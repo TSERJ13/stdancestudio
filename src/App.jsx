@@ -6,6 +6,7 @@ import About from './pages/About'
 import Contact from './pages/Contact'
 import Schedule from './pages/Schedule'
 import Payment from './pages/Payment'
+import Success from './pages/Success'
 import NotFound from './pages/NotFound'
 
 function ScrollToTop() {
@@ -26,6 +27,7 @@ export default function App() {
           <Route path="/about" element={<About />} />
           <Route path="/schedule" element={<Schedule />} />
           <Route path="/payment" element={<Payment />} />
+          <Route path="/success" element={<Success />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
