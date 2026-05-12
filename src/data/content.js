@@ -20,6 +20,7 @@ export const siteContent = {
     { label: 'მთავარი', to: '/' },
     { label: 'ჩვენ შესახებ', to: '/about' },
     { label: 'განრიგი', to: '/schedule' },
+    { label: 'გადახდა', to: '/payment' },
     { label: 'მიმართულებები', to: '/programs' },
     { label: 'მასწავლებლები', to: '/teachers' },
     { label: 'კონკურსები', to: '/competitions' },
