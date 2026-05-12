@@ -11,11 +11,11 @@ export default function Footer() {
 
       <div className="container footer__inner">
         <div className="footer__brand">
-          <img src="/images/logo-black.png" alt="ST Dance Studio" className="footer__logo" />
-          <div className="footer__brand-text" style={{ fontFamily: '"Times New Roman", Times, serif', textTransform: 'uppercase', marginBottom: '1.5rem' }}>
+          <img src="/images/logo-transparent.png" alt="ST Dance Studio" className="footer__logo" />
+          <div className="footer__brand-text" style={{ fontFamily: '"Times New Roman", Times, serif', textTransform: 'uppercase', marginBottom: '1.5rem', maxWidth: 'fit-content' }}>
             <span className="footer__name" style={{ color: 'var(--color-gold)', fontSize: '1.5rem', letterSpacing: '0.1em', display: 'block', marginBottom: '0' }}>ST DANCE</span>
-            <div style={{ height: '1px', background: 'var(--color-gold)', margin: '4px 0', width: '100%' }}></div>
-            <span className="footer__tagline" style={{ color: '#fff', fontSize: '0.9rem', letterSpacing: '0.4em', display: 'block', fontStyle: 'normal' }}>studio</span>
+            <div style={{ height: '1px', background: 'var(--color-gold)', margin: '2px 0', width: '100%' }}></div>
+            <span className="footer__tagline" style={{ color: '#fff', fontSize: '1rem', letterSpacing: '0.4em', display: 'block', textTransform: 'lowercase' }}>studio</span>
           </div>
         </div>
 

@@ -23,11 +23,11 @@ export default function Header() {
     <header className={`header ${scrolled ? 'is-scrolled' : ''}`}>
       <div className="header__inner container">
         <Link to="/" className="header__brand" onClick={() => setMobileOpen(false)}>
-          <img src="/images/logo-black.png" alt="ST Dance Studio" className="header__logo" />
+          <img src="/images/logo-transparent.png" alt="ST Dance Studio" className="header__logo" />
           <div className="header__brand-text" style={{ fontFamily: '"Times New Roman", Times, serif', textTransform: 'uppercase' }}>
             <span className="header__brand-name" style={{ color: 'var(--color-gold)', fontSize: '1.2rem', letterSpacing: '0.1em' }}>ST DANCE</span>
-            <div style={{ height: '1px', background: 'var(--color-gold)', margin: '2px 0' }}></div>
-            <span className="header__brand-sub" style={{ color: '#fff', fontSize: '0.8rem', letterSpacing: '0.3em', fontStyle: 'normal' }}>studio</span>
+            <div style={{ height: '1px', background: 'var(--color-gold)', margin: '1px 0' }}></div>
+            <span className="header__brand-sub" style={{ color: '#fff', fontSize: '0.8rem', letterSpacing: '0.3em', textTransform: 'lowercase' }}>studio</span>
           </div>
         </Link>
 
