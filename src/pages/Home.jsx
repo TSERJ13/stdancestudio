@@ -83,14 +83,14 @@ export default function Home() {
           <div className="about-blurb__copy">
             <span className="eyebrow">ჩვენ შესახებ</span>
             <h2 className="display about-blurb__title">
-              სცენაზე გასვლა <br />
-              <span className="display-italic">სიყვარულით იწყება</span>
+              წარმატება <br />
+              <span className="display-italic">პარკეტზე იწყება</span>
             </h2>
             <p>
-              კეთილი იყოს თქვენი მობრძანება სამეჯლისო ცეკვების სამყაროში. ჩვენი
-              სტუდია, სერგი წივწივაძის ხელმძღვანელობით, არის ადგილი, სადაც
-              ყოველ ბავშვს ეთმობა დრო და ენერგია, რათა ახდეს თქვენი ბავშვების
-              ოცნება.
+              კეთილი იყოს თქვენი მობრძანება სპორტული ცეკვების სამყაროში. ჩვენი
+              სტუდია არის ადგილი, სადაც ყოველ ბავშვს ეთმობა დრო და ენერგია,
+              რათა დაეუფლოს ცეკვის ტექნიკას და ჩამოყალიბდეს ნამდვილ
+              სპორტსმენად.
             </p>
             <p>
               ჩვენი მთავარი აქცენტი მოცეკვავეების მომავალი თაობის
@@ -143,7 +143,7 @@ export default function Home() {
             <span className="eyebrow">მასწავლებლები</span>
             <h2 className="display section-head__title">
               გუნდი, რომელიც <br />
-              <span className="display-italic">მოგიყვანთ სცენაზე</span>
+              <span className="display-italic">მოგამზადებთ შედეგისთვის</span>
             </h2>
           </div>
 

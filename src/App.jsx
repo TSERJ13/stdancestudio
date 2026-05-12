@@ -3,9 +3,6 @@ import { useEffect } from 'react'
 import Layout from './components/Layout'
 import Home from './pages/Home'
 import About from './pages/About'
-import Programs from './pages/Programs'
-import Teachers from './pages/Teachers'
-import Competitions from './pages/Competitions'
 import Contact from './pages/Contact'
 import Schedule from './pages/Schedule'
 import Payment from './pages/Payment'
@@ -27,9 +24,6 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
-          <Route path="/programs" element={<Programs />} />
-          <Route path="/teachers" element={<Teachers />} />
-          <Route path="/competitions" element={<Competitions />} />
           <Route path="/schedule" element={<Schedule />} />
           <Route path="/payment" element={<Payment />} />
           <Route path="/contact" element={<Contact />} />
