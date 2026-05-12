@@ -7,6 +7,7 @@ import Programs from './pages/Programs'
 import Teachers from './pages/Teachers'
 import Competitions from './pages/Competitions'
 import Contact from './pages/Contact'
+import Schedule from './pages/Schedule'
 import NotFound from './pages/NotFound'
 
 function ScrollToTop() {
@@ -28,6 +29,7 @@ export default function App() {
           <Route path="/programs" element={<Programs />} />
           <Route path="/teachers" element={<Teachers />} />
           <Route path="/competitions" element={<Competitions />} />
+          <Route path="/schedule" element={<Schedule />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
