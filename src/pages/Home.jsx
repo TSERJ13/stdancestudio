@@ -73,7 +73,7 @@ export default function Home() {
       <section className="section about-blurb">
         <div className="container about-blurb__grid">
           <div className="about-blurb__media">
-            <img src="/images/studio.png" alt="ST Dance Studio" />
+            <img src="/images/studio.jpg" alt="ST Dance Studio" />
             <div className="about-blurb__badge">
               <span className="display-italic">est.</span>
               <strong>2014</strong>

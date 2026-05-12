@@ -40,7 +40,7 @@ export default function About() {
       <section className="section section--alt">
         <div className="container split split--reverse">
           <div className="split__media">
-            <img src="/images/studio.png" alt="Studio" />
+            <img src="/images/studio.jpg" alt="Studio" />
           </div>
           <div className="split__copy">
             <h2 className="display">ჩვენი სივრცე</h2>
