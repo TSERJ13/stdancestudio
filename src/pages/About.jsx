@@ -21,7 +21,7 @@ export default function About() {
       <section className="section">
         <div className="container split">
           <div className="split__media">
-            <img src="/images/dancer-2.png" alt="Dancer" />
+            <img src="/images/about-kids.jpg?v=2" alt="Dancers" />
           </div>
           <div className="split__copy">
             <h2 className="display">სპორტი, რომელიც აყალიბებს ხასიათს</h2>
