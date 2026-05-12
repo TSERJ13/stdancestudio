@@ -11,9 +11,9 @@ export const siteContent = {
     phone: '+995 555 12 34 56',
     email: 'info@stdance.ge',
     address: 'ბათუმი, საქართველო',
-    instagram: 'https://www.instagram.com/stdance.ge/',
-    facebook: 'https://www.facebook.com/stdance.ge/',
-    youtube: '#',
+    instagram: 'https://www.instagram.com/stdancestudio',
+    facebook: 'https://www.facebook.com/STDanceStudio/',
+    youtube: 'https://www.youtube.com/@s_tdancestudio',
   },
 
   nav: [

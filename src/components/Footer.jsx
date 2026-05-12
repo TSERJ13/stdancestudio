@@ -61,9 +61,6 @@ export default function Footer() {
 
       <div className="footer__bottom container">
         <p>© {new Date().getFullYear()} ST Dance Studio. ყველა უფლება დაცულია.</p>
-        <p className="footer__credit">
-          მოამზადა <span className="display-italic">სიყვარულით</span>
-        </p>
       </div>
     </footer>
   )

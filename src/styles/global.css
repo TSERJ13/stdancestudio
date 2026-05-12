@@ -58,6 +58,12 @@ body {
   font-weight: 400;
   overflow-x: hidden;
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  flex: 1;
 }
 
 /* Subtle film grain overlay for atmosphere */
