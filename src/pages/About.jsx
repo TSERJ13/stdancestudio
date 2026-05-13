@@ -20,11 +20,11 @@ export default function About() {
       {/* ===================== STORY ===================== */}
       <section className="section">
         <div className="container split">
-          <div className="split__media" style={{ background: '#000', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div className="split__media" style={{ background: '#000', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
             <img 
-              src="/images/about-kids-extended.jpg?v=3" 
+              src="/images/about-kids-extended.jpg?v=4" 
               alt="Dancers" 
-              style={{ objectFit: 'contain', width: '100%', height: '100%' }}
+              style={{ objectFit: 'contain', width: '100%', height: '100%', transform: 'scale(1.02)' }}
             />
           </div>
           <div className="split__copy">
