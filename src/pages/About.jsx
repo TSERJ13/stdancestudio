@@ -20,8 +20,12 @@ export default function About() {
       {/* ===================== STORY ===================== */}
       <section className="section">
         <div className="container split">
-          <div className="split__media">
-            <img src="/images/about-kids.jpg?v=2" alt="Dancers" />
+          <div className="split__media" style={{ background: '#000', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <img 
+              src="/images/about-kids-extended.jpg?v=3" 
+              alt="Dancers" 
+              style={{ objectFit: 'contain', width: '100%', height: '100%' }}
+            />
           </div>
           <div className="split__copy">
             <h2 className="display">სპორტი, რომელიც აყალიბებს ხასიათს</h2>

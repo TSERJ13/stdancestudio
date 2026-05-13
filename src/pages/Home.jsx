@@ -72,8 +72,12 @@ export default function Home() {
       {/* ===================== ABOUT BLURB ===================== */}
       <section className="section about-blurb">
         <div className="container about-blurb__grid">
-          <div className="about-blurb__media">
-            <img src="/images/about-kids.jpg?v=2" alt="ST Dance Studio" />
+          <div className="about-blurb__media" style={{ background: '#000' }}>
+            <img 
+              src="/images/about-kids-extended.jpg?v=3" 
+              alt="ST Dance Studio" 
+              style={{ objectFit: 'contain', width: '100%', height: '100%' }}
+            />
             <div className="about-blurb__badge">
               <span className="display-italic">est.</span>
               <strong>2014</strong>
