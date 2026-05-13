@@ -20,29 +20,20 @@ export default function Schedule() {
 
       <section className="section">
         <div className="container">
-          <div className="calendar-wrap" style={{ 
-            position: 'relative', 
-            paddingBottom: '140%', 
-            minHeight: '800px',
-            height: 0, 
-            overflow: 'hidden',
-            borderRadius: '12px',
-            boxShadow: '0 20px 40px rgba(0,0,0,0.1)',
-            background: '#fff'
-          }}>
+          <div className="calendar-wrap">
             <iframe 
-              src="https://calendar.google.com/calendar/embed?src=stdancegroup%40gmail.com&ctz=Asia%2FTbilisi&mode=WEEK&showPrint=0&showTabs=0&showCalendars=0&showTitle=0" 
-              style={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                width: '100%',
-                height: '100%',
-                border: 0
-              }}
+              src="https://calendar.google.com/calendar/embed?src=e698ef6f2df8bc360f06f932e60971216127e4e8992c949e6d0a79a557b44747%40group.calendar.google.com&ctz=Asia%2FTbilisi&mode=WEEK&showTitle=0&showNav=1&showDate=1&showPrint=0&showTabs=0&showCalendars=0&showTz=0&hl=ka" 
+              style={{ 
+                position: 'absolute', 
+                top: 0, 
+                left: 0, 
+                width: '100%', 
+                height: '100%', 
+                border: 0 
+              }} 
               frameBorder="0" 
               scrolling="no"
-              title="ST Dance Studio Schedule"
+              title="Schedule"
             ></iframe>
           </div>
         </div>

@@ -250,6 +250,8 @@
 @media (max-width: 1024px) {
   .header {
     padding-block: 0.75rem;
+    padding-top: calc(0.75rem + env(safe-area-inset-top));
+    background: #0a0a0a;
   }
   .header__nav,
   .header__cta,
@@ -265,6 +267,7 @@
 @media (max-width: 480px) {
   .header {
     padding-block: 0.6rem;
+    padding-top: calc(0.6rem + env(safe-area-inset-top));
   }
   .header__brand-name {
     font-size: 1.05rem;
@@ -321,7 +324,7 @@
     bottom: 1.5rem;
     right: 1.5rem;
     transform: none;
-    padding: 0.25rem;
+    padding: 0.3rem;
     box-shadow: 0 8px 32px rgba(0,0,0,0.6);
     transition: all 0.4s var(--ease);
   }
@@ -339,12 +342,13 @@
   }
   
   .floating-lang button {
-    font-size: 0.65rem;
-    padding: 0.45rem 0.9rem;
+    font-size: 0.85rem;
+    padding: 0.65rem 1.15rem;
     white-space: nowrap;
     transition: all 0.3s var(--ease);
   }
 }
+
 
 
 
