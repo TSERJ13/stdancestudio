@@ -5,11 +5,38 @@ import './Header.css'
 
 const FloatingLangSwitcher = () => {
   const { lang, setLang } = useLanguage()
+  const [expanded, setExpanded] = useState(false)
+
+  const handleLangClick = (newLang) => {
+    if (!expanded) {
+      setExpanded(true)
+    } else {
+      setLang(newLang)
+      setExpanded(false)
+    }
+  }
+
+  // Auto-close when clicking outside might be good, but for now toggle is fine
   return (
-    <div className="floating-lang">
-      <button onClick={() => setLang('ka')} className={lang === 'ka' ? 'active' : ''}>GE</button>
-      <button onClick={() => setLang('en')} className={lang === 'en' ? 'active' : ''}>EN</button>
-      <button onClick={() => setLang('ru')} className={lang === 'ru' ? 'active' : ''}>RU</button>
+    <div className={`floating-lang ${expanded ? 'is-expanded' : 'is-collapsed'}`}>
+      <button 
+        onClick={() => handleLangClick('ka')} 
+        className={lang === 'ka' ? 'active' : ''}
+      >
+        GE
+      </button>
+      <button 
+        onClick={() => handleLangClick('en')} 
+        className={lang === 'en' ? 'active' : ''}
+      >
+        EN
+      </button>
+      <button 
+        onClick={() => handleLangClick('ru')} 
+        className={lang === 'ru' ? 'active' : ''}
+      >
+        RU
+      </button>
     </div>
   )
 }
