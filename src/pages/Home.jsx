@@ -62,12 +62,22 @@ export default function Home() {
       {/* ===================== STATS ===================== */}
       <section className="stats">
         <div className="container stats__inner">
-          {stats.map((s, i) => (
-            <div key={i} className="stat">
-              <div className="stat__value display">{s.value}</div>
-              <div className="stat__label">{s.label}</div>
-            </div>
-          ))}
+          <div className="stat">
+            <div className="stat__value display">10+</div>
+            <div className="stat__label">{t('stats.exp')}</div>
+          </div>
+          <div className="stat">
+            <div className="stat__value display">150+</div>
+            <div className="stat__label">{t('stats.students')}</div>
+          </div>
+          <div className="stat">
+            <div className="stat__value display">50+</div>
+            <div className="stat__label">{t('stats.awards')}</div>
+          </div>
+          <div className="stat">
+            <div className="stat__value display">5</div>
+            <div className="stat__label">{t('stats.trainers')}</div>
+          </div>
         </div>
       </section>
 

@@ -15,6 +15,12 @@ export const translations = {
       desc: 'ST Dance Studio-ში ჩვენ ვეხმარებით ბავშვებს სპორტული ცეკვების ათვისებაში, სწორი დისციპლინისა და ტექნიკის ჩამოყალიბებაში.',
       cta: 'ჩაეწერე ახლავე',
     },
+    stats: {
+      exp: 'წლიანი გამოცდილება',
+      students: 'აქტიური მოსწავლე',
+      awards: 'ჯილდო',
+      trainers: 'პროფესიონალი მწვრთნელი'
+    },
     about: {
       title: 'სტუდია, სადაც შედეგი ფასდება',
       story: 'სპორტი, რომელიც აყალიბებს ხასიათს',
@@ -26,6 +32,7 @@ export const translations = {
       address: 'მისამართი',
       phone: 'ტელეფონი',
       email: 'ელ-ფოსტა',
+      send: 'გაგზავნა'
     }
   },
   en: {
@@ -44,6 +51,12 @@ export const translations = {
       desc: 'At ST Dance Studio, we help children master sports dance, developing discipline and proper technique.',
       cta: 'Join Now',
     },
+    stats: {
+      exp: 'Years Experience',
+      students: 'Active Students',
+      awards: 'Awards Won',
+      trainers: 'Pro Trainers'
+    },
     about: {
       title: 'Studio Where Results Matter',
       story: 'Sport that Builds Character',
@@ -55,6 +68,7 @@ export const translations = {
       address: 'Address',
       phone: 'Phone',
       email: 'Email',
+      send: 'Send Message'
     }
   },
   ru: {
@@ -73,6 +87,12 @@ export const translations = {
       desc: 'В ST Dance Studio мы помогаем детям освоить спортивные танцы, развивая дисциплину и правильную технику.',
       cta: 'Записаться',
     },
+    stats: {
+      exp: 'Лет Опыта',
+      students: 'Активных Учеников',
+      awards: 'Наград',
+      trainers: 'Тренеров'
+    },
     about: {
       title: 'Студия, где ценится результат',
       story: 'Спорт, который формирует характер',
@@ -84,6 +104,7 @@ export const translations = {
       address: 'Адрес',
       phone: 'Телефон',
       email: 'Эл. почта',
+      send: 'Отправить'
     }
   }
 }
