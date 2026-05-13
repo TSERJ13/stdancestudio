@@ -3,23 +3,6 @@ import { NavLink, Link } from 'react-router-dom'
 import { useLanguage } from '../context/LanguageContext'
 import './Header.css'
 
-const LanguageSwitcher = () => {
-  const { lang, setLang } = useLanguage()
-  return (
-    <div className="lang-switcher">
-      <button onClick={() => setLang('ka')} className={lang === 'ka' ? 'active' : ''}>
-        <span className="flag">🇬🇪</span> GE
-      </button>
-      <button onClick={() => setLang('en')} className={lang === 'en' ? 'active' : ''}>
-        <span className="flag">🇺🇸</span> EN
-      </button>
-      <button onClick={() => setLang('ru')} className={lang === 'ru' ? 'active' : ''}>
-        <span className="flag">🇷🇺</span> RU
-      </button>
-    </div>
-  )
-}
-
 const FloatingLangSwitcher = () => {
   const { lang, setLang } = useLanguage()
   return (
@@ -81,7 +64,6 @@ export default function Header() {
                 {item.label}
               </NavLink>
             ))}
-            <LanguageSwitcher />
           </nav>
 
           <Link to="/contact" className="btn btn-primary header__cta">
