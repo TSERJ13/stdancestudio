@@ -1,17 +1,19 @@
+import { useLanguage } from '../context/LanguageContext'
 import './InnerPage.css'
 
 export default function Schedule() {
+  const { t } = useLanguage()
   return (
     <>
       <section className="page-hero">
         <div className="container">
-          <span className="eyebrow">განრიგი</span>
+          <span className="eyebrow">{t('schedule.eyebrow')}</span>
           <h1 className="display page-hero__title">
-            მეცადინეობების <br />
-            <span className="display-italic">კალენდარი</span>
+            {t('schedule.title')} <br />
+            <span className="display-italic">{t('schedule.titleItalic')}</span>
           </h1>
           <p className="page-hero__lead">
-            გაეცანით ჩვენი სტუდიის მიმდინარე განრიგს. ყველა ცვლილება ავტომატურად აისახება აქ.
+            {t('schedule.desc')}
           </p>
         </div>
       </section>
@@ -20,7 +22,8 @@ export default function Schedule() {
         <div className="container">
           <div className="calendar-wrap" style={{ 
             position: 'relative', 
-            paddingBottom: '75%', 
+            paddingBottom: '140%', 
+            minHeight: '800px',
             height: 0, 
             overflow: 'hidden',
             borderRadius: '12px',

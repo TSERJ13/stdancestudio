@@ -1,9 +1,19 @@
+import { useLanguage } from '../context/LanguageContext'
 import { Link } from 'react-router-dom'
 import { siteContent } from '../data/content'
 import './Footer.css'
 
 export default function Footer() {
-  const { brand, contact, nav } = siteContent
+  const { contact } = siteContent
+  const { t } = useLanguage()
+
+  const navItems = [
+    { label: t('nav.home'), to: '/' },
+    { label: t('nav.about'), to: '/about' },
+    { label: t('nav.schedule'), to: '/schedule' },
+    { label: t('nav.payment'), to: '/payment' },
+    { label: t('nav.contact'), to: '/contact' },
+  ]
 
   return (
     <footer className="footer">
@@ -20,9 +30,9 @@ export default function Footer() {
         </div>
 
         <div className="footer__col">
-          <h4 className="footer__heading">ნავიგაცია</h4>
+          <h4 className="footer__heading">{t('about.eyebrow')}</h4>
           <ul className="footer__links">
-            {nav.map((item) => (
+            {navItems.map((item) => (
               <li key={item.to}>
                 <Link to={item.to}>{item.label}</Link>
               </li>
@@ -31,25 +41,25 @@ export default function Footer() {
         </div>
 
         <div className="footer__col">
-          <h4 className="footer__heading">კონტაქტი</h4>
+          <h4 className="footer__heading">{t('contact.eyebrow')}</h4>
           <ul className="footer__contact">
             <li>
-              <span>ტელეფონი</span>
+              <span>{t('contact.phone')}</span>
               <a href={`tel:${contact.phone.replace(/\s/g, '')}`}>{contact.phone}</a>
             </li>
             <li>
-              <span>ელ-ფოსტა</span>
+              <span>{t('contact.email')}</span>
               <a href={`mailto:${contact.email}`}>{contact.email}</a>
             </li>
             <li>
-              <span>მისამართი</span>
+              <span>{t('contact.address')}</span>
               <p>{contact.address}</p>
             </li>
           </ul>
         </div>
 
         <div className="footer__col">
-          <h4 className="footer__heading">სოც. ქსელები</h4>
+          <h4 className="footer__heading">Social</h4>
           <ul className="footer__social">
             <li><a href={contact.instagram} target="_blank" rel="noopener noreferrer">Instagram</a></li>
             <li><a href={contact.facebook} target="_blank" rel="noopener noreferrer">Facebook</a></li>
@@ -59,7 +69,7 @@ export default function Footer() {
       </div>
 
       <div className="footer__bottom container">
-        <p>© {new Date().getFullYear()} ST Dance Studio. ყველა უფლება დაცულია.</p>
+        <p>© {new Date().getFullYear()} ST Dance Studio. {t('footer.rights')}.</p>
       </div>
     </footer>
   )

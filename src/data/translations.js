@@ -13,7 +13,7 @@ export const translations = {
       titleItalic: 'პარკეტი',
       titleEnd: 'ჩვენთან ერთად',
       desc: 'ST Dance Studio-ში ჩვენ ვეხმარებით ბავშვებს სპორტული ცეკვების ათვისებაში, სწორი დისციპლინისა და ტექნიკის ჩამოყალიბებაში.',
-      cta: 'ჩაეწერე ახლავე',
+      cta: 'გავიცნოთ ერთმანეთი',
     },
     stats: {
       exp: 'წლიანი გამოცდილება',
@@ -22,17 +22,51 @@ export const translations = {
       trainers: 'პროფესიონალი მწვრთნელი'
     },
     about: {
-      title: 'სტუდია, სადაც შედეგი ფასდება',
-      story: 'სპორტი, რომელიც აყალიბებს ხასიათს',
-      desc1: 'ST Dance Studio არის სივრცე, სადაც სპორტული ცეკვა მხოლოდ ჰობი არ არის. ჩვენი მიზანია ბავშვებს ვასწავლოთ დისციპლინა, შრომისმოყვარეობა.',
+      eyebrow: 'ჩვენ შესახებ',
+      title: 'წარმატება',
+      titleItalic: 'პარკეტზე იწყება',
+      desc1: 'კეთილი იყოს თქვენი მობრძანება სპორტული ცეკვების სამყაროში. ჩვენი სტუდია არის ადგილი, სადაც ყოველ ბავშვს ეთმობა დრო და ენერგია, რათა დაეუფლოს ცეკვის ტექნიკას.',
+      desc2: 'ჩვენი მთავარი აქცენტი მოცეკვავეების მომავალი თაობის ჩამოყალიბებაზეა — ვაერთიანებთ ტექნიკურ ოსტატობას და სცენურ კულტურას.',
+      more: 'მეტი ჩვენ შესახებ',
+      storyTitle: 'სპორტი, რომელიც აყალიბებს ხასიათს',
       teachers: 'ჩვენი გუნდი',
     },
+    schedule: {
+      eyebrow: 'განრიგი',
+      title: 'მეცადინეობების',
+      titleItalic: 'კალენდარი',
+      desc: 'გაეცანით ჩვენი სტუდიის მიმდინარე განრიგს. ყველა ცვლილება ავტომატურად აისახება აქ.',
+    },
+    payment: {
+      eyebrow: 'გადახდა',
+      title: 'ონლაინ',
+      titleItalic: 'ანგარიშსწორება',
+      desc: 'აქ შეგიძლიათ სწრაფად და მარტივად გადაიხადოთ მომსახურების საფასური.',
+    },
     contact: {
+      eyebrow: 'კონტაქტი',
       title: 'დაგვიკავშირდით',
       address: 'მისამართი',
       phone: 'ტელეფონი',
       email: 'ელ-ფოსტა',
-      send: 'გაგზავნა'
+      send: 'გაგზავნა',
+      success: 'შეტყობინება გაიგზავნა!',
+    },
+    footer: {
+      desc: 'სპორტული ცეკვების სტუდია ბათუმში. იგრძენი პარკეტი ჩვენთან ერთად.',
+      rights: 'ყველა უფლება დაცულია',
+    },
+    home: {
+      progEyebrow: 'მიმართულებები',
+      progTitle: 'რას',
+      progTitleItalic: 'ვასწავლით',
+      teamEyebrow: 'მასწავლებლები',
+      teamTitle: 'გუნდი, რომელიც',
+      teamTitleItalic: 'მოგამზადებთ შედეგისთვის',
+      ctaTitle: 'მზად ხართ',
+      ctaTitleItalic: 'პირველი ნაბიჯისთვის?',
+      ctaDesc: 'დაგვიკავშირდით — საცდელი გაკვეთილი უფასოა.',
+      ctaBtn: 'ჩაწერა საცდელ გაკვეთილზე',
     }
   },
   en: {
@@ -58,17 +92,51 @@ export const translations = {
       trainers: 'Pro Trainers'
     },
     about: {
-      title: 'Studio Where Results Matter',
-      story: 'Sport that Builds Character',
-      desc1: 'ST Dance Studio is a space where sports dance is more than a hobby. Our goal is to teach children discipline and hard work.',
+      eyebrow: 'About Us',
+      title: 'Success',
+      titleItalic: 'Starts on Parquet',
+      desc1: 'Welcome to the world of sports dance. Our studio is a place where every child is given time and energy to master dance technique.',
+      desc2: 'Our main focus is on forming the future generation of dancers — combining technical mastery and stage culture.',
+      more: 'More About Us',
+      storyTitle: 'Sport that Builds Character',
       teachers: 'Our Team',
     },
+    schedule: {
+      eyebrow: 'Schedule',
+      title: 'Class',
+      titleItalic: 'Calendar',
+      desc: 'Check out our current studio schedule. All changes are reflected here automatically.',
+    },
+    payment: {
+      eyebrow: 'Payment',
+      title: 'Online',
+      titleItalic: 'Payment',
+      desc: 'Here you can quickly and easily pay for the services.',
+    },
     contact: {
+      eyebrow: 'Contact',
       title: 'Contact Us',
       address: 'Address',
       phone: 'Phone',
       email: 'Email',
-      send: 'Send Message'
+      send: 'Send',
+      success: 'Message sent successfully!',
+    },
+    footer: {
+      desc: 'Sports dance studio in Batumi. Feel the parquet with us.',
+      rights: 'All rights reserved',
+    },
+    home: {
+      progEyebrow: 'Programs',
+      progTitle: 'What We',
+      progTitleItalic: 'Teach',
+      teamEyebrow: 'Teachers',
+      teamTitle: 'Team that',
+      teamTitleItalic: 'Prepares You',
+      ctaTitle: 'Ready for the',
+      ctaTitleItalic: 'First Step?',
+      ctaDesc: 'Contact us — the trial lesson is free.',
+      ctaBtn: 'Book Trial Lesson',
     }
   },
   ru: {
@@ -94,17 +162,51 @@ export const translations = {
       trainers: 'Тренеров'
     },
     about: {
-      title: 'Студия, где ценится результат',
-      story: 'Спорт, который формирует характер',
-      desc1: 'ST Dance Studio — это пространство, где спортивные танцы — больше, чем хобби. Наша цель — научить детей дисциплине.',
+      eyebrow: 'О нас',
+      title: 'Успех',
+      titleItalic: 'Начинается на паркете',
+      desc1: 'Добро пожаловать в мир спортивных танцев. Наша студия — это место, где каждому ребенку уделяется время и энергия для освоения техники.',
+      desc2: 'Наше основное внимание уделяется формированию будущего поколения танцоров — сочетанию мастерства и сценической культуры.',
+      more: 'Подробнее о нас',
+      storyTitle: 'Спорт, который формирует характер',
       teachers: 'Наша Команда',
     },
+    schedule: {
+      eyebrow: 'Расписание',
+      title: 'Календарь',
+      titleItalic: 'Занятий',
+      desc: 'Ознакомьтесь с текущим расписанием нашей студии. Все изменения отражаются здесь автоматически.',
+    },
+    payment: {
+      eyebrow: 'Оплата',
+      title: 'Онлайн',
+      titleItalic: 'Оплата',
+      desc: 'Здесь вы можете быстро и легко оплатить услуги.',
+    },
     contact: {
+      eyebrow: 'Контакт',
       title: 'Связаться с нами',
       address: 'Адрес',
       phone: 'Телефон',
       email: 'Эл. почта',
-      send: 'Отправить'
+      send: 'Отправить',
+      success: 'Сообщение отправлено!',
+    },
+    footer: {
+      desc: 'Студия спортивных танцев в Батуми. Почувствуй паркет с нами.',
+      rights: 'Все права защищены',
+    },
+    home: {
+      progEyebrow: 'Направления',
+      progTitle: 'Чему Мы',
+      progTitleItalic: 'Учим',
+      teamEyebrow: 'Тренеры',
+      teamTitle: 'Команда, которая',
+      teamTitleItalic: 'Готовит к Результату',
+      ctaTitle: 'Готовы к',
+      ctaTitleItalic: 'Первому Шагу?',
+      ctaDesc: 'Свяжитесь с нами — пробный урок бесплатно.',
+      ctaBtn: 'Записаться на урок',
     }
   }
 }

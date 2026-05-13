@@ -1,18 +1,20 @@
+import { useLanguage } from '../context/LanguageContext'
 import { siteContent } from '../data/content'
 import './InnerPage.css'
 import './Home.css' // Reuse home styles for sections
 
 export default function About() {
   const { programs, teachers, competitions } = siteContent
+  const { t } = useLanguage()
 
   return (
     <>
       <section className="page-hero">
         <div className="container">
-          <span className="eyebrow">ჩვენ შესახებ</span>
+          <span className="eyebrow">{t('about.eyebrow')}</span>
           <h1 className="display page-hero__title">
-            სტუდია, სადაც <br />
-            <span className="display-italic">შედეგი ფასდება</span>
+            {t('about.title')} <br />
+            <span className="display-italic">{t('about.titleItalic')}</span>
           </h1>
         </div>
       </section>
@@ -28,16 +30,12 @@ export default function About() {
             />
           </div>
           <div className="split__copy">
-            <h2 className="display">სპორტი, რომელიც აყალიბებს ხასიათს</h2>
+            <h2 className="display">{t('about.storyTitle')}</h2>
             <p>
-              ST Dance Studio არის სივრცე, სადაც სპორტული ცეკვა მხოლოდ ჰობი არ არის.
-              ჩვენი მიზანია ბავშვებს ვასწავლოთ დისციპლინა, შრომისმოყვარეობა და 
-              დავეხმაროთ მათ ფიზიკურ თუ ემოციურ განვითარებაში.
+              {t('about.desc1')}
             </p>
             <p>
-              პარკეტზე გატარებული ყოველი საათი აყალიბებს თავდაჯერებულობას, 
-              რომელიც მოცეკვავეებს არა მხოლოდ შეჯიბრებებზე, არამედ ცხოვრებაშიც 
-              ეხმარებათ.
+              {t('about.desc2')}
             </p>
           </div>
         </div>
@@ -47,9 +45,9 @@ export default function About() {
       <section className="section section--alt">
         <div className="container">
           <div className="section-head">
-            <span className="eyebrow">მიმართულებები</span>
+            <span className="eyebrow">{t('home.progEyebrow')}</span>
             <h2 className="display section-head__title">
-              რას <span className="display-italic">ვასწავლით</span>
+              {t('home.progTitle')} <span className="display-italic">{t('home.progTitleItalic')}</span>
             </h2>
           </div>
           <div className="programs-grid">
@@ -60,7 +58,7 @@ export default function About() {
                 <div className="prog-card__latin">{p.latin}</div>
                 <p className="prog-card__desc">{p.description}</p>
                 <div className="prog-card__meta">
-                  <span>ასაკი:</span> {p.ages}
+                  <span>Age:</span> {p.ages}
                 </div>
               </article>
             ))}
@@ -72,9 +70,9 @@ export default function About() {
       <section className="section">
         <div className="container">
           <div className="section-head section-head--center">
-            <span className="eyebrow">მასწავლებლები</span>
+            <span className="eyebrow">{t('home.teamEyebrow')}</span>
             <h2 className="display section-head__title">
-              ჩვენი <span className="display-italic">გუნდი</span>
+              {t('home.teamTitle')} <span className="display-italic">{t('home.teamTitleItalic')}</span>
             </h2>
           </div>
           <div className="teachers-grid">

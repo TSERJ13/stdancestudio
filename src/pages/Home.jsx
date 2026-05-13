@@ -97,24 +97,19 @@ export default function Home() {
           </div>
 
           <div className="about-blurb__copy">
-            <span className="eyebrow">ჩვენ შესახებ</span>
+            <span className="eyebrow">{t('about.eyebrow')}</span>
             <h2 className="display about-blurb__title">
-              წარმატება <br />
-              <span className="display-italic">პარკეტზე იწყება</span>
+              {t('about.title')} <br />
+              <span className="display-italic">{t('about.titleItalic')}</span>
             </h2>
             <p>
-              კეთილი იყოს თქვენი მობრძანება სპორტული ცეკვების სამყაროში. ჩვენი
-              სტუდია არის ადგილი, სადაც ყოველ ბავშვს ეთმობა დრო და ენერგია,
-              რათა დაეუფლოს ცეკვის ტექნიკას და ჩამოყალიბდეს ნამდვილ
-              სპორტსმენად.
+              {t('about.desc1')}
             </p>
             <p>
-              ჩვენი მთავარი აქცენტი მოცეკვავეების მომავალი თაობის
-              ჩამოყალიბებაზეა — ვაერთიანებთ ტექნიკურ ოსტატობას, მუსიკალურობასა
-              და სცენურ კულტურას.
+              {t('about.desc2')}
             </p>
             <Link to="/about" className="btn btn-arrow">
-              მეტი ჩვენ შესახებ
+              {t('about.more')}
             </Link>
           </div>
         </div>
@@ -124,9 +119,9 @@ export default function Home() {
       <section className="section programs-preview">
         <div className="container">
           <div className="section-head">
-            <span className="eyebrow">მიმართულებები</span>
+            <span className="eyebrow">{t('home.progEyebrow')}</span>
             <h2 className="display section-head__title">
-              ცეკვის ოთხი <span className="display-italic">სამყარო</span>
+              {t('home.progTitle')} <span className="display-italic">{t('home.progTitleItalic')}</span>
             </h2>
           </div>
 
@@ -138,15 +133,15 @@ export default function Home() {
                 <div className="prog-card__latin">{p.latin}</div>
                 <p className="prog-card__desc">{p.description}</p>
                 <div className="prog-card__meta">
-                  <span>ასაკი:</span> {p.ages}
+                  <span>Age:</span> {p.ages}
                 </div>
               </article>
             ))}
           </div>
 
           <div className="section-foot">
-            <Link to="/programs" className="btn btn-ghost">
-              ყველა მიმართულება
+            <Link to="/about" className="btn btn-ghost">
+              {t('about.more')}
             </Link>
           </div>
         </div>
@@ -156,10 +151,10 @@ export default function Home() {
       <section className="section teachers-preview">
         <div className="container">
           <div className="section-head section-head--center">
-            <span className="eyebrow">მასწავლებლები</span>
+            <span className="eyebrow">{t('home.teamEyebrow')}</span>
             <h2 className="display section-head__title">
-              გუნდი, რომელიც <br />
-              <span className="display-italic">მოგამზადებთ შედეგისთვის</span>
+              {t('home.teamTitle')} <br />
+              <span className="display-italic">{t('home.teamTitleItalic')}</span>
             </h2>
           </div>
 
@@ -217,15 +212,14 @@ export default function Home() {
         <div className="container cta__inner">
           <div className="cta__copy">
             <h2 className="display cta__title">
-              მზად ხართ <span className="display-italic">პირველი ნაბიჯისთვის?</span>
+              {t('home.ctaTitle')} <span className="display-italic">{t('home.ctaTitleItalic')}</span>
             </h2>
             <p>
-              დაგვიკავშირდით — საცდელი გაკვეთილი უფასოა. დაუტოვეთ თქვენი
-              ნომერი და ჩვენ დაგირეკავთ.
+              {t('home.ctaDesc')}
             </p>
           </div>
           <Link to="/contact" className="btn btn-primary cta__btn">
-            ჩაწერა საცდელ გაკვეთილზე
+            {t('home.ctaBtn')}
           </Link>
         </div>
       </section>

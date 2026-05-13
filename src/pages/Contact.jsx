@@ -1,17 +1,16 @@
 import { useState } from 'react'
+import { useLanguage } from '../context/LanguageContext'
 import { siteContent } from '../data/content'
 import './InnerPage.css'
 
 export default function Contact() {
   const { contact } = siteContent
+  const { t } = useLanguage()
   const [submitted, setSubmitted] = useState(false)
   const [form, setForm] = useState({ name: '', phone: '', message: '' })
 
   const onSubmit = (e) => {
     e.preventDefault()
-    // For now just show success state; later you can wire this up to
-    // Formspree, Resend, EmailJS, or a Vercel serverless function.
-    console.log('Form submitted:', form)
     setSubmitted(true)
   }
 
@@ -23,38 +22,34 @@ export default function Contact() {
     <>
       <section className="page-hero">
         <div className="container">
-          <span className="eyebrow">კონტაქტი</span>
+          <span className="eyebrow">{t('contact.eyebrow')}</span>
           <h1 className="display page-hero__title">
-            დავიწყოთ <br />
-            <span className="display-italic">საუბარი</span>
+            {t('contact.title')}
           </h1>
-          <p className="page-hero__lead">
-            დაგვიკავშირდით ნებისმიერი კითხვით. პასუხს მალე მიიღებთ.
-          </p>
         </div>
       </section>
 
       <section className="section">
         <div className="container contact-grid">
           <div className="contact-info">
-            <h2 className="display">სად ვართ</h2>
+            <h2 className="display">{t('contact.address')}</h2>
             <ul className="contact-list">
               <li>
-                <span className="contact-list__label">ტელეფონი</span>
+                <span className="contact-list__label">{t('contact.phone')}</span>
                 <a href={`tel:${contact.phone.replace(/\s/g, '')}`}>{contact.phone}</a>
               </li>
               <li>
-                <span className="contact-list__label">ელ-ფოსტა</span>
+                <span className="contact-list__label">{t('contact.email')}</span>
                 <a href={`mailto:${contact.email}`}>{contact.email}</a>
               </li>
               <li>
-                <span className="contact-list__label">მისამართი</span>
+                <span className="contact-list__label">{t('contact.address')}</span>
                 <p>{contact.address}</p>
               </li>
             </ul>
 
             <div className="contact-social">
-              <span className="contact-list__label">სოც. ქსელები</span>
+              <span className="contact-list__label">Social</span>
               <div className="contact-social__links">
                 <a href={contact.instagram} target="_blank" rel="noreferrer">Instagram</a>
                 <a href={contact.facebook} target="_blank" rel="noreferrer">Facebook</a>
@@ -67,15 +62,15 @@ export default function Contact() {
             {submitted ? (
               <div className="contact-success">
                 <div className="contact-success__icon">✓</div>
-                <h3 className="display">გმადლობთ!</h3>
-                <p>თქვენი მოთხოვნა მიღებულია — მალე დაგიკავშირდებით.</p>
+                <h3 className="display">Success!</h3>
+                <p>{t('contact.success')}</p>
               </div>
             ) : (
               <form className="contact-form" onSubmit={onSubmit}>
-                <h2 className="display">დაგვიტოვეთ შეტყობინება</h2>
+                <h2 className="display">{t('contact.title')}</h2>
 
                 <div className="form-field">
-                  <label htmlFor="name">სახელი</label>
+                  <label htmlFor="name">Name</label>
                   <input
                     id="name"
                     name="name"
@@ -87,7 +82,7 @@ export default function Contact() {
                 </div>
 
                 <div className="form-field">
-                  <label htmlFor="phone">ტელეფონი</label>
+                  <label htmlFor="phone">{t('contact.phone')}</label>
                   <input
                     id="phone"
                     name="phone"
@@ -99,7 +94,7 @@ export default function Contact() {
                 </div>
 
                 <div className="form-field">
-                  <label htmlFor="message">შეტყობინება</label>
+                  <label htmlFor="message">Message</label>
                   <textarea
                     id="message"
                     name="message"
@@ -109,7 +104,7 @@ export default function Contact() {
                   ></textarea>
                 </div>
 
-                <button type="submit" className="btn btn-primary">გაგზავნა</button>
+                <button type="submit" className="btn btn-primary">{t('contact.send')}</button>
               </form>
             )}
           </div>
