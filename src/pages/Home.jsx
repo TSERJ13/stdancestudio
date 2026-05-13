@@ -1,11 +1,13 @@
 import { Link } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { siteContent } from '../data/content'
+import { useLanguage } from '../context/LanguageContext'
 import './Home.css'
 
 export default function Home() {
-  const { hero, stats, programs, teachers, testimonials } = siteContent
+  const { stats, programs, teachers, testimonials } = siteContent
   const [testimonialIdx, setTestimonialIdx] = useState(0)
+  const { t } = useLanguage()
 
   useEffect(() => {
     const id = setInterval(() => {
@@ -26,26 +28,26 @@ export default function Home() {
         <div className="hero__inner container">
           <div className="hero__copy">
             <span className="eyebrow fade-up" style={{ animationDelay: '0.2s' }}>
-              {hero.eyebrow}
+              {t('hero.eyebrow')}
             </span>
 
             <h1 className="hero__title display fade-up" style={{ animationDelay: '0.35s' }}>
-              {hero.title}{' '}
-              <span className="display-italic">{hero.titleItalic}</span>
+              {t('hero.title')}{' '}
+              <span className="display-italic">{t('hero.titleItalic')}</span>
               <br />
-              {hero.titleEnd}
+              {t('hero.titleEnd')}
             </h1>
 
             <p className="hero__desc fade-up" style={{ animationDelay: '0.55s' }}>
-              {hero.description}
+              {t('hero.desc')}
             </p>
 
             <div className="hero__actions fade-up" style={{ animationDelay: '0.75s' }}>
               <Link to="/contact" className="btn btn-primary">
-                გავიცნოთ ერთმანეთი
+                {t('hero.cta')}
               </Link>
-              <Link to="/programs" className="btn btn-ghost">
-                მიმართულებები
+              <Link to="/about" className="btn btn-ghost">
+                {t('nav.about')}
               </Link>
             </div>
           </div>

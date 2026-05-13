@@ -1,11 +1,23 @@
 import { useState, useEffect } from 'react'
 import { NavLink, Link } from 'react-router-dom'
-import { siteContent } from '../data/content'
+import { useLanguage } from '../context/LanguageContext'
 import './Header.css'
+
+const LanguageSwitcher = () => {
+  const { lang, setLang } = useLanguage()
+  return (
+    <div className="lang-switcher">
+      <button onClick={() => setLang('ka')} className={lang === 'ka' ? 'active' : ''}>KA</button>
+      <button onClick={() => setLang('en')} className={lang === 'en' ? 'active' : ''}>EN</button>
+      <button onClick={() => setLang('ru')} className={lang === 'ru' ? 'active' : ''}>RU</button>
+    </div>
+  )
+}
 
 export default function Header() {
   const [scrolled, setScrolled] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
+  const { t } = useLanguage()
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40)
@@ -13,11 +25,18 @@ export default function Header() {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
-  // lock scroll when mobile menu open
   useEffect(() => {
     document.body.style.overflow = mobileOpen ? 'hidden' : ''
     return () => { document.body.style.overflow = '' }
   }, [mobileOpen])
+
+  const navItems = [
+    { label: t('nav.home'), to: '/' },
+    { label: t('nav.about'), to: '/about' },
+    { label: t('nav.schedule'), to: '/schedule' },
+    { label: t('nav.payment'), to: '/payment' },
+    { label: t('nav.contact'), to: '/contact' },
+  ]
 
   return (
     <header className={`header ${scrolled ? 'is-scrolled' : ''}`}>
@@ -32,7 +51,7 @@ export default function Header() {
         </Link>
 
         <nav className="header__nav">
-          {siteContent.nav.map((item) => (
+          {navItems.map((item) => (
             <NavLink
               key={item.to}
               to={item.to}
@@ -44,10 +63,11 @@ export default function Header() {
               {item.label}
             </NavLink>
           ))}
+          <LanguageSwitcher />
         </nav>
 
         <Link to="/contact" className="btn btn-primary header__cta">
-          ჩაწერა
+          {t('nav.contact')}
         </Link>
 
         <button
@@ -64,7 +84,7 @@ export default function Header() {
       {/* Mobile drawer */}
       <div className={`mobile-menu ${mobileOpen ? 'is-open' : ''}`}>
         <nav className="mobile-menu__nav">
-          {siteContent.nav.map((item, i) => (
+          {navItems.map((item, i) => (
             <NavLink
               key={item.to}
               to={item.to}
@@ -85,8 +105,9 @@ export default function Header() {
           onClick={() => setMobileOpen(false)}
           className="btn btn-primary mobile-menu__cta"
         >
-          ჩაწერა
+          {t('nav.contact')}
         </Link>
+        <LanguageSwitcher />
       </div>
     </header>
   )

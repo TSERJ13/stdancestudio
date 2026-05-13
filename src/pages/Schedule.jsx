@@ -28,7 +28,7 @@ export default function Schedule() {
             background: '#fff'
           }}>
             <iframe 
-              src="https://calendar.google.com/calendar/embed?src=stdancegroup%40gmail.com&ctz=Asia%2FTbilisi" 
+              src="https://calendar.google.com/calendar/embed?src=stdancegroup%40gmail.com&ctz=Asia%2FTbilisi&mode=WEEK&showPrint=0&showTabs=0&showCalendars=0&showTitle=0" 
               style={{
                 position: 'absolute',
                 top: 0,
