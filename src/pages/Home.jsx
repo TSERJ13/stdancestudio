@@ -74,9 +74,9 @@ export default function Home() {
         <div className="container about-blurb__grid">
           <div className="about-blurb__media" style={{ background: '#000', overflow: 'hidden' }}>
             <img 
-              src="/images/about-kids-extended.jpg?v=4" 
+              src="/images/about-kids-clean.jpg?v=5" 
               alt="ST Dance Studio" 
-              style={{ objectFit: 'contain', width: '100%', height: '100%', transform: 'scale(1.02)' }}
+              style={{ objectFit: 'contain', width: '100%', height: '100%' }}
             />
             <div className="about-blurb__badge">
               <span className="display-italic">est.</span>
