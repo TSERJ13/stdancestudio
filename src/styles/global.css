@@ -121,6 +121,14 @@ button {
   padding-block: clamp(4rem, 10vw, 8rem);
 }
 
+/* Visibility Utilities */
+.mobile-only { display: none; }
+@media (max-width: 768px) {
+  .desktop-only { display: none; }
+  .mobile-only { display: block; }
+}
+
+
 /* ======================================
    Typography utilities
    ====================================== */

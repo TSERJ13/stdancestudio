@@ -10,6 +10,14 @@
   overflow: hidden;
 }
 
+@media (max-width: 768px) {
+  .page-hero {
+    padding-top: 12rem;
+  }
+}
+
+
+
 .page-hero::before {
   content: '';
   position: absolute;
