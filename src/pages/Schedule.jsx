@@ -22,7 +22,7 @@ export default function Schedule() {
         <div className="container">
           <div className="calendar-wrap">
             <iframe 
-              src="https://calendar.google.com/calendar/embed?src=e698ef6f2df8bc360f06f932e60971216127e4e8992c949e6d0a79a557b44747%40group.calendar.google.com&ctz=Asia%2FTbilisi&mode=WEEK&showTitle=0&showNav=1&showDate=1&showPrint=0&showTabs=0&showCalendars=0&showTz=0&hl=ka" 
+              src="https://calendar.google.com/calendar/embed?src=stdancegroup%40gmail.com&ctz=Asia%2FTbilisi&mode=WEEK&showTitle=0&showNav=1&showDate=1&showPrint=0&showTabs=0&showCalendars=0&showTz=0&hl=ka" 
               style={{ 
                 position: 'absolute', 
                 top: 0, 

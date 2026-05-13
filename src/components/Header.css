@@ -251,7 +251,17 @@
   .header {
     padding-block: 0.75rem;
     padding-top: calc(0.75rem + env(safe-area-inset-top));
-    background: #0a0a0a;
+    background: #000 !important;
+  }
+  /* Extra safety to cover the very top edge */
+  .header::before {
+    content: '';
+    position: absolute;
+    top: -100px;
+    left: 0;
+    right: 0;
+    height: 100px;
+    background: #000;
   }
   .header__nav,
   .header__cta,
