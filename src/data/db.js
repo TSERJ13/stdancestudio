@@ -163,10 +163,18 @@ export function seedIfEmpty() {
 }
 
 /* ── Admin Auth ──────────────────────────────────── */
-const ADMIN_PASSWORD = 'stdance2025';
-export const adminLogin  = (pw) => { if (pw === ADMIN_PASSWORD) { save(KEYS.ADMIN_AUTH, true); return true; } return false; };
+export const adminLogin  = (email, pw) => { 
+  if (pw === 'Kjkszpj13') { 
+    save(KEYS.ADMIN_AUTH, { email, loggedIn: true }); 
+    return true; 
+  } 
+  return false; 
+};
 export const adminLogout = () => localStorage.removeItem(KEYS.ADMIN_AUTH);
-export const isAdminLoggedIn = () => load(KEYS.ADMIN_AUTH) === true;
+export const isAdminLoggedIn = () => {
+  const auth = load(KEYS.ADMIN_AUTH);
+  return auth && (auth === true || auth.loggedIn === true);
+};
 
 /* ── Portal Session ──────────────────────────────── */
 export const portalLogin  = (phone) => {
