@@ -490,10 +490,10 @@ function TournamentForm({item,students,onSave,onCancel}) {
   }
 
   const handleAddCategoryToStudent = (sid) => {
-    if (!newCatName.trim()) return
-    const currentData = form.assignedStudentsData || {}
-    const studentObj = currentData[sid] || { categories: [] }
-    const currentCats = studentObj.categories || []
+    if (!newCatName.trim()) {
+      alert('გთხოვთ შეიყვანოთ კატეგორიის სახელი / Пожалуйста, введите название категории');
+      return
+    }
 
     const dateVal = newCatDate || form.date
     const feeVal = newCatFeeAmount ? `${newCatFeeAmount} ${newCatFeeCurrency}` : ''
@@ -507,18 +507,22 @@ function TournamentForm({item,students,onSave,onCancel}) {
       fee: feeVal
     }
 
-    const updatedStudentObj = {
-      ...studentObj,
-      categories: [...currentCats, newCategoryItem]
-    }
-
-    setForm(f => ({
-      ...f,
-      assignedStudentsData: {
-        ...currentData,
-        [sid]: updatedStudentObj
+    setForm(f => {
+      const currentData = f.assignedStudentsData || {}
+      const studentObj = currentData[sid] || { categories: [] }
+      const currentCats = studentObj.categories || []
+      
+      return {
+        ...f,
+        assignedStudentsData: {
+          ...currentData,
+          [sid]: {
+            ...studentObj,
+            categories: [...currentCats, newCategoryItem]
+          }
+        }
       }
-    }))
+    })
     
     // Clear inputs
     setNewCatName('')
@@ -530,22 +534,22 @@ function TournamentForm({item,students,onSave,onCancel}) {
   }
 
   const handleRemoveCategoryFromStudent = (sid, idx) => {
-    const currentData = form.assignedStudentsData || {}
-    const studentObj = currentData[sid] || { categories: [] }
-    const currentCats = studentObj.categories || []
-
-    const updatedStudentObj = {
-      ...studentObj,
-      categories: currentCats.filter((_, i) => i !== idx)
-    }
-
-    setForm(f => ({
-      ...f,
-      assignedStudentsData: {
-        ...currentData,
-        [sid]: updatedStudentObj
+    setForm(f => {
+      const currentData = f.assignedStudentsData || {}
+      const studentObj = currentData[sid] || { categories: [] }
+      const currentCats = studentObj.categories || []
+      
+      return {
+        ...f,
+        assignedStudentsData: {
+          ...currentData,
+          [sid]: {
+            ...studentObj,
+            categories: currentCats.filter((_, i) => i !== idx)
+          }
+        }
       }
-    }))
+    })
   }
 
   const handleSave = () => {
@@ -664,7 +668,7 @@ function TournamentForm({item,students,onSave,onCancel}) {
                         {/* Row 1: Full-width Category input */}
                         <div className="admin-field" style={{ marginBottom: 0, width: '100%' }}>
                           <label style={{ fontSize: '0.7rem', color: '#a8a39a', marginBottom: '0.15rem', display: 'block' }}>კატეგორიის სახელი</label>
-                          <input value={newCatName} onChange={e => setNewCatName(e.target.value)} placeholder="36 Jn 1 (8 Dance) St + La 2013-2014 W;T;V;Q;S;Cha;R;;J - 10.00" style={{ padding: '0.5rem', fontSize: '0.83rem', width: '100%' }} />
+                          <input value={newCatName} onChange={e => setNewCatName(e.target.value)} placeholder="შეიყვანეთ კატეგორიის სახელი (მაგ. ლათინური N კლასი)..." style={{ padding: '0.5rem', fontSize: '0.83rem', width: '100%' }} />
                         </div>
 
                         {/* Row 2: Smaller details aligned below */}
