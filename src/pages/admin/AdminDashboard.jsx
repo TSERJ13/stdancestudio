@@ -452,6 +452,7 @@ function TournamentForm({item,students,onSave,onCancel}) {
   const [newCatName, setNewCatName] = useState('')
   const [newCatTime, setNewCatTime] = useState('')
   const [newCatDate, setNewCatDate] = useState('')
+  const [newCatReadyTime, setNewCatReadyTime] = useState('')
   const [newCatVenue, setNewCatVenue] = useState('')
   const [newCatFeeAmount, setNewCatFeeAmount] = useState('')
   const [newCatFeeCurrency, setNewCatFeeCurrency] = useState('₾')
@@ -463,7 +464,6 @@ function TournamentForm({item,students,onSave,onCancel}) {
 
     const currentData = form.assignedStudentsData || {}
     const defaultStudentData = {
-      readyTime: '',
       categories: []
     }
 
@@ -489,26 +489,10 @@ function TournamentForm({item,students,onSave,onCancel}) {
     }))
   }
 
-  const handleUpdateStudentField = (sid, field, val) => {
-    const currentData = form.assignedStudentsData || {}
-    const studentObj = currentData[sid] || { readyTime: '', categories: [] }
-
-    setForm(f => ({
-      ...f,
-      assignedStudentsData: {
-        ...currentData,
-        [sid]: {
-          ...studentObj,
-          [field]: val
-        }
-      }
-    }))
-  }
-
   const handleAddCategoryToStudent = (sid) => {
     if (!newCatName.trim()) return
     const currentData = form.assignedStudentsData || {}
-    const studentObj = currentData[sid] || { readyTime: '', categories: [] }
+    const studentObj = currentData[sid] || { categories: [] }
     const currentCats = studentObj.categories || []
 
     const dateVal = newCatDate || form.date
@@ -517,6 +501,7 @@ function TournamentForm({item,students,onSave,onCancel}) {
     const newCategoryItem = {
       name: newCatName.trim(),
       date: dateVal,
+      readyTime: newCatReadyTime.trim(),
       time: newCatTime.trim(),
       venue: newCatVenue.trim(),
       fee: feeVal
@@ -537,6 +522,7 @@ function TournamentForm({item,students,onSave,onCancel}) {
     
     // Clear inputs
     setNewCatName('')
+    setNewCatReadyTime('')
     setNewCatTime('')
     setNewCatDate('')
     setNewCatVenue('')
@@ -545,7 +531,7 @@ function TournamentForm({item,students,onSave,onCancel}) {
 
   const handleRemoveCategoryFromStudent = (sid, idx) => {
     const currentData = form.assignedStudentsData || {}
-    const studentObj = currentData[sid] || { readyTime: '', categories: [] }
+    const studentObj = currentData[sid] || { categories: [] }
     const currentCats = studentObj.categories || []
 
     const updatedStudentObj = {
@@ -618,7 +604,7 @@ function TournamentForm({item,students,onSave,onCancel}) {
           ) : (
             form.assignedStudents.map(sid => {
               const st = students.find(s => s.id === sid)
-              const stData = form.assignedStudentsData?.[sid] || { readyTime: '', categories: [] }
+              const stData = form.assignedStudentsData?.[sid] || { categories: [] }
               const isExpanded = activeStudentId === sid
               return (
                 <div key={sid} style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid ' + (isExpanded ? 'rgba(212,166,74,0.3)' : 'rgba(255,255,255,0.04)'), borderRadius: '6px', overflow: 'hidden', transition: 'all 0.3s ease' }}>
@@ -629,7 +615,11 @@ function TournamentForm({item,students,onSave,onCancel}) {
                       <div>
                         <div style={{ color: '#fff', fontWeight: 600, fontSize: '0.92rem' }}>{st?.name || 'სტუდენტი'}</div>
                         <div style={{ fontSize: '0.78rem', color: '#a8a39a' }}>
-                          {stData.readyTime ? `🎒 მზადყოფნა: ${stData.readyTime}` : '🎒 მზადყოფნა: მიუთითეთ'}
+                          {stData.categories?.length > 0 ? (
+                            stData.categories.map(c => `${c.name} (${c.time || '—'})`).join(', ')
+                          ) : (
+                            'კატეგორიები არ არის დამატებული'
+                          )}
                         </div>
                       </div>
                     </div>
@@ -639,87 +629,83 @@ function TournamentForm({item,students,onSave,onCancel}) {
                     </div>
                   </div>
 
-                  {/* Expanded Body: Inputs for details and categories list */}
+                  {/* Expanded Body: Categories list & Simple inputs */}
                   {isExpanded && (
-                    <div style={{ padding: '1.25rem', borderTop: '1px solid rgba(255,255,255,0.04)', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-                      {/* Arrival details row */}
-                      <div className="admin-field" style={{ maxWidth: '300px', marginBottom: 0 }}>
-                        <label style={{ fontSize: '0.78rem' }}>🎒 მზადყოფნის დრო / საათი (მაგ. 09:15)</label>
-                        <input value={stData.readyTime} onChange={e => handleUpdateStudentField(sid, 'readyTime', e.target.value)} placeholder="09:15" style={{ padding: '0.45rem' }} />
+                    <div style={{ padding: '1.25rem', borderTop: '1px solid rgba(255,255,255,0.04)', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                      
+                      {/* List of assigned categories */}
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+                        <span style={{ fontSize: '0.78rem', color: '#a8a39a', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600, marginBottom: '0.2rem' }}>დამატებული კატეგორიები:</span>
+                        {(stData.categories || []).length === 0 ? (
+                          <div style={{ fontSize: '0.8rem', color: '#6b665e', fontStyle: 'italic', paddingLeft: '0.25rem' }}>კატეგორიები ჯერ არ არის დამატებული.</div>
+                        ) : (
+                          stData.categories.map((cat, idx) => (
+                            <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(255,255,255,0.02)', padding: '0.55rem 0.85rem', borderRadius: '4px', border: '1px solid rgba(255,255,255,0.04)' }}>
+                              <div>
+                                <span style={{ fontSize: '0.88rem', color: '#fff', fontWeight: 600 }}>{cat.name}</span>
+                                <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', fontSize: '0.75rem', color: '#a8a39a', marginTop: '0.15rem' }}>
+                                  {cat.date && <span>📅 {cat.date}</span>}
+                                  {cat.readyTime && <span style={{ color: 'var(--color-gold)' }}>🎒 მზადყოფნა: {cat.readyTime}</span>}
+                                  {cat.time && <span style={{ color: '#d4a64a' }}>🕒 დაწყება: {cat.time}</span>}
+                                  {cat.venue && <span>🏛 {cat.venue}</span>}
+                                  {cat.fee && <span style={{ color: '#50c878' }}>💰 {cat.fee}</span>}
+                                </div>
+                              </div>
+                              <button type="button" onClick={() => handleRemoveCategoryFromStudent(sid, idx)} style={{ background: 'none', border: 'none', color: '#ff7070', fontSize: '1.2rem', cursor: 'pointer', padding: '0 0.4rem' }}>×</button>
+                            </div>
+                          ))
+                        )}
                       </div>
 
-                      {/* Categories section */}
-                      <div style={{ background: 'rgba(255,255,255,0.01)', border: '1px solid rgba(255,255,255,0.03)', borderRadius: '4px', padding: '1rem' }}>
-                        <span style={{ fontSize: '0.78rem', color: '#a8a39a', textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: 600, display: 'block', marginBottom: '0.85rem' }}>კატეგორიები და დეტალური განრიგი</span>
+                      {/* Extremely simplified category adding form */}
+                      <div style={{ background: 'rgba(255,255,255,0.01)', border: '1px solid rgba(212,166,74,0.1)', borderRadius: '4px', padding: '0.85rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                        <span style={{ fontSize: '0.75rem', color: 'var(--color-gold)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>+ კატეგორიის დამატება</span>
                         
-                        {/* List of assigned categories */}
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '1.25rem' }}>
-                          {(stData.categories || []).length === 0 ? (
-                            <div style={{ fontSize: '0.8rem', color: '#6b665e', fontStyle: 'italic' }}>კატეგორიები ჯერ არ არის დამატებული.</div>
-                          ) : (
-                            stData.categories.map((cat, idx) => (
-                              <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(255,255,255,0.02)', padding: '0.65rem 1rem', borderRadius: '4px', border: '1px solid rgba(255,255,255,0.04)' }}>
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
-                                  <span style={{ fontSize: '0.9rem', color: '#fff', fontWeight: 600 }}>{cat.name}</span>
-                                  <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', fontSize: '0.78rem', color: '#a8a39a' }}>
-                                    {cat.date && <span>📅 {cat.date}</span>}
-                                    {cat.time && <span style={{ color: 'var(--color-gold)' }}>🕒 {cat.time}</span>}
-                                    {cat.venue && <span>🏛 {cat.venue}</span>}
-                                    {cat.fee && <span style={{ color: '#50c878' }}>💰 {cat.fee}</span>}
-                                  </div>
-                                </div>
-                                <button type="button" onClick={() => handleRemoveCategoryFromStudent(sid, idx)} style={{ background: 'none', border: 'none', color: '#ff7070', fontSize: '1.25rem', cursor: 'pointer', padding: '0 0.5rem' }}>×</button>
-                              </div>
-                            ))
-                          )}
-                        </div>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '0.65rem' }}>
+                          <div className="admin-field" style={{ marginBottom: 0 }}>
+                            <label style={{ fontSize: '0.7rem', color: '#a8a39a', marginBottom: '0.15rem', display: 'block' }}>კატეგორია</label>
+                            <input value={newCatName} onChange={e => setNewCatName(e.target.value)} placeholder="ლათინური N კლასი" style={{ padding: '0.4rem', fontSize: '0.78rem' }} />
+                          </div>
 
-                        {/* Add category builder box */}
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', background: 'rgba(255,255,255,0.01)', border: '1px solid rgba(212,166,74,0.12)', borderRadius: '4px', padding: '1rem' }}>
-                          <span style={{ fontSize: '0.78rem', color: 'var(--color-gold)', fontWeight: 600 }}>+ ახალი კატეგორიის დამატება</span>
-                          
-                          <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-                            <div className="admin-field" style={{ flex: 2, minWidth: '180px', marginBottom: 0 }}>
-                              <label style={{ fontSize: '0.72rem', color: '#a8a39a', marginBottom: '0.2rem', display: 'block' }}>კატეგორიის სახელი</label>
-                              <input value={newCatName} onChange={e => setNewCatName(e.target.value)} placeholder="ლათინური N კლასი" style={{ padding: '0.45rem', fontSize: '0.8rem' }} />
-                            </div>
-                            
-                            <div className="admin-field" style={{ flex: 1.2, minWidth: '120px', marginBottom: 0 }}>
-                              <label style={{ fontSize: '0.72rem', color: '#a8a39a', marginBottom: '0.2rem', display: 'block' }}>თარიღი</label>
-                              <select value={newCatDate || form.date} onChange={e => setNewCatDate(e.target.value)} style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(212,166,74,0.2)', color: '#f5f1e8', padding: '0.45rem', borderRadius: '2px', fontSize: '0.8rem', width: '100%' }}>
-                                <option value={form.date}>{form.date}</option>
-                                {form.endDate && form.endDate !== form.date && <option value={form.endDate}>{form.endDate}</option>}
+                          <div className="admin-field" style={{ marginBottom: 0 }}>
+                            <label style={{ fontSize: '0.7rem', color: '#a8a39a', marginBottom: '0.15rem', display: 'block' }}>თარიღი</label>
+                            <select value={newCatDate || form.date} onChange={e => setNewCatDate(e.target.value)} style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(212,166,74,0.2)', color: '#f5f1e8', padding: '0.4rem', borderRadius: '2px', fontSize: '0.78rem', width: '100%' }}>
+                              <option value={form.date}>{form.date}</option>
+                              {form.endDate && form.endDate !== form.date && <option value={form.endDate}>{form.endDate}</option>}
+                            </select>
+                          </div>
+
+                          <div className="admin-field" style={{ marginBottom: 0 }}>
+                            <label style={{ fontSize: '0.7rem', color: '#a8a39a', marginBottom: '0.15rem', display: 'block' }}>🎒 მზადყოფნა</label>
+                            <input value={newCatReadyTime} onChange={e => setNewCatReadyTime(e.target.value)} placeholder="09:15" style={{ padding: '0.4rem', fontSize: '0.78rem' }} />
+                          </div>
+
+                          <div className="admin-field" style={{ marginBottom: 0 }}>
+                            <label style={{ fontSize: '0.7rem', color: '#a8a39a', marginBottom: '0.15rem', display: 'block' }}>🕒 დაწყება</label>
+                            <input value={newCatTime} onChange={e => setNewCatTime(e.target.value)} placeholder="10:00" style={{ padding: '0.4rem', fontSize: '0.78rem' }} />
+                          </div>
+
+                          <div className="admin-field" style={{ marginBottom: 0 }}>
+                            <label style={{ fontSize: '0.7rem', color: '#a8a39a', marginBottom: '0.15rem', display: 'block' }}>🏛 დარბაზი / ვენი</label>
+                            <input value={newCatVenue} onChange={e => setNewCatVenue(e.target.value)} placeholder="დარბაზი A" style={{ padding: '0.4rem', fontSize: '0.78rem' }} />
+                          </div>
+
+                          <div className="admin-field" style={{ marginBottom: 0 }}>
+                            <label style={{ fontSize: '0.7rem', color: '#a8a39a', marginBottom: '0.15rem', display: 'block' }}>💰 გადასახადი</label>
+                            <div style={{ display: 'flex', gap: '0.2rem' }}>
+                              <input type="number" value={newCatFeeAmount} onChange={e => setNewCatFeeAmount(e.target.value)} placeholder={form.fee ? `${form.fee}` : '25'} style={{ padding: '0.4rem', fontSize: '0.78rem', flex: 1, minWidth: '40px' }} />
+                              <select value={newCatFeeCurrency} onChange={e => setNewCatFeeCurrency(e.target.value)} style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(212,166,74,0.2)', color: '#f5f1e8', padding: '0.4rem', borderRadius: '2px', fontSize: '0.78rem', width: '50px' }}>
+                                <option value="₾">₾</option>
+                                <option value="$">$</option>
+                                <option value="€">€</option>
                               </select>
                             </div>
-
-                            <div className="admin-field" style={{ flex: 1, minWidth: '100px', marginBottom: 0 }}>
-                              <label style={{ fontSize: '0.72rem', color: '#a8a39a', marginBottom: '0.2rem', display: 'block' }}>დრო</label>
-                              <input value={newCatTime} onChange={e => setNewCatTime(e.target.value)} placeholder="10:00" style={{ padding: '0.45rem', fontSize: '0.8rem' }} />
-                            </div>
-                          </div>
-
-                          <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', alignItems: 'flex-end' }}>
-                            <div className="admin-field" style={{ flex: 1.5, minWidth: '150px', marginBottom: 0 }}>
-                              <label style={{ fontSize: '0.72rem', color: '#a8a39a', marginBottom: '0.2rem', display: 'block' }}>დარბაზი / ვენი (დამატებითი)</label>
-                              <input value={newCatVenue} onChange={e => setNewCatVenue(e.target.value)} placeholder="დარბაზი A" style={{ padding: '0.45rem', fontSize: '0.8rem' }} />
-                            </div>
-
-                            <div className="admin-field" style={{ flex: 1.5, minWidth: '160px', marginBottom: 0 }}>
-                              <label style={{ fontSize: '0.72rem', color: '#a8a39a', marginBottom: '0.2rem', display: 'block' }}>ამ კატეგორიის გადასახადი</label>
-                              <div style={{ display: 'flex', gap: '0.25rem' }}>
-                                <input type="number" value={newCatFeeAmount} onChange={e => setNewCatFeeAmount(e.target.value)} placeholder={form.fee ? `${form.fee}` : '25'} style={{ padding: '0.45rem', fontSize: '0.8rem', flex: 1 }} />
-                                <select value={newCatFeeCurrency} onChange={e => setNewCatFeeCurrency(e.target.value)} style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(212,166,74,0.2)', color: '#f5f1e8', padding: '0.45rem', borderRadius: '2px', fontSize: '0.8rem', width: '70px' }}>
-                                  <option value="₾">₾</option>
-                                  <option value="$">$</option>
-                                  <option value="€">€</option>
-                                </select>
-                              </div>
-                            </div>
-
-                            <button type="button" className="admin-btn admin-btn--gold admin-btn--sm" onClick={() => handleAddCategoryToStudent(sid)} style={{ padding: '0.5rem 1rem', height: '34px' }}>დამატება</button>
                           </div>
                         </div>
+                        
+                        <button type="button" className="admin-btn admin-btn--gold admin-btn--sm" onClick={() => handleAddCategoryToStudent(sid)} style={{ padding: '0.45rem 1rem', marginTop: '0.4rem', alignSelf: 'flex-start' }}>+ კატეგორიის დამატება</button>
                       </div>
+
                     </div>
                   )}
                 </div>

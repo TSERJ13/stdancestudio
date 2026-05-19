@@ -187,96 +187,6 @@ const TRANSLATIONS = {
   }
 };
 
-const FloatingLangSwitcher = ({ lang, setLang }) => {
-  const [expanded, setExpanded] = useState(false)
-
-  const handleLangClick = (newLang) => {
-    if (!expanded) {
-      setExpanded(true)
-    } else {
-      setLang(newLang)
-      localStorage.setItem('std_portal_lang', newLang)
-      setExpanded(false)
-    }
-  }
-
-  return (
-    <div className={`floating-lang ${expanded ? 'is-expanded' : 'is-collapsed'}`} style={{
-      display: 'flex',
-      position: 'fixed',
-      bottom: '2.5rem',
-      right: '2.5rem',
-      zIndex: 9999,
-      background: '#000',
-      border: '1px solid var(--color-gold, #d4a64a)',
-      borderRadius: '40px',
-      padding: '0.3rem',
-      gap: '0.2rem',
-      boxShadow: '0 12px 40px rgba(0,0,0,0.6)',
-      transition: 'all 0.4s cubic-bezier(0.22, 1, 0.36, 1)',
-      alignItems: 'center'
-    }}>
-      <button 
-        onClick={() => handleLangClick('ka')} 
-        style={{
-          background: lang === 'ka' ? 'var(--color-gold, #d4a64a)' : 'transparent',
-          border: '0',
-          color: lang === 'ka' ? '#000' : '#fff',
-          fontFamily: 'inherit',
-          fontSize: '0.8rem',
-          fontWeight: '600',
-          letterSpacing: '0.05em',
-          padding: '0.55rem 1.1rem',
-          borderRadius: '30px',
-          cursor: 'pointer',
-          transition: 'all 0.3s ease',
-          display: (!expanded && lang !== 'ka') ? 'none' : 'block'
-        }}
-      >
-        GE
-      </button>
-      <button 
-        onClick={() => handleLangClick('ru')} 
-        style={{
-          background: lang === 'ru' ? 'var(--color-gold, #d4a64a)' : 'transparent',
-          border: '0',
-          color: lang === 'ru' ? '#000' : '#fff',
-          fontFamily: 'inherit',
-          fontSize: '0.8rem',
-          fontWeight: '600',
-          letterSpacing: '0.05em',
-          padding: '0.55rem 1.1rem',
-          borderRadius: '30px',
-          cursor: 'pointer',
-          transition: 'all 0.3s ease',
-          display: (!expanded && lang !== 'ru') ? 'none' : 'block'
-        }}
-      >
-        RU
-      </button>
-      <button 
-        onClick={() => handleLangClick('en')} 
-        style={{
-          background: lang === 'en' ? 'var(--color-gold, #d4a64a)' : 'transparent',
-          border: '0',
-          color: lang === 'en' ? '#000' : '#fff',
-          fontFamily: 'inherit',
-          fontSize: '0.8rem',
-          fontWeight: '600',
-          letterSpacing: '0.05em',
-          padding: '0.55rem 1.1rem',
-          borderRadius: '30px',
-          cursor: 'pointer',
-          transition: 'all 0.3s ease',
-          display: (!expanded && lang !== 'en') ? 'none' : 'block'
-        }}
-      >
-        EN
-      </button>
-    </div>
-  )
-}
-
 export default function StudentDashboard() {
   const navigate = useNavigate()
   const [student, setStudent] = useState(null)
@@ -462,11 +372,11 @@ export default function StudentDashboard() {
             </button>
           ))}
 
-          {/* Sibling switcher for mobile inside drawer at the bottom of the menu */}
+          {/* Sibling switcher for mobile inside drawer */}
           {siblings.length > 1 && (
-            <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '1.5rem', marginTop: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-              <span style={{ fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.15em', color: '#6b665e' }}>ბავშვის შეცვლა / Сменить ребенка</span>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+            <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '1.25rem', marginTop: '1.25rem', display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
+              <span style={{ fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.12em', color: '#6b665e' }}>ბავშვის შეცვლა / Сменить ребенка</span>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
                 {siblings.map(sib => {
                   const isCurrent = sib.id === student.id;
                   return (
@@ -497,6 +407,32 @@ export default function StudentDashboard() {
               </div>
             </div>
           )}
+
+          {/* Integrated language selector for mobile menu drawer at the bottom */}
+          <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '1.25rem', marginTop: '1.5rem' }}>
+            <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center' }}>
+              {['ka', 'ru', 'en'].map(l => (
+                <button
+                  key={l}
+                  onClick={() => { setLang(l); localStorage.setItem('std_portal_lang', l); setMobileOpen(false); }}
+                  style={{
+                    background: lang === l ? 'var(--color-gold, #d4a64a)' : 'transparent',
+                    border: '1px solid ' + (lang === l ? 'var(--color-gold, #d4a64a)' : 'rgba(255,255,255,0.2)'),
+                    color: lang === l ? '#000' : '#fff',
+                    fontFamily: 'inherit',
+                    fontSize: '0.8rem',
+                    fontWeight: 'bold',
+                    padding: '0.45rem 1rem',
+                    borderRadius: '20px',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s'
+                  }}
+                >
+                  {l.toUpperCase()}
+                </button>
+              ))}
+            </div>
+          </div>
         </nav>
         <button className="portal-mobile-menu__logout" onClick={handleLogout}>
           {t('logout')} ↗
@@ -550,6 +486,32 @@ export default function StudentDashboard() {
               </div>
             </div>
           )}
+
+          {/* Integrated language selector for desktop sidebar at the very bottom */}
+          <div style={{ padding: '1.25rem 1.25rem 0.5rem', borderTop: '1px solid rgba(212,166,74,0.1)', marginTop: 'auto' }}>
+            <div style={{ display: 'flex', gap: '0.4rem', justifyContent: 'center' }}>
+              {['ka', 'ru', 'en'].map(l => (
+                <button
+                  key={l}
+                  onClick={() => { setLang(l); localStorage.setItem('std_portal_lang', l); }}
+                  style={{
+                    background: lang === l ? 'var(--color-gold, #d4a64a)' : 'transparent',
+                    border: '1px solid ' + (lang === l ? 'var(--color-gold, #d4a64a)' : 'rgba(255,255,255,0.1)'),
+                    color: lang === l ? '#000' : '#a8a39a',
+                    fontFamily: 'inherit',
+                    fontSize: '0.75rem',
+                    fontWeight: 'bold',
+                    padding: '0.35rem 0.7rem',
+                    borderRadius: '20px',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s'
+                  }}
+                >
+                  {l.toUpperCase()}
+                </button>
+              ))}
+            </div>
+          </div>
         </nav>
 
         <main className="portal-content">
@@ -708,9 +670,6 @@ export default function StudentDashboard() {
                     {upcomingTrn.map(tItem => {
                       const stData = tItem.assignedStudentsData?.[student.id] || {}
                       
-                      // Get ready time
-                      const readyTime = stData.readyTime || tItem.studentSchedules?.[student.id]?.readyTime || ''
-                      
                       // Get categories with details
                       let myCats = []
                       if (Array.isArray(stData.categories)) {
@@ -719,8 +678,10 @@ export default function StudentDashboard() {
                         // Legacy fallback
                         const legacyCats = tItem.studentCategories?.[student.id] || tItem.studentSchedules?.[student.id]?.categories || []
                         const legacyStartTime = tItem.studentSchedules?.[student.id]?.startTime || ''
+                        const legacyReadyTime = tItem.studentSchedules?.[student.id]?.readyTime || ''
                         myCats = legacyCats.map(c => ({
                           name: c,
+                          readyTime: legacyReadyTime,
                           time: legacyStartTime
                         }))
                       }
@@ -741,19 +702,6 @@ export default function StudentDashboard() {
                             ) : null}
                           </div>
 
-                          {readyTime && (
-                            <div style={{
-                              background: 'rgba(212,166,74,0.06)',
-                              border: '1px solid rgba(212,166,74,0.15)',
-                              borderRadius: '4px',
-                              padding: '0.75rem 1rem',
-                              margin: '0.75rem 0',
-                              fontSize: '0.85rem'
-                            }}>
-                              🎒 <strong>{lang === 'ru' ? 'Быть готовым к:' : lang === 'en' ? 'Arrival time:' : 'მზადყოფნის დრო:'}</strong> {readyTime}
-                            </div>
-                          )}
-
                           {myCats.length > 0 ? (
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', margin: '0.75rem 0' }}>
                               <span style={{ fontSize: '0.72rem', color: '#6b665e', textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: 600 }}>
@@ -764,9 +712,10 @@ export default function StudentDashboard() {
                                   <div key={idx} style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', background: 'rgba(255,255,255,0.02)', padding: '0.75rem 1rem', borderRadius: '4px', border: '1px solid rgba(255,255,255,0.03)' }}>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                       <span style={{ fontSize: '0.92rem', color: '#f5f1e8', fontWeight: 600 }}>{cat.name}</span>
-                                      <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'center' }}>
+                                      <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'center', flexWrap: 'wrap' }}>
                                         {cat.date && <span className="portal-badge" style={{ fontSize: '0.75rem', background: 'rgba(255,255,255,0.05)', color: '#a8a39a', border: '1px solid rgba(255,255,255,0.08)' }}>📅 {cat.date}</span>}
-                                        {cat.time && <span className="portal-badge portal-badge--gold" style={{ fontSize: '0.75rem' }}>🕒 {cat.time}</span>}
+                                        {cat.readyTime && <span className="portal-badge" style={{ fontSize: '0.75rem', background: 'rgba(212,166,74,0.08)', color: 'var(--color-gold)', border: '1px solid rgba(212,166,74,0.15)' }}>🎒 {lang === 'ru' ? 'Сбор:' : lang === 'en' ? 'Ready:' : 'მზადება:'} {cat.readyTime}</span>}
+                                        {cat.time && <span className="portal-badge portal-badge--gold" style={{ fontSize: '0.75rem' }}>🕒 {lang === 'ru' ? 'Старт:' : lang === 'en' ? 'Start:' : 'დაწყება:'} {cat.time}</span>}
                                       </div>
                                     </div>
                                     {(cat.venue || cat.fee) && (
@@ -813,7 +762,7 @@ export default function StudentDashboard() {
                           : r.place === 2 
                             ? (lang === 'ru' ? '🥈 II место' : lang === 'en' ? '🥈 2nd Place' : '🥈 II ადგილი') 
                             : r.place === 3 
-                              ? (lang === 'ru' ? '🥉 III место' : lang === 'en' ? '🥉 3rd Place' : '🥉 III ადგილი') 
+                              ? (lang === 'ru' ? '🥉 III место' : lang === 'en' ? '🥉 3rd Place' : '🥉 III ადгили') 
                               : null;
                         return (
                           <div key={`${tItem.id}-${i}`} className="trn-history-item">
@@ -853,7 +802,6 @@ export default function StudentDashboard() {
           )}
         </main>
       </div>
-      <FloatingLangSwitcher lang={lang} setLang={setLang} />
     </div>
   )
 }
