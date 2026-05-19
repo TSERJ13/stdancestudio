@@ -92,6 +92,7 @@ export async function syncTournamentsToCloud(tournaments) {
 
     if (!patchRes.ok) throw new Error('Failed to sync tournaments to cloud');
     console.log('✅ Tournaments successfully synced to cloud!');
+    clearCache();
     return true;
   } catch (err) {
     console.error('❌ Cloud tournament sync error:', err);
@@ -130,6 +131,7 @@ export async function syncNewsToCloud(news) {
 
     if (!patchRes.ok) throw new Error('Failed to sync news to cloud');
     console.log('✅ News successfully synced to cloud!');
+    clearCache();
     return true;
   } catch (err) {
     console.error('❌ Cloud news sync error:', err);

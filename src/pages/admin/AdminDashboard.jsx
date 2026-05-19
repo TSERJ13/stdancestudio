@@ -33,6 +33,7 @@ export default function AdminDashboard() {
   const [students, setStudents] = useState([])
   const [tournaments, setTournaments] = useState([])
   const [editingItem, setEditingItem] = useState(null) // { tab: 'news'|'student'|'tournament'|'results', id: 0|'id' }
+  const [saving, setSaving] = useState(false)
 
   useEffect(() => {
     if (!isAdminLoggedIn()) { navigate('/admin'); return }
@@ -72,36 +73,70 @@ export default function AdminDashboard() {
     });
   }
 
-  const handleSaveTournament = (t) => {
+  const handleSaveTournament = async (t) => {
+    setSaving(true)
     saveTournament(t)
-    refresh()
-    import('../../data/classcore').then(mod => {
-      mod.syncTournamentsToCloud(getTournaments())
-    })
+    try {
+      const mod = await import('../../data/classcore')
+      mod.clearCache()
+      await mod.syncTournamentsToCloud(getTournaments())
+    } catch (err) {
+      console.error('Tournament sync error:', err)
+      alert('ღრუბელთან სინქრონიზაცია ვერ მოხერხდა, თუმცა ლოკალურად შენახულია. / Ошибка синхронизации.')
+    } finally {
+      setSaving(false)
+      setEditingItem(null)
+      refresh()
+    }
   }
 
-  const handleDeleteTournament = (id) => {
+  const handleDeleteTournament = async (id) => {
+    if (!window.confirm('დარწმუნებული ხართ, რომ გსურთ წაშლა? / Вы уверены?')) return
+    setSaving(true)
     deleteTournament(id)
-    refresh()
-    import('../../data/classcore').then(mod => {
-      mod.syncTournamentsToCloud(getTournaments())
-    })
+    try {
+      const mod = await import('../../data/classcore')
+      mod.clearCache()
+      await mod.syncTournamentsToCloud(getTournaments())
+    } catch (err) {
+      console.error('Tournament delete sync error:', err)
+    } finally {
+      setSaving(false)
+      refresh()
+    }
   }
 
-  const handleSaveNews = (n) => {
+  const handleSaveNews = async (n) => {
+    setSaving(true)
     saveNews(n)
-    refresh()
-    import('../../data/classcore').then(mod => {
-      mod.syncNewsToCloud(getNews())
-    })
+    try {
+      const mod = await import('../../data/classcore')
+      mod.clearCache()
+      await mod.syncNewsToCloud(getNews())
+    } catch (err) {
+      console.error('News sync error:', err)
+      alert('ღრუბელთან სინქრონიზაცია ვერ მოხერხდა, თუმცა ლოკალურად შენახულია.')
+    } finally {
+      setSaving(false)
+      setEditingItem(null)
+      refresh()
+    }
   }
 
-  const handleDeleteNews = (id) => {
+  const handleDeleteNews = async (id) => {
+    if (!window.confirm('დარწმუნებული ხართ, რომ გსურთ წაშლა? / Вы уверены?')) return
+    setSaving(true)
     deleteNews(id)
-    refresh()
-    import('../../data/classcore').then(mod => {
-      mod.syncNewsToCloud(getNews())
-    })
+    try {
+      const mod = await import('../../data/classcore')
+      mod.clearCache()
+      await mod.syncNewsToCloud(getNews())
+    } catch (err) {
+      console.error('News delete sync error:', err)
+    } finally {
+      setSaving(false)
+      refresh()
+    }
   }
 
   const logout = () => { adminLogout(); navigate('/admin') }
@@ -193,6 +228,34 @@ export default function AdminDashboard() {
           )}
         </div>
       </div>
+      {saving && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'rgba(0,0,0,0.85)',
+          zIndex: 99999,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: '1rem'
+        }}>
+          <div style={{
+            width: '40px',
+            height: '40px',
+            border: '3px solid rgba(212,166,74,0.1)',
+            borderTop: '3px solid var(--color-gold, #d4a64a)',
+            borderRadius: '50%',
+            animation: 'spin 1s linear infinite'
+          }}></div>
+          <span style={{ color: 'var(--color-gold, #d4a64a)', fontSize: '0.95rem', fontWeight: 600, letterSpacing: '0.05em' }}>
+            ინახება ღრუბელში... / Сохранение в облаке...
+          </span>
+        </div>
+      )}
     </div>
   )
 }
