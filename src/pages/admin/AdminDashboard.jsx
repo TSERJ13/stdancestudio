@@ -32,7 +32,7 @@ export default function AdminDashboard() {
   const [news, setNews] = useState([])
   const [students, setStudents] = useState([])
   const [tournaments, setTournaments] = useState([])
-  const [editingItem, setEditingItem] = useState(null) // { tab: 'news'|'student'|'tournament', id: 0|'id' }
+  const [editingItem, setEditingItem] = useState(null) // { tab: 'news'|'student'|'tournament'|'results', id: 0|'id' }
 
   useEffect(() => {
     if (!isAdminLoggedIn()) { navigate('/admin'); return }
@@ -138,13 +138,15 @@ export default function AdminDashboard() {
       <div className="admin-content">
         <div className="admin-topbar">
           <span className="admin-topbar__title" style={{ display: 'inline-flex', alignItems: 'center' }}>
-            {SVG_ICONS[ICONS[tab]]}
-            <span style={{ marginLeft: '0.25rem' }}>{TABS[tab]}</span>
+            {SVG_ICONS[ICONS[tab === 3 ? 2 : tab]]}
+            <span style={{ marginLeft: '0.25rem' }}>{tab === 3 ? 'შედეგების მართვა' : TABS[tab]}</span>
           </span>
           <div className="admin-topbar__actions">
-            <button className="admin-btn admin-btn--gold admin-btn--sm" onClick={() => setEditingItem({ tab: ['news', 'student', 'tournament'][tab], id: 0 })}>
-              + დამატება
-            </button>
+            {tab !== 3 && (
+              <button className="admin-btn admin-btn--gold admin-btn--sm" onClick={() => setEditingItem({ tab: ['news', 'student', 'tournament'][tab], id: 0 })}>
+                + დამატება
+              </button>
+            )}
           </div>
         </div>
 
@@ -173,12 +175,20 @@ export default function AdminDashboard() {
                   onCancel={() => setEditingItem(null)} 
                 />
               )}
+              {editingItem.tab === 'results' && (
+                <ResultsForm 
+                  item={tournaments.find(t => t.id === editingItem.id)} 
+                  students={students} 
+                  onSave={t => { handleSaveTournament(t); setEditingItem(null); }} 
+                  onCancel={() => setEditingItem(null)} 
+                />
+              )}
             </>
           ) : (
             <>
               {tab===0 && <NewsTab news={news} onEdit={id => setEditingItem({ tab: 'news', id })} onDelete={handleDeleteNews} />}
               {tab===1 && <StudentsTab students={students} onEdit={id => setEditingItem({ tab: 'student', id })} onDelete={id=>{deleteStudent(id);refresh()}} />}
-              {tab===2 && <TournamentsTab tournaments={tournaments} students={students} onEdit={id => setEditingItem({ tab: 'tournament', id })} onDelete={handleDeleteTournament} />}
+              {tab===2 && <TournamentsTab tournaments={tournaments} students={students} onEdit={id => setEditingItem({ tab: 'tournament', id })} onManageResults={id => setEditingItem({ tab: 'results', id })} onDelete={handleDeleteTournament} />}
             </>
           )}
         </div>
@@ -384,7 +394,7 @@ function StudentForm({item,onSave,onCancel}) {
 }
 
 /* ── Tournaments Tab ── */
-function TournamentsTab({tournaments,students,onEdit,onDelete}) {
+function TournamentsTab({tournaments,students,onEdit,onManageResults,onDelete}) {
   const today=new Date().toISOString().slice(0,10)
   return (
     <div>
@@ -401,16 +411,16 @@ function TournamentsTab({tournaments,students,onEdit,onDelete}) {
           <div className="admin-trn-card__info" style={{display:'flex',flexWrap:'wrap',gap:'1rem'}}>
             <span>🏛 {t.venue}</span>
             <span>📍 {t.address}</span>
-            {t.fee && <span>💰 {t.fee}{t.currency || '₾'}</span>}
+            {t.fee && <span>💰 {t.fee}{t.currency || '₾'} (ძირითადი)</span>}
             {t.assignedStudents && t.assignedStudents.length > 0 ? (
               <span style={{color: '#d4a64a'}}>👥 გაზიარებულია: {t.assignedStudents.length} სტუდენტთან</span>
             ) : (
               <span style={{color: '#50c878'}}>🌍 გაზიარებულია ყველასთან</span>
             )}
           </div>
-          <div className="admin-trn-card__cats">{(t.categories||[]).map((c,i)=><span key={i} className="badge badge--muted">{c}</span>)}</div>
-          <div className="admin-trn-card__actions">
-            <button className="admin-btn admin-btn--ghost admin-btn--sm" onClick={()=>onEdit(t.id)}>✏ რედაქტირება</button>
+          <div className="admin-trn-card__actions" style={{ marginTop: '1rem', display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+            <button className="admin-btn admin-btn--ghost admin-btn--sm" onClick={()=>onEdit(t.id)}>✏ რედაქტირება და განრიგი</button>
+            <button className="admin-btn admin-btn--gold admin-btn--sm" onClick={()=>onManageResults(t.id)}>🏆 შედეგები</button>
             <button className="admin-btn admin-btn--danger admin-btn--sm" onClick={()=>onDelete(t.id)}>🗑 წაშლა</button>
           </div>
         </div>
@@ -424,80 +434,114 @@ function TournamentForm({item,students,onSave,onCancel}) {
   const [form,setForm]=useState({
     id:item?.id||'',name:item?.name||'',date:item?.date||new Date().toISOString().slice(0,10),
     venue:item?.venue||'',address:item?.address||'',mapUrl:item?.mapUrl||'',
-    categories:item?.categories||[],fee:item?.fee||0,currency:item?.currency||'₾',
+    fee:item?.fee||0,currency:item?.currency||'₾',
     assignedStudents:item?.assignedStudents||[],notes:item?.notes||'',
+    assignedStudentsData:item?.assignedStudentsData||{},
+    // Keep legacy keys during saves to prevent data loss
     studentCategories:item?.studentCategories||{},
     studentSchedules:item?.studentSchedules||{},
     results:item?.results||{}
   })
-  const [catInput,setCatInput]=useState('')
   const set=(k,v)=>setForm(f=>({...f,[k]:v}))
-  const addCat=()=>{if(catInput.trim()){set('categories',[...form.categories,catInput.trim()]);setCatInput('')}}
-  const remCat=(i)=>set('categories',form.categories.filter((_,j)=>j!==i))
   
-  // Student schedule state
-  const [selSchedStudent, setSelSchedStudent] = useState('')
-  const [schedStartTime, setSchedStartTime] = useState('')
-  const [schedReadyTime, setSchedReadyTime] = useState('')
-  const [schedHall, setSchedHall] = useState('')
-  const [schedCats, setSchedCats] = useState([])
-  const [schedCatInput, setSchedCatInput] = useState('')
+  // Participant-specific inputs helper state
+  const [activeStudentId, setActiveStudentId] = useState('')
+  const [newCatName, setNewCatName] = useState('')
+  const [newCatTime, setNewCatTime] = useState('')
 
-  const addSchedCat = () => {
-    if (schedCatInput.trim()) {
-      setSchedCats([...schedCats, schedCatInput.trim()])
-      setSchedCatInput('')
+  const handleAddStudent = (sid) => {
+    if (!sid) return
+    const currentList = form.assignedStudents || []
+    if (currentList.includes(sid)) return
+
+    const currentData = form.assignedStudentsData || {}
+    const defaultStudentData = {
+      readyTime: '',
+      fee: form.fee ? `${form.fee} ${form.currency}` : '',
+      categories: []
     }
-  }
-  const remSchedCat = (idx) => {
-    setSchedCats(schedCats.filter((_, i) => i !== idx))
-  }
 
-  const handleSaveSched = () => {
-    if (!selSchedStudent) return
-    const ss = form.studentSchedules || {}
-    set('studentSchedules', {
-      ...ss,
-      [selSchedStudent]: {
-        categories: schedCats,
-        startTime: schedStartTime.trim(),
-        readyTime: schedReadyTime.trim(),
-        hall: schedHall.trim()
+    setForm(f => ({
+      ...f,
+      assignedStudents: [...currentList, sid],
+      assignedStudentsData: {
+        ...currentData,
+        [sid]: defaultStudentData
       }
-    })
-    // Reset inputs
-    setSelSchedStudent('')
-    setSchedStartTime('')
-    setSchedReadyTime('')
-    setSchedHall('')
-    setSchedCats([])
+    }))
   }
 
-  const handleEditSched = (sid, data) => {
-    setSelSchedStudent(sid)
-    setSchedStartTime(data.startTime || '')
-    setSchedReadyTime(data.readyTime || '')
-    setSchedHall(data.hall || '')
-    setSchedCats(data.categories || [])
+  const handleRemoveStudent = (sid) => {
+    const currentList = form.assignedStudents || []
+    const currentData = { ...form.assignedStudentsData }
+    delete currentData[sid]
+
+    setForm(f => ({
+      ...f,
+      assignedStudents: currentList.filter(id => id !== sid),
+      assignedStudentsData: currentData
+    }))
   }
 
-  const handleRemoveSched = (sid) => {
-    const ss = form.studentSchedules || {}
-    const updated = { ...ss }
-    delete updated[sid]
-    set('studentSchedules', updated)
+  const handleUpdateStudentField = (sid, field, val) => {
+    const currentData = form.assignedStudentsData || {}
+    const studentObj = currentData[sid] || { readyTime: '', fee: '', categories: [] }
+
+    setForm(f => ({
+      ...f,
+      assignedStudentsData: {
+        ...currentData,
+        [sid]: {
+          ...studentObj,
+          [field]: val
+        }
+      }
+    }))
   }
 
-  const [resStudent,setResStudent]=useState('')
-  const [resForm,setResForm]=useState({category:'',place:'',total:'',notes:''})
-  const addResult=()=>{
-    if(!resStudent||!resForm.category) return
-    const r=form.results||{}
-    const arr=r[resStudent]||[]
-    set('results',{...r,[resStudent]:[...arr,{...resForm,place:+resForm.place,total:+resForm.total}]})
-    setResForm({category:'',place:'',total:'',notes:''})
+  const handleAddCategoryToStudent = (sid) => {
+    if (!newCatName.trim()) return
+    const currentData = form.assignedStudentsData || {}
+    const studentObj = currentData[sid] || { readyTime: '', fee: '', categories: [] }
+    const currentCats = studentObj.categories || []
+
+    const updatedStudentObj = {
+      ...studentObj,
+      categories: [...currentCats, { name: newCatName.trim(), time: newCatTime.trim() }]
+    }
+
+    setForm(f => ({
+      ...f,
+      assignedStudentsData: {
+        ...currentData,
+        [sid]: updatedStudentObj
+      }
+    }))
+    
+    // Clear inputs
+    setNewCatName('')
+    setNewCatTime('')
   }
-  
+
+  const handleRemoveCategoryFromStudent = (sid, idx) => {
+    const currentData = form.assignedStudentsData || {}
+    const studentObj = currentData[sid] || { readyTime: '', fee: '', categories: [] }
+    const currentCats = studentObj.categories || []
+
+    const updatedStudentObj = {
+      ...studentObj,
+      categories: currentCats.filter((_, i) => i !== idx)
+    }
+
+    setForm(f => ({
+      ...f,
+      assignedStudentsData: {
+        ...currentData,
+        [sid]: updatedStudentObj
+      }
+    }))
+  }
+
   const handleSave = () => {
     const tid = form.id || ('trn_' + Math.random().toString(36).slice(2,8))
     onSave({...form, id: tid})
@@ -505,13 +549,15 @@ function TournamentForm({item,students,onSave,onCancel}) {
 
   return (
     <div className="admin-section">
-      <div className="admin-section__head"><span className="admin-section__title">{isNew?'ახალი ტურნირი':'ტურნირის რედაქტირება'}</span></div>
+      <div className="admin-section__head"><span className="admin-section__title">{isNew?'ახალი ტურნირი':'ტურნირის რედაქტირება და განრიგი'}</span></div>
       <div className="admin-section__body">
+        
+        {/* Tournament General Details */}
         <div className="admin-field"><label>ტურნირის სახელი</label><input value={form.name} onChange={e=>set('name',e.target.value)} /></div>
         <div className="admin-grid-2">
           <div className="admin-field"><label>თარიღი</label><input type="date" value={form.date} onChange={e=>set('date',e.target.value)} /></div>
           <div className="admin-field">
-            <label>საფასური</label>
+            <label>ძირითადი საფასური (მინიშნებისთვის)</label>
             <div style={{display:'flex',gap:'0.5rem'}}>
               <input type="number" value={form.fee} onChange={e=>set('fee',+e.target.value)} style={{flex:1}} />
               <select value={form.currency||'₾'} onChange={e=>set('currency',e.target.value)} style={{background:'rgba(255,255,255,0.04)',border:'1px solid rgba(212,166,74,0.2)',color:'#f5f1e8',padding:'0.5rem',borderRadius:'2px',width:'100px'}}>
@@ -525,136 +571,232 @@ function TournamentForm({item,students,onSave,onCancel}) {
           <div className="admin-field"><label>მისამართი</label><input value={form.address} onChange={e=>set('address',e.target.value)} /></div>
         </div>
         <div className="admin-field"><label>Google Maps URL</label><input value={form.mapUrl} onChange={e=>set('mapUrl',e.target.value)} placeholder="https://maps.app.goo.gl/..." /></div>
-        
-        <div className="admin-field" style={{marginTop:'1.25rem',marginBottom:'1.25rem'}}>
-          <label>ვისთვისაა ეს ტურნირი? (თუ არაფერს აირჩევთ, გამოჩნდება ყველასთან)</label>
-          <div style={{display:'flex',gap:'0.5rem',marginBottom:'0.5rem'}}>
-            <select value="" onChange={e=>{
-              const val=e.target.value;
-              if(val && !(form.assignedStudents||[]).includes(val)) {
-                set('assignedStudents', [...(form.assignedStudents||[]), val]);
-              }
-            }} style={{background:'rgba(255,255,255,0.04)',border:'1px solid rgba(212,166,74,0.2)',color:'#f5f1e8',padding:'0.5rem',borderRadius:'2px',flex:1}}>
-              <option value="">დაამატეთ სტუდენტი...</option>
-              {students.map(s=><option key={s.id} value={s.id}>{s.name}</option>)}
-            </select>
-          </div>
-          <div style={{display:'flex',flexWrap:'wrap',gap:'0.4rem'}}>
-            {(!form.assignedStudents || form.assignedStudents.length === 0) && (
-              <span className="badge badge--green">🌍 ყველა სტუდენტი</span>
-            )}
-            {(form.assignedStudents||[]).map(sid=>{
-              const st=students.find(s=>s.id===sid)
-              return (
-                <span key={sid} className="badge badge--gold" style={{cursor:'pointer'}} onClick={()=>{
-                  set('assignedStudents', form.assignedStudents.filter(id=>id!==sid))
-                }}>
-                  👤 {st?.name || sid} ×
-                </span>
-              )
-            })}
-          </div>
-        </div>
-
         <div className="admin-field"><label>შენიშვნები</label><textarea value={form.notes} onChange={e=>set('notes',e.target.value)} rows={3} /></div>
-        <div className="admin-field">
-          <label>კატეგორიები</label>
-          <div style={{display:'flex',gap:'0.5rem',marginBottom:'0.5rem'}}>
-            <input value={catInput} onChange={e=>setCatInput(e.target.value)} onKeyDown={e=>e.key==='Enter'&&addCat()} placeholder="ლათინური B კლასი — ჩა-ჩა" />
-            <button type="button" className="admin-btn admin-btn--ghost admin-btn--sm" onClick={addCat}>+</button>
-          </div>
-          <div style={{display:'flex',flexWrap:'wrap',gap:'0.4rem'}}>
-            {form.categories.map((c,i)=><span key={i} className="badge badge--muted" style={{cursor:'pointer'}} onClick={()=>remCat(i)}>{c} ×</span>)}
-          </div>
+
+        {/* Participant & Individual Schedule Section */}
+        <hr style={{borderColor:'rgba(212,166,74,0.12)',margin:'2rem 0'}} />
+        <p style={{fontSize:'0.82rem',letterSpacing:'0.2em',textTransform:'uppercase',color:'#d4a64a',marginBottom:'1.25rem',fontWeight:'bold'}}>👥 მონაწილეები და ინდივიდუალური განრიგი</p>
+        
+        {/* Dropdown to Add Kid */}
+        <div className="admin-field" style={{ marginBottom: '1.5rem' }}>
+          <label>დაამატეთ ბავშვი ამ ტურნირზე</label>
+          <select value="" onChange={e=>{ handleAddStudent(e.target.value); e.target.value = ''; }} style={{background:'rgba(255,255,255,0.04)',border:'1px solid rgba(212,166,74,0.3)',color:'#f5f1e8',padding:'0.6rem',borderRadius:'4px',width:'100%'}}>
+            <option value="">აირჩიეთ მოსწავლე დასამატებლად...</option>
+            {students.map(s=><option key={s.id} value={s.id}>{s.name}</option>)}
+          </select>
         </div>
 
-        {/* 👥 Student-Specific Schedules & Categories */}
-        <hr style={{borderColor:'rgba(212,166,74,0.12)',margin:'1.5rem 0'}} />
-        <p style={{fontSize:'0.75rem',letterSpacing:'0.2em',textTransform:'uppercase',color:'#6b665e',marginBottom:'1rem'}}>👥 მოსწავლის ინდივიდუალური განრიგი და კატეგორიები</p>
-        <div style={{ background: 'rgba(255,255,255,0.02)', padding: '1rem', border: '1px solid rgba(212,166,74,0.1)', borderRadius: '4px', marginBottom: '1rem' }}>
-          <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '0.75rem' }}>
-            <select value={selSchedStudent} onChange={e=>setSelSchedStudent(e.target.value)} style={{background:'rgba(255,255,255,0.04)',border:'1px solid rgba(212,166,74,0.2)',color:'#f5f1e8',padding:'0.5rem',borderRadius:'2px',flex:1,minWidth:'150px'}}>
-              <option value="">მოსწავლე</option>
-              {students.map(s=><option key={s.id} value={s.id}>{s.name}</option>)}
-            </select>
-            <input value={schedStartTime} onChange={e=>setSchedStartTime(e.target.value)} placeholder="დაწყების დრო (მაგ. 10:00)" style={{background:'rgba(255,255,255,0.04)',border:'1px solid rgba(212,166,74,0.2)',color:'#f5f1e8',padding:'0.5rem',borderRadius:'2px',flex:1,minWidth:'120px'}} />
-            <input value={schedReadyTime} onChange={e=>setSchedReadyTime(e.target.value)} placeholder="მზადყოფნა (მაგ. 09:15)" style={{background:'rgba(255,255,255,0.04)',border:'1px solid rgba(212,166,74,0.2)',color:'#f5f1e8',padding:'0.5rem',borderRadius:'2px',flex:1,minWidth:'120px'}} />
-            <input value={schedHall} onChange={e=>setSchedHall(e.target.value)} placeholder="დარბაზი (მაგ. დარბაზი A)" style={{background:'rgba(255,255,255,0.04)',border:'1px solid rgba(212,166,74,0.2)',color:'#f5f1e8',padding:'0.5rem',borderRadius:'2px',flex:1,minWidth:'120px'}} />
-          </div>
-          
-          <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem' }}>
-            <input value={schedCatInput} onChange={e=>setSchedCatInput(e.target.value)} onKeyDown={e=>e.key==='Enter'&&(e.preventDefault(),addSchedCat())} placeholder="კატეგორიის დამატება (მაგ. ლათინური N კლასი)" style={{background:'rgba(255,255,255,0.04)',border:'1px solid rgba(212,166,74,0.2)',color:'#f5f1e8',padding:'0.5rem',borderRadius:'2px',flex:1}} />
-            <button type="button" className="admin-btn admin-btn--ghost admin-btn--sm" onClick={addSchedCat}>+</button>
-          </div>
-
-          {schedCats.length > 0 && (
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', marginBottom: '1rem' }}>
-              {schedCats.map((c, i) => (
-                <span key={i} className="badge badge--gold" style={{ cursor: 'pointer' }} onClick={() => remSchedCat(i)}>{c} ×</span>
-              ))}
+        {/* Assigned Kids List */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', marginBottom: '2rem' }}>
+          {(form.assignedStudents || []).length === 0 ? (
+            <div style={{ padding: '2rem', textAlign: 'center', background: 'rgba(255,255,255,0.01)', border: '1px dashed rgba(212,166,74,0.15)', borderRadius: '6px', color: '#6b665e', fontSize: '0.85rem' }}>
+              ტურნირზე მოსწავლეები ჯერ არ არიან დამატებულები. გამოიყენეთ ზედა სელექტორი ბავშვის დასამატებლად.
             </div>
-          )}
-
-          <button type="button" className="admin-btn admin-btn--gold admin-btn--sm" onClick={handleSaveSched} disabled={!selSchedStudent}>
-            განრიგის შენახვა მოსწავლისთვის
-          </button>
-        </div>
-
-        {/* Assigned list */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '1.5rem' }}>
-          {Object.entries(form.studentSchedules || {}).map(([sid, data]) => {
-            const st = students.find(s => s.id === sid)
-            return (
-              <div key={sid} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.75rem 1rem', background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.04)', borderRadius: '4px' }}>
-                <div style={{ flex: 1 }}>
-                  <div style={{ color: '#d4a64a', fontWeight: 600, fontSize: '0.9rem', marginBottom: '0.25rem' }}>👤 {st?.name || sid}</div>
-                  <div style={{ fontSize: '0.8rem', color: '#a8a39a', display: 'flex', flexWrap: 'wrap', gap: '0.75rem' }}>
-                    {data.startTime && <span>🕒 დაწყება: {data.startTime}</span>}
-                    {data.readyTime && <span>🎒 მზადყოფნა: {data.readyTime}</span>}
-                    {data.hall && <span>🏛 დარბაზი: {data.hall}</span>}
+          ) : (
+            form.assignedStudents.map(sid => {
+              const st = students.find(s => s.id === sid)
+              const stData = form.assignedStudentsData?.[sid] || { readyTime: '', fee: '', categories: [] }
+              const isExpanded = activeStudentId === sid
+              return (
+                <div key={sid} style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid ' + (isExpanded ? 'rgba(212,166,74,0.3)' : 'rgba(255,255,255,0.04)'), borderRadius: '6px', overflow: 'hidden', transition: 'all 0.3s ease' }}>
+                  {/* Card Header (Click to expand categories management) */}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.85rem 1.25rem', background: isExpanded ? 'rgba(212,166,74,0.04)' : 'rgba(255,255,255,0.01)', borderBottom: '1px solid rgba(255,255,255,0.04)', cursor: 'pointer' }} onClick={() => setActiveStudentId(isExpanded ? '' : sid)}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
+                      <div className="admin-avatar" style={{ width: '32px', height: '32px', fontSize: '0.8rem' }}>{st?.photo ? <img src={st.photo} alt="" /> : st?.name?.[0]}</div>
+                      <div>
+                        <div style={{ color: '#fff', fontWeight: 600, fontSize: '0.92rem' }}>{st?.name || 'სტუდენტი'}</div>
+                        <div style={{ fontSize: '0.78rem', color: '#a8a39a' }}>
+                          {stData.readyTime ? `🎒 მზადყოფნა: ${stData.readyTime}` : '🎒 მზადყოფნა: მიუთითეთ'} · {stData.fee ? `💰 გადასახადი: ${stData.fee}` : '💰 გადასახადი: მიუთითეთ'}
+                        </div>
+                      </div>
+                    </div>
+                    <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+                      <span className="badge badge--gold" style={{ fontSize: '0.75rem' }}>{stData.categories?.length || 0} კატეგორია</span>
+                      <button type="button" className="admin-btn admin-btn--danger admin-btn--sm" onClick={(e) => { e.stopPropagation(); handleRemoveStudent(sid); }} style={{ padding: '0.35rem 0.55rem' }}>🗑</button>
+                    </div>
                   </div>
-                  {Array.isArray(data.categories) && data.categories.length > 0 && (
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.3rem', marginTop: '0.4rem' }}>
-                      {data.categories.map((c, idx) => (
-                        <span key={idx} className="badge badge--muted" style={{ fontSize: '0.72rem' }}>{c}</span>
-                      ))}
+
+                  {/* Expanded Body: Inputs for details and categories list */}
+                  {isExpanded && (
+                    <div style={{ padding: '1.25rem', borderTop: '1px solid rgba(255,255,255,0.04)', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                      {/* Details row */}
+                      <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+                        <div className="admin-field" style={{ flex: 1, minWidth: '150px', marginBottom: 0 }}>
+                          <label style={{ fontSize: '0.78rem' }}>მზადყოფნის დრო (მაგ. 09:15)</label>
+                          <input value={stData.readyTime} onChange={e => handleUpdateStudentField(sid, 'readyTime', e.target.value)} placeholder="09:15" style={{ padding: '0.45rem' }} />
+                        </div>
+                        <div className="admin-field" style={{ flex: 1, minWidth: '150px', marginBottom: 0 }}>
+                          <label style={{ fontSize: '0.78rem' }}>გადასახადი (მაგ. 50 ₾)</label>
+                          <input value={stData.fee} onChange={e => handleUpdateStudentField(sid, 'fee', e.target.value)} placeholder="50 ₾" style={{ padding: '0.45rem' }} />
+                        </div>
+                      </div>
+
+                      {/* Categories section */}
+                      <div style={{ background: 'rgba(255,255,255,0.01)', border: '1px solid rgba(255,255,255,0.03)', borderRadius: '4px', padding: '0.85rem' }}>
+                        <span style={{ fontSize: '0.75rem', color: '#6b665e', textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: 600, display: 'block', marginBottom: '0.75rem' }}>კატეგორიები და დაწყების დრო</span>
+                        
+                        {/* List of assigned categories */}
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', marginBottom: '0.85rem' }}>
+                          {(stData.categories || []).length === 0 ? (
+                            <div style={{ fontSize: '0.8rem', color: '#6b665e', fontStyle: 'italic' }}>კატეგორიები ჯერ არ არის დამატებული.</div>
+                          ) : (
+                            stData.categories.map((cat, idx) => (
+                              <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(255,255,255,0.02)', padding: '0.45rem 0.75rem', borderRadius: '4px', border: '1px solid rgba(255,255,255,0.03)' }}>
+                                <span style={{ fontSize: '0.85rem', color: '#fff' }}>{cat.name} {cat.time && <span style={{ color: 'var(--color-gold)', marginLeft: '0.5rem' }}>🕒 {cat.time}</span>}</span>
+                                <button type="button" onClick={() => handleRemoveCategoryFromStudent(sid, idx)} style={{ background: 'none', border: 'none', color: '#ff7070', fontSize: '1rem', cursor: 'pointer', padding: '0 0.25rem' }}>×</button>
+                              </div>
+                            ))
+                          )}
+                        </div>
+
+                        {/* Add category box */}
+                        <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'flex-end', flexWrap: 'wrap' }}>
+                          <div className="admin-field" style={{ flex: 2, minWidth: '150px', marginBottom: 0 }}>
+                            <input value={newCatName} onChange={e => setNewCatName(e.target.value)} placeholder="კატეგორიის სახელი (მაგ. ლათინური N კლასი)" style={{ padding: '0.45rem', fontSize: '0.8rem' }} />
+                          </div>
+                          <div className="admin-field" style={{ flex: 1, minWidth: '100px', marginBottom: 0 }}>
+                            <input value={newCatTime} onChange={e => setNewCatTime(e.target.value)} placeholder="დრო (მაგ. 10:00)" style={{ padding: '0.45rem', fontSize: '0.8rem' }} />
+                          </div>
+                          <button type="button" className="admin-btn admin-btn--ghost admin-btn--sm" onClick={() => handleAddCategoryToStudent(sid)} style={{ padding: '0.5rem 0.85rem' }}>დამატება</button>
+                        </div>
+                      </div>
                     </div>
                   )}
                 </div>
-                <div style={{ display: 'flex', gap: '0.5rem' }}>
-                  <button type="button" className="admin-btn admin-btn--ghost admin-btn--sm" onClick={() => handleEditSched(sid, data)}>✏</button>
-                  <button type="button" className="admin-btn admin-btn--danger admin-btn--sm" onClick={() => handleRemoveSched(sid)}>🗑</button>
-                </div>
-              </div>
-            )
-          })}
+              )
+            })
+          )}
         </div>
-
-        <hr style={{borderColor:'rgba(212,166,74,0.12)',margin:'1.5rem 0'}} />
-        <p style={{fontSize:'0.75rem',letterSpacing:'0.2em',textTransform:'uppercase',color:'#6b665e',marginBottom:'1rem'}}>🏅 რეზულტატები</p>
-        <div style={{display:'flex',gap:'0.5rem',flexWrap:'wrap',marginBottom:'0.75rem'}}>
-          <select value={resStudent} onChange={e=>setResStudent(e.target.value)} style={{background:'rgba(255,255,255,0.04)',border:'1px solid rgba(212,166,74,0.2)',color:'#f5f1e8',padding:'0.5rem',borderRadius:'2px',flex:1}}>
-            <option value="">სტუდენტი</option>
-            {students.map(s=><option key={s.id} value={s.id}>{s.name}</option>)}
-          </select>
-          <input value={resForm.category} onChange={e=>setResForm(r=>({...r,category:e.target.value}))} placeholder="კატეგორია" style={{background:'rgba(255,255,255,0.04)',border:'1px solid rgba(212,166,74,0.2)',color:'#f5f1e8',padding:'0.5rem',borderRadius:'2px',flex:2}} />
-          <input type="number" value={resForm.place} onChange={e=>setResForm(r=>({...r,place:e.target.value}))} placeholder="ადგილი" style={{background:'rgba(255,255,255,0.04)',border:'1px solid rgba(212,166,74,0.2)',color:'#f5f1e8',padding:'0.5rem',borderRadius:'2px',width:'80px'}} />
-          <input type="number" value={resForm.total} onChange={e=>setResForm(r=>({...r,total:e.target.value}))} placeholder="სულ" style={{background:'rgba(255,255,255,0.04)',border:'1px solid rgba(212,166,74,0.2)',color:'#f5f1e8',padding:'0.5rem',borderRadius:'2px',width:'80px'}} />
-          <button type="button" className="admin-btn admin-btn--ghost admin-btn--sm" onClick={addResult}>+ დამატება</button>
-        </div>
-        {Object.entries(form.results||{}).map(([sid,res])=>{
-          const st=students.find(s=>s.id===sid)
-          return res.map((r,i)=>(
-            <div key={`${sid}-${i}`} style={{display:'flex',alignItems:'center',gap:'0.75rem',padding:'0.5rem 0.75rem',background:'rgba(255,255,255,0.03)',borderRadius:'2px',marginBottom:'0.4rem',fontSize:'0.82rem'}}>
-              <span style={{color:'#d4a64a'}}>{st?.name}</span>
-              <span style={{color:'#a8a39a'}}>{r.category}</span>
-              <span style={{color:'#50c878',fontWeight:700}}>#{r.place}/{r.total}</span>
-            </div>
-          ))
-        })}
 
         <div style={{display:'flex',gap:'0.75rem',marginTop:'1.5rem'}}>
-          <button type="button" className="admin-btn admin-btn--gold" onClick={handleSave}>შენახვა</button>
+          <button type="button" className="admin-btn admin-btn--gold" onClick={handleSave}>ტურნირის შენახვა</button>
+          <button type="button" className="admin-btn admin-btn--ghost" onClick={onCancel}>გაუქმება</button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+/* ── Results Management Form (Separate Page) ── */
+function ResultsForm({item,students,onSave,onCancel}) {
+  const [form,setForm]=useState({
+    ...item,
+    results:item?.results||{}
+  })
+  
+  const [resStudent,setResStudent]=useState('')
+  const [resForm,setResForm]=useState({category:'',place:'',total:'',notes:''})
+
+  const addResult=()=>{
+    if(!resStudent||!resForm.category) return
+    const r=form.results||{}
+    const arr=r[resStudent]||[]
+    
+    const updated = {
+      ...form,
+      results: {
+        ...r,
+        [resStudent]: [...arr, {
+          category: resForm.category.trim(),
+          place: +resForm.place || 1,
+          total: +resForm.total || 1,
+          notes: resForm.notes.trim()
+        }]
+      }
+    }
+    
+    setForm(updated)
+    setResForm({category:'',place:'',total:'',notes:''})
+  }
+
+  const removeResult=(sid, idx)=>{
+    const r=form.results||{}
+    const arr=r[sid]||[]
+    const updatedArr=arr.filter((_,i)=>i!==idx)
+    
+    const updated = {
+      ...form,
+      results: {
+        ...r,
+        [sid]: updatedArr
+      }
+    }
+    
+    setForm(updated)
+  }
+
+  const handleSave=()=>{
+    onSave(form)
+  }
+
+  // Get only the assigned students for result selection dropdown
+  const assignedKids = students.filter(s => (form.assignedStudents || []).includes(s.id))
+  const selectStudentsList = assignedKids.length > 0 ? assignedKids : students // fallback to all if none assigned
+
+  return (
+    <div className="admin-section">
+      <div className="admin-section__head" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <span className="admin-section__title">🏆 შედეგების მართვა: {form.name}</span>
+        <button type="button" className="admin-btn admin-btn--ghost admin-btn--sm" onClick={onCancel}>← უკან</button>
+      </div>
+      <div className="admin-section__body">
+        
+        {/* Add Result Box */}
+        <p style={{fontSize:'0.75rem',letterSpacing:'0.2em',textTransform:'uppercase',color:'#6b665e',marginBottom:'1rem'}}>ახალი შედეგის დამატება</p>
+        <div style={{background:'rgba(255,255,255,0.01)',border:'1px solid rgba(212,166,74,0.15)',borderRadius:'6px',padding:'1.25rem',marginBottom:'2rem'}}>
+          <div style={{display:'flex',gap:'0.75rem',flexWrap:'wrap',marginBottom:'0.75rem'}}>
+            <div className="admin-field" style={{flex:1.5,minWidth:'180px',marginBottom:0}}>
+              <label>სტუდენტი</label>
+              <select value={resStudent} onChange={e=>setResStudent(e.target.value)} style={{background:'rgba(255,255,255,0.04)',border:'1px solid rgba(212,166,74,0.2)',color:'#f5f1e8',padding:'0.5rem',borderRadius:'2px'}}>
+                <option value="">აირჩიეთ სტუდენტი...</option>
+                {selectStudentsList.map(s=><option key={s.id} value={s.id}>{s.name}</option>)}
+              </select>
+            </div>
+            
+            <div className="admin-field" style={{flex:2,minWidth:'200px',marginBottom:0}}>
+              <label>კატეგორია</label>
+              <input value={resForm.category} onChange={e=>setResForm(r=>({...r,category:e.target.value}))} placeholder="მაგ. ლათინური N კლასი" style={{padding:'0.5rem'}} />
+            </div>
+
+            <div className="admin-field" style={{width:'80px',marginBottom:0}}>
+              <label>ადგილი</label>
+              <input type="number" min={1} value={resForm.place} onChange={e=>setResForm(r=>({...r,place:e.target.value}))} placeholder="1" style={{padding:'0.5rem'}} />
+            </div>
+
+            <div className="admin-field" style={{width:'80px',marginBottom:0}}>
+              <label>სულ</label>
+              <input type="number" min={1} value={resForm.total} onChange={e=>setResForm(r=>({...r,total:e.target.value}))} placeholder="12" style={{padding:'0.5rem'}} />
+            </div>
+          </div>
+          <button type="button" className="admin-btn admin-btn--gold admin-btn--sm" onClick={addResult} disabled={!resStudent || !resForm.category}>+ შედეგის დამატება</button>
+        </div>
+
+        {/* Existing Results List */}
+        <p style={{fontSize:'0.75rem',letterSpacing:'0.2em',textTransform:'uppercase',color:'#6b665e',marginBottom:'1rem'}}>ტურნირის შედეგების სია</p>
+        <div style={{display:'flex',flexDirection:'column',gap:'0.5rem'}}>
+          {Object.entries(form.results||{}).filter(([_,res])=>res.length>0).length === 0 ? (
+            <div style={{padding:'2rem',textAlign:'center',background:'rgba(255,255,255,0.01)',border:'1px dashed rgba(255,255,255,0.05)',borderRadius:'4px',color:'#6b665e',fontSize:'0.82rem'}}>
+              შედეგები ჯერ არ არის დამატებული.
+            </div>
+          ) : (
+            Object.entries(form.results||{}).map(([sid,res])=>{
+              const st=students.find(s=>s.id===sid)
+              return res.map((r,i)=>(
+                <div key={`${sid}-${i}`} style={{display:'flex',justifyContent: 'space-between',alignItems:'center',padding:'0.65rem 1rem',background:'rgba(255,255,255,0.02)',border:'1px solid rgba(255,255,255,0.04)',borderRadius:'4px',fontSize:'0.85rem'}}>
+                  <div>
+                    <span style={{color:'#fff',fontWeight:600,marginRight:'0.75rem'}}>👤 {st?.name || sid}</span>
+                    <span style={{color:'#a8a39a',marginRight:'0.75rem'}}>{r.category}</span>
+                    <span style={{color:'var(--color-gold)',fontWeight:700}}>🏆 #{r.place}/{r.total}</span>
+                  </div>
+                  <button type="button" className="admin-btn admin-btn--danger admin-btn--sm" onClick={()=>removeResult(sid,i)} style={{padding:'0.2rem 0.5rem'}}>🗑</button>
+                </div>
+              ))
+            })
+          )}
+        </div>
+
+        <div style={{display:'flex',gap:'0.75rem',marginTop:'2rem'}}>
+          <button type="button" className="admin-btn admin-btn--gold" onClick={handleSave}>შედეგების შენახვა</button>
           <button type="button" className="admin-btn admin-btn--ghost" onClick={onCancel}>გაუქმება</button>
         </div>
       </div>

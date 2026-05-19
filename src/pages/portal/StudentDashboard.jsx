@@ -315,7 +315,7 @@ export default function StudentDashboard() {
           setSiblings(sibs)
         }
 
-        // Auto-detect student language from preference
+        // Auto-detect student language from ClassCore preference
         const ccLang = found.language || found.data?.language || 'ka';
         const storedLang = localStorage.getItem('std_portal_lang');
         if (storedLang) {
@@ -703,11 +703,28 @@ export default function StudentDashboard() {
                   </div>
                   <div className="portal-card__body" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                     {upcomingTrn.map(tItem => {
-                      const schedObj = tItem.studentSchedules?.[student.id] || {};
-                      const myCats = schedObj.categories || tItem.studentCategories?.[student.id] || [];
-                      const startTime = schedObj.startTime || '';
-                      const readyTime = schedObj.readyTime || '';
-                      const hall = schedObj.hall || '';
+                      const stData = tItem.assignedStudentsData?.[student.id] || {}
+                      
+                      // Get ready time
+                      const readyTime = stData.readyTime || tItem.studentSchedules?.[student.id]?.readyTime || ''
+                      
+                      // Get student-specific fee
+                      const myFee = stData.fee || ''
+                      
+                      // Get categories with start times
+                      let myCats = []
+                      if (Array.isArray(stData.categories)) {
+                        myCats = stData.categories
+                      } else {
+                        // Legacy fallback
+                        const legacyCats = tItem.studentCategories?.[student.id] || tItem.studentSchedules?.[student.id]?.categories || []
+                        const legacyStartTime = tItem.studentSchedules?.[student.id]?.startTime || ''
+                        myCats = legacyCats.map(c => ({
+                          name: c,
+                          time: legacyStartTime
+                        }))
+                      }
+
                       return (
                         <div key={tItem.id} className="trn-upcoming">
                           <div className="trn-upcoming__name" style={{ fontFamily: 'var(--font-display)', fontSize: '1.25rem', fontWeight: 600 }}>{tItem.name}</div>
@@ -715,10 +732,12 @@ export default function StudentDashboard() {
                           <div className="trn-upcoming__info">
                             <span>🏛 {tItem.venue}</span>
                             <span>📍 {tItem.address}</span>
-                            {tItem.fee && <span style={{ color: 'var(--color-gold)' }}>💰 {tItem.fee}{tItem.currency || '₾'}</span>}
+                            {!myFee && tItem.fee ? (
+                              <span style={{ color: 'var(--color-gold)' }}>💰 {tItem.fee}{tItem.currency || '₾'}</span>
+                            ) : null}
                           </div>
 
-                          {(startTime || readyTime || hall) && (
+                          {(readyTime || myFee) && (
                             <div style={{
                               background: 'rgba(212,166,74,0.06)',
                               border: '1px solid rgba(212,166,74,0.15)',
@@ -727,33 +746,42 @@ export default function StudentDashboard() {
                               margin: '0.75rem 0',
                               display: 'flex',
                               flexWrap: 'wrap',
-                              gap: '1rem',
+                              gap: '1.5rem',
                               fontSize: '0.85rem'
                             }}>
-                              {startTime && (
-                                <span>
-                                  🕒 <strong>{lang === 'ru' ? 'Время начала:' : lang === 'en' ? 'Start Time:' : 'დაწყების დრო:'}</strong> {startTime}
-                                </span>
-                              )}
                               {readyTime && (
                                 <span>
                                   🎒 <strong>{lang === 'ru' ? 'Быть готовым к:' : lang === 'en' ? 'Arrival time:' : 'მზადყოფნის დრო:'}</strong> {readyTime}
                                 </span>
                               )}
-                              {hall && (
+                              {myFee && (
                                 <span>
-                                  🏛 <strong>{lang === 'ru' ? 'Зал / Паркет:' : lang === 'en' ? 'Hall / Floor:' : 'დარბაზი / პარკეტი:'}</strong> {hall}
+                                  💰 <strong>{lang === 'ru' ? 'Взнос:' : lang === 'en' ? 'Fee:' : 'გადასახადი:'}</strong> {myFee}
                                 </span>
                               )}
                             </div>
                           )}
 
-                          {myCats.length > 0 && (
-                            <div className="trn-upcoming__cats">
-                              <span style={{ fontSize: '0.72rem', color: '#6b665e', marginRight: '0.5rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>{t('my_categories')}</span>
-                              {myCats.map((c, i) => <span key={i} className="portal-badge portal-badge--gold">{c}</span>)}
+                          {myCats.length > 0 ? (
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', margin: '0.75rem 0' }}>
+                              <span style={{ fontSize: '0.72rem', color: '#6b665e', textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: 600 }}>
+                                {lang === 'ru' ? 'Мои категории и время:' : lang === 'en' ? 'My Categories & Time:' : 'ჩემი კატეგორიები და დრო:'}
+                              </span>
+                              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+                                {myCats.map((cat, idx) => (
+                                  <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(255,255,255,0.02)', padding: '0.5rem 0.75rem', borderRadius: '4px', border: '1px solid rgba(255,255,255,0.03)' }}>
+                                    <span style={{ fontSize: '0.88rem', color: '#f5f1e8', fontWeight: 500 }}>{cat.name}</span>
+                                    {cat.time && <span className="portal-badge portal-badge--gold" style={{ fontSize: '0.78rem' }}>🕒 {cat.time}</span>}
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          ) : (
+                            <div style={{ fontSize: '0.82rem', color: '#6b665e', fontStyle: 'italic', margin: '0.75rem 0' }}>
+                              {lang === 'ru' ? 'Категории еще не назначены' : lang === 'en' ? 'No categories assigned yet' : 'კატეგორიები ჯერ არ არის მინიჭებული'}
                             </div>
                           )}
+
                           {tItem.notes && <p style={{ fontSize: '0.8rem', color: '#a8a39a', marginBottom: '0.75rem', lineHeight: '1.5' }}>{tItem.notes}</p>}
                           {tItem.mapUrl && (
                             <a className="trn-map-btn" href={tItem.mapUrl} target="_blank" rel="noreferrer">📍 {t('show_map')}</a>
@@ -776,7 +804,7 @@ export default function StudentDashboard() {
                       const results = tItem.results?.[student.id] || []
                       return results.map((r, i) => {
                         const medal = r.place === 1 
-                          ? (lang === 'ru' ? '🥇 I место' : lang === 'en' ? '🥇 1st Place' : '🥇 I ადგილი') 
+                          ? (lang === 'ru' ? '🥇 I место' : lang === 'en' ? '🥇 1st Place' : '🥇 I ადგიли') 
                           : r.place === 2 
                             ? (lang === 'ru' ? '🥈 II место' : lang === 'en' ? '🥈 2nd Place' : '🥈 II ადგილი') 
                             : r.place === 3 
