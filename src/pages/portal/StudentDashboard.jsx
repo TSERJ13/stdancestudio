@@ -4,7 +4,8 @@ import {
   fetchStudioData, getStudentName,
   getStudentSubscription, getStudentAttendance,
   getStudentGroups, getPortalSession,
-  clearPortalSession, clearCache
+  clearPortalSession, clearCache,
+  findAllStudentsByPhone, savePortalSession
 } from '../../data/classcore'
 import { getTournaments } from '../../data/db'
 import './portal.css'
@@ -206,6 +207,7 @@ const FloatingLangSwitcher = ({ lang, setLang }) => {
 export default function StudentDashboard() {
   const navigate = useNavigate()
   const [student, setStudent] = useState(null)
+  const [siblings, setSiblings] = useState([])
   const [tab, setTab] = useState('info')
   const [sub, setSub] = useState(null)
   const [att, setAtt] = useState([])
@@ -220,7 +222,6 @@ export default function StudentDashboard() {
     const studentId = getPortalSession()
     if (!studentId) { navigate('/portal'); return }
 
-    // Read tournaments locally
     setTournaments(getTournaments())
 
     fetchStudioData()
@@ -237,6 +238,13 @@ export default function StudentDashboard() {
         setAtt(getStudentAttendance(data.attendance || [], studentId))
         setGroups(getStudentGroups(data.groups || [], found))
         
+        // Find siblings
+        const loggedPhone = localStorage.getItem('std_portal_logged_phone')
+        if (loggedPhone) {
+          const sibs = findAllStudentsByPhone(data.students || [], loggedPhone)
+          setSiblings(sibs)
+        }
+
         // Auto-detect student language from ClassCore preference
         const studentData = found.data || {}
         const ccLang = studentData.language === 'ru' || studentData.lang === 'ru' || studentData.locale === 'ru' || studentData.nationality === 'ru' ? 'ru' : 'ka';
@@ -248,7 +256,6 @@ export default function StudentDashboard() {
           localStorage.setItem('std_portal_lang', ccLang);
         }
 
-        // Prioritize cloud tournaments if returned by ClassCore API!
         if (Array.isArray(data.tournaments) && data.tournaments.length > 0) {
           setTournaments(data.tournaments)
           localStorage.setItem('std_tournaments', JSON.stringify(data.tournaments))
@@ -266,10 +273,10 @@ export default function StudentDashboard() {
   const handleLogout = () => {
     clearPortalSession()
     clearCache()
+    localStorage.removeItem('std_portal_logged_phone')
     navigate('/portal')
   }
 
-  // Prevent scroll when mobile menu is open
   useEffect(() => {
     document.body.style.overflow = mobileOpen ? 'hidden' : ''
     return () => { document.body.style.overflow = '' }
@@ -311,13 +318,11 @@ export default function StudentDashboard() {
   const parentName = studentData.parent_name || ''
   const today = new Date().toISOString().slice(0,10)
 
-  // Recent 30 days attendance
   const recentAtt = att.slice(-30)
   const present = recentAtt.filter(r => r.present).length
   const absent  = recentAtt.filter(r => !r.present).length
   const pct     = recentAtt.length ? Math.round((present / recentAtt.length) * 100) : 0
 
-  // Tournaments filtering
   const upcomingTrn = tournaments.filter(t => {
     const isFuture = t.date >= today;
     const isAssigned = !t.assignedStudents || t.assignedStudents.length === 0 || t.assignedStudents.includes(student.id);
@@ -339,7 +344,6 @@ export default function StudentDashboard() {
 
   return (
     <div className="portal-wrap portal-shell">
-      {/* Editorial Luxury Header in Site's Style */}
       <header className="portal-header">
         <div className="portal-header__brand-container" style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
           <Link to="/" className="header__brand" style={{ display: 'flex', alignItems: 'center', gap: '0.875rem', textDecoration: 'none' }}>
@@ -355,7 +359,42 @@ export default function StudentDashboard() {
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          {/* Header language buttons matching site's header structure */}
+          {/* Sibling switcher in header for desktop */}
+          {siblings.length > 1 && (
+            <div className="sibling-switcher desktop-only" style={{ marginRight: '1rem', position: 'relative' }}>
+              <select 
+                value={student.id} 
+                onChange={e => {
+                  savePortalSession(e.target.value);
+                  window.location.reload();
+                }}
+                style={{
+                  background: 'rgba(212,166,74,0.06)',
+                  border: '1px solid var(--color-gold, #d4a64a)',
+                  color: '#fff',
+                  fontFamily: 'inherit',
+                  fontSize: '0.8rem',
+                  fontWeight: '600',
+                  padding: '0.4rem 1.8rem 0.4rem 0.8rem',
+                  borderRadius: '20px',
+                  cursor: 'pointer',
+                  appearance: 'none',
+                  outline: 'none',
+                  backgroundImage: 'url("data:image/svg+xml;utf8,<svg fill=\'%23d4a64a\' height=\'24\' viewBox=\'0 0 24 24\' width=\'24\' xmlns=\'http://www.w3.org/2000/svg\'><path d=\'M7 10l5 5 5-5z\'/><path d=\'M0 0h24v24H0z\' fill=\'none\'/></svg>")',
+                  backgroundRepeat: 'no-repeat',
+                  backgroundPosition: 'right 6px center',
+                  backgroundSize: '16px'
+                }}
+              >
+                {siblings.map(sib => (
+                  <option key={sib.id} value={sib.id} style={{ background: '#0a0a0a', color: '#fff' }}>
+                    👤 {getStudentName(sib)}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
           <div className="lang-switcher desktop-only" style={{ display: 'flex', gap: '0.5rem', marginRight: '1rem' }}>
             <button 
               onClick={() => { setLang('ka'); localStorage.setItem('std_portal_lang', 'ka') }}
@@ -392,7 +431,6 @@ export default function StudentDashboard() {
           <button className="portal-header__logout desktop-only" onClick={handleLogout}>{t('logout')} ↗</button>
         </div>
 
-        {/* Burger Button for Mobile Menu */}
         <button
           className={`portal-burger mobile-only ${mobileOpen ? 'is-open' : ''}`}
           onClick={() => setMobileOpen(v => !v)}
@@ -404,9 +442,44 @@ export default function StudentDashboard() {
         </button>
       </header>
 
-      {/* Mobile Drawer Menu in Site's Luxury Style */}
       <div className={`portal-mobile-menu ${mobileOpen ? 'is-open' : ''}`}>
         <nav className="portal-mobile-menu__nav">
+          {/* Sibling switcher for mobile inside drawer */}
+          {siblings.length > 1 && (
+            <div style={{ padding: '0 2rem 1.5rem', borderBottom: '1px solid rgba(255,255,255,0.05)', marginBottom: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+              <span style={{ fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.15em', color: '#6b665e' }}>ბავშვის შეცვლა / Сменить ребенка</span>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                {siblings.map(sib => {
+                  const isCurrent = sib.id === student.id;
+                  return (
+                    <button
+                      key={sib.id}
+                      onClick={() => {
+                        savePortalSession(sib.id);
+                        window.location.reload();
+                      }}
+                      style={{
+                        background: isCurrent ? 'var(--color-gold, #d4a64a)' : 'transparent',
+                        border: '1px solid var(--color-gold, #d4a64a)',
+                        color: isCurrent ? '#000' : '#fff',
+                        fontFamily: 'inherit',
+                        fontSize: '0.85rem',
+                        fontWeight: '600',
+                        padding: '0.5rem 1.2rem',
+                        borderRadius: '30px',
+                        cursor: 'pointer',
+                        textAlign: 'left',
+                        transition: 'all 0.3s ease'
+                      }}
+                    >
+                      👤 {getStudentName(sib)} {isCurrent ? '✓' : ''}
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+          )}
+
           <div style={{ padding: '0 2rem 1.5rem', borderBottom: '1px solid rgba(255,255,255,0.05)', marginBottom: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
             <span style={{ fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.15em', color: '#6b665e' }}>Language / ენა</span>
             <div style={{ display: 'flex', gap: '0.75rem' }}>
@@ -475,7 +548,6 @@ export default function StudentDashboard() {
       </div>
 
       <div className="portal-body">
-        {/* Sidebar for Desktop */}
         <nav className="portal-sidenav">
           {TABS_LIST.map(tItem => (
             <button key={tItem.id} className={`portal-nav-item${tab===tItem.id?' active':''}`} onClick={() => setTab(tItem.id)} style={{ display: 'flex', alignItems: 'center' }}>
@@ -488,7 +560,6 @@ export default function StudentDashboard() {
         </nav>
 
         <main className="portal-content">
-          {/* Hero Card */}
           <div className="portal-hero">
             <div className="portal-hero__photo">
               {studentData.photo_url
@@ -518,7 +589,6 @@ export default function StudentDashboard() {
             </div>
           </div>
 
-          {/* Tab: Info */}
           {tab === 'info' && (
             <div className="portal-card">
               <div className="portal-card__head">
@@ -547,7 +617,6 @@ export default function StudentDashboard() {
             </div>
           )}
 
-          {/* Tab: Subscription */}
           {tab === 'sub' && (
             <div className="portal-card">
               <div className="portal-card__head">
@@ -592,7 +661,6 @@ export default function StudentDashboard() {
             </div>
           )}
 
-          {/* Tab: Schedule */}
           {tab === 'schedule' && (
             <div className="portal-card">
               <div className="portal-card__head">
@@ -633,7 +701,6 @@ export default function StudentDashboard() {
             </div>
           )}
 
-          {/* Tab: Attendance */}
           {tab === 'att' && (
             <div className="portal-card">
               <div className="portal-card__head">
@@ -679,7 +746,6 @@ export default function StudentDashboard() {
             </div>
           )}
 
-          {/* Tab: Tournaments & Results */}
           {tab === 'trn' && (
             <>
               {upcomingTrn.length > 0 && (
@@ -732,7 +798,7 @@ export default function StudentDashboard() {
                           : r.place === 2 
                             ? (lang === 'ru' ? '🥈 II место' : '🥈 II ადგილი') 
                             : r.place === 3 
-                              ? (lang === 'ru' ? '🥉 III место' : '🥉 III ადгиლი') 
+                              ? (lang === 'ru' ? '🥉 III место' : '🥉 III ადгили') 
                               : null;
                         return (
                           <div key={`${tItem.id}-${i}`} className="trn-history-item">

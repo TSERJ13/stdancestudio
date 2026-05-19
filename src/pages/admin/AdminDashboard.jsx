@@ -32,7 +32,7 @@ export default function AdminDashboard() {
   const [news, setNews] = useState([])
   const [students, setStudents] = useState([])
   const [tournaments, setTournaments] = useState([])
-  const [modal, setModal] = useState(null)
+  const [editingItem, setEditingItem] = useState(null) // { tab: 'news'|'student'|'tournament', id: 0|'id' }
 
   useEffect(() => {
     if (!isAdminLoggedIn()) { navigate('/admin'); return }
@@ -44,7 +44,6 @@ export default function AdminDashboard() {
     setNews(getNews())
     setTournaments(getTournaments())
     
-    // Import classcore loader dynamically to prevent loading timing issues
     import('../../data/classcore').then(mod => {
       mod.fetchStudioData()
         .then(data => {
@@ -120,7 +119,7 @@ export default function AdminDashboard() {
         </div>
         <nav className="admin-nav">
           {TABS.map((t,i) => (
-            <button key={i} className={`admin-nav__item${tab===i?' active':''}`} onClick={()=>setTab(i)}>
+            <button key={i} className={`admin-nav__item${tab===i?' active':''}`} onClick={()=>{setTab(i); setEditingItem(null)}}>
               <span className="admin-nav__icon" style={{ display: 'inline-flex', alignItems: 'center' }}>
                 {SVG_ICONS[ICONS[i]]}
               </span>
@@ -142,36 +141,56 @@ export default function AdminDashboard() {
             <span style={{ marginLeft: '0.25rem' }}>{TABS[tab]}</span>
           </span>
           <div className="admin-topbar__actions">
-            <button className="admin-btn admin-btn--gold admin-btn--sm" onClick={()=>setModal({type:['news','student','tournament'][tab]})}>
+            <button className="admin-btn admin-btn--gold admin-btn--sm" onClick={() => setEditingItem({ tab: ['news', 'student', 'tournament'][tab], id: 0 })}>
               + დამატება
             </button>
           </div>
         </div>
 
         <div className="admin-page">
-          {tab===0 && <NewsTab news={news} onSave={handleSaveNews} onDelete={handleDeleteNews} />}
-          {tab===1 && <StudentsTab students={students} onSave={s=>{saveStudent(s);refresh()}} onDelete={id=>{deleteStudent(id);refresh()}} />}
-          {tab===2 && <TournamentsTab tournaments={tournaments} students={students} onSave={handleSaveTournament} onDelete={handleDeleteTournament} />}
+          {editingItem ? (
+            <>
+              {editingItem.tab === 'news' && (
+                <NewsForm 
+                  item={editingItem.id === 0 ? {} : news.find(n => n.id === editingItem.id)} 
+                  onSave={n => { handleSaveNews(n); setEditingItem(null); }} 
+                  onCancel={() => setEditingItem(null)} 
+                />
+              )}
+              {editingItem.tab === 'student' && (
+                <StudentForm 
+                  item={editingItem.id === 0 ? {} : students.find(s => s.id === editingItem.id)} 
+                  onSave={s => { saveStudent(s); refresh(); setEditingItem(null); }} 
+                  onCancel={() => setEditingItem(null)} 
+                />
+              )}
+              {editingItem.tab === 'tournament' && (
+                <TournamentForm 
+                  item={editingItem.id === 0 ? {} : tournaments.find(t => t.id === editingItem.id)} 
+                  students={students} 
+                  onSave={t => { handleSaveTournament(t); setEditingItem(null); }} 
+                  onCancel={() => setEditingItem(null)} 
+                />
+              )}
+            </>
+          ) : (
+            <>
+              {tab===0 && <NewsTab news={news} onEdit={id => setEditingItem({ tab: 'news', id })} onDelete={handleDeleteNews} />}
+              {tab===1 && <StudentsTab students={students} onEdit={id => setEditingItem({ tab: 'student', id })} onDelete={id=>{deleteStudent(id);refresh()}} />}
+              {tab===2 && <TournamentsTab tournaments={tournaments} students={students} onEdit={id => setEditingItem({ tab: 'tournament', id })} onDelete={handleDeleteTournament} />}
+            </>
+          )}
         </div>
       </div>
-
-      {modal && <Modal modal={modal} onClose={()=>setModal(null)} onSave={item=>{
-        if(modal.type==='news'){handleSaveNews(item)}
-        else if(modal.type==='student'){saveStudent(item); refresh()}
-        else{handleSaveTournament(item)}
-        setModal(null)
-      }} />}
     </div>
   )
 }
 
 /* ── News Tab ── */
-function NewsTab({news,onSave,onDelete}) {
-  const [editing,setEditing]=useState(null)
-  if(editing!==null) return <NewsForm item={editing===0?{}:news.find(n=>n.id===editing)} onSave={n=>{onSave(n);setEditing(null)}} onCancel={()=>setEditing(null)} />
+function NewsTab({news,onEdit,onDelete}) {
   return (
     <div>
-      <button className="admin-btn admin-btn--gold admin-btn--sm" style={{marginBottom:'1.5rem'}} onClick={()=>setEditing(0)}>+ ახალი სიახლე</button>
+      <button className="admin-btn admin-btn--gold admin-btn--sm" style={{marginBottom:'1.5rem'}} onClick={()=>onEdit(0)}>+ ახალი სიახლე</button>
       {news.length===0 && <p style={{color:'#6b665e',fontSize:'0.85rem'}}>სიახლეები არ არის</p>}
       {news.map(n=>(
         <div key={n.id} className={`admin-news-card${n.important?' important':''}`}>
@@ -184,7 +203,7 @@ function NewsTab({news,onSave,onDelete}) {
           </div>
           <p className="admin-news-card__body">{n.body}</p>
           <div className="admin-news-card__actions">
-            <button className="admin-btn admin-btn--ghost admin-btn--sm" onClick={()=>setEditing(n.id)}>✏ რედაქტირება</button>
+            <button className="admin-btn admin-btn--ghost admin-btn--sm" onClick={()=>onEdit(n.id)}>✏ რედაქტირება</button>
             <button className="admin-btn admin-btn--danger admin-btn--sm" onClick={()=>onDelete(n.id)}>🗑 წაშლა</button>
           </div>
         </div>
@@ -214,12 +233,10 @@ function NewsForm({item,onSave,onCancel}) {
 }
 
 /* ── Students Tab ── */
-function StudentsTab({students,onSave,onDelete}) {
-  const [editing,setEditing]=useState(null)
-  if(editing!==null) return <StudentForm item={editing===0?{}:students.find(s=>s.id===editing)} onSave={s=>{onSave(s);setEditing(null)}} onCancel={()=>setEditing(null)} />
+function StudentsTab({students,onEdit,onDelete}) {
   return (
     <div>
-      <button className="admin-btn admin-btn--gold admin-btn--sm" style={{marginBottom:'1.5rem'}} onClick={()=>setEditing(0)}>+ ახალი სტუდენტი</button>
+      <button className="admin-btn admin-btn--gold admin-btn--sm" style={{marginBottom:'1.5rem'}} onClick={()=>onEdit(0)}>+ ახალი სტუდენტი</button>
       <div className="admin-section">
         <table className="admin-table">
           <thead><tr>
@@ -250,7 +267,7 @@ function StudentsTab({students,onSave,onDelete}) {
                   </td>
                   <td>
                     <div className="row-actions">
-                      <button className="admin-btn admin-btn--ghost admin-btn--sm" onClick={()=>setEditing(s.id)}>✏</button>
+                      <button className="admin-btn admin-btn--ghost admin-btn--sm" onClick={()=>onEdit(s.id)}>✏</button>
                       <button className="admin-btn admin-btn--danger admin-btn--sm" onClick={()=>onDelete(s.id)}>🗑</button>
                     </div>
                   </td>
@@ -355,13 +372,11 @@ function StudentForm({item,onSave,onCancel}) {
 }
 
 /* ── Tournaments Tab ── */
-function TournamentsTab({tournaments,students,onSave,onDelete}) {
-  const [editing,setEditing]=useState(null)
-  if(editing!==null) return <TournamentForm item={editing===0?{}:tournaments.find(t=>t.id===editing)} students={students} onSave={t=>{onSave(t);setEditing(null)}} onCancel={()=>setEditing(null)} />
+function TournamentsTab({tournaments,students,onEdit,onDelete}) {
   const today=new Date().toISOString().slice(0,10)
   return (
     <div>
-      <button className="admin-btn admin-btn--gold admin-btn--sm" style={{marginBottom:'1.5rem'}} onClick={()=>setEditing(0)}>+ ახალი ტურნირი</button>
+      <button className="admin-btn admin-btn--gold admin-btn--sm" style={{marginBottom:'1.5rem'}} onClick={()=>onEdit(0)}>+ ახალი ტურნირი</button>
       {tournaments.map(t=>(
         <div key={t.id} className="admin-trn-card">
           <div className="admin-trn-card__head">
@@ -383,7 +398,7 @@ function TournamentsTab({tournaments,students,onSave,onDelete}) {
           </div>
           <div className="admin-trn-card__cats">{(t.categories||[]).map((c,i)=><span key={i} className="badge badge--muted">{c}</span>)}</div>
           <div className="admin-trn-card__actions">
-            <button className="admin-btn admin-btn--ghost admin-btn--sm" onClick={()=>setEditing(t.id)}>✏ რედაქტირება</button>
+            <button className="admin-btn admin-btn--ghost admin-btn--sm" onClick={()=>onEdit(t.id)}>✏ რედაქტირება</button>
             <button className="admin-btn admin-btn--danger admin-btn--sm" onClick={()=>onDelete(t.id)}>🗑 წაშლა</button>
           </div>
         </div>
@@ -405,6 +420,32 @@ function TournamentForm({item,students,onSave,onCancel}) {
   const set=(k,v)=>setForm(f=>({...f,[k]:v}))
   const addCat=()=>{if(catInput.trim()){set('categories',[...form.categories,catInput.trim()]);setCatInput('')}}
   const remCat=(i)=>set('categories',form.categories.filter((_,j)=>j!==i))
+  
+  // Sibling student category state
+  const [selCatStudent, setSelCatStudent] = useState('')
+  const [studentCatInput, setStudentCatInput] = useState('')
+  const addStudentCategory = () => {
+    if (!selCatStudent || !studentCatInput.trim()) return
+    const sc = form.studentCategories || {}
+    const arr = sc[selCatStudent] || []
+    if (!arr.includes(studentCatInput.trim())) {
+      set('studentCategories', {
+        ...sc,
+        [selCatStudent]: [...arr, studentCatInput.trim()]
+      })
+    }
+    setStudentCatInput('')
+  }
+  const remStudentCategory = (sid, idx) => {
+    const sc = form.studentCategories || {}
+    const arr = sc[sid] || []
+    const updated = arr.filter((_, i) => i !== idx)
+    set('studentCategories', {
+      ...sc,
+      [sid]: updated
+    })
+  }
+
   const [resStudent,setResStudent]=useState('')
   const [resForm,setResForm]=useState({category:'',place:'',total:'',notes:''})
   const addResult=()=>{
@@ -414,6 +455,12 @@ function TournamentForm({item,students,onSave,onCancel}) {
     set('results',{...r,[resStudent]:[...arr,{...resForm,place:+resForm.place,total:+resForm.total}]})
     setResForm({category:'',place:'',total:'',notes:''})
   }
+  
+  const handleSave = () => {
+    const tid = form.id || ('trn_' + Math.random().toString(36).slice(2,8))
+    onSave({...form, id: tid})
+  }
+
   return (
     <div className="admin-section">
       <div className="admin-section__head"><span className="admin-section__title">{isNew?'ახალი ტურნირი':'ტურნირის რედაქტირება'}</span></div>
@@ -479,6 +526,34 @@ function TournamentForm({item,students,onSave,onCancel}) {
           </div>
         </div>
 
+        {/* 👥 Student-Specific Categories */}
+        <hr style={{borderColor:'rgba(212,166,74,0.12)',margin:'1.5rem 0'}} />
+        <p style={{fontSize:'0.75rem',letterSpacing:'0.2em',textTransform:'uppercase',color:'#6b665e',marginBottom:'1rem'}}>👥 მოსწავლის კატეგორიები ტურნირში</p>
+        <div style={{display:'flex',gap:'0.5rem',flexWrap:'wrap',marginBottom:'0.75rem'}}>
+          <select value={selCatStudent} onChange={e=>setSelCatStudent(e.target.value)} style={{background:'rgba(255,255,255,0.04)',border:'1px solid rgba(212,166,74,0.2)',color:'#f5f1e8',padding:'0.5rem',borderRadius:'2px',flex:1}}>
+            <option value="">სტუდენტი</option>
+            {students.map(s=><option key={s.id} value={s.id}>{s.name}</option>)}
+          </select>
+          <input value={studentCatInput} onChange={e=>setStudentCatInput(e.target.value)} placeholder="მაგ. ლათინური N კლასი" style={{background:'rgba(255,255,255,0.04)',border:'1px solid rgba(212,166,74,0.2)',color:'#f5f1e8',padding:'0.5rem',borderRadius:'2px',flex:2}} />
+          <button type="button" className="admin-btn admin-btn--ghost admin-btn--sm" onClick={addStudentCategory}>+ დამატება</button>
+        </div>
+        <div style={{marginBottom:'1rem'}}>
+          {Object.entries(form.studentCategories||{}).map(([sid,cats])=>{
+            const st=students.find(s=>s.id===sid)
+            if(!Array.isArray(cats) || cats.length === 0) return null;
+            return (
+              <div key={sid} style={{display:'flex',flexWrap:'wrap',alignItems:'center',gap:'0.5rem',padding:'0.6rem 0.75rem',background:'rgba(255,255,255,0.02)',border:'1px solid rgba(255,255,255,0.04)',borderRadius:'4px',marginBottom:'0.4rem'}}>
+                <span style={{color:'#d4a64a',fontWeight:600,marginRight:'0.5rem'}}>{st?.name || sid}:</span>
+                {cats.map((c,i)=>(
+                  <span key={i} className="badge badge--gold" style={{cursor:'pointer',fontSize:'0.78rem'}} onClick={()=>remStudentCategory(sid,i)}>
+                    {c} ×
+                  </span>
+                ))}
+              </div>
+            )
+          })}
+        </div>
+
         <hr style={{borderColor:'rgba(212,166,74,0.12)',margin:'1.5rem 0'}} />
         <p style={{fontSize:'0.75rem',letterSpacing:'0.2em',textTransform:'uppercase',color:'#6b665e',marginBottom:'1rem'}}>🏅 რეზულტატები</p>
         <div style={{display:'flex',gap:'0.5rem',flexWrap:'wrap',marginBottom:'0.75rem'}}>
@@ -489,7 +564,7 @@ function TournamentForm({item,students,onSave,onCancel}) {
           <input value={resForm.category} onChange={e=>setResForm(r=>({...r,category:e.target.value}))} placeholder="კატეგორია" style={{background:'rgba(255,255,255,0.04)',border:'1px solid rgba(212,166,74,0.2)',color:'#f5f1e8',padding:'0.5rem',borderRadius:'2px',flex:2}} />
           <input type="number" value={resForm.place} onChange={e=>setResForm(r=>({...r,place:e.target.value}))} placeholder="ადგილი" style={{background:'rgba(255,255,255,0.04)',border:'1px solid rgba(212,166,74,0.2)',color:'#f5f1e8',padding:'0.5rem',borderRadius:'2px',width:'80px'}} />
           <input type="number" value={resForm.total} onChange={e=>setResForm(r=>({...r,total:e.target.value}))} placeholder="სულ" style={{background:'rgba(255,255,255,0.04)',border:'1px solid rgba(212,166,74,0.2)',color:'#f5f1e8',padding:'0.5rem',borderRadius:'2px',width:'80px'}} />
-          <button className="admin-btn admin-btn--ghost admin-btn--sm" onClick={addResult}>+ დამატება</button>
+          <button type="button" className="admin-btn admin-btn--ghost admin-btn--sm" onClick={addResult}>+ დამატება</button>
         </div>
         {Object.entries(form.results||{}).map(([sid,res])=>{
           const st=students.find(s=>s.id===sid)
@@ -503,12 +578,10 @@ function TournamentForm({item,students,onSave,onCancel}) {
         })}
 
         <div style={{display:'flex',gap:'0.75rem',marginTop:'1.5rem'}}>
-          <button className="admin-btn admin-btn--gold" onClick={()=>onSave(form)}>შენახვა</button>
-          <button className="admin-btn admin-btn--ghost" onClick={onCancel}>გაუქმება</button>
+          <button type="button" className="admin-btn admin-btn--gold" onClick={handleSave}>შენახვა</button>
+          <button type="button" className="admin-btn admin-btn--ghost" onClick={onCancel}>გაუქმება</button>
         </div>
       </div>
     </div>
   )
 }
-
-function Modal({modal,onClose,onSave}) { return null }

@@ -166,6 +166,29 @@ export function findStudentByPhone(students, phone) {
   }) || null;
 }
 
+export function findAllStudentsByPhone(students, phone) {
+  const cleaned = phone.replace(/\D/g, '');
+  if (!cleaned || cleaned.length < 6) return [];
+
+  return students.filter(s => {
+    // Check main phone
+    const mainPhone = (s.phone || '').replace(/\D/g, '');
+    if (mainPhone && mainPhone.includes(cleaned)) return true;
+    if (cleaned.length >= 9 && mainPhone.endsWith(cleaned.slice(-9))) return true;
+
+    // Check in data.phone
+    const dataPhone = (s.data?.phone || '').replace(/\D/g, '');
+    if (dataPhone && dataPhone.includes(cleaned)) return true;
+    if (cleaned.length >= 9 && dataPhone.endsWith(cleaned.slice(-9))) return true;
+
+    // Check parent phone
+    const parentPhone = (s.data?.parent_phone || '').replace(/\D/g, '');
+    if (parentPhone && parentPhone.includes(cleaned)) return true;
+
+    return false;
+  });
+}
+
 /**
  * Get student display name
  */
