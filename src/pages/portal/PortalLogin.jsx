@@ -39,8 +39,14 @@ export default function PortalLogin() {
     <div className="portal-wrap">
       <div className="portal-login">
         <div className="portal-login__card">
-          <span className="portal-login__logo">ST</span>
-          <span className="portal-login__sub">Dance Studio</span>
+          <div className="portal-login__logo-container">
+            <img src="/images/logo-transparent.png" alt="ST Dance Studio" className="portal-login__logo-img" />
+            <div className="portal-login__brand-text" style={{ fontFamily: '"Times New Roman", Times, serif', textTransform: 'uppercase', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <span className="portal-login__brand-name" style={{ color: 'var(--color-gold, #d4a64a)', fontSize: '1.25rem', letterSpacing: '0.12em', fontWeight: 'bold' }}>ST DANCE</span>
+              <div style={{ height: '1px', background: 'var(--color-gold, #d4a64a)', width: '80%', margin: '3px 0' }}></div>
+              <span className="portal-login__brand-sub" style={{ color: '#fff', fontSize: '0.85rem', letterSpacing: '0.3em', textTransform: 'lowercase' }}>studio</span>
+            </div>
+          </div>
           <h1 className="portal-login__title">სტუდენტის პორტალი</h1>
           <p className="portal-login__hint">შეიყვანეთ თქვენი ტელეფონის ნომერი</p>
           <form onSubmit={handleSubmit}>

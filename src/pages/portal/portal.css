@@ -4,8 +4,8 @@
 /* Login */
 .portal-login { min-height:100vh; display:flex; align-items:center; justify-content:center; background:radial-gradient(ellipse at 50% 0%,rgba(212,166,74,0.1) 0%,#080808 65%); padding:2rem; }
 .portal-login__card { width:100%; max-width:400px; background:rgba(26,24,22,0.95); border:1px solid rgba(212,166,74,0.22); border-radius:4px; padding:2.5rem 2rem; box-shadow:0 40px 100px rgba(0,0,0,0.8); animation:pFadeUp 0.5s cubic-bezier(0.22,1,0.36,1) backwards; }
-.portal-login__logo { font-family:'Cormorant Garamond',serif; font-size:3rem; font-weight:600; color:#d4a64a; text-align:center; display:block; }
-.portal-login__sub  { font-size:0.6rem; letter-spacing:0.4em; text-transform:uppercase; color:#6b665e; text-align:center; margin-top:0.25rem; margin-bottom:2rem; }
+.portal-login__logo-container { display:flex; align-items:center; justify-content:center; gap:0.75rem; margin-bottom:2.25rem; }
+.portal-login__logo-img { max-height:50px; width:auto; }
 .portal-login__title { font-family:'Cormorant Garamond',serif; font-size:1.6rem; text-align:center; margin-bottom:0.3rem; }
 .portal-login__hint  { font-size:0.8rem; color:#6b665e; text-align:center; margin-bottom:1.75rem; }
 .portal-field { margin-bottom:1rem; }
