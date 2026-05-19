@@ -504,7 +504,7 @@ export default function StudentDashboard() {
       </div>
 
       <div className="portal-body">
-        <nav className="portal-sidenav" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: 'auto' }}>
+        <nav className="portal-sidenav">
           <div>
             {TABS_LIST.map(tItem => (
               <button key={tItem.id} className={`portal-nav-item${tab===tItem.id?' active':''}`} onClick={() => setTab(tItem.id)} style={{ display: 'flex', alignItems: 'center' }}>
