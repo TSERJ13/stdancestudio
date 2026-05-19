@@ -7,15 +7,49 @@ export default function AdminLogin() {
   const [email, setEmail] = useState('')
   const [pw, setPw] = useState('')
   const [err, setErr] = useState('')
+  const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    if (adminLogin(email, pw)) {
+    setLoading(true)
+    setErr('')
+
+    // 1. Fallback / direct admin check
+    if (email === 'admin@stdance.ge' && pw === 'Kjkszpj13') {
+      adminLogin(email, pw)
       navigate('/admin/dashboard')
-    } else {
-      setErr('პაროლი არასწორია')
+      return
+    }
+
+    // 2. Real-time direct Supabase Auth integration with ClassCore.ge backend!
+    try {
+      const res = await fetch('https://xnhzqalncwcefnhoqzxe.supabase.co/auth/v1/token?grant_type=password', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhuaHpxYWxuY3djZWZuaG9xenhlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE3ODU5MjcsImV4cCI6MjA4NzM2MTkyN30.tapUV9nQIYkJif0lS9OQNFSBgIoZLuJhexcmtfj3h48'
+        },
+        body: JSON.stringify({ email, password: pw })
+      })
+
+      if (!res.ok) {
+        throw new Error('ელ-ფოსტა ან პაროლი არასწორია')
+      }
+
+      const tokenData = await res.json()
+      if (tokenData?.access_token) {
+        // Authenticated successfully! Persist session
+        localStorage.setItem('std_admin_auth', 'true')
+        navigate('/admin/dashboard')
+      } else {
+        throw new Error('ავტორიზაცია ვერ მოხერხდა')
+      }
+    } catch (err) {
+      setErr(err.message || 'იმეილი ან პაროლი არასწორია')
       setPw('')
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -28,7 +62,7 @@ export default function AdminLogin() {
             <span className="admin-login__logo-sub">Dance Studio</span>
           </div>
           <h1 className="admin-login__title">ადმინ პანელი</h1>
-          <p className="admin-login__desc">შეიყვანეთ ელ-ფოსტა და პაროლი</p>
+          <p className="admin-login__desc">შეიყვანეთ ClassCore-ის ელ-ფოსტა და პაროლი</p>
 
           <form onSubmit={handleSubmit}>
             {err && <div className="admin-error">⚠ {err}</div>}
@@ -39,7 +73,7 @@ export default function AdminLogin() {
                 type="email"
                 value={email}
                 onChange={e => { setEmail(e.target.value); setErr('') }}
-                placeholder="admin@stdance.ge"
+                placeholder="email@example.com"
                 autoFocus
                 required
               />
@@ -56,8 +90,8 @@ export default function AdminLogin() {
               />
             </div>
 
-            <button type="submit" className="admin-btn admin-btn--gold" style={{ marginTop: '0.5rem' }}>
-              შესვლა →
+            <button type="submit" className="admin-btn admin-btn--gold" style={{ marginTop: '0.5rem' }} disabled={loading}>
+              {loading ? 'მოწმდება...' : 'შესვლა →'}
             </button>
           </form>
         </div>
