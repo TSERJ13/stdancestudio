@@ -32,7 +32,7 @@ const TRANSLATIONS = {
     title: 'სტუდენტის პორტალი',
     logout: 'გასვლა',
     loading: 'იტვირთება...',
-    error_load: 'მონაცემების ჩატვირთვა ვერ მოხერხდა',
+    error_load: 'მონაცების ჩატვირთვა ვერ მოხერხდა',
     retry: 'თავიდან ცდა',
     years: 'წლის',
     parent: 'მშობელი',
@@ -131,6 +131,77 @@ const TRANSLATIONS = {
     days: ['Вс','Пн','Вт','Ср','Чт','Пт','Сб']
   }
 };
+
+const FloatingLangSwitcher = ({ lang, setLang }) => {
+  const [expanded, setExpanded] = useState(false)
+
+  const handleLangClick = (newLang) => {
+    if (!expanded) {
+      setExpanded(true)
+    } else {
+      setLang(newLang)
+      localStorage.setItem('std_portal_lang', newLang)
+      setExpanded(false)
+    }
+  }
+
+  return (
+    <div className={`floating-lang ${expanded ? 'is-expanded' : 'is-collapsed'}`} style={{
+      display: 'flex',
+      position: 'fixed',
+      bottom: '2.5rem',
+      right: '2.5rem',
+      zIndex: 9999,
+      background: '#000',
+      border: '1px solid var(--color-gold, #d4a64a)',
+      borderRadius: '40px',
+      padding: '0.3rem',
+      gap: (!expanded && window.innerWidth <= 768) ? '0' : '0.2rem',
+      boxShadow: '0 12px 40px rgba(0,0,0,0.6)',
+      transition: 'all 0.4s cubic-bezier(0.22, 1, 0.36, 1)',
+      alignItems: 'center'
+    }}>
+      <button 
+        onClick={() => handleLangClick('ka')} 
+        style={{
+          background: lang === 'ka' ? 'var(--color-gold, #d4a64a)' : 'transparent',
+          border: '0',
+          color: lang === 'ka' ? '#000' : '#fff',
+          fontFamily: 'inherit',
+          fontSize: '0.8rem',
+          fontWeight: '600',
+          letterSpacing: '0.05em',
+          padding: '0.55rem 1.1rem',
+          borderRadius: '30px',
+          cursor: 'pointer',
+          transition: 'all 0.3s ease',
+          display: (!expanded && window.innerWidth <= 768 && lang !== 'ka') ? 'none' : 'block'
+        }}
+      >
+        GE
+      </button>
+      <button 
+        onClick={() => handleLangClick('ru')} 
+        style={{
+          background: lang === 'ru' ? 'var(--color-gold, #d4a64a)' : 'transparent',
+          border: '0',
+          color: lang === 'ru' ? '#000' : '#fff',
+          fontFamily: 'inherit',
+          fontSize: '0.8rem',
+          fontWeight: '600',
+          letterSpacing: '0.05em',
+          padding: '0.55rem 1.1rem',
+          borderRadius: '30px',
+          cursor: 'pointer',
+          transition: 'all 0.3s ease',
+          display: (!expanded && window.innerWidth <= 768 && lang !== 'ru') ? 'none' : 'block'
+        }}
+      >
+        RU
+      </button>
+    </div>
+  )
+}
 
 export default function StudentDashboard() {
   const navigate = useNavigate()
@@ -270,44 +341,52 @@ export default function StudentDashboard() {
     <div className="portal-wrap portal-shell">
       {/* Editorial Luxury Header in Site's Style */}
       <header className="portal-header">
-        <div className="portal-header__brand-container">
-          <Link to="/" className="portal-header__brand">
-            <img src="/images/logo-transparent.png" alt="ST Dance Studio" className="portal-header__logo-img" />
-            <div className="portal-header__brand-text" style={{ fontFamily: '"Times New Roman", Times, serif', textTransform: 'uppercase' }}>
-              <span className="portal-header__brand-name" style={{ color: 'var(--color-gold)', fontSize: '1.05rem', letterSpacing: '0.08em' }}>ST DANCE</span>
-              <div style={{ height: '1px', background: 'var(--color-gold)', margin: '1px 0' }}></div>
-              <span className="portal-header__brand-sub" style={{ color: '#fff', fontSize: '0.7rem', letterSpacing: '0.25em', textTransform: 'lowercase' }}>studio</span>
+        <div className="portal-header__brand-container" style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
+          <Link to="/" className="header__brand" style={{ display: 'flex', alignItems: 'center', gap: '0.875rem', textDecoration: 'none' }}>
+            <img src="/images/logo-transparent.png" alt="ST Dance Studio" className="header__logo" style={{ width: '48px', height: '48px', objectFit: 'contain', filter: 'drop-shadow(0 0 12px var(--color-gold-glow))' }} />
+            <div className="header__brand-text" style={{ display: 'flex', flexDirection: 'column', lineHeight: 1, fontFamily: '"Times New Roman", Times, serif', textTransform: 'uppercase' }}>
+              <span className="header__brand-name" style={{ color: 'var(--color-gold)', fontSize: '1.25rem', letterSpacing: '0.04em', fontWeight: 600 }}>ST DANCE</span>
+              <div style={{ height: '1px', background: 'var(--color-gold)', margin: '2px 0' }}></div>
+              <span className="header__brand-sub" style={{ color: '#fff', fontSize: '0.8rem', letterSpacing: '0.08em', textTransform: 'lowercase' }}>studio</span>
             </div>
           </Link>
-          <div className="portal-header__divider"></div>
-          <span className="portal-header__name">{t('title')}</span>
+          <div className="portal-header__divider" style={{ width: '1px', height: '24px', background: 'rgba(212,166,74,0.2)', margin: '0 1rem' }}></div>
+          <span className="portal-header__name" style={{ fontSize: '1.25rem', fontFamily: 'var(--font-display, "Cormorant Garamond", serif)', fontStyle: 'italic', color: 'var(--color-gold, #d4a64a)', letterSpacing: '0.05em' }}>{t('title')}</span>
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          {/* Language Switcher Dropdown */}
-          <div className="lang-switcher" style={{ marginRight: '0.5rem' }}>
-            <select 
-              value={lang} 
-              onChange={(e) => {
-                setLang(e.target.value);
-                localStorage.setItem('std_portal_lang', e.target.value);
-              }}
+          {/* Header language buttons matching site's header structure */}
+          <div className="lang-switcher desktop-only" style={{ display: 'flex', gap: '0.5rem', marginRight: '1rem' }}>
+            <button 
+              onClick={() => { setLang('ka'); localStorage.setItem('std_portal_lang', 'ka') }}
               style={{
-                background: 'rgba(255,255,255,0.06)',
-                border: '1px solid rgba(212,166,74,0.3)',
-                color: '#f5f1e8',
-                fontSize: '0.78rem',
-                padding: '0.35rem 0.6rem',
-                borderRadius: '3px',
+                background: 'transparent',
+                border: '0',
+                color: lang === 'ka' ? 'var(--color-gold, #d4a64a)' : '#a8a39a',
+                fontSize: '0.75rem',
+                fontWeight: '600',
+                padding: '0.25rem 0.5rem',
                 cursor: 'pointer',
-                outline: 'none',
-                fontFamily: 'inherit',
-                letterSpacing: '0.05em'
+                transition: 'all 0.3s ease'
               }}
             >
-              <option value="ka" style={{ background: '#1a1816', color: '#f5f1e8' }}>GEO (ქარ)</option>
-              <option value="ru" style={{ background: '#1a1816', color: '#f5f1e8' }}>RUS (рус)</option>
-            </select>
+              GE
+            </button>
+            <button 
+              onClick={() => { setLang('ru'); localStorage.setItem('std_portal_lang', 'ru') }}
+              style={{
+                background: 'transparent',
+                border: '0',
+                color: lang === 'ru' ? 'var(--color-gold, #d4a64a)' : '#a8a39a',
+                fontSize: '0.75rem',
+                fontWeight: '600',
+                padding: '0.25rem 0.5rem',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease'
+              }}
+            >
+              RU
+            </button>
           </div>
 
           <button className="portal-header__logout desktop-only" onClick={handleLogout}>{t('logout')} ↗</button>
@@ -328,29 +407,52 @@ export default function StudentDashboard() {
       {/* Mobile Drawer Menu in Site's Luxury Style */}
       <div className={`portal-mobile-menu ${mobileOpen ? 'is-open' : ''}`}>
         <nav className="portal-mobile-menu__nav">
-          <div style={{ padding: '0 2rem 1.5rem', borderBottom: '1px solid rgba(255,255,255,0.05)', marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div style={{ padding: '0 2rem 1.5rem', borderBottom: '1px solid rgba(255,255,255,0.05)', marginBottom: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
             <span style={{ fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.15em', color: '#6b665e' }}>Language / ენა</span>
-            <select 
-              value={lang} 
-              onChange={(e) => {
-                setLang(e.target.value);
-                localStorage.setItem('std_portal_lang', e.target.value);
-              }}
-              style={{
-                background: 'rgba(255,255,255,0.06)',
-                border: '1px solid rgba(212,166,74,0.3)',
-                color: '#f5f1e8',
-                fontSize: '0.8rem',
-                padding: '0.4rem 0.75rem',
-                borderRadius: '3px',
-                cursor: 'pointer',
-                outline: 'none',
-                fontFamily: 'inherit'
-              }}
-            >
-              <option value="ka" style={{ background: '#1a1816', color: '#f5f1e8' }}>ქართული (GEO)</option>
-              <option value="ru" style={{ background: '#1a1816', color: '#f5f1e8' }}>Русский (RUS)</option>
-            </select>
+            <div style={{ display: 'flex', gap: '0.75rem' }}>
+              <button 
+                onClick={() => {
+                  setLang('ka');
+                  localStorage.setItem('std_portal_lang', 'ka');
+                }}
+                style={{
+                  background: lang === 'ka' ? 'var(--color-gold, #d4a64a)' : 'transparent',
+                  border: '1px solid var(--color-gold, #d4a64a)',
+                  color: lang === 'ka' ? '#000' : '#fff',
+                  fontFamily: 'inherit',
+                  fontSize: '0.85rem',
+                  fontWeight: '600',
+                  padding: '0.5rem 1.2rem',
+                  borderRadius: '30px',
+                  cursor: 'pointer',
+                  flex: 1,
+                  transition: 'all 0.3s ease'
+                }}
+              >
+                GE
+              </button>
+              <button 
+                onClick={() => {
+                  setLang('ru');
+                  localStorage.setItem('std_portal_lang', 'ru');
+                }}
+                style={{
+                  background: lang === 'ru' ? 'var(--color-gold, #d4a64a)' : 'transparent',
+                  border: '1px solid var(--color-gold, #d4a64a)',
+                  color: lang === 'ru' ? '#000' : '#fff',
+                  fontFamily: 'inherit',
+                  fontSize: '0.85rem',
+                  fontWeight: '600',
+                  padding: '0.5rem 1.2rem',
+                  borderRadius: '30px',
+                  cursor: 'pointer',
+                  flex: 1,
+                  transition: 'all 0.3s ease'
+                }}
+              >
+                RU
+              </button>
+            </div>
           </div>
           {TABS_LIST.map((tItem, i) => (
             <button
@@ -630,7 +732,7 @@ export default function StudentDashboard() {
                           : r.place === 2 
                             ? (lang === 'ru' ? '🥈 II место' : '🥈 II ადგილი') 
                             : r.place === 3 
-                              ? (lang === 'ru' ? '🥉 III место' : '🥉 III ადგილი') 
+                              ? (lang === 'ru' ? '🥉 III место' : '🥉 III ადгиლი') 
                               : null;
                         return (
                           <div key={`${tItem.id}-${i}`} className="trn-history-item">
@@ -668,6 +770,7 @@ export default function StudentDashboard() {
           )}
         </main>
       </div>
+      <FloatingLangSwitcher lang={lang} setLang={setLang} />
     </div>
   )
 }

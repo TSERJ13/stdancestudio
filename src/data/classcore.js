@@ -221,8 +221,8 @@ export function getStudentAttendance(attendance, studentId) {
  * Get groups a student belongs to
  */
 export function getStudentGroups(groups, student) {
-  const enrolledIds = student.data?.enrolled_group_ids || [];
-  if (enrolledIds.length === 0) return groups; // show all if no enrollment data
+  const enrolledIds = student.data?.enrolled_group_ids;
+  if (!Array.isArray(enrolledIds)) return [];
   return groups.filter(g => enrolledIds.includes(g.id || g.data?.id));
 }
 
