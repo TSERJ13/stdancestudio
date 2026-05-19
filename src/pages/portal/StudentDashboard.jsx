@@ -355,7 +355,7 @@ export default function StudentDashboard() {
             </div>
           </Link>
           <div className="portal-header__divider" style={{ width: '1px', height: '24px', background: 'rgba(212,166,74,0.2)', margin: '0 1rem' }}></div>
-          <span className="portal-header__name" style={{ fontSize: '1.25rem', fontFamily: 'var(--font-display, "Cormorant Garamond", serif)', fontStyle: 'italic', color: 'var(--color-gold, #d4a64a)', letterSpacing: '0.05em' }}>{t('title')}</span>
+          <span className="portal-header__name" style={{ fontSize: '0.95rem', fontFamily: 'var(--font-display, "Cormorant Garamond", serif)', fontStyle: 'italic', color: 'var(--color-gold, #d4a64a)', letterSpacing: '0.05em' }}>{t('title')}</span>
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
