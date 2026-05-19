@@ -130,6 +130,57 @@ const TRANSLATIONS = {
       trn: 'Турниры'
     },
     days: ['Вс','Пн','Вт','Ср','Чт','Пт','Сб']
+  },
+  en: {
+    title: 'Student Portal',
+    logout: 'Logout',
+    loading: 'Loading...',
+    error_load: 'Failed to load data',
+    retry: 'Retry',
+    years: 'years',
+    parent: 'Parent',
+    sub_warning: 'Subscription ending soon',
+    info_title: 'Personal Info',
+    name: 'Name',
+    phone: 'Phone',
+    birth_date: 'Birth Date',
+    groups: 'Group(s)',
+    status: 'Status',
+    active: '✅ Active',
+    inactive: '❌ Inactive',
+    sub_title: 'Subscription',
+    remaining: 'Remaining lessons',
+    total: 'Total',
+    lessons: 'lessons',
+    used: 'Used',
+    expires: 'Expires',
+    remaining_only: 'Only',
+    update_warning: 'lessons left. Please renew your subscription.',
+    no_sub: 'No subscription info',
+    my_groups: 'My Groups',
+    teacher: 'Teacher',
+    no_group: 'No group assigned',
+    no_schedule: 'No schedule specified',
+    attendance: 'Attendance',
+    present: 'Present',
+    absent: 'Absent',
+    total_records: 'Total {n} records',
+    no_attendance: 'No attendance records',
+    upcoming_tournaments: 'Upcoming Tournaments',
+    tournament_results: 'Tournament Results',
+    my_categories: 'My Categories:',
+    show_map: 'View on map',
+    place: 'place',
+    total_participants: 'Total {n} participants',
+    no_tournaments: 'No tournaments or results yet',
+    tabs: {
+      info: 'My Info',
+      sub: 'Subscription',
+      schedule: 'Schedule',
+      att: 'Attendance',
+      trn: 'Tournaments'
+    },
+    days: ['Sun','Mon','Tue','Wed','Thu','Fri','Sat']
   }
 };
 
@@ -157,7 +208,7 @@ const FloatingLangSwitcher = ({ lang, setLang }) => {
       border: '1px solid var(--color-gold, #d4a64a)',
       borderRadius: '40px',
       padding: '0.3rem',
-      gap: (!expanded && window.innerWidth <= 768) ? '0' : '0.2rem',
+      gap: '0.2rem',
       boxShadow: '0 12px 40px rgba(0,0,0,0.6)',
       transition: 'all 0.4s cubic-bezier(0.22, 1, 0.36, 1)',
       alignItems: 'center'
@@ -176,7 +227,7 @@ const FloatingLangSwitcher = ({ lang, setLang }) => {
           borderRadius: '30px',
           cursor: 'pointer',
           transition: 'all 0.3s ease',
-          display: (!expanded && window.innerWidth <= 768 && lang !== 'ka') ? 'none' : 'block'
+          display: (!expanded && lang !== 'ka') ? 'none' : 'block'
         }}
       >
         GE
@@ -195,10 +246,29 @@ const FloatingLangSwitcher = ({ lang, setLang }) => {
           borderRadius: '30px',
           cursor: 'pointer',
           transition: 'all 0.3s ease',
-          display: (!expanded && window.innerWidth <= 768 && lang !== 'ru') ? 'none' : 'block'
+          display: (!expanded && lang !== 'ru') ? 'none' : 'block'
         }}
       >
         RU
+      </button>
+      <button 
+        onClick={() => handleLangClick('en')} 
+        style={{
+          background: lang === 'en' ? 'var(--color-gold, #d4a64a)' : 'transparent',
+          border: '0',
+          color: lang === 'en' ? '#000' : '#fff',
+          fontFamily: 'inherit',
+          fontSize: '0.8rem',
+          fontWeight: '600',
+          letterSpacing: '0.05em',
+          padding: '0.55rem 1.1rem',
+          borderRadius: '30px',
+          cursor: 'pointer',
+          transition: 'all 0.3s ease',
+          display: (!expanded && lang !== 'en') ? 'none' : 'block'
+        }}
+      >
+        EN
       </button>
     </div>
   )
@@ -245,9 +315,8 @@ export default function StudentDashboard() {
           setSiblings(sibs)
         }
 
-        // Auto-detect student language from ClassCore preference
-        const studentData = found.data || {}
-        const ccLang = studentData.language === 'ru' || studentData.lang === 'ru' || studentData.locale === 'ru' || studentData.nationality === 'ru' ? 'ru' : 'ka';
+        // Auto-detect student language from preference
+        const ccLang = found.language || found.data?.language || 'ka';
         const storedLang = localStorage.getItem('std_portal_lang');
         if (storedLang) {
           setLang(storedLang);
@@ -491,177 +560,134 @@ export default function StudentDashboard() {
             <div>
               <div className="portal-hero__name">{name}</div>
               <div style={{ fontSize: '0.8rem', color: '#a8a39a' }}>
-                {age && <span>{age} {t('years')}</span>}
-                {parentName && <span> · {t('parent')}: {parentName}</span>}
+                {age && <span>{age} {t('years')} · </span>}
+                {t('parent')}: {parentName || '—'}
               </div>
               <div className="portal-hero__meta">
-                {studentData.dance_class && (
-                  <span className="portal-badge portal-badge--gold">{studentData.dance_class}</span>
-                )}
-                {groups.map((g, i) => (
-                  <span key={i} className="portal-badge portal-badge--blue">
-                    {g.data?.name || g.name || 'Group'}
-                  </span>
-                ))}
-                {sub && sub.total && (sub.total - sub.used) <= 2 && (
-                  <span className="portal-badge portal-badge--red">⚠ {t('sub_warning')}</span>
-                )}
+                <span className="portal-badge portal-badge--gold">{studentData.dance_class || 'N Class'}</span>
+                <span className={`portal-badge ${student.status === 'active' || !student.status ? 'portal-badge--green' : 'portal-badge--red'}`}>
+                  {student.status === 'active' || !student.status ? t('active') : t('inactive')}
+                </span>
               </div>
             </div>
           </div>
 
           {tab === 'info' && (
-            <div className="portal-card">
+            <div className="portal-card animate-fade-in">
               <div className="portal-card__head">
                 <span className="portal-nav-icon" style={{ display: 'inline-flex', alignItems: 'center', color: 'var(--color-gold)', marginRight: '0.5rem' }}>{SVG_ICONS.info}</span>
                 <span className="portal-card__title">{t('info_title')}</span>
               </div>
               <div className="portal-card__body">
-                <table style={{ width: '100%', fontSize: '0.88rem', borderCollapse: 'collapse' }}>
-                  <tbody>
-                    {[
-                      [t('name'), name],
-                      [t('phone'), student.phone || studentData.phone || '—'],
-                      [t('birth_date'), birthDate || '—'],
-                      [t('parent'), parentName || '—'],
-                      [t('groups'), groups.map(g => g.data?.name || g.name || '').filter(Boolean).join(', ') || '—'],
-                      [t('status'), student.status === 'active' || !student.status ? t('active') : t('inactive')],
-                    ].filter(([,v]) => v && v !== '—').map(([k,v]) => (
-                      <tr key={k} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
-                        <td style={{ padding: '0.7rem 0', color: '#6b665e', width: '40%' }}>{k}</td>
-                        <td style={{ padding: '0.7rem 0', fontWeight: 500 }}>{v}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                <div className="portal-info-grid">
+                  <div className="portal-info-item"><span className="label">{t('name')}</span><span className="val">{name}</span></div>
+                  <div className="portal-info-item"><span className="label">{t('phone')}</span><span className="val">{student.phone || '—'}</span></div>
+                  <div className="portal-info-item"><span className="label">{t('birth_date')}</span><span className="val">{birthDate || '—'}</span></div>
+                  <div className="portal-info-item"><span className="label">{t('parent')}</span><span className="val">{parentName || '—'}</span></div>
+                  <div className="portal-info-item"><span className="label">{t('groups')}</span><span className="val">{groups.map(g=>g.name).join(', ') || '—'}</span></div>
+                  <div className="portal-info-item"><span className="label">{t('status')}</span><span className="val">{student.status === 'active' || !student.status ? t('active') : t('inactive')}</span></div>
+                </div>
               </div>
             </div>
           )}
 
           {tab === 'sub' && (
-            <div className="portal-card">
+            <div className="portal-card animate-fade-in">
               <div className="portal-card__head">
                 <span className="portal-nav-icon" style={{ display: 'inline-flex', alignItems: 'center', color: 'var(--color-gold)', marginRight: '0.5rem' }}>{SVG_ICONS.sub}</span>
                 <span className="portal-card__title">{t('sub_title')}</span>
               </div>
               <div className="portal-card__body">
                 {sub ? (
-                  <>
-                    <div className="sub-row">
-                      <div>
-                        <div className="sub-big">{Math.max(0, (sub.total || 0) - (sub.used || 0))}</div>
-                        <div className="sub-label">{t('remaining')}</div>
-                      </div>
-                      <div style={{ textAlign: 'right' }}>
-                        <div style={{ fontSize: '0.85rem', color: '#a8a39a' }}>{sub.plan}</div>
-                        <div style={{ fontSize: '0.78rem', color: '#6b665e', marginTop: '0.25rem' }}>{t('total')}: {sub.total || '—'} {t('lessons')}</div>
-                      </div>
-                    </div>
-                    {sub.total > 0 && (
-                      <div className="sub-bar">
-                        <div className="sub-bar__fill" style={{
-                          width: `${Math.max(0, ((sub.total - sub.used) / sub.total) * 100)}%`,
-                          background: (sub.total - sub.used) <= 2 ? '#ff7070' : (sub.total - sub.used) <= 4 ? '#d4a64a' : '#50c878'
-                        }} />
+                  <div>
+                    {sub.total - sub.used <= 2 && (
+                      <div className="portal-alert portal-alert--warning" style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.5rem' }}>
+                        <span>⚠</span>
+                        <div><strong>{t('sub_warning')}!</strong> {t('remaining_only')} {sub.total - sub.used} {t('update_warning')}</div>
                       </div>
                     )}
-                    <div className="sub-details">
-                      <span>{t('used')}: <strong>{sub.used || 0}</strong></span>
-                      {sub.expires && <span>{t('expires')}: <strong style={{ color: sub.expires < today ? '#ff7070' : '#d4a64a' }}>{sub.expires.slice(0,10)}</strong></span>}
-                    </div>
-                    {sub.total && (sub.total - sub.used) <= 2 && (
-                      <div style={{ marginTop: '1rem', padding: '0.75rem', background: 'rgba(220,50,50,0.1)', border: '1px solid rgba(220,50,50,0.25)', borderRadius: '4px', fontSize: '0.83rem', color: '#ff7070' }}>
-                        ⚠ {t('remaining_only')} <strong>{Math.max(0, sub.total - sub.used)}</strong> {t('update_warning')}
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '2rem' }}>
+                      <div style={{ flex: 1, minWidth: '200px' }}>
+                        <div style={{ fontSize: '0.8rem', color: '#6b665e', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '0.5rem' }}>{t('remaining')}</div>
+                        <div style={{ fontSize: '4.5rem', fontWeight: 300, color: 'var(--color-gold)', lineHeight: 1 }}>{sub.total - sub.used}</div>
+                        <div style={{ fontSize: '0.85rem', color: '#a8a39a', marginTop: '0.5rem' }}>{t('total')} {sub.total} {t('lessons')}</div>
                       </div>
-                    )}
-                  </>
+                      <div style={{ flex: 1.5, minWidth: '240px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                        <div className="portal-progress">
+                          <div className="portal-progress__fill" style={{ width: `${Math.min(100, (sub.used / sub.total) * 100)}%` }} />
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.82rem', marginTop: '0.5rem', color: '#a8a39a' }}>
+                          <span>{t('used')}: {sub.used}</span>
+                          <span>{t('expires')}: {sub.expires || '—'}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 ) : (
-                  <p style={{ color: '#6b665e' }}>{t('no_sub')}</p>
+                  <p style={{ color: '#6b665e', fontSize: '0.85rem' }}>{t('no_sub')}</p>
                 )}
               </div>
             </div>
           )}
 
           {tab === 'schedule' && (
-            <div className="portal-card">
+            <div className="portal-card animate-fade-in">
               <div className="portal-card__head">
                 <span className="portal-nav-icon" style={{ display: 'inline-flex', alignItems: 'center', color: 'var(--color-gold)', marginRight: '0.5rem' }}>{SVG_ICONS.schedule}</span>
                 <span className="portal-card__title">{t('my_groups')}</span>
               </div>
-              <div className="portal-card__body">
-                {groups.length > 0 ? (
-                  <div className="schedule-grid">
-                    {groups.map((g, i) => {
-                      const gData = g.data || {}
-                      const schedule = gData.schedule || g.schedule || []
-                      return (
-                        <div key={i} className="schedule-item" style={{ flexDirection: 'column', alignItems: 'flex-start', gap: '0.5rem' }}>
-                          <span className="schedule-day" style={{ fontWeight: 600, fontSize: '0.95rem' }}>
-                            {gData.name || g.name || 'Group'}
-                          </span>
-                          {gData.teacher_name && (
-                            <span style={{ fontSize: '0.78rem', color: '#a8a39a' }}>👨‍🏫 {gData.teacher_name}</span>
-                          )}
-                          {Array.isArray(schedule) && schedule.length > 0 ? (
-                            schedule.map((slot, j) => (
-                              <span key={j} className="schedule-time">
-                                {slot.day || ''} {slot.start || slot.time || ''}{slot.end ? `–${slot.end}` : ''}
-                              </span>
-                            ))
-                          ) : (
-                            <span className="schedule-time" style={{ color: '#6b665e' }}>{t('no_schedule')}</span>
-                          )}
-                        </div>
-                      )
-                    })}
+              <div className="portal-card__body" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                {groups.length === 0 && <p style={{ color: '#6b665e', fontSize: '0.85rem' }}>{t('no_group')}</p>}
+                {groups.map(g => (
+                  <div key={g.id} className="portal-group-item">
+                    <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '0.5rem', marginBottom: '0.75rem' }}>
+                      <span style={{ fontSize: '1.05rem', fontWeight: 600, color: 'var(--color-gold)' }}>{g.name}</span>
+                      <span style={{ fontSize: '0.8rem', color: '#a8a39a' }}>{t('teacher')}: {g.teacher_name || '—'}</span>
+                    </div>
+                    {g.schedule && g.schedule.length > 0 ? (
+                      <div className="portal-schedule-list" style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+                        {g.schedule.map((s, idx) => (
+                          <div key={idx} style={{ display: 'flex', fontSize: '0.88rem', color: '#f5f1e8' }}>
+                            <span style={{ width: '100px', fontWeight: 600, color: '#d4a64a' }}>{t('days')[s.day]}:</span>
+                            <span>{s.time}</span>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p style={{ color: '#6b665e', fontSize: '0.8rem', margin: 0 }}>{t('no_schedule')}</p>
+                    )}
                   </div>
-                ) : (
-                  <p style={{ color: '#6b665e' }}>{t('no_group')}</p>
-                )}
+                ))}
               </div>
             </div>
           )}
 
           {tab === 'att' && (
-            <div className="portal-card">
+            <div className="portal-card animate-fade-in">
               <div className="portal-card__head">
                 <span className="portal-nav-icon" style={{ display: 'inline-flex', alignItems: 'center', color: 'var(--color-gold)', marginRight: '0.5rem' }}>{SVG_ICONS.att}</span>
                 <span className="portal-card__title">{t('attendance')}</span>
               </div>
               <div className="portal-card__body">
-                <div className="att-stats">
-                  <div className="att-stat">
-                    <div className="att-stat__num" style={{ color: '#50c878' }}>{present}</div>
-                    <div className="att-stat__label">{t('present')}</div>
-                  </div>
-                  <div className="att-stat">
-                    <div className="att-stat__num" style={{ color: '#ff7070' }}>{absent}</div>
-                    <div className="att-stat__label">{t('absent')}</div>
-                  </div>
-                  <div className="att-stat">
-                    <div className="att-stat__num" style={{ color: pct >= 80 ? '#50c878' : pct >= 60 ? '#d4a64a' : '#ff7070' }}>{pct}%</div>
-                    <div className="att-stat__label">{t('attendance')}</div>
-                  </div>
-                </div>
-
-                {recentAtt.length > 0 ? (
-                  <>
-                    <div style={{ marginBottom: '0.5rem', fontSize: '0.72rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#6b665e' }}>
-                      {t('total_records').replace('{n}', att.length)}
+                {att.length > 0 ? (
+                  <div>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '2rem', marginBottom: '2rem', background: 'rgba(255,255,255,0.01)', padding: '1rem 1.5rem', borderRadius: '4px', border: '1px solid rgba(255,255,255,0.02)' }}>
+                      <div><div style={{ fontSize: '0.75rem', color: '#6b665e', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{t('present')}</div><div style={{ fontSize: '1.75rem', color: '#50c878', fontWeight: 600 }}>{present}</div></div>
+                      <div><div style={{ fontSize: '0.75rem', color: '#6b665e', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{t('absent')}</div><div style={{ fontSize: '1.75rem', color: '#ff7070', fontWeight: 600 }}>{absent}</div></div>
+                      <div><div style={{ fontSize: '0.75rem', color: '#6b665e', textTransform: 'uppercase', letterSpacing: '0.05em' }}>%</div><div style={{ fontSize: '1.75rem', color: 'var(--color-gold)', fontWeight: 600 }}>{pct}%</div></div>
                     </div>
-                    <div className="att-grid">
-                      {t('days').map(d => (
-                        <div key={d} style={{ textAlign: 'center', fontSize: '0.6rem', color: '#6b665e', paddingBottom: '3px' }}>{d}</div>
-                      ))}
-                      {recentAtt.map((r, i) => (
-                        <div key={i} className={`att-cell att-cell--${r.present ? 'present' : 'absent'}`} title={r.date}>
-                          {r.present ? '✓' : '✗'}
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))', gap: '0.75rem' }}>
+                      {att.map((r, i) => (
+                        <div key={i} className={`portal-att-pill ${r.present ? 'present' : 'absent'}`} style={{ display: 'flex', justifyContent: 'space-between', padding: '0.5rem 0.75rem', borderRadius: '4px', fontSize: '0.8rem', border: '1px solid ' + (r.present ? 'rgba(80,200,120,0.15)' : 'rgba(220,50,50,0.15)') }}>
+                          <span>{r.date}</span>
+                          <span style={{ fontWeight: 700 }}>{r.present ? '✓' : '×'}</span>
                         </div>
                       ))}
                     </div>
-                  </>
+                    <div style={{ fontSize: '0.75rem', color: '#6b665e', marginTop: '1.5rem', textAlign: 'right' }}>{t('total_records').replace('{n}', att.length)}</div>
+                  </div>
                 ) : (
-                  <p style={{ color: '#6b665e', marginTop: '1rem' }}>{t('no_attendance')}</p>
+                  <p style={{ color: '#6b665e', fontSize: '0.85rem' }}>{t('no_attendance')}</p>
                 )}
               </div>
             </div>
@@ -670,14 +696,18 @@ export default function StudentDashboard() {
           {tab === 'trn' && (
             <>
               {upcomingTrn.length > 0 && (
-                <div className="portal-card animate-fade-in">
+                <div className="portal-card animate-fade-in" style={{ marginBottom: '1.5rem' }}>
                   <div className="portal-card__head">
                     <span className="portal-nav-icon" style={{ display: 'inline-flex', alignItems: 'center', color: 'var(--color-gold)', marginRight: '0.5rem' }}>{SVG_ICONS.trn}</span>
                     <span className="portal-card__title">{t('upcoming_tournaments')}</span>
                   </div>
-                  <div className="portal-card__body">
+                  <div className="portal-card__body" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                     {upcomingTrn.map(tItem => {
-                      const myCats = tItem.studentCategories?.[student.id] || []
+                      const schedObj = tItem.studentSchedules?.[student.id] || {};
+                      const myCats = schedObj.categories || tItem.studentCategories?.[student.id] || [];
+                      const startTime = schedObj.startTime || '';
+                      const readyTime = schedObj.readyTime || '';
+                      const hall = schedObj.hall || '';
                       return (
                         <div key={tItem.id} className="trn-upcoming">
                           <div className="trn-upcoming__name" style={{ fontFamily: 'var(--font-display)', fontSize: '1.25rem', fontWeight: 600 }}>{tItem.name}</div>
@@ -687,6 +717,37 @@ export default function StudentDashboard() {
                             <span>📍 {tItem.address}</span>
                             {tItem.fee && <span style={{ color: 'var(--color-gold)' }}>💰 {tItem.fee}{tItem.currency || '₾'}</span>}
                           </div>
+
+                          {(startTime || readyTime || hall) && (
+                            <div style={{
+                              background: 'rgba(212,166,74,0.06)',
+                              border: '1px solid rgba(212,166,74,0.15)',
+                              borderRadius: '4px',
+                              padding: '0.75rem 1rem',
+                              margin: '0.75rem 0',
+                              display: 'flex',
+                              flexWrap: 'wrap',
+                              gap: '1rem',
+                              fontSize: '0.85rem'
+                            }}>
+                              {startTime && (
+                                <span>
+                                  🕒 <strong>{lang === 'ru' ? 'Время начала:' : lang === 'en' ? 'Start Time:' : 'დაწყების დრო:'}</strong> {startTime}
+                                </span>
+                              )}
+                              {readyTime && (
+                                <span>
+                                  🎒 <strong>{lang === 'ru' ? 'Быть готовым к:' : lang === 'en' ? 'Arrival time:' : 'მზადყოფნის დრო:'}</strong> {readyTime}
+                                </span>
+                              )}
+                              {hall && (
+                                <span>
+                                  🏛 <strong>{lang === 'ru' ? 'Зал / Паркет:' : lang === 'en' ? 'Hall / Floor:' : 'დარბაზი / პარკეტი:'}</strong> {hall}
+                                </span>
+                              )}
+                            </div>
+                          )}
+
                           {myCats.length > 0 && (
                             <div className="trn-upcoming__cats">
                               <span style={{ fontSize: '0.72rem', color: '#6b665e', marginRight: '0.5rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>{t('my_categories')}</span>
@@ -715,11 +776,11 @@ export default function StudentDashboard() {
                       const results = tItem.results?.[student.id] || []
                       return results.map((r, i) => {
                         const medal = r.place === 1 
-                          ? (lang === 'ru' ? '🥇 I место' : '🥇 I ადგილი') 
+                          ? (lang === 'ru' ? '🥇 I место' : lang === 'en' ? '🥇 1st Place' : '🥇 I ადგილი') 
                           : r.place === 2 
-                            ? (lang === 'ru' ? '🥈 II место' : '🥈 II ადგილი') 
+                            ? (lang === 'ru' ? '🥈 II место' : lang === 'en' ? '🥈 2nd Place' : '🥈 II ადგილი') 
                             : r.place === 3 
-                              ? (lang === 'ru' ? '🥉 III место' : '🥉 III ადгили') 
+                              ? (lang === 'ru' ? '🥉 III место' : lang === 'en' ? '🥉 3rd Place' : '🥉 III ადგილი') 
                               : null;
                         return (
                           <div key={`${tItem.id}-${i}`} className="trn-history-item">

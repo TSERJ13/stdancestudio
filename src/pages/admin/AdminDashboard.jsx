@@ -57,6 +57,7 @@ export default function AdminDashboard() {
               birthYear: s.data?.birth_date ? new Date(s.data.birth_date).getFullYear() : 2010,
               classification: s.data?.dance_class || 'N კლასი',
               photo: s.data?.photo_url || '',
+              language: s.language || s.data?.language || 'ka',
               active: s.status === 'active' || !s.status
             }
           });
@@ -240,7 +241,7 @@ function StudentsTab({students,onEdit,onDelete}) {
       <div className="admin-section">
         <table className="admin-table">
           <thead><tr>
-            <th>სტუდენტი</th><th>ტელეფონი</th><th>კლასი</th><th>ამონ.</th><th>მზაობა</th><th></th>
+            <th>სტუდენტი</th><th>ტელეფონი</th><th>კლასი</th><th>ამონ.</th><th>მზაობა</th><th>ენა</th><th></th>
           </tr></thead>
           <tbody>
             {students.map(s=>{
@@ -266,6 +267,9 @@ function StudentsTab({students,onEdit,onDelete}) {
                     </div>
                   </td>
                   <td>
+                    <span className="badge badge--muted" style={{textTransform:'uppercase'}}>{s.language || 'ka'}</span>
+                  </td>
+                  <td>
                     <div className="row-actions">
                       <button className="admin-btn admin-btn--ghost admin-btn--sm" onClick={()=>onEdit(s.id)}>✏</button>
                       <button className="admin-btn admin-btn--danger admin-btn--sm" onClick={()=>onDelete(s.id)}>🗑</button>
@@ -287,6 +291,7 @@ function StudentForm({item,onSave,onCancel}) {
     id:item?.id||'',name:item?.name||'',phone:item?.phone||'',photo:item?.photo||'',
     birthYear:item?.birthYear||2010,gender:item?.gender||'female',
     classification:item?.classification||'N კლასი',
+    language:item?.language||'ka',
     categories:item?.categories||[],joinDate:item?.joinDate||new Date().toISOString().slice(0,10),active:item?.active!==false
   })
   const [sub,setSub]=useState(item?.id?getSubscription(item.id)||{total:12,used:0,plan:'ჯგუფური'}:{total:12,used:0,plan:'ჯგუფური'})
@@ -322,13 +327,20 @@ function StudentForm({item,onSave,onCancel}) {
             </select>
           </div>
           <div className="admin-field"><label>სტუდიაში შემოსვლის თარიღი</label><input type="date" value={form.joinDate} onChange={e=>set('joinDate',e.target.value)} /></div>
+          <div className="admin-field"><label>პორტალის ენა / Язык портала</label>
+            <select value={form.language} onChange={e=>set('language',e.target.value)}>
+              <option value="ka">ქართული (GE)</option>
+              <option value="ru">Русский (RU)</option>
+              <option value="en">English (EN)</option>
+            </select>
+          </div>
         </div>
         <div className="admin-field"><label>ფოტოს URL</label><input value={form.photo} onChange={e=>set('photo',e.target.value)} placeholder="https://..." /></div>
 
         <div className="admin-field">
           <label>კატეგორიები</label>
           <div style={{display:'flex',gap:'0.5rem',marginBottom:'0.5rem'}}>
-            <input value={catInput} onChange={e=>setCatInput(e.target.value)} onKeyDown={e=>e.key==='Enter'&&addCat()} placeholder="ლათინური — ჩა-ჩა" />
+            <input value={catInput} onChange={e=>setCatInput(e.target.value)} placeholder="ლათინური — ჩა-ჩა" />
             <button type="button" className="admin-btn admin-btn--ghost admin-btn--sm" onClick={addCat}>+</button>
           </div>
           <div style={{display:'flex',flexWrap:'wrap',gap:'0.4rem'}}>
@@ -414,36 +426,66 @@ function TournamentForm({item,students,onSave,onCancel}) {
     venue:item?.venue||'',address:item?.address||'',mapUrl:item?.mapUrl||'',
     categories:item?.categories||[],fee:item?.fee||0,currency:item?.currency||'₾',
     assignedStudents:item?.assignedStudents||[],notes:item?.notes||'',
-    studentCategories:item?.studentCategories||{},results:item?.results||{}
+    studentCategories:item?.studentCategories||{},
+    studentSchedules:item?.studentSchedules||{},
+    results:item?.results||{}
   })
   const [catInput,setCatInput]=useState('')
   const set=(k,v)=>setForm(f=>({...f,[k]:v}))
   const addCat=()=>{if(catInput.trim()){set('categories',[...form.categories,catInput.trim()]);setCatInput('')}}
   const remCat=(i)=>set('categories',form.categories.filter((_,j)=>j!==i))
   
-  // Sibling student category state
-  const [selCatStudent, setSelCatStudent] = useState('')
-  const [studentCatInput, setStudentCatInput] = useState('')
-  const addStudentCategory = () => {
-    if (!selCatStudent || !studentCatInput.trim()) return
-    const sc = form.studentCategories || {}
-    const arr = sc[selCatStudent] || []
-    if (!arr.includes(studentCatInput.trim())) {
-      set('studentCategories', {
-        ...sc,
-        [selCatStudent]: [...arr, studentCatInput.trim()]
-      })
+  // Student schedule state
+  const [selSchedStudent, setSelSchedStudent] = useState('')
+  const [schedStartTime, setSchedStartTime] = useState('')
+  const [schedReadyTime, setSchedReadyTime] = useState('')
+  const [schedHall, setSchedHall] = useState('')
+  const [schedCats, setSchedCats] = useState([])
+  const [schedCatInput, setSchedCatInput] = useState('')
+
+  const addSchedCat = () => {
+    if (schedCatInput.trim()) {
+      setSchedCats([...schedCats, schedCatInput.trim()])
+      setSchedCatInput('')
     }
-    setStudentCatInput('')
   }
-  const remStudentCategory = (sid, idx) => {
-    const sc = form.studentCategories || {}
-    const arr = sc[sid] || []
-    const updated = arr.filter((_, i) => i !== idx)
-    set('studentCategories', {
-      ...sc,
-      [sid]: updated
+  const remSchedCat = (idx) => {
+    setSchedCats(schedCats.filter((_, i) => i !== idx))
+  }
+
+  const handleSaveSched = () => {
+    if (!selSchedStudent) return
+    const ss = form.studentSchedules || {}
+    set('studentSchedules', {
+      ...ss,
+      [selSchedStudent]: {
+        categories: schedCats,
+        startTime: schedStartTime.trim(),
+        readyTime: schedReadyTime.trim(),
+        hall: schedHall.trim()
+      }
     })
+    // Reset inputs
+    setSelSchedStudent('')
+    setSchedStartTime('')
+    setSchedReadyTime('')
+    setSchedHall('')
+    setSchedCats([])
+  }
+
+  const handleEditSched = (sid, data) => {
+    setSelSchedStudent(sid)
+    setSchedStartTime(data.startTime || '')
+    setSchedReadyTime(data.readyTime || '')
+    setSchedHall(data.hall || '')
+    setSchedCats(data.categories || [])
+  }
+
+  const handleRemoveSched = (sid) => {
+    const ss = form.studentSchedules || {}
+    const updated = { ...ss }
+    delete updated[sid]
+    set('studentSchedules', updated)
   }
 
   const [resStudent,setResStudent]=useState('')
@@ -526,29 +568,63 @@ function TournamentForm({item,students,onSave,onCancel}) {
           </div>
         </div>
 
-        {/* 👥 Student-Specific Categories */}
+        {/* 👥 Student-Specific Schedules & Categories */}
         <hr style={{borderColor:'rgba(212,166,74,0.12)',margin:'1.5rem 0'}} />
-        <p style={{fontSize:'0.75rem',letterSpacing:'0.2em',textTransform:'uppercase',color:'#6b665e',marginBottom:'1rem'}}>👥 მოსწავლის კატეგორიები ტურნირში</p>
-        <div style={{display:'flex',gap:'0.5rem',flexWrap:'wrap',marginBottom:'0.75rem'}}>
-          <select value={selCatStudent} onChange={e=>setSelCatStudent(e.target.value)} style={{background:'rgba(255,255,255,0.04)',border:'1px solid rgba(212,166,74,0.2)',color:'#f5f1e8',padding:'0.5rem',borderRadius:'2px',flex:1}}>
-            <option value="">სტუდენტი</option>
-            {students.map(s=><option key={s.id} value={s.id}>{s.name}</option>)}
-          </select>
-          <input value={studentCatInput} onChange={e=>setStudentCatInput(e.target.value)} placeholder="მაგ. ლათინური N კლასი" style={{background:'rgba(255,255,255,0.04)',border:'1px solid rgba(212,166,74,0.2)',color:'#f5f1e8',padding:'0.5rem',borderRadius:'2px',flex:2}} />
-          <button type="button" className="admin-btn admin-btn--ghost admin-btn--sm" onClick={addStudentCategory}>+ დამატება</button>
+        <p style={{fontSize:'0.75rem',letterSpacing:'0.2em',textTransform:'uppercase',color:'#6b665e',marginBottom:'1rem'}}>👥 მოსწავლის ინდივიდუალური განრიგი და კატეგორიები</p>
+        <div style={{ background: 'rgba(255,255,255,0.02)', padding: '1rem', border: '1px solid rgba(212,166,74,0.1)', borderRadius: '4px', marginBottom: '1rem' }}>
+          <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '0.75rem' }}>
+            <select value={selSchedStudent} onChange={e=>setSelSchedStudent(e.target.value)} style={{background:'rgba(255,255,255,0.04)',border:'1px solid rgba(212,166,74,0.2)',color:'#f5f1e8',padding:'0.5rem',borderRadius:'2px',flex:1,minWidth:'150px'}}>
+              <option value="">მოსწავლე</option>
+              {students.map(s=><option key={s.id} value={s.id}>{s.name}</option>)}
+            </select>
+            <input value={schedStartTime} onChange={e=>setSchedStartTime(e.target.value)} placeholder="დაწყების დრო (მაგ. 10:00)" style={{background:'rgba(255,255,255,0.04)',border:'1px solid rgba(212,166,74,0.2)',color:'#f5f1e8',padding:'0.5rem',borderRadius:'2px',flex:1,minWidth:'120px'}} />
+            <input value={schedReadyTime} onChange={e=>setSchedReadyTime(e.target.value)} placeholder="მზადყოფნა (მაგ. 09:15)" style={{background:'rgba(255,255,255,0.04)',border:'1px solid rgba(212,166,74,0.2)',color:'#f5f1e8',padding:'0.5rem',borderRadius:'2px',flex:1,minWidth:'120px'}} />
+            <input value={schedHall} onChange={e=>setSchedHall(e.target.value)} placeholder="დარბაზი (მაგ. დარბაზი A)" style={{background:'rgba(255,255,255,0.04)',border:'1px solid rgba(212,166,74,0.2)',color:'#f5f1e8',padding:'0.5rem',borderRadius:'2px',flex:1,minWidth:'120px'}} />
+          </div>
+          
+          <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem' }}>
+            <input value={schedCatInput} onChange={e=>setSchedCatInput(e.target.value)} onKeyDown={e=>e.key==='Enter'&&(e.preventDefault(),addSchedCat())} placeholder="კატეგორიის დამატება (მაგ. ლათინური N კლასი)" style={{background:'rgba(255,255,255,0.04)',border:'1px solid rgba(212,166,74,0.2)',color:'#f5f1e8',padding:'0.5rem',borderRadius:'2px',flex:1}} />
+            <button type="button" className="admin-btn admin-btn--ghost admin-btn--sm" onClick={addSchedCat}>+</button>
+          </div>
+
+          {schedCats.length > 0 && (
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', marginBottom: '1rem' }}>
+              {schedCats.map((c, i) => (
+                <span key={i} className="badge badge--gold" style={{ cursor: 'pointer' }} onClick={() => remSchedCat(i)}>{c} ×</span>
+              ))}
+            </div>
+          )}
+
+          <button type="button" className="admin-btn admin-btn--gold admin-btn--sm" onClick={handleSaveSched} disabled={!selSchedStudent}>
+            განრიგის შენახვა მოსწავლისთვის
+          </button>
         </div>
-        <div style={{marginBottom:'1rem'}}>
-          {Object.entries(form.studentCategories||{}).map(([sid,cats])=>{
-            const st=students.find(s=>s.id===sid)
-            if(!Array.isArray(cats) || cats.length === 0) return null;
+
+        {/* Assigned list */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '1.5rem' }}>
+          {Object.entries(form.studentSchedules || {}).map(([sid, data]) => {
+            const st = students.find(s => s.id === sid)
             return (
-              <div key={sid} style={{display:'flex',flexWrap:'wrap',alignItems:'center',gap:'0.5rem',padding:'0.6rem 0.75rem',background:'rgba(255,255,255,0.02)',border:'1px solid rgba(255,255,255,0.04)',borderRadius:'4px',marginBottom:'0.4rem'}}>
-                <span style={{color:'#d4a64a',fontWeight:600,marginRight:'0.5rem'}}>{st?.name || sid}:</span>
-                {cats.map((c,i)=>(
-                  <span key={i} className="badge badge--gold" style={{cursor:'pointer',fontSize:'0.78rem'}} onClick={()=>remStudentCategory(sid,i)}>
-                    {c} ×
-                  </span>
-                ))}
+              <div key={sid} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.75rem 1rem', background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.04)', borderRadius: '4px' }}>
+                <div style={{ flex: 1 }}>
+                  <div style={{ color: '#d4a64a', fontWeight: 600, fontSize: '0.9rem', marginBottom: '0.25rem' }}>👤 {st?.name || sid}</div>
+                  <div style={{ fontSize: '0.8rem', color: '#a8a39a', display: 'flex', flexWrap: 'wrap', gap: '0.75rem' }}>
+                    {data.startTime && <span>🕒 დაწყება: {data.startTime}</span>}
+                    {data.readyTime && <span>🎒 მზადყოფნა: {data.readyTime}</span>}
+                    {data.hall && <span>🏛 დარბაზი: {data.hall}</span>}
+                  </div>
+                  {Array.isArray(data.categories) && data.categories.length > 0 && (
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.3rem', marginTop: '0.4rem' }}>
+                      {data.categories.map((c, idx) => (
+                        <span key={idx} className="badge badge--muted" style={{ fontSize: '0.72rem' }}>{c}</span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                  <button type="button" className="admin-btn admin-btn--ghost admin-btn--sm" onClick={() => handleEditSched(sid, data)}>✏</button>
+                  <button type="button" className="admin-btn admin-btn--danger admin-btn--sm" onClick={() => handleRemoveSched(sid)}>🗑</button>
+                </div>
               </div>
             )
           })}
