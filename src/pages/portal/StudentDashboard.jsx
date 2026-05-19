@@ -395,38 +395,6 @@ export default function StudentDashboard() {
             </div>
           )}
 
-          <div className="lang-switcher desktop-only" style={{ display: 'flex', gap: '0.5rem', marginRight: '1rem' }}>
-            <button 
-              onClick={() => { setLang('ka'); localStorage.setItem('std_portal_lang', 'ka') }}
-              style={{
-                background: 'transparent',
-                border: '0',
-                color: lang === 'ka' ? 'var(--color-gold, #d4a64a)' : '#a8a39a',
-                fontSize: '0.75rem',
-                fontWeight: '600',
-                padding: '0.25rem 0.5rem',
-                cursor: 'pointer',
-                transition: 'all 0.3s ease'
-              }}
-            >
-              GE
-            </button>
-            <button 
-              onClick={() => { setLang('ru'); localStorage.setItem('std_portal_lang', 'ru') }}
-              style={{
-                background: 'transparent',
-                border: '0',
-                color: lang === 'ru' ? 'var(--color-gold, #d4a64a)' : '#a8a39a',
-                fontSize: '0.75rem',
-                fontWeight: '600',
-                padding: '0.25rem 0.5rem',
-                cursor: 'pointer',
-                transition: 'all 0.3s ease'
-              }}
-            >
-              RU
-            </button>
-          </div>
 
           <button className="portal-header__logout desktop-only" onClick={handleLogout}>{t('logout')} ↗</button>
         </div>
