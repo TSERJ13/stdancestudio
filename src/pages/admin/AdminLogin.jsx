@@ -57,13 +57,8 @@ export default function AdminLogin() {
     <div className="admin-wrap">
       <div className="admin-login">
         <div className="admin-login__card">
-          <div className="portal-login__logo-container" style={{ marginBottom: '1.75rem' }}>
+          <div className="portal-login__logo-container">
             <img src="/images/logo-transparent.png" alt="ST Dance Studio" className="portal-login__logo-img" />
-            <div className="portal-login__brand-text" style={{ fontFamily: '"Times New Roman", Times, serif', textTransform: 'uppercase', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-              <span className="portal-login__brand-name" style={{ color: 'var(--color-gold, #d4a64a)', fontSize: '1.25rem', letterSpacing: '0.12em', fontWeight: 'bold' }}>ST DANCE</span>
-              <div style={{ height: '1px', background: 'var(--color-gold, #d4a64a)', width: '80%', margin: '3px 0' }}></div>
-              <span className="portal-login__brand-sub" style={{ color: '#fff', fontSize: '0.85rem', letterSpacing: '0.3em', textTransform: 'lowercase' }}>studio</span>
-            </div>
           </div>
           <h1 className="admin-login__title">ადმინ პანელი</h1>
           <p className="admin-login__desc">შეიყვანეთ ClassCore-ის ელ-ფოსტა და პაროლი</p>
