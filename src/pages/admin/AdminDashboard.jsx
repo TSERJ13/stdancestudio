@@ -451,6 +451,7 @@ function TournamentForm({item,students,onSave,onCancel}) {
   const [activeStudentId, setActiveStudentId] = useState('')
   const [newCatName, setNewCatName] = useState('')
   const [newCatTime, setNewCatTime] = useState('')
+  const [newCatDate, setNewCatDate] = useState('')
 
   const handleAddStudent = (sid) => {
     if (!sid) return
@@ -508,9 +509,11 @@ function TournamentForm({item,students,onSave,onCancel}) {
     const studentObj = currentData[sid] || { readyTime: '', fee: '', categories: [] }
     const currentCats = studentObj.categories || []
 
+    const dateVal = newCatDate || form.date
+
     const updatedStudentObj = {
       ...studentObj,
-      categories: [...currentCats, { name: newCatName.trim(), time: newCatTime.trim() }]
+      categories: [...currentCats, { name: newCatName.trim(), date: dateVal, time: newCatTime.trim() }]
     }
 
     setForm(f => ({
@@ -524,6 +527,7 @@ function TournamentForm({item,students,onSave,onCancel}) {
     // Clear inputs
     setNewCatName('')
     setNewCatTime('')
+    setNewCatDate('')
   }
 
   const handleRemoveCategoryFromStudent = (sid, idx) => {
@@ -679,7 +683,11 @@ function TournamentForm({item,students,onSave,onCancel}) {
                           ) : (
                             stData.categories.map((cat, idx) => (
                               <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(255,255,255,0.02)', padding: '0.45rem 0.75rem', borderRadius: '4px', border: '1px solid rgba(255,255,255,0.03)' }}>
-                                <span style={{ fontSize: '0.85rem', color: '#fff' }}>{cat.name} {cat.time && <span style={{ color: 'var(--color-gold)', marginLeft: '0.5rem' }}>🕒 {cat.time}</span>}</span>
+                                <span style={{ fontSize: '0.85rem', color: '#fff' }}>
+                                  <strong>{cat.name}</strong> 
+                                  {cat.date && <span style={{ color: '#a8a39a', marginLeft: '0.5rem', fontSize: '0.8rem' }}>📅 {cat.date}</span>}
+                                  {cat.time && <span style={{ color: 'var(--color-gold)', marginLeft: '0.5rem', fontSize: '0.8rem' }}>🕒 {cat.time}</span>}
+                                </span>
                                 <button type="button" onClick={() => handleRemoveCategoryFromStudent(sid, idx)} style={{ background: 'none', border: 'none', color: '#ff7070', fontSize: '1rem', cursor: 'pointer', padding: '0 0.25rem' }}>×</button>
                               </div>
                             ))
@@ -689,11 +697,23 @@ function TournamentForm({item,students,onSave,onCancel}) {
                         {/* Add category box */}
                         <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'flex-end', flexWrap: 'wrap' }}>
                           <div className="admin-field" style={{ flex: 2, minWidth: '150px', marginBottom: 0 }}>
-                            <input value={newCatName} onChange={e => setNewCatName(e.target.value)} placeholder="კატეგორიის სახელი (მაგ. ლათინური N კლასი)" style={{ padding: '0.45rem', fontSize: '0.8rem' }} />
+                            <label style={{ fontSize: '0.72rem', color: '#a8a39a', marginBottom: '0.2rem', display: 'block' }}>კატეგორია</label>
+                            <input value={newCatName} onChange={e => setNewCatName(e.target.value)} placeholder="ლათინური N კლასი" style={{ padding: '0.45rem', fontSize: '0.8rem' }} />
                           </div>
+                          
+                          <div className="admin-field" style={{ flex: 1.2, minWidth: '120px', marginBottom: 0 }}>
+                            <label style={{ fontSize: '0.72rem', color: '#a8a39a', marginBottom: '0.2rem', display: 'block' }}>თარიღი</label>
+                            <select value={newCatDate || form.date} onChange={e => setNewCatDate(e.target.value)} style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(212,166,74,0.2)', color: '#f5f1e8', padding: '0.45rem', borderRadius: '2px', fontSize: '0.8rem', width: '100%' }}>
+                              <option value={form.date}>{form.date}</option>
+                              {form.endDate && form.endDate !== form.date && <option value={form.endDate}>{form.endDate}</option>}
+                            </select>
+                          </div>
+
                           <div className="admin-field" style={{ flex: 1, minWidth: '100px', marginBottom: 0 }}>
-                            <input value={newCatTime} onChange={e => setNewCatTime(e.target.value)} placeholder="დრო (მაგ. 10:00)" style={{ padding: '0.45rem', fontSize: '0.8rem' }} />
+                            <label style={{ fontSize: '0.72rem', color: '#a8a39a', marginBottom: '0.2rem', display: 'block' }}>დრო</label>
+                            <input value={newCatTime} onChange={e => setNewCatTime(e.target.value)} placeholder="10:00" style={{ padding: '0.45rem', fontSize: '0.8rem' }} />
                           </div>
+                          
                           <button type="button" className="admin-btn admin-btn--ghost admin-btn--sm" onClick={() => handleAddCategoryToStudent(sid)} style={{ padding: '0.5rem 0.85rem' }}>დამატება</button>
                         </div>
                       </div>

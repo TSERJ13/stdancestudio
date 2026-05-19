@@ -778,7 +778,10 @@ export default function StudentDashboard() {
                                 {myCats.map((cat, idx) => (
                                   <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(255,255,255,0.02)', padding: '0.5rem 0.75rem', borderRadius: '4px', border: '1px solid rgba(255,255,255,0.03)' }}>
                                     <span style={{ fontSize: '0.88rem', color: '#f5f1e8', fontWeight: 500 }}>{cat.name}</span>
-                                    {cat.time && <span className="portal-badge portal-badge--gold" style={{ fontSize: '0.78rem' }}>🕒 {cat.time}</span>}
+                                    <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'center' }}>
+                                      {cat.date && <span className="portal-badge" style={{ fontSize: '0.78rem', background: 'rgba(255,255,255,0.05)', color: '#a8a39a', border: '1px solid rgba(255,255,255,0.08)' }}>📅 {cat.date}</span>}
+                                      {cat.time && <span className="portal-badge portal-badge--gold" style={{ fontSize: '0.78rem' }}>🕒 {cat.time}</span>}
+                                    </div>
                                   </div>
                                 ))}
                               </div>
