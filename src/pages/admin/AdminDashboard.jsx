@@ -798,6 +798,18 @@ function TournamentForm({item,students,onSave,onCancel}) {
               const stData = form.assignedStudentsData?.[sid] || { categories: [] }
               const isExpanded = activeStudentId === sid
 
+              // Collect already used categories in this tournament for autocomplete
+              const existingCategories = []
+              if (form.assignedStudentsData) {
+                Object.values(form.assignedStudentsData).forEach(stDataVal => {
+                  ;(stDataVal.categories || []).forEach(catVal => {
+                    if (catVal.name && !existingCategories.includes(catVal.name)) {
+                      existingCategories.push(catVal.name)
+                    }
+                  })
+                })
+              }
+
               // Calculate total fee for this student in admin
               let totalStudentFeeText = '';
               if (stData.categories?.length > 0) {
@@ -1018,6 +1030,61 @@ function TournamentForm({item,students,onSave,onCancel}) {
                         <div className="admin-field" style={{ marginBottom: 0, width: '100%' }}>
                           <label style={{ fontSize: '0.7rem', color: '#a8a39a', marginBottom: '0.15rem', display: 'block' }}>კატეგორიის სახელი</label>
                           <input value={newCatName} onChange={e => setNewCatName(e.target.value)} placeholder="შეიყვანეთ კატეგორიის სახელი (მაგ. ლათინური N კლასი)..." style={{ padding: '0.5rem', fontSize: '0.83rem', width: '100%' }} />
+                          {existingCategories.length > 0 && (
+                            <div style={{ marginTop: '0.4rem', display: 'flex', gap: '0.35rem', flexWrap: 'wrap', alignItems: 'center' }}>
+                              <span style={{ fontSize: '0.68rem', color: '#a8a39a', userSelect: 'none' }}>⚡ სწრაფი არჩევა:</span>
+                              {existingCategories.map((cName, cIdx) => (
+                                <button
+                                  key={cIdx}
+                                  type="button"
+                                  onClick={() => {
+                                    setNewCatName(cName)
+                                    // Search for this category to auto-fill times, venue, and fee
+                                    let found = null
+                                    Object.values(form.assignedStudentsData || {}).forEach(stDataVal => {
+                                      const match = (stDataVal.categories || []).find(c => c.name === cName)
+                                      if (match) found = match
+                                    })
+                                    if (found) {
+                                      if (found.readyTime) setNewCatReadyTime(found.readyTime)
+                                      if (found.time) setNewCatTime(found.time)
+                                      if (found.date) setNewCatDate(found.date)
+                                      if (found.venue) setNewCatVenue(found.venue)
+                                      if (found.fee) {
+                                        const amt = found.fee.toString().replace(/[^\d.]/g, '')
+                                        setNewCatFeeAmount(amt)
+                                        const cleanText = found.fee.toString().toLowerCase()
+                                        if (cleanText.includes('€')) setNewCatFeeCurrency('€')
+                                        else if (cleanText.includes('$')) setNewCatFeeCurrency('$')
+                                        else setNewCatFeeCurrency('₾')
+                                      }
+                                    }
+                                  }}
+                                  style={{
+                                    background: 'rgba(212,166,74,0.08)',
+                                    border: '1px solid rgba(212,166,74,0.25)',
+                                    color: 'var(--color-gold)',
+                                    fontSize: '0.7rem',
+                                    padding: '0.15rem 0.45rem',
+                                    borderRadius: '4px',
+                                    cursor: 'pointer',
+                                    transition: 'all 0.2s',
+                                    fontWeight: '500'
+                                  }}
+                                  onMouseEnter={e => {
+                                    e.currentTarget.style.background = 'rgba(212,166,74,0.18)'
+                                    e.currentTarget.style.borderColor = 'rgba(212,166,74,0.4)'
+                                  }}
+                                  onMouseLeave={e => {
+                                    e.currentTarget.style.background = 'rgba(212,166,74,0.08)'
+                                    e.currentTarget.style.borderColor = 'rgba(212,166,74,0.25)'
+                                  }}
+                                >
+                                  {cName}
+                                </button>
+                              ))}
+                            </div>
+                          )}
                         </div>
 
                         {/* Row 2: Smaller details aligned below */}
