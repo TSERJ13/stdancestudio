@@ -11,8 +11,20 @@ import {
 } from '../../data/db'
 import './admin.css'
 
+const SVG_ICONS = {
+  news: (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '0.6rem' }}><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Z"/><path d="M18 14h-8M15 18h-5M10 6h8v4h-8V6Z"/></svg>
+  ),
+  students: (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '0.6rem' }}><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+  ),
+  tournaments: (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '0.6rem' }}><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
+  )
+};
+
 const TABS = ['სიახლეები','სტუდენტები','ტურნირები']
-const ICONS = ['📰','👥','🏆']
+const ICONS = ['news','students','tournaments']
 
 export default function AdminDashboard() {
   const navigate = useNavigate()
@@ -97,14 +109,22 @@ export default function AdminDashboard() {
   return (
     <div className="admin-wrap admin-shell">
       <aside className="admin-sidebar">
-        <div className="admin-sidebar__brand">
-          <span className="admin-sidebar__logo">ST</span>
-          <span className="admin-sidebar__label">Admin Panel</span>
+        <div className="admin-sidebar__brand" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem', padding: '1.75rem 1rem', borderBottom: '1px solid rgba(212,166,74,0.12)', marginBottom: '1rem' }}>
+          <img src="/images/logo-transparent.png" alt="ST Dance Studio" style={{ maxHeight: '55px', width: 'auto', display: 'block' }} />
+          <div style={{ fontFamily: '"Times New Roman", Times, serif', textTransform: 'uppercase', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
+            <span style={{ color: 'var(--color-gold, #d4a64a)', fontSize: '0.9rem', letterSpacing: '0.12em', fontWeight: 'bold' }}>ST DANCE</span>
+            <div style={{ height: '1px', background: 'var(--color-gold, #d4a64a)', width: '60%', margin: '2px 0' }}></div>
+            <span style={{ color: '#fff', fontSize: '0.6rem', letterSpacing: '0.3em', textTransform: 'lowercase' }}>studio</span>
+            <span style={{ color: '#6b665e', fontSize: '0.45rem', letterSpacing: '0.2em', textTransform: 'uppercase', marginTop: '0.35rem' }}>ADMIN PANEL</span>
+          </div>
         </div>
         <nav className="admin-nav">
           {TABS.map((t,i) => (
             <button key={i} className={`admin-nav__item${tab===i?' active':''}`} onClick={()=>setTab(i)}>
-              <span className="admin-nav__icon">{ICONS[i]}</span>{t}
+              <span className="admin-nav__icon" style={{ display: 'inline-flex', alignItems: 'center' }}>
+                {SVG_ICONS[ICONS[i]]}
+              </span>
+              {t}
             </button>
           ))}
         </nav>
@@ -117,7 +137,10 @@ export default function AdminDashboard() {
 
       <div className="admin-content">
         <div className="admin-topbar">
-          <span className="admin-topbar__title">{ICONS[tab]} {TABS[tab]}</span>
+          <span className="admin-topbar__title" style={{ display: 'inline-flex', alignItems: 'center' }}>
+            {SVG_ICONS[ICONS[tab]]}
+            <span style={{ marginLeft: '0.25rem' }}>{TABS[tab]}</span>
+          </span>
           <div className="admin-topbar__actions">
             <button className="admin-btn admin-btn--gold admin-btn--sm" onClick={()=>setModal({type:['news','student','tournament'][tab]})}>
               + დამატება

@@ -9,14 +9,128 @@ import {
 import { getTournaments } from '../../data/db'
 import './portal.css'
 
-const DAYS_GEO = ['კვი','ორშ','სამ','ოთხ','ხუთ','პარ','შაბ']
-const TABS = [
-  { id: 'info',    icon: '👤', label: 'ჩემი ინფო' },
-  { id: 'sub',     icon: '💳', label: 'აბონემენტი' },
-  { id: 'schedule',icon: '📅', label: 'განრიგი' },
-  { id: 'att',     icon: '📊', label: 'დასწრება' },
-  { id: 'trn',     icon: '🏆', label: 'ტურნირები' },
-]
+const SVG_ICONS = {
+  info: (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '0.5rem', verticalAlign: 'middle' }}><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+  ),
+  sub: (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '0.5rem', verticalAlign: 'middle' }}><rect width="22" height="16" x="2" y="4" rx="2"/><path d="M2 10h20M6 14h2"/></svg>
+  ),
+  schedule: (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '0.5rem', verticalAlign: 'middle' }}><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
+  ),
+  att: (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '0.5rem', verticalAlign: 'middle' }}><line x1="18" x2="18" y1="20" y2="10"/><line x1="12" x2="12" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="14"/></svg>
+  ),
+  trn: (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '0.5rem', verticalAlign: 'middle' }}><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
+  )
+};
+
+const TRANSLATIONS = {
+  ka: {
+    title: 'სტუდენტის პორტალი',
+    logout: 'გასვლა',
+    loading: 'იტვირთება...',
+    error_load: 'მონაცემების ჩატვირთვა ვერ მოხერხდა',
+    retry: 'თავიდან ცდა',
+    years: 'წლის',
+    parent: 'მშობელი',
+    sub_warning: 'აბონემენტი მთავრდება',
+    info_title: 'პირადი ინფორმაცია',
+    name: 'სახელი',
+    phone: 'ტელეფონი',
+    birth_date: 'დაბადების თარიღი',
+    groups: 'ჯგუფ(ებ)ი',
+    status: 'სტატუსი',
+    active: '✅ აქტიური',
+    inactive: '❌ არააქტიური',
+    sub_title: 'აბონემენტი',
+    remaining: 'დარჩენილი გაკვეთილი',
+    total: 'სულ',
+    lessons: 'გაკვეთილი',
+    used: 'გამოყენებული',
+    expires: 'ვადა',
+    remaining_only: 'დარჩა მხოლოდ',
+    update_warning: 'გაკვეთილი. გთხოვთ დროულად განაახლოთ აბონემენტი.',
+    no_sub: 'აბონემენტის ინფო არ არის',
+    my_groups: 'ჩემი ჯგუფები',
+    teacher: 'მასწავლებელი',
+    no_group: 'ჯგუფი მინიჭებული არ არის',
+    no_schedule: 'განრიგი მითითებული არ არის',
+    attendance: 'დასწრება',
+    present: 'დასწრებული',
+    absent: 'გაცდენა',
+    total_records: 'სულ {n} ჩანაწერი',
+    no_attendance: 'დასწრების ჩანაწერები არ არის',
+    upcoming_tournaments: 'მომავალი ტურნირები',
+    tournament_results: 'ტურნირების შედეგები',
+    my_categories: 'ჩემი კატეგორიები:',
+    show_map: 'რუკაზე ნახვა',
+    place: 'ადგილი',
+    total_participants: 'სულ {n} მონაწილე',
+    no_tournaments: 'ტურნირების ინფორმაცია და შედეგები ჯერ არ არის დამატებული',
+    tabs: {
+      info: 'ჩემი ინფო',
+      sub: 'აბონემენტი',
+      schedule: 'განრიგი',
+      att: 'დასწრება',
+      trn: 'ტურნირები'
+    },
+    days: ['კვი','ორშ','სამ','ოთხ','ხუთ','პარ','შაბ']
+  },
+  ru: {
+    title: 'Портал студента',
+    logout: 'Выйти',
+    loading: 'Загрузка...',
+    error_load: 'Не удалось загрузить данные',
+    retry: 'Повторить',
+    years: 'лет',
+    parent: 'Родитель',
+    sub_warning: 'Абонемент заканчивается',
+    info_title: 'Личная информация',
+    name: 'Имя',
+    phone: 'Телефон',
+    birth_date: 'Дата рождения',
+    groups: 'Группа(ы)',
+    status: 'Статус',
+    active: '✅ Активный',
+    inactive: '❌ Неактивный',
+    sub_title: 'Абонемент',
+    remaining: 'Осталось занятий',
+    total: 'Всего',
+    lessons: 'занятий',
+    used: 'Использовано',
+    expires: 'Срок',
+    remaining_only: 'Осталось только',
+    update_warning: 'занятий. Пожалуйста, своевременно обновите абонемент.',
+    no_sub: 'Информация об абонементе отсутствует',
+    my_groups: 'Мои группы',
+    teacher: 'Преподаватель',
+    no_group: 'Группа не назначена',
+    no_schedule: 'Расписание не указано',
+    attendance: 'Посещаемость',
+    present: 'Посетил',
+    absent: 'Пропустил',
+    total_records: 'Всего {n} записей',
+    no_attendance: 'Записи о посещаемости отсутствуют',
+    upcoming_tournaments: 'Предстоящие турниры',
+    tournament_results: 'Результаты турниров',
+    my_categories: 'Мои категории:',
+    show_map: 'Показать на карте',
+    place: 'место',
+    total_participants: 'Всего {n} участников',
+    no_tournaments: 'Информация о турнирах и результатах пока не добавлена',
+    tabs: {
+      info: 'Моя инфо',
+      sub: 'Абонемент',
+      schedule: 'Расписание',
+      att: 'Посещаемость',
+      trn: 'Турниры'
+    },
+    days: ['Вс','Пн','Вт','Ср','Чт','Пт','Сб']
+  }
+};
 
 export default function StudentDashboard() {
   const navigate = useNavigate()
@@ -29,6 +143,7 @@ export default function StudentDashboard() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [mobileOpen, setMobileOpen] = useState(false)
+  const [lang, setLang] = useState('ka')
 
   useEffect(() => {
     const studentId = getPortalSession()
@@ -51,6 +166,17 @@ export default function StudentDashboard() {
         setAtt(getStudentAttendance(data.attendance || [], studentId))
         setGroups(getStudentGroups(data.groups || [], found))
         
+        // Auto-detect student language from ClassCore preference
+        const studentData = found.data || {}
+        const ccLang = studentData.language === 'ru' || studentData.lang === 'ru' || studentData.locale === 'ru' || studentData.nationality === 'ru' ? 'ru' : 'ka';
+        const storedLang = localStorage.getItem('std_portal_lang');
+        if (storedLang) {
+          setLang(storedLang);
+        } else {
+          setLang(ccLang);
+          localStorage.setItem('std_portal_lang', ccLang);
+        }
+
         // Prioritize cloud tournaments if returned by ClassCore API!
         if (Array.isArray(data.tournaments) && data.tournaments.length > 0) {
           setTournaments(data.tournaments)
@@ -61,7 +187,7 @@ export default function StudentDashboard() {
       })
       .catch(err => {
         console.error('Dashboard load error:', err)
-        setError('მონაცემების ჩატვირთვა ვერ მოხერხდა')
+        setError('cc_error')
         setLoading(false)
       })
   }, [navigate])
@@ -78,11 +204,16 @@ export default function StudentDashboard() {
     return () => { document.body.style.overflow = '' }
   }, [mobileOpen])
 
+  const t = (key) => {
+    const dict = TRANSLATIONS[lang] || TRANSLATIONS.ka;
+    return dict[key] || TRANSLATIONS.ka[key] || '';
+  }
+
   if (loading) {
     return (
       <div className="portal-wrap portal-shell">
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', color: '#d4a64a', fontSize: '1.1rem' }}>
-          ⏳ იტვირთება...
+          ⏳ {t('loading')}
         </div>
       </div>
     )
@@ -92,8 +223,8 @@ export default function StudentDashboard() {
     return (
       <div className="portal-wrap portal-shell">
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh', gap: '1rem' }}>
-          <div style={{ color: '#ff7070', fontSize: '1.1rem' }}>⚠ {error}</div>
-          <button className="portal-btn" onClick={() => { clearCache(); window.location.reload() }}>თავიდან ცდა</button>
+          <div style={{ color: '#ff7070', fontSize: '1.1rem' }}>⚠ {t('error_load')}</div>
+          <button className="portal-btn" onClick={() => { clearCache(); window.location.reload() }}>{t('retry')}</button>
         </div>
       </div>
     )
@@ -127,6 +258,14 @@ export default function StudentDashboard() {
     return isPast && isAssigned && t.results?.[student.id]?.length > 0;
   })
 
+  const TABS_LIST = [
+    { id: 'info',    icon: 'info', label: t('tabs').info },
+    { id: 'sub',     icon: 'sub', label: t('tabs').sub },
+    { id: 'schedule',icon: 'schedule', label: t('tabs').schedule },
+    { id: 'att',     icon: 'att', label: t('tabs').att },
+    { id: 'trn',     icon: 'trn', label: t('tabs').trn },
+  ];
+
   return (
     <div className="portal-wrap portal-shell">
       {/* Editorial Luxury Header in Site's Style */}
@@ -141,10 +280,38 @@ export default function StudentDashboard() {
             </div>
           </Link>
           <div className="portal-header__divider"></div>
-          <span className="portal-header__name">სტუდენტის პორტალი</span>
+          <span className="portal-header__name">{t('title')}</span>
         </div>
 
-        <button className="portal-header__logout desktop-only" onClick={handleLogout}>გასვლა ↗</button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          {/* Language Switcher Dropdown */}
+          <div className="lang-switcher" style={{ marginRight: '0.5rem' }}>
+            <select 
+              value={lang} 
+              onChange={(e) => {
+                setLang(e.target.value);
+                localStorage.setItem('std_portal_lang', e.target.value);
+              }}
+              style={{
+                background: 'rgba(255,255,255,0.06)',
+                border: '1px solid rgba(212,166,74,0.3)',
+                color: '#f5f1e8',
+                fontSize: '0.78rem',
+                padding: '0.35rem 0.6rem',
+                borderRadius: '3px',
+                cursor: 'pointer',
+                outline: 'none',
+                fontFamily: 'inherit',
+                letterSpacing: '0.05em'
+              }}
+            >
+              <option value="ka" style={{ background: '#1a1816', color: '#f5f1e8' }}>GEO (ქარ)</option>
+              <option value="ru" style={{ background: '#1a1816', color: '#f5f1e8' }}>RUS (рус)</option>
+            </select>
+          </div>
+
+          <button className="portal-header__logout desktop-only" onClick={handleLogout}>{t('logout')} ↗</button>
+        </div>
 
         {/* Burger Button for Mobile Menu */}
         <button
@@ -161,29 +328,59 @@ export default function StudentDashboard() {
       {/* Mobile Drawer Menu in Site's Luxury Style */}
       <div className={`portal-mobile-menu ${mobileOpen ? 'is-open' : ''}`}>
         <nav className="portal-mobile-menu__nav">
-          {TABS.map((t, i) => (
+          <div style={{ padding: '0 2rem 1.5rem', borderBottom: '1px solid rgba(255,255,255,0.05)', marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span style={{ fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.15em', color: '#6b665e' }}>Language / ენა</span>
+            <select 
+              value={lang} 
+              onChange={(e) => {
+                setLang(e.target.value);
+                localStorage.setItem('std_portal_lang', e.target.value);
+              }}
+              style={{
+                background: 'rgba(255,255,255,0.06)',
+                border: '1px solid rgba(212,166,74,0.3)',
+                color: '#f5f1e8',
+                fontSize: '0.8rem',
+                padding: '0.4rem 0.75rem',
+                borderRadius: '3px',
+                cursor: 'pointer',
+                outline: 'none',
+                fontFamily: 'inherit'
+              }}
+            >
+              <option value="ka" style={{ background: '#1a1816', color: '#f5f1e8' }}>ქართული (GEO)</option>
+              <option value="ru" style={{ background: '#1a1816', color: '#f5f1e8' }}>Русский (RUS)</option>
+            </select>
+          </div>
+          {TABS_LIST.map((tItem, i) => (
             <button
-              key={t.id}
-              className={`portal-mobile-menu__link ${tab === t.id ? 'is-active' : ''}`}
-              onClick={() => { setTab(t.id); setMobileOpen(false) }}
-              style={{ animationDelay: `${0.1 + i * 0.07}s` }}
+              key={tItem.id}
+              className={`portal-mobile-menu__link ${tab === tItem.id ? 'is-active' : ''}`}
+              onClick={() => { setTab(tItem.id); setMobileOpen(false) }}
+              style={{ animationDelay: `${0.1 + i * 0.07}s`, display: 'flex', alignItems: 'center' }}
             >
               <span className="portal-mobile-menu__num">0{i + 1}</span>
-              <span style={{ marginRight: '0.75rem' }}>{t.icon}</span> {t.label}
+              <span style={{ display: 'inline-flex', alignItems: 'center', marginRight: '0.75rem', color: tab === tItem.id ? 'var(--color-gold)' : 'inherit' }}>
+                {SVG_ICONS[tItem.icon]}
+              </span>
+              {tItem.label}
             </button>
           ))}
         </nav>
         <button className="portal-mobile-menu__logout" onClick={handleLogout}>
-          გასვლა ↗
+          {t('logout')} ↗
         </button>
       </div>
 
       <div className="portal-body">
         {/* Sidebar for Desktop */}
         <nav className="portal-sidenav">
-          {TABS.map(t => (
-            <button key={t.id} className={`portal-nav-item${tab===t.id?' active':''}`} onClick={() => setTab(t.id)}>
-              <span className="portal-nav-icon">{t.icon}</span>{t.label}
+          {TABS_LIST.map(tItem => (
+            <button key={tItem.id} className={`portal-nav-item${tab===tItem.id?' active':''}`} onClick={() => setTab(tItem.id)} style={{ display: 'flex', alignItems: 'center' }}>
+              <span className="portal-nav-icon" style={{ display: 'inline-flex', alignItems: 'center' }}>
+                {SVG_ICONS[tItem.icon]}
+              </span>
+              {tItem.label}
             </button>
           ))}
         </nav>
@@ -200,8 +397,8 @@ export default function StudentDashboard() {
             <div>
               <div className="portal-hero__name">{name}</div>
               <div style={{ fontSize: '0.8rem', color: '#a8a39a' }}>
-                {age && <span>{age} წლის</span>}
-                {parentName && <span> · მშობელი: {parentName}</span>}
+                {age && <span>{age} {t('years')}</span>}
+                {parentName && <span> · {t('parent')}: {parentName}</span>}
               </div>
               <div className="portal-hero__meta">
                 {studentData.dance_class && (
@@ -213,7 +410,7 @@ export default function StudentDashboard() {
                   </span>
                 ))}
                 {sub && sub.total && (sub.total - sub.used) <= 2 && (
-                  <span className="portal-badge portal-badge--red">⚠ აბონემენტი მთავრდება</span>
+                  <span className="portal-badge portal-badge--red">⚠ {t('sub_warning')}</span>
                 )}
               </div>
             </div>
@@ -222,17 +419,20 @@ export default function StudentDashboard() {
           {/* Tab: Info */}
           {tab === 'info' && (
             <div className="portal-card">
-              <div className="portal-card__head"><span className="portal-card__icon">👤</span><span className="portal-card__title">პირადი ინფორმაცია</span></div>
+              <div className="portal-card__head">
+                <span className="portal-nav-icon" style={{ display: 'inline-flex', alignItems: 'center', color: 'var(--color-gold)', marginRight: '0.5rem' }}>{SVG_ICONS.info}</span>
+                <span className="portal-card__title">{t('info_title')}</span>
+              </div>
               <div className="portal-card__body">
                 <table style={{ width: '100%', fontSize: '0.88rem', borderCollapse: 'collapse' }}>
                   <tbody>
                     {[
-                      ['სახელი', name],
-                      ['ტელეფონი', student.phone || studentData.phone || '—'],
-                      ['დაბადების თარიღი', birthDate || '—'],
-                      ['მშობელი', parentName || '—'],
-                      ['ჯგუფ(ებ)ი', groups.map(g => g.data?.name || g.name || '').filter(Boolean).join(', ') || '—'],
-                      ['სტატუსი', student.status === 'active' || !student.status ? '✅ აქტიური' : '❌ არააქტიური'],
+                      [t('name'), name],
+                      [t('phone'), student.phone || studentData.phone || '—'],
+                      [t('birth_date'), birthDate || '—'],
+                      [t('parent'), parentName || '—'],
+                      [t('groups'), groups.map(g => g.data?.name || g.name || '').filter(Boolean).join(', ') || '—'],
+                      [t('status'), student.status === 'active' || !student.status ? t('active') : t('inactive')],
                     ].filter(([,v]) => v && v !== '—').map(([k,v]) => (
                       <tr key={k} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
                         <td style={{ padding: '0.7rem 0', color: '#6b665e', width: '40%' }}>{k}</td>
@@ -248,18 +448,21 @@ export default function StudentDashboard() {
           {/* Tab: Subscription */}
           {tab === 'sub' && (
             <div className="portal-card">
-              <div className="portal-card__head"><span className="portal-card__icon">💳</span><span className="portal-card__title">აბონემენტი</span></div>
+              <div className="portal-card__head">
+                <span className="portal-nav-icon" style={{ display: 'inline-flex', alignItems: 'center', color: 'var(--color-gold)', marginRight: '0.5rem' }}>{SVG_ICONS.sub}</span>
+                <span className="portal-card__title">{t('sub_title')}</span>
+              </div>
               <div className="portal-card__body">
                 {sub ? (
                   <>
                     <div className="sub-row">
                       <div>
                         <div className="sub-big">{Math.max(0, (sub.total || 0) - (sub.used || 0))}</div>
-                        <div className="sub-label">დარჩენილი გაკვეთილი</div>
+                        <div className="sub-label">{t('remaining')}</div>
                       </div>
                       <div style={{ textAlign: 'right' }}>
                         <div style={{ fontSize: '0.85rem', color: '#a8a39a' }}>{sub.plan}</div>
-                        <div style={{ fontSize: '0.78rem', color: '#6b665e', marginTop: '0.25rem' }}>სულ: {sub.total || '—'} გაკვეთილი</div>
+                        <div style={{ fontSize: '0.78rem', color: '#6b665e', marginTop: '0.25rem' }}>{t('total')}: {sub.total || '—'} {t('lessons')}</div>
                       </div>
                     </div>
                     {sub.total > 0 && (
@@ -271,17 +474,17 @@ export default function StudentDashboard() {
                       </div>
                     )}
                     <div className="sub-details">
-                      <span>გამოყენებული: <strong>{sub.used || 0}</strong></span>
-                      {sub.expires && <span>ვადა: <strong style={{ color: sub.expires < today ? '#ff7070' : '#d4a64a' }}>{sub.expires.slice(0,10)}</strong></span>}
+                      <span>{t('used')}: <strong>{sub.used || 0}</strong></span>
+                      {sub.expires && <span>{t('expires')}: <strong style={{ color: sub.expires < today ? '#ff7070' : '#d4a64a' }}>{sub.expires.slice(0,10)}</strong></span>}
                     </div>
                     {sub.total && (sub.total - sub.used) <= 2 && (
                       <div style={{ marginTop: '1rem', padding: '0.75rem', background: 'rgba(220,50,50,0.1)', border: '1px solid rgba(220,50,50,0.25)', borderRadius: '4px', fontSize: '0.83rem', color: '#ff7070' }}>
-                        ⚠ დარჩა მხოლოდ <strong>{Math.max(0, sub.total - sub.used)}</strong> გაკვეთილი. გთხოვთ დროულად განაახლოთ აბონემენტი.
+                        ⚠ {t('remaining_only')} <strong>{Math.max(0, sub.total - sub.used)}</strong> {t('update_warning')}
                       </div>
                     )}
                   </>
                 ) : (
-                  <p style={{ color: '#6b665e' }}>აბონემენტის ინფო არ არის</p>
+                  <p style={{ color: '#6b665e' }}>{t('no_sub')}</p>
                 )}
               </div>
             </div>
@@ -290,7 +493,10 @@ export default function StudentDashboard() {
           {/* Tab: Schedule */}
           {tab === 'schedule' && (
             <div className="portal-card">
-              <div className="portal-card__head"><span className="portal-card__icon">📅</span><span className="portal-card__title">ჩემი ჯგუფები</span></div>
+              <div className="portal-card__head">
+                <span className="portal-nav-icon" style={{ display: 'inline-flex', alignItems: 'center', color: 'var(--color-gold)', marginRight: '0.5rem' }}>{SVG_ICONS.schedule}</span>
+                <span className="portal-card__title">{t('my_groups')}</span>
+              </div>
               <div className="portal-card__body">
                 {groups.length > 0 ? (
                   <div className="schedule-grid">
@@ -300,7 +506,7 @@ export default function StudentDashboard() {
                       return (
                         <div key={i} className="schedule-item" style={{ flexDirection: 'column', alignItems: 'flex-start', gap: '0.5rem' }}>
                           <span className="schedule-day" style={{ fontWeight: 600, fontSize: '0.95rem' }}>
-                            {gData.name || g.name || 'ჯგუფი'}
+                            {gData.name || g.name || 'Group'}
                           </span>
                           {gData.teacher_name && (
                             <span style={{ fontSize: '0.78rem', color: '#a8a39a' }}>👨‍🏫 {gData.teacher_name}</span>
@@ -312,14 +518,14 @@ export default function StudentDashboard() {
                               </span>
                             ))
                           ) : (
-                            <span className="schedule-time" style={{ color: '#6b665e' }}>განრიგი მითითებული არ არის</span>
+                            <span className="schedule-time" style={{ color: '#6b665e' }}>{t('no_schedule')}</span>
                           )}
                         </div>
                       )
                     })}
                   </div>
                 ) : (
-                  <p style={{ color: '#6b665e' }}>ჯგუფი მინიჭებული არ არის</p>
+                  <p style={{ color: '#6b665e' }}>{t('no_group')}</p>
                 )}
               </div>
             </div>
@@ -328,30 +534,33 @@ export default function StudentDashboard() {
           {/* Tab: Attendance */}
           {tab === 'att' && (
             <div className="portal-card">
-              <div className="portal-card__head"><span className="portal-card__icon">📊</span><span className="portal-card__title">დასწრება</span></div>
+              <div className="portal-card__head">
+                <span className="portal-nav-icon" style={{ display: 'inline-flex', alignItems: 'center', color: 'var(--color-gold)', marginRight: '0.5rem' }}>{SVG_ICONS.att}</span>
+                <span className="portal-card__title">{t('attendance')}</span>
+              </div>
               <div className="portal-card__body">
                 <div className="att-stats">
                   <div className="att-stat">
                     <div className="att-stat__num" style={{ color: '#50c878' }}>{present}</div>
-                    <div className="att-stat__label">დასწრებული</div>
+                    <div className="att-stat__label">{t('present')}</div>
                   </div>
                   <div className="att-stat">
                     <div className="att-stat__num" style={{ color: '#ff7070' }}>{absent}</div>
-                    <div className="att-stat__label">გაცდენა</div>
+                    <div className="att-stat__label">{t('absent')}</div>
                   </div>
                   <div className="att-stat">
                     <div className="att-stat__num" style={{ color: pct >= 80 ? '#50c878' : pct >= 60 ? '#d4a64a' : '#ff7070' }}>{pct}%</div>
-                    <div className="att-stat__label">დასწრება</div>
+                    <div className="att-stat__label">{t('attendance')}</div>
                   </div>
                 </div>
 
                 {recentAtt.length > 0 ? (
                   <>
                     <div style={{ marginBottom: '0.5rem', fontSize: '0.72rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#6b665e' }}>
-                      სულ {att.length} ჩანაწერი
+                      {t('total_records').replace('{n}', att.length)}
                     </div>
                     <div className="att-grid">
-                      {DAYS_GEO.map(d => (
+                      {t('days').map(d => (
                         <div key={d} style={{ textAlign: 'center', fontSize: '0.6rem', color: '#6b665e', paddingBottom: '3px' }}>{d}</div>
                       ))}
                       {recentAtt.map((r, i) => (
@@ -362,42 +571,42 @@ export default function StudentDashboard() {
                     </div>
                   </>
                 ) : (
-                  <p style={{ color: '#6b665e', marginTop: '1rem' }}>დასწრების ჩანაწერები არ არის</p>
+                  <p style={{ color: '#6b665e', marginTop: '1rem' }}>{t('no_attendance')}</p>
                 )}
               </div>
             </div>
           )}
 
-          {/* Tab: Tournaments & Results (Requested!) */}
+          {/* Tab: Tournaments & Results */}
           {tab === 'trn' && (
             <>
               {upcomingTrn.length > 0 && (
                 <div className="portal-card animate-fade-in">
                   <div className="portal-card__head">
-                    <span className="portal-card__icon">🏆</span>
-                    <span className="portal-card__title">მომავალი ტურნირები</span>
+                    <span className="portal-nav-icon" style={{ display: 'inline-flex', alignItems: 'center', color: 'var(--color-gold)', marginRight: '0.5rem' }}>{SVG_ICONS.trn}</span>
+                    <span className="portal-card__title">{t('upcoming_tournaments')}</span>
                   </div>
                   <div className="portal-card__body">
-                    {upcomingTrn.map(t => {
-                      const myCats = t.studentCategories?.[student.id] || []
+                    {upcomingTrn.map(tItem => {
+                      const myCats = tItem.studentCategories?.[student.id] || []
                       return (
-                        <div key={t.id} className="trn-upcoming">
-                          <div className="trn-upcoming__name" style={{ fontFamily: 'var(--font-display)', fontSize: '1.25rem', fontWeight: 600 }}>{t.name}</div>
-                          <div className="trn-upcoming__date">📅 {t.date}</div>
+                        <div key={tItem.id} className="trn-upcoming">
+                          <div className="trn-upcoming__name" style={{ fontFamily: 'var(--font-display)', fontSize: '1.25rem', fontWeight: 600 }}>{tItem.name}</div>
+                          <div className="trn-upcoming__date">📅 {tItem.date}</div>
                           <div className="trn-upcoming__info">
-                            <span>🏛 {t.venue}</span>
-                            <span>📍 {t.address}</span>
-                            {t.fee && <span style={{ color: 'var(--color-gold)' }}>💰 {t.fee}{t.currency || '₾'}</span>}
+                            <span>🏛 {tItem.venue}</span>
+                            <span>📍 {tItem.address}</span>
+                            {tItem.fee && <span style={{ color: 'var(--color-gold)' }}>💰 {tItem.fee}{tItem.currency || '₾'}</span>}
                           </div>
                           {myCats.length > 0 && (
                             <div className="trn-upcoming__cats">
-                              <span style={{ fontSize: '0.72rem', color: '#6b665e', marginRight: '0.5rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>ჩემი კატეგორიები:</span>
+                              <span style={{ fontSize: '0.72rem', color: '#6b665e', marginRight: '0.5rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>{t('my_categories')}</span>
                               {myCats.map((c, i) => <span key={i} className="portal-badge portal-badge--gold">{c}</span>)}
                             </div>
                           )}
-                          {t.notes && <p style={{ fontSize: '0.8rem', color: '#a8a39a', marginBottom: '0.75rem', lineHeight: '1.5' }}>{t.notes}</p>}
-                          {t.mapUrl && (
-                            <a className="trn-map-btn" href={t.mapUrl} target="_blank" rel="noreferrer">📍 რუკაზე ნახვა</a>
+                          {tItem.notes && <p style={{ fontSize: '0.8rem', color: '#a8a39a', marginBottom: '0.75rem', lineHeight: '1.5' }}>{tItem.notes}</p>}
+                          {tItem.mapUrl && (
+                            <a className="trn-map-btn" href={tItem.mapUrl} target="_blank" rel="noreferrer">📍 {t('show_map')}</a>
                           )}
                         </div>
                       )
@@ -409,28 +618,36 @@ export default function StudentDashboard() {
               {pastTrn.length > 0 && (
                 <div className="portal-card animate-fade-in">
                   <div className="portal-card__head">
-                    <span className="portal-card__icon">🥇</span>
-                    <span className="portal-card__title">ტურნირების შედეგები</span>
+                    <span className="portal-nav-icon" style={{ display: 'inline-flex', alignItems: 'center', color: 'var(--color-gold)', marginRight: '0.5rem' }}>{SVG_ICONS.trn}</span>
+                    <span className="portal-card__title">{t('tournament_results')}</span>
                   </div>
                   <div className="portal-card__body">
-                    {pastTrn.map(t => {
-                      const results = t.results?.[student.id] || []
+                    {pastTrn.map(tItem => {
+                      const results = tItem.results?.[student.id] || []
                       return results.map((r, i) => {
-                        const medal = r.place === 1 ? '🥇 I ადგილი' : r.place === 2 ? '🥈 II ადგილი' : r.place === 3 ? '🥉 III ადგილი' : null
+                        const medal = r.place === 1 
+                          ? (lang === 'ru' ? '🥇 I место' : '🥇 I ადგილი') 
+                          : r.place === 2 
+                            ? (lang === 'ru' ? '🥈 II место' : '🥈 II ადგილი') 
+                            : r.place === 3 
+                              ? (lang === 'ru' ? '🥉 III место' : '🥉 III ადგილი') 
+                              : null;
                         return (
-                          <div key={`${t.id}-${i}`} className="trn-history-item">
+                          <div key={`${tItem.id}-${i}`} className="trn-history-item">
                             <div className="trn-place">
                               {r.place === 1 ? '🥇' : r.place === 2 ? '🥈' : r.place === 3 ? '🥉' : `#${r.place}`}
                             </div>
                             <div style={{ flex: 1 }}>
                               <div className="trn-hist-cat" style={{ fontWeight: 600 }}>{r.category}</div>
-                              <div className="trn-hist-event">{t.name} · {t.date}</div>
+                              <div className="trn-hist-event">{tItem.name} · {tItem.date}</div>
                             </div>
                             <div style={{ textAlign: 'right' }}>
                               <span className="portal-badge portal-badge--gold" style={{ fontSize: '0.75rem' }}>
-                                {medal || `#${r.place} ადგილი`}
+                                {medal || `#${r.place} ${t('place')}`}
                               </span>
-                              <div style={{ fontSize: '0.68rem', color: 'var(--color-text-dim)', marginTop: '0.2rem' }}>სულ {r.total} მონაწილე</div>
+                              <div style={{ fontSize: '0.68rem', color: 'var(--color-text-dim)', marginTop: '0.2rem' }}>
+                                {t('total_participants').replace('{n}', r.total)}
+                              </div>
                             </div>
                           </div>
                         )
@@ -443,7 +660,7 @@ export default function StudentDashboard() {
               {upcomingTrn.length === 0 && pastTrn.length === 0 && (
                 <div className="portal-card">
                   <div className="portal-card__body" style={{ color: '#6b665e', fontSize: '0.85rem', textAlign: 'center', padding: '2rem 0' }}>
-                    ტურნირების ინფორმაცია და შედეგები ჯერ არ არის დამატებული
+                    {t('no_tournaments')}
                   </div>
                 </div>
               )}
