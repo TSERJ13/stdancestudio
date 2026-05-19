@@ -8,6 +8,10 @@ import Schedule from './pages/Schedule'
 import Payment from './pages/Payment'
 import Success from './pages/Success'
 import NotFound from './pages/NotFound'
+import AdminLogin from './pages/admin/AdminLogin'
+import AdminDashboard from './pages/admin/AdminDashboard'
+import PortalLogin from './pages/portal/PortalLogin'
+import StudentDashboard from './pages/portal/StudentDashboard'
 
 function ScrollToTop() {
   const { pathname } = useLocation()
@@ -18,20 +22,32 @@ function ScrollToTop() {
 }
 
 export default function App() {
+  const { pathname } = useLocation()
+  const isStandalone = pathname.startsWith('/admin') || pathname.startsWith('/portal')
+
   return (
     <>
       <ScrollToTop />
-      <Layout>
+      {isStandalone ? (
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/schedule" element={<Schedule />} />
-          <Route path="/payment" element={<Payment />} />
-          <Route path="/success" element={<Success />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="*" element={<NotFound />} />
+          <Route path="/admin" element={<AdminLogin />} />
+          <Route path="/admin/dashboard" element={<AdminDashboard />} />
+          <Route path="/portal" element={<PortalLogin />} />
+          <Route path="/portal/dashboard" element={<StudentDashboard />} />
         </Routes>
-      </Layout>
+      ) : (
+        <Layout>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/schedule" element={<Schedule />} />
+            <Route path="/payment" element={<Payment />} />
+            <Route path="/success" element={<Success />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </Layout>
+      )}
     </>
   )
 }
