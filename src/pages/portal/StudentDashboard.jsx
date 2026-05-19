@@ -359,43 +359,6 @@ export default function StudentDashboard() {
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          {/* Sibling switcher in header for desktop */}
-          {siblings.length > 1 && (
-            <div className="sibling-switcher desktop-only" style={{ marginRight: '1rem', position: 'relative' }}>
-              <select 
-                value={student.id} 
-                onChange={e => {
-                  savePortalSession(e.target.value);
-                  window.location.reload();
-                }}
-                style={{
-                  background: 'rgba(212,166,74,0.06)',
-                  border: '1px solid var(--color-gold, #d4a64a)',
-                  color: '#fff',
-                  fontFamily: 'inherit',
-                  fontSize: '0.8rem',
-                  fontWeight: '600',
-                  padding: '0.4rem 1.8rem 0.4rem 0.8rem',
-                  borderRadius: '20px',
-                  cursor: 'pointer',
-                  appearance: 'none',
-                  outline: 'none',
-                  backgroundImage: 'url("data:image/svg+xml;utf8,<svg fill=\'%23d4a64a\' height=\'24\' viewBox=\'0 0 24 24\' width=\'24\' xmlns=\'http://www.w3.org/2000/svg\'><path d=\'M7 10l5 5 5-5z\'/><path d=\'M0 0h24v24H0z\' fill=\'none\'/></svg>")',
-                  backgroundRepeat: 'no-repeat',
-                  backgroundPosition: 'right 6px center',
-                  backgroundSize: '16px'
-                }}
-              >
-                {siblings.map(sib => (
-                  <option key={sib.id} value={sib.id} style={{ background: '#0a0a0a', color: '#fff' }}>
-                    👤 {getStudentName(sib)}
-                  </option>
-                ))}
-              </select>
-            </div>
-          )}
-
-
           <button className="portal-header__logout desktop-only" onClick={handleLogout}>{t('logout')} ↗</button>
         </div>
 
@@ -412,9 +375,24 @@ export default function StudentDashboard() {
 
       <div className={`portal-mobile-menu ${mobileOpen ? 'is-open' : ''}`}>
         <nav className="portal-mobile-menu__nav">
-          {/* Sibling switcher for mobile inside drawer */}
+          {TABS_LIST.map((tItem, i) => (
+            <button
+              key={tItem.id}
+              className={`portal-mobile-menu__link ${tab === tItem.id ? 'is-active' : ''}`}
+              onClick={() => { setTab(tItem.id); setMobileOpen(false) }}
+              style={{ animationDelay: `${0.1 + i * 0.07}s`, display: 'flex', alignItems: 'center' }}
+            >
+              <span className="portal-mobile-menu__num">0{i + 1}</span>
+              <span style={{ display: 'inline-flex', alignItems: 'center', marginRight: '0.75rem', color: tab === tItem.id ? 'var(--color-gold)' : 'inherit' }}>
+                {SVG_ICONS[tItem.icon]}
+              </span>
+              {tItem.label}
+            </button>
+          ))}
+
+          {/* Sibling switcher for mobile inside drawer at the bottom of the menu */}
           {siblings.length > 1 && (
-            <div style={{ padding: '0 2rem 1.5rem', borderBottom: '1px solid rgba(255,255,255,0.05)', marginBottom: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+            <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '1.5rem', marginTop: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
               <span style={{ fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.15em', color: '#6b665e' }}>ბავშვის შეცვლა / Сменить ребенка</span>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                 {siblings.map(sib => {
@@ -447,68 +425,6 @@ export default function StudentDashboard() {
               </div>
             </div>
           )}
-
-          <div style={{ padding: '0 2rem 1.5rem', borderBottom: '1px solid rgba(255,255,255,0.05)', marginBottom: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-            <span style={{ fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.15em', color: '#6b665e' }}>Language / ენა</span>
-            <div style={{ display: 'flex', gap: '0.75rem' }}>
-              <button 
-                onClick={() => {
-                  setLang('ka');
-                  localStorage.setItem('std_portal_lang', 'ka');
-                }}
-                style={{
-                  background: lang === 'ka' ? 'var(--color-gold, #d4a64a)' : 'transparent',
-                  border: '1px solid var(--color-gold, #d4a64a)',
-                  color: lang === 'ka' ? '#000' : '#fff',
-                  fontFamily: 'inherit',
-                  fontSize: '0.85rem',
-                  fontWeight: '600',
-                  padding: '0.5rem 1.2rem',
-                  borderRadius: '30px',
-                  cursor: 'pointer',
-                  flex: 1,
-                  transition: 'all 0.3s ease'
-                }}
-              >
-                GE
-              </button>
-              <button 
-                onClick={() => {
-                  setLang('ru');
-                  localStorage.setItem('std_portal_lang', 'ru');
-                }}
-                style={{
-                  background: lang === 'ru' ? 'var(--color-gold, #d4a64a)' : 'transparent',
-                  border: '1px solid var(--color-gold, #d4a64a)',
-                  color: lang === 'ru' ? '#000' : '#fff',
-                  fontFamily: 'inherit',
-                  fontSize: '0.85rem',
-                  fontWeight: '600',
-                  padding: '0.5rem 1.2rem',
-                  borderRadius: '30px',
-                  cursor: 'pointer',
-                  flex: 1,
-                  transition: 'all 0.3s ease'
-                }}
-              >
-                RU
-              </button>
-            </div>
-          </div>
-          {TABS_LIST.map((tItem, i) => (
-            <button
-              key={tItem.id}
-              className={`portal-mobile-menu__link ${tab === tItem.id ? 'is-active' : ''}`}
-              onClick={() => { setTab(tItem.id); setMobileOpen(false) }}
-              style={{ animationDelay: `${0.1 + i * 0.07}s`, display: 'flex', alignItems: 'center' }}
-            >
-              <span className="portal-mobile-menu__num">0{i + 1}</span>
-              <span style={{ display: 'inline-flex', alignItems: 'center', marginRight: '0.75rem', color: tab === tItem.id ? 'var(--color-gold)' : 'inherit' }}>
-                {SVG_ICONS[tItem.icon]}
-              </span>
-              {tItem.label}
-            </button>
-          ))}
         </nav>
         <button className="portal-mobile-menu__logout" onClick={handleLogout}>
           {t('logout')} ↗
@@ -516,15 +432,52 @@ export default function StudentDashboard() {
       </div>
 
       <div className="portal-body">
-        <nav className="portal-sidenav">
-          {TABS_LIST.map(tItem => (
-            <button key={tItem.id} className={`portal-nav-item${tab===tItem.id?' active':''}`} onClick={() => setTab(tItem.id)} style={{ display: 'flex', alignItems: 'center' }}>
-              <span className="portal-nav-icon" style={{ display: 'inline-flex', alignItems: 'center' }}>
-                {SVG_ICONS[tItem.icon]}
-              </span>
-              {tItem.label}
-            </button>
-          ))}
+        <nav className="portal-sidenav" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: 'auto' }}>
+          <div>
+            {TABS_LIST.map(tItem => (
+              <button key={tItem.id} className={`portal-nav-item${tab===tItem.id?' active':''}`} onClick={() => setTab(tItem.id)} style={{ display: 'flex', alignItems: 'center' }}>
+                <span className="portal-nav-icon" style={{ display: 'inline-flex', alignItems: 'center' }}>
+                  {SVG_ICONS[tItem.icon]}
+                </span>
+                {tItem.label}
+              </button>
+            ))}
+          </div>
+
+          {siblings.length > 1 && (
+            <div style={{ padding: '2rem 1.25rem 1rem', borderTop: '1px solid rgba(212,166,74,0.1)', marginTop: '2rem', display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
+              <span style={{ fontSize: '0.68rem', textTransform: 'uppercase', letterSpacing: '0.1em', color: '#6b665e' }}>ბავშვის შეცვლა / Сменить ребенка</span>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+                {siblings.map(sib => {
+                  const isCurrent = sib.id === student.id;
+                  return (
+                    <button
+                      key={sib.id}
+                      onClick={() => {
+                        savePortalSession(sib.id);
+                        window.location.reload();
+                      }}
+                      style={{
+                        background: isCurrent ? 'rgba(212,166,74,0.12)' : 'transparent',
+                        border: '1px solid ' + (isCurrent ? 'var(--color-gold, #d4a64a)' : 'rgba(255,255,255,0.08)'),
+                        color: isCurrent ? 'var(--color-gold, #d4a64a)' : '#a8a39a',
+                        fontFamily: 'inherit',
+                        fontSize: '0.78rem',
+                        fontWeight: '600',
+                        padding: '0.45rem 0.75rem',
+                        borderRadius: '4px',
+                        cursor: 'pointer',
+                        textAlign: 'left',
+                        transition: 'all 0.3s ease'
+                      }}
+                    >
+                      👤 {getStudentName(sib)}
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+          )}
         </nav>
 
         <main className="portal-content">
