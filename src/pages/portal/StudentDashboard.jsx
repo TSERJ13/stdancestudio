@@ -42,7 +42,7 @@ const TRANSLATIONS = {
     name: 'სახელი',
     phone: 'ტელეფონი',
     birth_date: 'დაბადების თარიღი',
-    groups: 'ჯგუფ(ებ)ი',
+    groups: 'გუნდ(ებ)ი',
     status: 'სტატუსი',
     active: '✅ აქტიური',
     inactive: '❌ არააქტიური',
@@ -640,7 +640,7 @@ export default function StudentDashboard() {
                 <span className="portal-card__title">{t('my_groups')}</span>
               </div>
               <div className="portal-card__body" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                {groups.length === 0 && <p style={{ color: '#6b665e', fontSize: '0.85rem' }}>{t('no_group')}</p>}
+                {groups.length === 0 && <p style={{color:'#6b665e',fontSize:'0.85rem'}}> {t('no_group')}</p>}
                 {groups.map(g => (
                   <div key={g.id} className="portal-group-item">
                     <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '0.5rem', marginBottom: '0.75rem' }}>
@@ -711,10 +711,7 @@ export default function StudentDashboard() {
                       // Get ready time
                       const readyTime = stData.readyTime || tItem.studentSchedules?.[student.id]?.readyTime || ''
                       
-                      // Get student-specific fee
-                      const myFee = stData.fee || ''
-                      
-                      // Get categories with start times
+                      // Get categories with details
                       let myCats = []
                       if (Array.isArray(stData.categories)) {
                         myCats = stData.categories
@@ -737,35 +734,23 @@ export default function StudentDashboard() {
                           <div className="trn-upcoming__info">
                             <span>🏛 {tItem.venue}</span>
                             <span>📍 {tItem.address}</span>
-                            {!myFee && tItem.fee ? (
+                            {tItem.fee ? (
                               <span style={{ color: 'var(--color-gold)' }}>
                                 🎫 {t('ticket_price')}: {tItem.fee}{tItem.currency || '₾'}
                               </span>
                             ) : null}
                           </div>
 
-                          {(readyTime || myFee) && (
+                          {readyTime && (
                             <div style={{
                               background: 'rgba(212,166,74,0.06)',
                               border: '1px solid rgba(212,166,74,0.15)',
                               borderRadius: '4px',
                               padding: '0.75rem 1rem',
                               margin: '0.75rem 0',
-                              display: 'flex',
-                              flexWrap: 'wrap',
-                              gap: '1.5rem',
                               fontSize: '0.85rem'
                             }}>
-                              {readyTime && (
-                                <span>
-                                  🎒 <strong>{lang === 'ru' ? 'Быть готовым к:' : lang === 'en' ? 'Arrival time:' : 'მზადყოფნის დრო:'}</strong> {readyTime}
-                                </span>
-                              )}
-                              {myFee && (
-                                <span>
-                                  💰 <strong>{lang === 'ru' ? 'Взнос:' : lang === 'en' ? 'Fee:' : 'გადასახადი:'}</strong> {myFee}
-                                </span>
-                              )}
+                              🎒 <strong>{lang === 'ru' ? 'Быть готовым к:' : lang === 'en' ? 'Arrival time:' : 'მზადყოფნის დრო:'}</strong> {readyTime}
                             </div>
                           )}
 
@@ -774,14 +759,22 @@ export default function StudentDashboard() {
                               <span style={{ fontSize: '0.72rem', color: '#6b665e', textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: 600 }}>
                                 {lang === 'ru' ? 'Мои категории и время:' : lang === 'en' ? 'My Categories & Time:' : 'ჩემი კატეგორიები და დრო:'}
                               </span>
-                              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+                              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                                 {myCats.map((cat, idx) => (
-                                  <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(255,255,255,0.02)', padding: '0.5rem 0.75rem', borderRadius: '4px', border: '1px solid rgba(255,255,255,0.03)' }}>
-                                    <span style={{ fontSize: '0.88rem', color: '#f5f1e8', fontWeight: 500 }}>{cat.name}</span>
-                                    <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'center' }}>
-                                      {cat.date && <span className="portal-badge" style={{ fontSize: '0.78rem', background: 'rgba(255,255,255,0.05)', color: '#a8a39a', border: '1px solid rgba(255,255,255,0.08)' }}>📅 {cat.date}</span>}
-                                      {cat.time && <span className="portal-badge portal-badge--gold" style={{ fontSize: '0.78rem' }}>🕒 {cat.time}</span>}
+                                  <div key={idx} style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', background: 'rgba(255,255,255,0.02)', padding: '0.75rem 1rem', borderRadius: '4px', border: '1px solid rgba(255,255,255,0.03)' }}>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                      <span style={{ fontSize: '0.92rem', color: '#f5f1e8', fontWeight: 600 }}>{cat.name}</span>
+                                      <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'center' }}>
+                                        {cat.date && <span className="portal-badge" style={{ fontSize: '0.75rem', background: 'rgba(255,255,255,0.05)', color: '#a8a39a', border: '1px solid rgba(255,255,255,0.08)' }}>📅 {cat.date}</span>}
+                                        {cat.time && <span className="portal-badge portal-badge--gold" style={{ fontSize: '0.75rem' }}>🕒 {cat.time}</span>}
+                                      </div>
                                     </div>
+                                    {(cat.venue || cat.fee) && (
+                                      <div style={{ display: 'flex', gap: '1rem', fontSize: '0.78rem', color: '#a8a39a', borderTop: '1px solid rgba(255,255,255,0.03)', paddingTop: '0.35rem', marginTop: '0.15rem' }}>
+                                        {cat.venue && <span>🏛 {cat.venue}</span>}
+                                        {cat.fee && <span style={{ color: 'var(--color-gold)' }}>💰 {lang === 'ru' ? 'Взнос:' : lang === 'en' ? 'Fee:' : 'გადასახადი:'} {cat.fee}</span>}
+                                      </div>
+                                    )}
                                   </div>
                                 ))}
                               </div>
