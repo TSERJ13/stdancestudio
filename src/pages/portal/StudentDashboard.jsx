@@ -10,6 +10,15 @@ import {
 import { getTournaments } from '../../data/db'
 import './portal.css'
 
+const formatDate = (dateStr) => {
+  if (!dateStr) return '';
+  const parts = dateStr.toString().split('-');
+  if (parts.length === 3 && parts[0].length === 4) {
+    return `${parts[2]}.${parts[1]}.${parts[0]}`;
+  }
+  return dateStr;
+};
+
 const SVG_ICONS = {
   info: (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '0.5rem', verticalAlign: 'middle' }}><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
@@ -776,7 +785,7 @@ export default function StudentDashboard() {
                             <div style={{ flex: 1, minWidth: '200px' }}>
                               <div className="trn-upcoming__name" style={{ fontFamily: 'var(--font-display)', fontSize: '1.3rem', fontWeight: 600, color: '#f5f1e8' }}>{tItem.name}</div>
                               <div className="trn-upcoming__date" style={{ fontSize: '0.85rem', color: '#a8a39a', marginTop: '0.25rem' }}>
-                                📅 {tItem.endDate && tItem.endDate !== tItem.date ? `${tItem.date} — ${tItem.endDate}` : tItem.date}
+                                📅 {tItem.endDate && tItem.endDate !== tItem.date ? `${formatDate(tItem.date)} — ${formatDate(tItem.endDate)}` : formatDate(tItem.date)}
                               </div>
                               <div className="trn-upcoming__info" style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', marginTop: '0.65rem' }}>
                                 <span>🏛 {tItem.venue}</span>
@@ -800,7 +809,7 @@ export default function StudentDashboard() {
                                   <div key={idx} style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', background: 'rgba(255,255,255,0.02)', padding: '0.85rem 1.1rem', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.03)' }}>
                                     <div style={{ fontSize: '0.92rem', color: '#f5f1e8', fontWeight: 600, lineHeight: 1.45 }}>{cat.name}</div>
                                     <div style={{ display: 'flex', gap: '0.45rem', alignItems: 'center', flexWrap: 'wrap' }}>
-                                      {cat.date && <span className="portal-badge" style={{ fontSize: '0.75rem', background: 'rgba(255,255,255,0.05)', color: '#a8a39a', border: '1px solid rgba(255,255,255,0.08)' }}>📅 {cat.date}</span>}
+                                      {cat.date && <span className="portal-badge" style={{ fontSize: '0.75rem', background: 'rgba(255,255,255,0.05)', color: '#a8a39a', border: '1px solid rgba(255,255,255,0.08)' }}>📅 {formatDate(cat.date)}</span>}
                                       {cat.readyTime && <span className="portal-badge" style={{ fontSize: '0.75rem', background: 'rgba(212,166,74,0.08)', color: 'var(--color-gold)', border: '1px solid rgba(212,166,74,0.15)' }}>🎒 {lang === 'ru' ? 'Сбор:' : lang === 'en' ? 'Ready:' : 'მზადება:'} {cat.readyTime}</span>}
                                       {cat.time && <span className="portal-badge portal-badge--gold" style={{ fontSize: '0.75rem' }}>🕒 {lang === 'ru' ? 'Старт:' : lang === 'en' ? 'Start:' : 'დაწყება:'} {cat.time}</span>}
                                     </div>
@@ -865,7 +874,7 @@ export default function StudentDashboard() {
                             <div style={{ flex: 1 }}>
                               <div className="trn-hist-cat" style={{ fontWeight: 600 }}>{r.category}</div>
                               <div className="trn-hist-event">
-                                {tItem.name} · {tItem.endDate && tItem.endDate !== tItem.date ? `${tItem.date} — ${tItem.endDate}` : tItem.date}
+                                {tItem.name} · {tItem.endDate && tItem.endDate !== tItem.date ? `${formatDate(tItem.date)} — ${formatDate(tItem.endDate)}` : formatDate(tItem.date)}
                               </div>
                             </div>
                             <div style={{ textAlign: 'right' }}>

@@ -11,6 +11,15 @@ import {
 } from '../../data/db'
 import './admin.css'
 
+const formatDate = (dateStr) => {
+  if (!dateStr) return '';
+  const parts = dateStr.toString().split('-');
+  if (parts.length === 3 && parts[0].length === 4) {
+    return `${parts[2]}.${parts[1]}.${parts[0]}`;
+  }
+  return dateStr;
+};
+
 const SVG_ICONS = {
   news: (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '0.6rem' }}><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Z"/><path d="M18 14h-8M15 18h-5M10 6h8v4h-8V6Z"/></svg>
@@ -273,7 +282,7 @@ function NewsTab({news,onEdit,onDelete}) {
               {n.important && <span className="badge badge--gold" style={{marginRight:'0.5rem'}}>მნიშვნელოვანი</span>}
               <span className="admin-news-card__title">{n.title}</span>
             </div>
-            <span className="admin-news-card__meta">{n.date}</span>
+            <span className="admin-news-card__meta">{formatDate(n.date)}</span>
           </div>
           <p className="admin-news-card__body">{n.body}</p>
           <div className="admin-news-card__actions">
@@ -468,7 +477,7 @@ function TournamentsTab({tournaments,students,onEdit,onManageResults,onDelete}) 
             <div>
               <div className="admin-trn-card__name">{t.name}</div>
               <div className="admin-trn-card__date">
-                📅 {t.endDate && t.endDate !== t.date ? `${t.date} — ${t.endDate}` : t.date}
+                📅 {t.endDate && t.endDate !== t.date ? `${formatDate(t.date)} — ${formatDate(t.endDate)}` : formatDate(t.date)}
               </div>
             </div>
             <span className={`badge ${t.date>=today?'badge--green':'badge--muted'}`}>{t.date>=today?'მომავალი':'დასრულებული'}</span>
@@ -975,7 +984,7 @@ function TournamentForm({item,students,onSave,onCancel}) {
                                 <div>
                                   <span style={{ fontSize: '0.88rem', color: '#fff', fontWeight: 600 }}>{cat.name}</span>
                                   <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', fontSize: '0.75rem', color: '#a8a39a', marginTop: '0.15rem' }}>
-                                    {cat.date && <span>📅 {cat.date}</span>}
+                                    {cat.date && <span>📅 {formatDate(cat.date)}</span>}
                                     {cat.readyTime && <span style={{ color: 'var(--color-gold)' }}>🎒 მზადყოფნა: {cat.readyTime}</span>}
                                     {cat.time && <span style={{ color: '#d4a64a' }}>🕒 დაწყება: {cat.time}</span>}
                                     {cat.venue && <span>🏛 {cat.venue}</span>}
