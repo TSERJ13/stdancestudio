@@ -661,15 +661,17 @@ function TournamentForm({item,students,onSave,onCancel}) {
                       <div style={{ background: 'rgba(255,255,255,0.01)', border: '1px solid rgba(212,166,74,0.1)', borderRadius: '4px', padding: '0.85rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                         <span style={{ fontSize: '0.75rem', color: 'var(--color-gold)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>+ კატეგორიის დამატება</span>
                         
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '0.65rem' }}>
-                          <div className="admin-field" style={{ marginBottom: 0 }}>
-                            <label style={{ fontSize: '0.7rem', color: '#a8a39a', marginBottom: '0.15rem', display: 'block' }}>კატეგორია</label>
-                            <input value={newCatName} onChange={e => setNewCatName(e.target.value)} placeholder="ლათინური N კლასი" style={{ padding: '0.4rem', fontSize: '0.78rem' }} />
-                          </div>
+                        {/* Row 1: Full-width Category input */}
+                        <div className="admin-field" style={{ marginBottom: 0, width: '100%' }}>
+                          <label style={{ fontSize: '0.7rem', color: '#a8a39a', marginBottom: '0.15rem', display: 'block' }}>კატეგორიის სახელი</label>
+                          <input value={newCatName} onChange={e => setNewCatName(e.target.value)} placeholder="36 Jn 1 (8 Dance) St + La 2013-2014 W;T;V;Q;S;Cha;R;;J - 10.00" style={{ padding: '0.5rem', fontSize: '0.83rem', width: '100%' }} />
+                        </div>
 
+                        {/* Row 2: Smaller details aligned below */}
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '0.65rem', alignItems: 'end' }}>
                           <div className="admin-field" style={{ marginBottom: 0 }}>
                             <label style={{ fontSize: '0.7rem', color: '#a8a39a', marginBottom: '0.15rem', display: 'block' }}>თარიღი</label>
-                            <select value={newCatDate || form.date} onChange={e => setNewCatDate(e.target.value)} style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(212,166,74,0.2)', color: '#f5f1e8', padding: '0.4rem', borderRadius: '2px', fontSize: '0.78rem', width: '100%' }}>
+                            <select value={newCatDate || form.date} onChange={e => setNewCatDate(e.target.value)} style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(212,166,74,0.2)', color: '#f5f1e8', padding: '0.45rem', borderRadius: '2px', fontSize: '0.78rem', width: '100%' }}>
                               <option value={form.date}>{form.date}</option>
                               {form.endDate && form.endDate !== form.date && <option value={form.endDate}>{form.endDate}</option>}
                             </select>
@@ -677,33 +679,33 @@ function TournamentForm({item,students,onSave,onCancel}) {
 
                           <div className="admin-field" style={{ marginBottom: 0 }}>
                             <label style={{ fontSize: '0.7rem', color: '#a8a39a', marginBottom: '0.15rem', display: 'block' }}>🎒 მზადყოფნა</label>
-                            <input value={newCatReadyTime} onChange={e => setNewCatReadyTime(e.target.value)} placeholder="09:15" style={{ padding: '0.4rem', fontSize: '0.78rem' }} />
+                            <input value={newCatReadyTime} onChange={e => setNewCatReadyTime(e.target.value)} placeholder="09:15" style={{ padding: '0.45rem', fontSize: '0.78rem' }} />
                           </div>
 
                           <div className="admin-field" style={{ marginBottom: 0 }}>
                             <label style={{ fontSize: '0.7rem', color: '#a8a39a', marginBottom: '0.15rem', display: 'block' }}>🕒 დაწყება</label>
-                            <input value={newCatTime} onChange={e => setNewCatTime(e.target.value)} placeholder="10:00" style={{ padding: '0.4rem', fontSize: '0.78rem' }} />
+                            <input value={newCatTime} onChange={e => setNewCatTime(e.target.value)} placeholder="10:00" style={{ padding: '0.45rem', fontSize: '0.78rem' }} />
                           </div>
 
                           <div className="admin-field" style={{ marginBottom: 0 }}>
                             <label style={{ fontSize: '0.7rem', color: '#a8a39a', marginBottom: '0.15rem', display: 'block' }}>🏛 დარბაზი / ვენი</label>
-                            <input value={newCatVenue} onChange={e => setNewCatVenue(e.target.value)} placeholder="დარბაზი A" style={{ padding: '0.4rem', fontSize: '0.78rem' }} />
+                            <input value={newCatVenue} onChange={e => setNewCatVenue(e.target.value)} placeholder="დარბაზი A" style={{ padding: '0.45rem', fontSize: '0.78rem' }} />
                           </div>
 
                           <div className="admin-field" style={{ marginBottom: 0 }}>
                             <label style={{ fontSize: '0.7rem', color: '#a8a39a', marginBottom: '0.15rem', display: 'block' }}>💰 გადასახადი</label>
                             <div style={{ display: 'flex', gap: '0.2rem' }}>
-                              <input type="number" value={newCatFeeAmount} onChange={e => setNewCatFeeAmount(e.target.value)} placeholder={form.fee ? `${form.fee}` : '25'} style={{ padding: '0.4rem', fontSize: '0.78rem', flex: 1, minWidth: '40px' }} />
-                              <select value={newCatFeeCurrency} onChange={e => setNewCatFeeCurrency(e.target.value)} style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(212,166,74,0.2)', color: '#f5f1e8', padding: '0.4rem', borderRadius: '2px', fontSize: '0.78rem', width: '50px' }}>
+                              <input type="number" value={newCatFeeAmount} onChange={e => setNewCatFeeAmount(e.target.value)} placeholder={form.fee ? `${form.fee}` : '25'} style={{ padding: '0.45rem', fontSize: '0.78rem', flex: 1, minWidth: '40px' }} />
+                              <select value={newCatFeeCurrency} onChange={e => setNewCatFeeCurrency(e.target.value)} style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(212,166,74,0.2)', color: '#f5f1e8', padding: '0.45rem', borderRadius: '2px', fontSize: '0.78rem', width: '50px' }}>
                                 <option value="₾">₾</option>
                                 <option value="$">$</option>
                                 <option value="€">€</option>
                               </select>
                             </div>
                           </div>
+
+                          <button type="button" className="admin-btn admin-btn--gold admin-btn--sm" onClick={() => handleAddCategoryToStudent(sid)} style={{ padding: '0.48rem 1rem', height: '34px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>+ დამატება</button>
                         </div>
-                        
-                        <button type="button" className="admin-btn admin-btn--gold admin-btn--sm" onClick={() => handleAddCategoryToStudent(sid)} style={{ padding: '0.45rem 1rem', marginTop: '0.4rem', alignSelf: 'flex-start' }}>+ კატეგორიის დამატება</button>
                       </div>
 
                     </div>
