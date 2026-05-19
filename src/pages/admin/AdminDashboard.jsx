@@ -982,7 +982,7 @@ function TournamentForm({item,students,onSave,onCancel}) {
                                     {cat.fee && <span style={{ color: '#50c878' }}>💰 {cat.fee}</span>}
                                   </div>
                                 </div>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }} onClick={e => e.stopPropagation()}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                                   <span style={{ fontSize: '0.7rem', color: 'rgba(212,166,74,0.7)', marginRight: '0.2rem', userSelect: 'none', background: 'rgba(212,166,74,0.06)', padding: '0.2rem 0.4rem', borderRadius: '4px', border: '1px solid rgba(212,166,74,0.15)', pointerEvents: 'none' }}>
                                     ✏️ ჩასწორება
                                   </span>
