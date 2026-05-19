@@ -71,6 +71,7 @@ const TRANSLATIONS = {
     place: 'ადგილი',
     total_participants: 'სულ {n} მონაწილე',
     no_tournaments: 'ტურნირების ინფორმაცია და შედეგები ჯერ არ არის დამატებული',
+    ticket_price: 'ბილეთის ფასი',
     tabs: {
       info: 'ჩემი ინფო',
       sub: 'აბონემენტი',
@@ -122,6 +123,7 @@ const TRANSLATIONS = {
     place: 'место',
     total_participants: 'Всего {n} участников',
     no_tournaments: 'Информация о турнирах и результатах пока не добавлена',
+    ticket_price: 'Цена билета',
     tabs: {
       info: 'Моя инфо',
       sub: 'Абонемент',
@@ -173,6 +175,7 @@ const TRANSLATIONS = {
     place: 'place',
     total_participants: 'Total {n} participants',
     no_tournaments: 'No tournaments or results yet',
+    ticket_price: 'Ticket Price',
     tabs: {
       info: 'My Info',
       sub: 'Subscription',
@@ -728,12 +731,16 @@ export default function StudentDashboard() {
                       return (
                         <div key={tItem.id} className="trn-upcoming">
                           <div className="trn-upcoming__name" style={{ fontFamily: 'var(--font-display)', fontSize: '1.25rem', fontWeight: 600 }}>{tItem.name}</div>
-                          <div className="trn-upcoming__date">📅 {tItem.date}</div>
+                          <div className="trn-upcoming__date">
+                            📅 {tItem.endDate && tItem.endDate !== tItem.date ? `${tItem.date} — ${tItem.endDate}` : tItem.date}
+                          </div>
                           <div className="trn-upcoming__info">
                             <span>🏛 {tItem.venue}</span>
                             <span>📍 {tItem.address}</span>
                             {!myFee && tItem.fee ? (
-                              <span style={{ color: 'var(--color-gold)' }}>💰 {tItem.fee}{tItem.currency || '₾'}</span>
+                              <span style={{ color: 'var(--color-gold)' }}>
+                                🎫 {t('ticket_price')}: {tItem.fee}{tItem.currency || '₾'}
+                              </span>
                             ) : null}
                           </div>
 
@@ -782,7 +789,9 @@ export default function StudentDashboard() {
                             </div>
                           )}
 
-                          {tItem.notes && <p style={{ fontSize: '0.8rem', color: '#a8a39a', marginBottom: '0.75rem', lineHeight: '1.5' }}>{tItem.notes}</p>}
+                          {tItem.notes && tItem.notes.trim() && (
+                            <p style={{ fontSize: '0.8rem', color: '#a8a39a', marginBottom: '0.75rem', lineHeight: '1.5' }}>{tItem.notes}</p>
+                          )}
                           {tItem.mapUrl && (
                             <a className="trn-map-btn" href={tItem.mapUrl} target="_blank" rel="noreferrer">📍 {t('show_map')}</a>
                           )}
@@ -804,7 +813,7 @@ export default function StudentDashboard() {
                       const results = tItem.results?.[student.id] || []
                       return results.map((r, i) => {
                         const medal = r.place === 1 
-                          ? (lang === 'ru' ? '🥇 I место' : lang === 'en' ? '🥇 1st Place' : '🥇 I ადგიли') 
+                          ? (lang === 'ru' ? '🥇 I место' : lang === 'en' ? '🥇 1st Place' : '🥇 I ადგილი') 
                           : r.place === 2 
                             ? (lang === 'ru' ? '🥈 II место' : lang === 'en' ? '🥈 2nd Place' : '🥈 II ადგილი') 
                             : r.place === 3 
@@ -817,7 +826,9 @@ export default function StudentDashboard() {
                             </div>
                             <div style={{ flex: 1 }}>
                               <div className="trn-hist-cat" style={{ fontWeight: 600 }}>{r.category}</div>
-                              <div className="trn-hist-event">{tItem.name} · {tItem.date}</div>
+                              <div className="trn-hist-event">
+                                {tItem.name} · {tItem.endDate && tItem.endDate !== tItem.date ? `${tItem.date} — ${tItem.endDate}` : tItem.date}
+                              </div>
                             </div>
                             <div style={{ textAlign: 'right' }}>
                               <span className="portal-badge portal-badge--gold" style={{ fontSize: '0.75rem' }}>

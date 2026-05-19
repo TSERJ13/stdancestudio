@@ -404,14 +404,16 @@ function TournamentsTab({tournaments,students,onEdit,onManageResults,onDelete}) 
           <div className="admin-trn-card__head">
             <div>
               <div className="admin-trn-card__name">{t.name}</div>
-              <div className="admin-trn-card__date">📅 {t.date}</div>
+              <div className="admin-trn-card__date">
+                📅 {t.endDate && t.endDate !== t.date ? `${t.date} — ${t.endDate}` : t.date}
+              </div>
             </div>
             <span className={`badge ${t.date>=today?'badge--green':'badge--muted'}`}>{t.date>=today?'მომავალი':'დასრულებული'}</span>
           </div>
           <div className="admin-trn-card__info" style={{display:'flex',flexWrap:'wrap',gap:'1rem'}}>
             <span>🏛 {t.venue}</span>
             <span>📍 {t.address}</span>
-            {t.fee && <span>💰 {t.fee}{t.currency || '₾'} (ძირითადი)</span>}
+            {t.fee ? <span>🎫 ბილეთის ფასი: {t.fee}{t.currency || '₾'}</span> : null}
             {t.assignedStudents && t.assignedStudents.length > 0 ? (
               <span style={{color: '#d4a64a'}}>👥 გაზიარებულია: {t.assignedStudents.length} სტუდენტთან</span>
             ) : (
@@ -433,6 +435,7 @@ function TournamentForm({item,students,onSave,onCancel}) {
   const isNew=!item?.id
   const [form,setForm]=useState({
     id:item?.id||'',name:item?.name||'',date:item?.date||new Date().toISOString().slice(0,10),
+    endDate:item?.endDate||'',
     venue:item?.venue||'',address:item?.address||'',mapUrl:item?.mapUrl||'',
     fee:item?.fee||0,currency:item?.currency||'₾',
     assignedStudents:item?.assignedStudents||[],notes:item?.notes||'',
@@ -555,9 +558,10 @@ function TournamentForm({item,students,onSave,onCancel}) {
         {/* Tournament General Details */}
         <div className="admin-field"><label>ტურნირის სახელი</label><input value={form.name} onChange={e=>set('name',e.target.value)} /></div>
         <div className="admin-grid-2">
-          <div className="admin-field"><label>თარიღი</label><input type="date" value={form.date} onChange={e=>set('date',e.target.value)} /></div>
+          <div className="admin-field"><label>დაწყების თარიღი</label><input type="date" value={form.date} onChange={e=>set('date',e.target.value)} /></div>
+          <div className="admin-field"><label>დასრულების თარიღი (თუ 2 დღიანია)</label><input type="date" value={form.endDate} onChange={e=>set('endDate',e.target.value)} /></div>
           <div className="admin-field">
-            <label>ძირითადი საფასური (მინიშნებისთვის)</label>
+            <label>ბილეთის ფასი / Стоимость билета</label>
             <div style={{display:'flex',gap:'0.5rem'}}>
               <input type="number" value={form.fee} onChange={e=>set('fee',+e.target.value)} style={{flex:1}} />
               <select value={form.currency||'₾'} onChange={e=>set('currency',e.target.value)} style={{background:'rgba(255,255,255,0.04)',border:'1px solid rgba(212,166,74,0.2)',color:'#f5f1e8',padding:'0.5rem',borderRadius:'2px',width:'100px'}}>
@@ -568,10 +572,12 @@ function TournamentForm({item,students,onSave,onCancel}) {
             </div>
           </div>
           <div className="admin-field"><label>დარბაზი / ვენი</label><input value={form.venue} onChange={e=>set('venue',e.target.value)} /></div>
-          <div className="admin-field"><label>მისამართი</label><input value={form.address} onChange={e=>set('address',e.target.value)} /></div>
         </div>
-        <div className="admin-field"><label>Google Maps URL</label><input value={form.mapUrl} onChange={e=>set('mapUrl',e.target.value)} placeholder="https://maps.app.goo.gl/..." /></div>
-        <div className="admin-field"><label>შენიშვნები</label><textarea value={form.notes} onChange={e=>set('notes',e.target.value)} rows={3} /></div>
+        <div className="admin-grid-2">
+          <div className="admin-field"><label>მისამართი</label><input value={form.address} onChange={e=>set('address',e.target.value)} /></div>
+          <div className="admin-field"><label>Google Maps URL</label><input value={form.mapUrl} onChange={e=>set('mapUrl',e.target.value)} placeholder="https://maps.app.goo.gl/..." /></div>
+        </div>
+        <div className="admin-field"><label>შენიშვნები (არ გამოჩნდება თუ ცარიელია)</label><textarea value={form.notes} onChange={e=>set('notes',e.target.value)} rows={2} /></div>
 
         {/* Participant & Individual Schedule Section */}
         <hr style={{borderColor:'rgba(212,166,74,0.12)',margin:'2rem 0'}} />
@@ -625,10 +631,41 @@ function TournamentForm({item,students,onSave,onCancel}) {
                           <label style={{ fontSize: '0.78rem' }}>მზადყოფნის დრო (მაგ. 09:15)</label>
                           <input value={stData.readyTime} onChange={e => handleUpdateStudentField(sid, 'readyTime', e.target.value)} placeholder="09:15" style={{ padding: '0.45rem' }} />
                         </div>
-                        <div className="admin-field" style={{ flex: 1, minWidth: '150px', marginBottom: 0 }}>
-                          <label style={{ fontSize: '0.78rem' }}>გადასახადი (მაგ. 50 ₾)</label>
-                          <input value={stData.fee} onChange={e => handleUpdateStudentField(sid, 'fee', e.target.value)} placeholder="50 ₾" style={{ padding: '0.45rem' }} />
-                        </div>
+                        {(() => {
+                          const feeStr = stData.fee || '';
+                          const matchAmount = feeStr.match(/^[\d.]+/);
+                          const amountVal = matchAmount ? matchAmount[0] : '';
+                          const currencyVal = feeStr.includes('€') ? '€' : feeStr.includes('$') ? '$' : '₾';
+                          return (
+                            <div className="admin-field" style={{ flex: 1, minWidth: '150px', marginBottom: 0 }}>
+                              <label style={{ fontSize: '0.78rem' }}>მონაწილეობის გადასახადი</label>
+                              <div style={{ display: 'flex', gap: '0.35rem' }}>
+                                <input 
+                                  type="number" 
+                                  value={amountVal} 
+                                  onChange={e => {
+                                    const newAmount = e.target.value;
+                                    handleUpdateStudentField(sid, 'fee', newAmount ? `${newAmount} ${currencyVal}` : '');
+                                  }} 
+                                  placeholder={form.fee ? `${form.fee}` : '50'} 
+                                  style={{ padding: '0.45rem', flex: 1 }} 
+                                />
+                                <select 
+                                  value={currencyVal} 
+                                  onChange={e => {
+                                    const newCurrency = e.target.value;
+                                    handleUpdateStudentField(sid, 'fee', amountVal ? `${amountVal} ${newCurrency}` : '');
+                                  }} 
+                                  style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(212,166,74,0.2)', color: '#f5f1e8', padding: '0.45rem', borderRadius: '2px', width: '80px' }}
+                                >
+                                  <option value="₾">₾ (GEL)</option>
+                                  <option value="$">$ (USD)</option>
+                                  <option value="€">€ (EUR)</option>
+                                </select>
+                              </div>
+                            </div>
+                          );
+                        })()}
                       </div>
 
                       {/* Categories section */}
