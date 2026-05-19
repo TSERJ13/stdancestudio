@@ -116,8 +116,16 @@ export default function StudentDashboard() {
   const pct     = recentAtt.length ? Math.round((present / recentAtt.length) * 100) : 0
 
   // Tournaments filtering
-  const upcomingTrn = tournaments.filter(t => t.date >= today)
-  const pastTrn = tournaments.filter(t => t.date < today && t.results?.[student.id]?.length > 0)
+  const upcomingTrn = tournaments.filter(t => {
+    const isFuture = t.date >= today;
+    const isAssigned = !t.assignedStudents || t.assignedStudents.length === 0 || t.assignedStudents.includes(student.id);
+    return isFuture && isAssigned;
+  })
+  const pastTrn = tournaments.filter(t => {
+    const isPast = t.date < today;
+    const isAssigned = !t.assignedStudents || t.assignedStudents.length === 0 || t.assignedStudents.includes(student.id);
+    return isPast && isAssigned && t.results?.[student.id]?.length > 0;
+  })
 
   return (
     <div className="portal-wrap portal-shell">
@@ -379,7 +387,7 @@ export default function StudentDashboard() {
                           <div className="trn-upcoming__info">
                             <span>🏛 {t.venue}</span>
                             <span>📍 {t.address}</span>
-                            {t.fee && <span style={{ color: 'var(--color-gold)' }}>💰 {t.fee}₾</span>}
+                            {t.fee && <span style={{ color: 'var(--color-gold)' }}>💰 {t.fee}{t.currency || '₾'}</span>}
                           </div>
                           {myCats.length > 0 && (
                             <div className="trn-upcoming__cats">

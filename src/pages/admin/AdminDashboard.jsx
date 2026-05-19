@@ -348,10 +348,15 @@ function TournamentsTab({tournaments,students,onSave,onDelete}) {
             </div>
             <span className={`badge ${t.date>=today?'badge--green':'badge--muted'}`}>{t.date>=today?'მომავალი':'დასრულებული'}</span>
           </div>
-          <div className="admin-trn-card__info">
+          <div className="admin-trn-card__info" style={{display:'flex',flexWrap:'wrap',gap:'1rem'}}>
             <span>🏛 {t.venue}</span>
             <span>📍 {t.address}</span>
-            {t.fee && <span>💰 {t.fee}₾</span>}
+            {t.fee && <span>💰 {t.fee}{t.currency || '₾'}</span>}
+            {t.assignedStudents && t.assignedStudents.length > 0 ? (
+              <span style={{color: '#d4a64a'}}>👥 გაზიარებულია: {t.assignedStudents.length} სტუდენტთან</span>
+            ) : (
+              <span style={{color: '#50c878'}}>🌍 გაზიარებულია ყველასთან</span>
+            )}
           </div>
           <div className="admin-trn-card__cats">{(t.categories||[]).map((c,i)=><span key={i} className="badge badge--muted">{c}</span>)}</div>
           <div className="admin-trn-card__actions">
@@ -369,7 +374,8 @@ function TournamentForm({item,students,onSave,onCancel}) {
   const [form,setForm]=useState({
     id:item?.id||'',name:item?.name||'',date:item?.date||new Date().toISOString().slice(0,10),
     venue:item?.venue||'',address:item?.address||'',mapUrl:item?.mapUrl||'',
-    categories:item?.categories||[],fee:item?.fee||0,notes:item?.notes||'',
+    categories:item?.categories||[],fee:item?.fee||0,currency:item?.currency||'₾',
+    assignedStudents:item?.assignedStudents||[],notes:item?.notes||'',
     studentCategories:item?.studentCategories||{},results:item?.results||{}
   })
   const [catInput,setCatInput]=useState('')
@@ -392,11 +398,52 @@ function TournamentForm({item,students,onSave,onCancel}) {
         <div className="admin-field"><label>ტურნირის სახელი</label><input value={form.name} onChange={e=>set('name',e.target.value)} /></div>
         <div className="admin-grid-2">
           <div className="admin-field"><label>თარიღი</label><input type="date" value={form.date} onChange={e=>set('date',e.target.value)} /></div>
-          <div className="admin-field"><label>საფასური (₾)</label><input type="number" value={form.fee} onChange={e=>set('fee',+e.target.value)} /></div>
+          <div className="admin-field">
+            <label>საფასური</label>
+            <div style={{display:'flex',gap:'0.5rem'}}>
+              <input type="number" value={form.fee} onChange={e=>set('fee',+e.target.value)} style={{flex:1}} />
+              <select value={form.currency||'₾'} onChange={e=>set('currency',e.target.value)} style={{background:'rgba(255,255,255,0.04)',border:'1px solid rgba(212,166,74,0.2)',color:'#f5f1e8',padding:'0.5rem',borderRadius:'2px',width:'100px'}}>
+                <option value="₾">₾ (GEL)</option>
+                <option value="$">$ (USD)</option>
+                <option value="€">€ (EUR)</option>
+              </select>
+            </div>
+          </div>
           <div className="admin-field"><label>დარბაზი / ვენი</label><input value={form.venue} onChange={e=>set('venue',e.target.value)} /></div>
           <div className="admin-field"><label>მისამართი</label><input value={form.address} onChange={e=>set('address',e.target.value)} /></div>
         </div>
         <div className="admin-field"><label>Google Maps URL</label><input value={form.mapUrl} onChange={e=>set('mapUrl',e.target.value)} placeholder="https://maps.app.goo.gl/..." /></div>
+        
+        <div className="admin-field" style={{marginTop:'1.25rem',marginBottom:'1.25rem'}}>
+          <label>ვისთვისაა ეს ტურნირი? (თუ არაფერს აირჩევთ, გამოჩნდება ყველასთან)</label>
+          <div style={{display:'flex',gap:'0.5rem',marginBottom:'0.5rem'}}>
+            <select value="" onChange={e=>{
+              const val=e.target.value;
+              if(val && !(form.assignedStudents||[]).includes(val)) {
+                set('assignedStudents', [...(form.assignedStudents||[]), val]);
+              }
+            }} style={{background:'rgba(255,255,255,0.04)',border:'1px solid rgba(212,166,74,0.2)',color:'#f5f1e8',padding:'0.5rem',borderRadius:'2px',flex:1}}>
+              <option value="">დაამატეთ სტუდენტი...</option>
+              {students.map(s=><option key={s.id} value={s.id}>{s.name}</option>)}
+            </select>
+          </div>
+          <div style={{display:'flex',flexWrap:'wrap',gap:'0.4rem'}}>
+            {(!form.assignedStudents || form.assignedStudents.length === 0) && (
+              <span className="badge badge--green">🌍 ყველა სტუდენტი</span>
+            )}
+            {(form.assignedStudents||[]).map(sid=>{
+              const st=students.find(s=>s.id===sid)
+              return (
+                <span key={sid} className="badge badge--gold" style={{cursor:'pointer'}} onClick={()=>{
+                  set('assignedStudents', form.assignedStudents.filter(id=>id!==sid))
+                }}>
+                  👤 {st?.name || sid} ×
+                </span>
+              )
+            })}
+          </div>
+        </div>
+
         <div className="admin-field"><label>შენიშვნები</label><textarea value={form.notes} onChange={e=>set('notes',e.target.value)} rows={3} /></div>
         <div className="admin-field">
           <label>კატეგორიები</label>
