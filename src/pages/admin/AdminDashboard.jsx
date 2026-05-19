@@ -60,6 +60,38 @@ export default function AdminDashboard() {
     });
   }
 
+  const handleSaveTournament = (t) => {
+    saveTournament(t)
+    refresh()
+    import('../../data/classcore').then(mod => {
+      mod.syncTournamentsToCloud(getTournaments())
+    })
+  }
+
+  const handleDeleteTournament = (id) => {
+    deleteTournament(id)
+    refresh()
+    import('../../data/classcore').then(mod => {
+      mod.syncTournamentsToCloud(getTournaments())
+    })
+  }
+
+  const handleSaveNews = (n) => {
+    saveNews(n)
+    refresh()
+    import('../../data/classcore').then(mod => {
+      mod.syncNewsToCloud(getNews())
+    })
+  }
+
+  const handleDeleteNews = (id) => {
+    deleteNews(id)
+    refresh()
+    import('../../data/classcore').then(mod => {
+      mod.syncNewsToCloud(getNews())
+    })
+  }
+
   const logout = () => { adminLogout(); navigate('/admin') }
 
   return (
@@ -94,17 +126,17 @@ export default function AdminDashboard() {
         </div>
 
         <div className="admin-page">
-          {tab===0 && <NewsTab news={news} onSave={n=>{saveNews(n);refresh()}} onDelete={id=>{deleteNews(id);refresh()}} />}
+          {tab===0 && <NewsTab news={news} onSave={handleSaveNews} onDelete={handleDeleteNews} />}
           {tab===1 && <StudentsTab students={students} onSave={s=>{saveStudent(s);refresh()}} onDelete={id=>{deleteStudent(id);refresh()}} />}
-          {tab===2 && <TournamentsTab tournaments={tournaments} students={students} onSave={t=>{saveTournament(t);refresh()}} onDelete={id=>{deleteTournament(id);refresh()}} />}
+          {tab===2 && <TournamentsTab tournaments={tournaments} students={students} onSave={handleSaveTournament} onDelete={handleDeleteTournament} />}
         </div>
       </div>
 
       {modal && <Modal modal={modal} onClose={()=>setModal(null)} onSave={item=>{
-        if(modal.type==='news'){saveNews(item)}
-        else if(modal.type==='student'){saveStudent(item)}
-        else{saveTournament(item)}
-        refresh(); setModal(null)
+        if(modal.type==='news'){handleSaveNews(item)}
+        else if(modal.type==='student'){saveStudent(item); refresh()}
+        else{handleSaveTournament(item)}
+        setModal(null)
       }} />}
     </div>
   )

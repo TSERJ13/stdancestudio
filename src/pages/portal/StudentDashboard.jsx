@@ -50,6 +50,13 @@ export default function StudentDashboard() {
         setSub(getStudentSubscription(data.subscriptions || [], studentId))
         setAtt(getStudentAttendance(data.attendance || [], studentId))
         setGroups(getStudentGroups(data.groups || [], found))
+        
+        // Prioritize cloud tournaments if returned by ClassCore API!
+        if (Array.isArray(data.tournaments) && data.tournaments.length > 0) {
+          setTournaments(data.tournaments)
+          localStorage.setItem('std_tournaments', JSON.stringify(data.tournaments))
+        }
+        
         setLoading(false)
       })
       .catch(err => {

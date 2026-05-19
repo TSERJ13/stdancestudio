@@ -9,6 +9,9 @@ const STUDIO_SLUG = 'stdancestudio';
 const CACHE_KEY = 'cc_portal_cache';
 const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
+const SUPABASE_URL = 'https://xnhzqalncwcefnhoqzxe.supabase.co';
+const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhuaHpxYWxuY3djZWZuaG9xenhlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE3ODU5MjcsImV4cCI6MjA4NzM2MTkyN30.tapUV9nQIYkJif0lS9OQNFSBgIoZLuJhexcmtfj3h48';
+
 /* ── Cache helpers ──────────────────────────────── */
 function getCached() {
   try {
@@ -55,6 +58,83 @@ export async function fetchStudioData() {
 
   setCache(data);
   return data;
+}
+
+/* ── Cloud Syncing Helpers for Tournaments & News ── */
+export async function syncTournamentsToCloud(tournaments) {
+  try {
+    // 1. Get the org_id first by fetching studio settings
+    const settingsUrl = `${SUPABASE_URL}/rest/v1/studio_settings?studio_slug=eq.${STUDIO_SLUG}`;
+    const getRes = await fetch(settingsUrl, {
+      headers: { 'apikey': ANON_KEY }
+    });
+    if (!getRes.ok) throw new Error('Failed to load studio settings from cloud');
+    const settingsList = await getRes.json();
+    if (!settingsList || settingsList.length === 0) throw new Error('Studio settings not found on cloud');
+    const settings = settingsList[0];
+    const orgId = settings.org_id;
+
+    // 2. Patch staff_data with new tournaments list
+    const currentStaffData = settings.staff_data || {};
+    const updatedStaffData = {
+      ...currentStaffData,
+      portal_tournaments: tournaments
+    };
+
+    const patchRes = await fetch(`${SUPABASE_URL}/rest/v1/studio_settings?org_id=eq.${orgId}`, {
+      method: 'PATCH',
+      headers: {
+        'apikey': ANON_KEY,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ staff_data: updatedStaffData })
+    });
+
+    if (!patchRes.ok) throw new Error('Failed to sync tournaments to cloud');
+    console.log('✅ Tournaments successfully synced to cloud!');
+    return true;
+  } catch (err) {
+    console.error('❌ Cloud tournament sync error:', err);
+    return false;
+  }
+}
+
+export async function syncNewsToCloud(news) {
+  try {
+    // 1. Get the org_id first by fetching studio settings
+    const settingsUrl = `${SUPABASE_URL}/rest/v1/studio_settings?studio_slug=eq.${STUDIO_SLUG}`;
+    const getRes = await fetch(settingsUrl, {
+      headers: { 'apikey': ANON_KEY }
+    });
+    if (!getRes.ok) throw new Error('Failed to load studio settings from cloud');
+    const settingsList = await getRes.json();
+    if (!settingsList || settingsList.length === 0) throw new Error('Studio settings not found on cloud');
+    const settings = settingsList[0];
+    const orgId = settings.org_id;
+
+    // 2. Patch staff_data with new news list
+    const currentStaffData = settings.staff_data || {};
+    const updatedStaffData = {
+      ...currentStaffData,
+      portal_news: news
+    };
+
+    const patchRes = await fetch(`${SUPABASE_URL}/rest/v1/studio_settings?org_id=eq.${orgId}`, {
+      method: 'PATCH',
+      headers: {
+        'apikey': ANON_KEY,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ staff_data: updatedStaffData })
+    });
+
+    if (!patchRes.ok) throw new Error('Failed to sync news to cloud');
+    console.log('✅ News successfully synced to cloud!');
+    return true;
+  } catch (err) {
+    console.error('❌ Cloud news sync error:', err);
+    return false;
+  }
 }
 
 /* ── Student helpers ────────────────────────────── */
