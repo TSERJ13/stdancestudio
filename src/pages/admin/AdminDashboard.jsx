@@ -501,6 +501,7 @@ function TournamentForm({item,students,onSave,onCancel}) {
     endDate:item?.endDate||'',
     venue:item?.venue||'',address:item?.address||'',mapUrl:item?.mapUrl||'',
     fee:item?.fee||0,currency:item?.currency||'₾',
+    poster:item?.poster||'',
     assignedStudents:item?.assignedStudents||[],notes:item?.notes||'',
     assignedStudentsData:item?.assignedStudentsData||{},
     // Keep legacy keys during saves to prevent data loss
@@ -519,6 +520,72 @@ function TournamentForm({item,students,onSave,onCancel}) {
   const [newCatVenue, setNewCatVenue] = useState('')
   const [newCatFeeAmount, setNewCatFeeAmount] = useState('')
   const [newCatFeeCurrency, setNewCatFeeCurrency] = useState('₾')
+  const [editingCat, setEditingCat] = useState(null)
+
+  const handleEditCategoryStart = (sid, idx, cat) => {
+    let amount = ''
+    let currency = '₾'
+    if (cat.fee) {
+      amount = cat.fee.toString().replace(/[^\d.]/g, '')
+      const cleanText = cat.fee.toString().toLowerCase()
+      if (cleanText.includes('€')) currency = '€'
+      else if (cleanText.includes('$')) currency = '$'
+    }
+    setEditingCat({
+      studentId: sid,
+      categoryIndex: idx,
+      name: cat.name,
+      date: cat.date || form.date,
+      readyTime: cat.readyTime || '',
+      time: cat.time || '',
+      venue: cat.venue || '',
+      feeAmount: amount,
+      feeCurrency: currency
+    })
+  }
+
+  const handleEditCategorySave = () => {
+    if (!editingCat) return
+    if (!editingCat.name.trim()) {
+      alert('გთხოვთ შეიყვანოთ კატეგორიის სახელი')
+      return
+    }
+
+    const sid = editingCat.studentId
+    const idx = editingCat.categoryIndex
+    const feeVal = editingCat.feeAmount ? `${editingCat.feeAmount} ${editingCat.feeCurrency}` : ''
+
+    const updatedCategory = {
+      name: editingCat.name.trim(),
+      date: editingCat.date,
+      readyTime: editingCat.readyTime.trim(),
+      time: editingCat.time.trim(),
+      venue: editingCat.venue.trim(),
+      fee: feeVal
+    }
+
+    setForm(f => {
+      const currentData = f.assignedStudentsData || {}
+      const studentObj = currentData[sid] || { categories: [] }
+      const currentCats = studentObj.categories || []
+      
+      const nextCats = [...currentCats]
+      nextCats[idx] = updatedCategory
+
+      return {
+        ...f,
+        assignedStudentsData: {
+          ...currentData,
+          [sid]: {
+            ...studentObj,
+            categories: nextCats
+          }
+        }
+      }
+    })
+
+    setEditingCat(null)
+  }
 
   const handleAddStudent = (sid) => {
     if (!sid) return
@@ -647,6 +714,54 @@ function TournamentForm({item,students,onSave,onCancel}) {
           <div className="admin-field"><label>მისამართი</label><input value={form.address} onChange={e=>set('address',e.target.value)} /></div>
           <div className="admin-field"><label>Google Maps URL</label><input value={form.mapUrl} onChange={e=>set('mapUrl',e.target.value)} placeholder="https://maps.app.goo.gl/..." /></div>
         </div>
+        <div className="admin-field">
+          <label>ტურნირის პოსტერი / Афиша турнира (სურათის ლინკი ან ატვირთეთ ფაილი)</label>
+          <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+            <input 
+              type="text" 
+              value={form.poster} 
+              onChange={e=>set('poster',e.target.value)} 
+              placeholder="https://example.com/poster.jpg ან ატვირთეთ" 
+              style={{ flex: 1 }} 
+            />
+            <button 
+              type="button" 
+              className="admin-btn admin-btn--ghost admin-btn--sm"
+              onClick={() => document.getElementById('poster-file-input').click()}
+              style={{ minWidth: '150px' }}
+            >
+              📷 ატვირთვა / Загрузить
+            </button>
+            <input 
+              id="poster-file-input" 
+              type="file" 
+              accept="image/*" 
+              style={{ display: 'none' }} 
+              onChange={(e) => {
+                const file = e.target.files[0]
+                if (file) {
+                  const reader = new FileReader()
+                  reader.onload = (uploadEvent) => {
+                    set('poster', uploadEvent.target.result)
+                  }
+                  reader.readAsDataURL(file)
+                }
+              }} 
+            />
+          </div>
+          {form.poster && (
+            <div style={{ marginTop: '0.65rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+              <img src={form.poster} alt="Preview" style={{ maxHeight: '100px', borderRadius: '4px', border: '1px solid rgba(212,166,74,0.3)', display: 'block' }} />
+              <button 
+                type="button" 
+                style={{ background: 'transparent', border: 'none', color: '#ff7070', cursor: 'pointer', fontSize: '0.8rem', fontWeight: 'bold' }}
+                onClick={() => set('poster', '')}
+              >
+                წაშლა / Удалить ✕
+              </button>
+            </div>
+          )}
+        </div>
         <div className="admin-field"><label>შენიშვნები (არ გამოჩნდება თუ ცარიელია)</label><textarea value={form.notes} onChange={e=>set('notes',e.target.value)} rows={2} /></div>
 
         {/* Participant & Individual Schedule Section */}
@@ -673,6 +788,30 @@ function TournamentForm({item,students,onSave,onCancel}) {
               const st = students.find(s => s.id === sid)
               const stData = form.assignedStudentsData?.[sid] || { categories: [] }
               const isExpanded = activeStudentId === sid
+
+              // Calculate total fee for this student in admin
+              let totalStudentFeeText = '';
+              if (stData.categories?.length > 0) {
+                let sum = 0;
+                let detectedCurrency = '';
+                stData.categories.forEach(cat => {
+                  if (cat.fee) {
+                    const val = parseFloat(cat.fee.toString().replace(/[^\d.]/g, ''))
+                    if (!isNaN(val)) {
+                      sum += val;
+                    }
+                    const cleanText = cat.fee.toString().toLowerCase();
+                    if (cleanText.includes('€')) detectedCurrency = '€';
+                    else if (cleanText.includes('$')) detectedCurrency = '$';
+                    else if (cleanText.includes('₾') || cleanText.includes('gel')) detectedCurrency = '₾';
+                    else if (cleanText.includes('руб') || cleanText.includes('rub')) detectedCurrency = ' руб';
+                  }
+                });
+                if (sum > 0) {
+                  totalStudentFeeText = `💰 ${sum} ${detectedCurrency || '₾'}`;
+                }
+              }
+
               return (
                 <div key={sid} style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid ' + (isExpanded ? 'rgba(212,166,74,0.3)' : 'rgba(255,255,255,0.04)'), borderRadius: '6px', overflow: 'hidden', transition: 'all 0.3s ease' }}>
                   {/* Card Header */}
@@ -691,6 +830,7 @@ function TournamentForm({item,students,onSave,onCancel}) {
                       </div>
                     </div>
                     <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+                      {totalStudentFeeText && <span style={{ fontSize: '0.8rem', color: 'var(--color-gold)', fontWeight: 'bold' }}>{totalStudentFeeText}</span>}
                       <span className="badge badge--gold" style={{ fontSize: '0.75rem' }}>{stData.categories?.length || 0} კატეგორია</span>
                       <button type="button" className="admin-btn admin-btn--danger admin-btn--sm" onClick={(e) => { e.stopPropagation(); handleRemoveStudent(sid); }} style={{ padding: '0.35rem 0.55rem' }}>🗑</button>
                     </div>
@@ -706,21 +846,158 @@ function TournamentForm({item,students,onSave,onCancel}) {
                         {(stData.categories || []).length === 0 ? (
                           <div style={{ fontSize: '0.8rem', color: '#6b665e', fontStyle: 'italic', paddingLeft: '0.25rem' }}>კატეგორიები ჯერ არ არის დამატებული.</div>
                         ) : (
-                          stData.categories.map((cat, idx) => (
-                            <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(255,255,255,0.02)', padding: '0.55rem 0.85rem', borderRadius: '4px', border: '1px solid rgba(255,255,255,0.04)' }}>
-                              <div>
-                                <span style={{ fontSize: '0.88rem', color: '#fff', fontWeight: 600 }}>{cat.name}</span>
-                                <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', fontSize: '0.75rem', color: '#a8a39a', marginTop: '0.15rem' }}>
-                                  {cat.date && <span>📅 {cat.date}</span>}
-                                  {cat.readyTime && <span style={{ color: 'var(--color-gold)' }}>🎒 მზადყოფნა: {cat.readyTime}</span>}
-                                  {cat.time && <span style={{ color: '#d4a64a' }}>🕒 დაწყება: {cat.time}</span>}
-                                  {cat.venue && <span>🏛 {cat.venue}</span>}
-                                  {cat.fee && <span style={{ color: '#50c878' }}>💰 {cat.fee}</span>}
+                          stData.categories.map((cat, idx) => {
+                            const isEditing = editingCat && editingCat.studentId === sid && editingCat.categoryIndex === idx
+                            
+                            if (isEditing) {
+                              return (
+                                <div key={idx} style={{ background: 'rgba(212,166,74,0.03)', padding: '0.85rem 1.1rem', borderRadius: '6px', border: '1px solid rgba(212,166,74,0.3)', display: 'flex', flexDirection: 'column', gap: '0.65rem', margin: '0.2rem 0' }}>
+                                  <div style={{ fontSize: '0.75rem', color: 'var(--color-gold)', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                                    <span>✏️ კატეგორიის რედაქტირება</span>
+                                  </div>
+                                  
+                                  {/* Name Input */}
+                                  <div className="admin-field" style={{ marginBottom: 0, width: '100%' }}>
+                                    <label style={{ fontSize: '0.7rem', color: '#a8a39a', marginBottom: '0.15rem', display: 'block' }}>კატეგორიის სახელი</label>
+                                    <input 
+                                      value={editingCat.name} 
+                                      onChange={e => setEditingCat({...editingCat, name: e.target.value})} 
+                                      placeholder="შეიყვანეთ სახელი..." 
+                                      style={{ padding: '0.45rem', fontSize: '0.83rem', width: '100%', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(212,166,74,0.2)', color: '#fff' }} 
+                                    />
+                                  </div>
+                                  
+                                  {/* Grid fields */}
+                                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(110px, 1fr))', gap: '0.5rem', alignItems: 'end' }}>
+                                    <div className="admin-field" style={{ marginBottom: 0 }}>
+                                      <label style={{ fontSize: '0.65rem', color: '#a8a39a', display: 'block', marginBottom: '0.15rem' }}>თარიღი</label>
+                                      <select 
+                                        value={editingCat.date} 
+                                        onChange={e => setEditingCat({...editingCat, date: e.target.value})} 
+                                        style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(212,166,74,0.2)', color: '#f5f1e8', padding: '0.42rem', borderRadius: '2px', fontSize: '0.78rem', width: '100%' }}
+                                      >
+                                        <option value={form.date}>{form.date}</option>
+                                        {form.endDate && form.endDate !== form.date && <option value={form.endDate}>{form.endDate}</option>}
+                                      </select>
+                                    </div>
+                                    
+                                    <div className="admin-field" style={{ marginBottom: 0 }}>
+                                      <label style={{ fontSize: '0.65rem', color: '#a8a39a', display: 'block', marginBottom: '0.15rem' }}>🎒 მზადყოფნა</label>
+                                      <input 
+                                        value={editingCat.readyTime} 
+                                        onChange={e => setEditingCat({...editingCat, readyTime: e.target.value})} 
+                                        placeholder="09:15" 
+                                        style={{ padding: '0.42rem', fontSize: '0.78rem', width: '100%', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(212,166,74,0.2)', color: '#fff' }} 
+                                      />
+                                    </div>
+                                    
+                                    <div className="admin-field" style={{ marginBottom: 0 }}>
+                                      <label style={{ fontSize: '0.65rem', color: '#a8a39a', display: 'block', marginBottom: '0.15rem' }}>🕒 დაწყება</label>
+                                      <input 
+                                        value={editingCat.time} 
+                                        onChange={e => setEditingCat({...editingCat, time: e.target.value})} 
+                                        placeholder="10:00" 
+                                        style={{ padding: '0.42rem', fontSize: '0.78rem', width: '100%', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(212,166,74,0.2)', color: '#fff' }} 
+                                      />
+                                    </div>
+                                    
+                                    <div className="admin-field" style={{ marginBottom: 0 }}>
+                                      <label style={{ fontSize: '0.65rem', color: '#a8a39a', display: 'block', marginBottom: '0.15rem' }}>🏛 დარბაზი</label>
+                                      <input 
+                                        value={editingCat.venue} 
+                                        onChange={e => setEditingCat({...editingCat, venue: e.target.value})} 
+                                        placeholder="დარბაზი" 
+                                        style={{ padding: '0.42rem', fontSize: '0.78rem', width: '100%', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(212,166,74,0.2)', color: '#fff' }} 
+                                      />
+                                    </div>
+                                    
+                                    <div className="admin-field" style={{ marginBottom: 0 }}>
+                                      <label style={{ fontSize: '0.65rem', color: '#a8a39a', display: 'block', marginBottom: '0.15rem' }}>💰 საფასური</label>
+                                      <div style={{ display: 'flex', gap: '0.15rem' }}>
+                                        <input 
+                                          type="number" 
+                                          value={editingCat.feeAmount} 
+                                          onChange={e => setEditingCat({...editingCat, feeAmount: e.target.value})} 
+                                          placeholder="30" 
+                                          style={{ padding: '0.42rem', fontSize: '0.78rem', flex: 1, minWidth: '40px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(212,166,74,0.2)', color: '#fff' }} 
+                                        />
+                                        <select 
+                                          value={editingCat.feeCurrency} 
+                                          onChange={e => setEditingCat({...editingCat, feeCurrency: e.target.value})} 
+                                          style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(212,166,74,0.2)', color: '#f5f1e8', padding: '0.42rem', borderRadius: '2px', fontSize: '0.78rem', width: '50px' }}
+                                        >
+                                          <option value="₾">₾</option>
+                                          <option value="$">$</option>
+                                          <option value="€">€</option>
+                                        </select>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  
+                                  {/* Actions */}
+                                  <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.65rem', marginTop: '0.4rem' }}>
+                                    <button 
+                                      type="button" 
+                                      onClick={() => setEditingCat(null)} 
+                                      className="admin-btn admin-btn--ghost admin-btn--sm"
+                                      style={{ padding: '0.4rem 0.85rem', fontSize: '0.78rem' }}
+                                    >
+                                      გაუქმება / Отмена
+                                    </button>
+                                    <button 
+                                      type="button" 
+                                      onClick={handleEditCategorySave} 
+                                      className="admin-btn admin-btn--gold admin-btn--sm"
+                                      style={{ padding: '0.4rem 0.85rem', fontSize: '0.78rem' }}
+                                    >
+                                      შენახვა / Сохранить
+                                    </button>
+                                  </div>
+                                </div>
+                              )
+                            }
+
+                            return (
+                              <div 
+                                key={idx} 
+                                onClick={() => handleEditCategoryStart(sid, idx, cat)}
+                                style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(255,255,255,0.02)', padding: '0.65rem 0.95rem', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.04)', cursor: 'pointer', transition: 'all 0.25s ease' }}
+                                onMouseEnter={(e) => {
+                                  e.currentTarget.style.background = 'rgba(212,166,74,0.04)'
+                                  e.currentTarget.style.borderColor = 'rgba(212,166,74,0.2)'
+                                }}
+                                onMouseLeave={(e) => {
+                                  e.currentTarget.style.background = 'rgba(255,255,255,0.02)'
+                                  e.currentTarget.style.borderColor = 'rgba(255,255,255,0.04)'
+                                }}
+                                title="დააწკაპუნეთ ჩასასწორებლად / Нажмите для редактирования"
+                              >
+                                <div>
+                                  <span style={{ fontSize: '0.88rem', color: '#fff', fontWeight: 600 }}>{cat.name}</span>
+                                  <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', fontSize: '0.75rem', color: '#a8a39a', marginTop: '0.15rem' }}>
+                                    {cat.date && <span>📅 {cat.date}</span>}
+                                    {cat.readyTime && <span style={{ color: 'var(--color-gold)' }}>🎒 მზადყოფნა: {cat.readyTime}</span>}
+                                    {cat.time && <span style={{ color: '#d4a64a' }}>🕒 დაწყება: {cat.time}</span>}
+                                    {cat.venue && <span>🏛 {cat.venue}</span>}
+                                    {cat.fee && <span style={{ color: '#50c878' }}>💰 {cat.fee}</span>}
+                                  </div>
+                                </div>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }} onClick={e => e.stopPropagation()}>
+                                  <span style={{ fontSize: '0.7rem', color: 'rgba(212,166,74,0.7)', marginRight: '0.2rem', userSelect: 'none', background: 'rgba(212,166,74,0.06)', padding: '0.2rem 0.4rem', borderRadius: '4px', border: '1px solid rgba(212,166,74,0.15)', pointerEvents: 'none' }}>
+                                    ✏️ ჩასწორება
+                                  </span>
+                                  <button 
+                                    type="button" 
+                                    onClick={(e) => { e.stopPropagation(); handleRemoveCategoryFromStudent(sid, idx); }} 
+                                    style={{ background: 'none', border: 'none', color: '#ff7070', fontSize: '1.25rem', cursor: 'pointer', padding: '0 0.4rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                                    title="წაშლა"
+                                  >
+                                    ×
+                                  </button>
                                 </div>
                               </div>
-                              <button type="button" onClick={() => handleRemoveCategoryFromStudent(sid, idx)} style={{ background: 'none', border: 'none', color: '#ff7070', fontSize: '1.2rem', cursor: 'pointer', padding: '0 0.4rem' }}>×</button>
-                            </div>
-                          ))
+                            )
+                          })
                         )}
                       </div>
 

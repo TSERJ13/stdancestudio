@@ -37,6 +37,7 @@ const TRANSLATIONS = {
     retry: 'თავიდან ცდა',
     years: 'წლის',
     parent: 'მშობელი',
+    switch_student: 'ბავშვის შეცვლა',
     sub_warning: 'აბონემენტი მთავრდება',
     info_title: 'პირადი ინფორმაცია',
     name: 'სახელი',
@@ -89,6 +90,7 @@ const TRANSLATIONS = {
     retry: 'Повторить',
     years: 'лет',
     parent: 'Родитель',
+    switch_student: 'Сменить ребенка',
     sub_warning: 'Абонемент заканчивается',
     info_title: 'Личная информация',
     name: 'Имя',
@@ -141,6 +143,7 @@ const TRANSLATIONS = {
     retry: 'Retry',
     years: 'years',
     parent: 'Parent',
+    switch_student: 'Switch Student',
     sub_warning: 'Subscription ending soon',
     info_title: 'Personal Info',
     name: 'Name',
@@ -300,10 +303,59 @@ export default function StudentDashboard() {
   const parentName = studentData.parent_name || ''
   const today = new Date().toISOString().slice(0,10)
 
-  const recentAtt = att.slice(-30)
-  const present = recentAtt.filter(r => r.present).length
-  const absent  = recentAtt.filter(r => !r.present).length
-  const pct     = recentAtt.length ? Math.round((present / recentAtt.length) * 100) : 0
+  // Generate scheduled past dates that weren't attended as missed (absent)
+  const presentDatesSet = new Set(att.map(r => r.date))
+  let startDateStr = ''
+  if (sub && sub.starts) {
+    startDateStr = sub.starts
+  } else {
+    const d = new Date()
+    d.setDate(d.getDate() - 30)
+    startDateStr = d.toISOString().slice(0, 10)
+  }
+
+  const scheduledDays = new Set()
+  groups.forEach(g => {
+    if (Array.isArray(g.schedule)) {
+      g.schedule.forEach(s => {
+        scheduledDays.add(Number(s.day))
+      })
+    }
+  })
+
+  const generatedAtt = []
+  const start = new Date(startDateStr)
+  const end = new Date() // today
+
+  if (!isNaN(start.getTime()) && start < end) {
+    const curr = new Date(start)
+    while (curr < end) {
+      const dateStr = curr.toISOString().slice(0, 10)
+      const dayOfWeek = curr.getDay()
+      if (scheduledDays.has(dayOfWeek)) {
+        generatedAtt.push({
+          date: dateStr,
+          present: presentDatesSet.has(dateStr)
+        })
+      }
+      curr.setDate(curr.getDate() + 1)
+    }
+  }
+
+  // Preserve any makeup present classes (even if not on a scheduled day)
+  att.forEach(a => {
+    if (!generatedAtt.some(g => g.date === a.date)) {
+      generatedAtt.push({
+        date: a.date,
+        present: true
+      })
+    }
+  })
+
+  const sortedUnifiedAtt = generatedAtt.sort((a, b) => b.date.localeCompare(a.date))
+  const present = sortedUnifiedAtt.filter(r => r.present).length
+  const absent  = sortedUnifiedAtt.filter(r => !r.present).length
+  const pct     = sortedUnifiedAtt.length ? Math.round((present / sortedUnifiedAtt.length) * 100) : 0
 
   const upcomingTrn = tournaments.filter(t => {
     const isFuture = t.date >= today;
@@ -375,7 +427,7 @@ export default function StudentDashboard() {
           {/* Sibling switcher for mobile inside drawer */}
           {siblings.length > 1 && (
             <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '1.25rem', marginTop: '1.25rem', display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
-              <span style={{ fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.12em', color: '#6b665e' }}>ბავშვის შეცვლა / Сменить ребенка</span>
+              <span style={{ fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.12em', color: '#6b665e' }}>{t('switch_student')}</span>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
                 {siblings.map(sib => {
                   const isCurrent = sib.id === student.id;
@@ -454,7 +506,7 @@ export default function StudentDashboard() {
 
           {siblings.length > 1 && (
             <div style={{ padding: '2rem 1.25rem 1rem', borderTop: '1px solid rgba(212,166,74,0.1)', marginTop: '2rem', display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
-              <span style={{ fontSize: '0.68rem', textTransform: 'uppercase', letterSpacing: '0.1em', color: '#6b665e' }}>ბავშვის შეცვლა / Сменить ребенка</span>
+              <span style={{ fontSize: '0.68rem', textTransform: 'uppercase', letterSpacing: '0.1em', color: '#6b665e' }}>{t('switch_student')}</span>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
                 {siblings.map(sib => {
                   const isCurrent = sib.id === student.id;
@@ -634,7 +686,7 @@ export default function StudentDashboard() {
                 <span className="portal-card__title">{t('attendance')}</span>
               </div>
               <div className="portal-card__body">
-                {att.length > 0 ? (
+                {sortedUnifiedAtt.length > 0 ? (
                   <div>
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: '2rem', marginBottom: '2rem', background: 'rgba(255,255,255,0.01)', padding: '1rem 1.5rem', borderRadius: '4px', border: '1px solid rgba(255,255,255,0.02)' }}>
                       <div><div style={{ fontSize: '0.75rem', color: '#6b665e', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{t('present')}</div><div style={{ fontSize: '1.75rem', color: '#50c878', fontWeight: 600 }}>{present}</div></div>
@@ -642,14 +694,14 @@ export default function StudentDashboard() {
                       <div><div style={{ fontSize: '0.75rem', color: '#6b665e', textTransform: 'uppercase', letterSpacing: '0.05em' }}>%</div><div style={{ fontSize: '1.75rem', color: 'var(--color-gold)', fontWeight: 600 }}>{pct}%</div></div>
                     </div>
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))', gap: '0.75rem' }}>
-                      {att.map((r, i) => (
+                      {sortedUnifiedAtt.map((r, i) => (
                         <div key={i} className={`portal-att-pill ${r.present ? 'present' : 'absent'}`} style={{ display: 'flex', justifyContent: 'space-between', padding: '0.5rem 0.75rem', borderRadius: '4px', fontSize: '0.8rem', border: '1px solid ' + (r.present ? 'rgba(80,200,120,0.15)' : 'rgba(220,50,50,0.15)') }}>
                           <span>{r.date}</span>
                           <span style={{ fontWeight: 700 }}>{r.present ? '✓' : '×'}</span>
                         </div>
                       ))}
                     </div>
-                    <div style={{ fontSize: '0.75rem', color: '#6b665e', marginTop: '1.5rem', textAlign: 'right' }}>{t('total_records').replace('{n}', att.length)}</div>
+                    <div style={{ fontSize: '0.75rem', color: '#6b665e', marginTop: '1.5rem', textAlign: 'right' }}>{t('total_records').replace('{n}', sortedUnifiedAtt.length)}</div>
                   </div>
                 ) : (
                   <p style={{ color: '#6b665e', fontSize: '0.85rem' }}>{t('no_attendance')}</p>
@@ -686,20 +738,56 @@ export default function StudentDashboard() {
                         }))
                       }
 
+                      // Calculate total category fee sum
+                      let totalFeeText = '';
+                      if (myCats.length > 0) {
+                        let sum = 0;
+                        let detectedCurrency = '';
+                        myCats.forEach(cat => {
+                          if (cat.fee) {
+                            const val = parseFloat(cat.fee.toString().replace(/[^\d.]/g, ''))
+                            if (!isNaN(val)) {
+                              sum += val;
+                            }
+                            const cleanText = cat.fee.toString().toLowerCase();
+                            if (cleanText.includes('€')) detectedCurrency = '€';
+                            else if (cleanText.includes('$')) detectedCurrency = '$';
+                            else if (cleanText.includes('₾') || cleanText.includes('gel')) detectedCurrency = '₾';
+                            else if (cleanText.includes('руб') || cleanText.includes('rub')) detectedCurrency = ' руб';
+                          }
+                        });
+                        if (sum > 0) {
+                          totalFeeText = `${sum} ${detectedCurrency || '₾'}`;
+                        }
+                      }
+
                       return (
-                        <div key={tItem.id} className="trn-upcoming">
-                          <div className="trn-upcoming__name" style={{ fontFamily: 'var(--font-display)', fontSize: '1.25rem', fontWeight: 600 }}>{tItem.name}</div>
-                          <div className="trn-upcoming__date">
-                            📅 {tItem.endDate && tItem.endDate !== tItem.date ? `${tItem.date} — ${tItem.endDate}` : tItem.date}
-                          </div>
-                          <div className="trn-upcoming__info">
-                            <span>🏛 {tItem.venue}</span>
-                            <span>📍 {tItem.address}</span>
-                            {tItem.fee ? (
-                              <span style={{ color: 'var(--color-gold)' }}>
-                                🎫 {t('ticket_price')}: {tItem.fee}{tItem.currency || '₾'}
-                              </span>
-                            ) : null}
+                        <div key={tItem.id} className="trn-upcoming" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)', paddingBottom: '1.5rem', marginBottom: '1rem' }}>
+                          <div style={{ display: 'flex', gap: '1.25rem', flexWrap: 'wrap', marginBottom: '1.25rem' }}>
+                            {tItem.poster && (
+                              <div style={{ width: '110px', flexShrink: 0 }}>
+                                <img 
+                                  src={tItem.poster} 
+                                  alt={tItem.name} 
+                                  style={{ width: '100%', borderRadius: '6px', border: '1px solid rgba(212,166,74,0.22)', display: 'block', maxHeight: '160px', objectFit: 'contain', background: 'rgba(0,0,0,0.2)' }} 
+                                />
+                              </div>
+                            )}
+                            <div style={{ flex: 1, minWidth: '200px' }}>
+                              <div className="trn-upcoming__name" style={{ fontFamily: 'var(--font-display)', fontSize: '1.3rem', fontWeight: 600, color: '#f5f1e8' }}>{tItem.name}</div>
+                              <div className="trn-upcoming__date" style={{ fontSize: '0.85rem', color: '#a8a39a', marginTop: '0.25rem' }}>
+                                📅 {tItem.endDate && tItem.endDate !== tItem.date ? `${tItem.date} — ${tItem.endDate}` : tItem.date}
+                              </div>
+                              <div className="trn-upcoming__info" style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', marginTop: '0.65rem' }}>
+                                <span>🏛 {tItem.venue}</span>
+                                <span>📍 {tItem.address}</span>
+                                {tItem.fee ? (
+                                  <span style={{ color: 'var(--color-gold)', fontWeight: 600 }}>
+                                    🎫 {t('ticket_price')}: {tItem.fee}{tItem.currency || '₾'}
+                                  </span>
+                                ) : null}
+                              </div>
+                            </div>
                           </div>
 
                           {myCats.length > 0 ? (
@@ -709,24 +797,29 @@ export default function StudentDashboard() {
                               </span>
                               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                                 {myCats.map((cat, idx) => (
-                                  <div key={idx} style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', background: 'rgba(255,255,255,0.02)', padding: '0.75rem 1rem', borderRadius: '4px', border: '1px solid rgba(255,255,255,0.03)' }}>
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                      <span style={{ fontSize: '0.92rem', color: '#f5f1e8', fontWeight: 600 }}>{cat.name}</span>
-                                      <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'center', flexWrap: 'wrap' }}>
-                                        {cat.date && <span className="portal-badge" style={{ fontSize: '0.75rem', background: 'rgba(255,255,255,0.05)', color: '#a8a39a', border: '1px solid rgba(255,255,255,0.08)' }}>📅 {cat.date}</span>}
-                                        {cat.readyTime && <span className="portal-badge" style={{ fontSize: '0.75rem', background: 'rgba(212,166,74,0.08)', color: 'var(--color-gold)', border: '1px solid rgba(212,166,74,0.15)' }}>🎒 {lang === 'ru' ? 'Сбор:' : lang === 'en' ? 'Ready:' : 'მზადება:'} {cat.readyTime}</span>}
-                                        {cat.time && <span className="portal-badge portal-badge--gold" style={{ fontSize: '0.75rem' }}>🕒 {lang === 'ru' ? 'Старт:' : lang === 'en' ? 'Start:' : 'დაწყება:'} {cat.time}</span>}
-                                      </div>
+                                  <div key={idx} style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', background: 'rgba(255,255,255,0.02)', padding: '0.85rem 1.1rem', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.03)' }}>
+                                    <div style={{ fontSize: '0.92rem', color: '#f5f1e8', fontWeight: 600, lineHeight: 1.45 }}>{cat.name}</div>
+                                    <div style={{ display: 'flex', gap: '0.45rem', alignItems: 'center', flexWrap: 'wrap' }}>
+                                      {cat.date && <span className="portal-badge" style={{ fontSize: '0.75rem', background: 'rgba(255,255,255,0.05)', color: '#a8a39a', border: '1px solid rgba(255,255,255,0.08)' }}>📅 {cat.date}</span>}
+                                      {cat.readyTime && <span className="portal-badge" style={{ fontSize: '0.75rem', background: 'rgba(212,166,74,0.08)', color: 'var(--color-gold)', border: '1px solid rgba(212,166,74,0.15)' }}>🎒 {lang === 'ru' ? 'Сбор:' : lang === 'en' ? 'Ready:' : 'მზადება:'} {cat.readyTime}</span>}
+                                      {cat.time && <span className="portal-badge portal-badge--gold" style={{ fontSize: '0.75rem' }}>🕒 {lang === 'ru' ? 'Старт:' : lang === 'en' ? 'Start:' : 'დაწყება:'} {cat.time}</span>}
                                     </div>
                                     {(cat.venue || cat.fee) && (
-                                      <div style={{ display: 'flex', gap: '1rem', fontSize: '0.78rem', color: '#a8a39a', borderTop: '1px solid rgba(255,255,255,0.03)', paddingTop: '0.35rem', marginTop: '0.15rem' }}>
+                                      <div style={{ display: 'flex', gap: '1rem', fontSize: '0.78rem', color: '#a8a39a', borderTop: '1px solid rgba(255,255,255,0.03)', paddingTop: '0.45rem', marginTop: '0.2rem' }}>
                                         {cat.venue && <span>🏛 {cat.venue}</span>}
-                                        {cat.fee && <span style={{ color: 'var(--color-gold)' }}>💰 {lang === 'ru' ? 'Взнос:' : lang === 'en' ? 'Fee:' : 'გადასახადი:'} {cat.fee}</span>}
+                                        {cat.fee && <span style={{ color: 'var(--color-gold)', fontWeight: 600 }}>💰 {lang === 'ru' ? 'Взнос:' : lang === 'en' ? 'Fee:' : 'გადასახადი:'} {cat.fee}</span>}
                                       </div>
                                     )}
                                   </div>
                                 ))}
                               </div>
+                              {totalFeeText && (
+                                <div style={{ display: 'flex', justifyContent: 'flex-end', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '0.65rem', marginTop: '0.5rem' }}>
+                                  <span style={{ fontSize: '0.88rem', color: '#fff', fontWeight: 'bold', display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}>
+                                    💰 {lang === 'ru' ? 'Общий взнос:' : lang === 'en' ? 'Total fee:' : 'ჯამური გადასახადი:'} <span style={{ color: 'var(--color-gold)', fontSize: '1.05rem' }}>{totalFeeText}</span>
+                                  </span>
+                                </div>
+                              )}
                             </div>
                           ) : (
                             <div style={{ fontSize: '0.82rem', color: '#6b665e', fontStyle: 'italic', margin: '0.75rem 0' }}>

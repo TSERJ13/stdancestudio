@@ -179,11 +179,12 @@
   z-index: 95;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
-  padding: 4rem 2rem;
+  padding: 7.5rem 2rem 4rem 2rem;
   transform: translateX(100%);
   transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  overflow-y: auto;
 }
 .portal-mobile-menu.is-open {
   transform: translateX(0);
@@ -191,16 +192,16 @@
 .portal-mobile-menu__nav {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 1.5rem;
   width: 100%;
   max-width: 320px;
-  margin-bottom: 3rem;
+  margin-bottom: 2rem;
 }
 .portal-mobile-menu__link {
   display: flex;
   align-items: center;
   font-family: var(--font-display, 'Cormorant Garamond', serif);
-  font-size: 2.3rem;
+  font-size: 1.85rem;
   font-weight: 500;
   color: var(--color-text-muted, #a8a39a);
   letter-spacing: 0.05em;
@@ -263,4 +264,39 @@
 
 .animate-fade-in {
   animation: pFadeUp 0.6s var(--ease) both;
+}
+
+/* Student Info Grid */
+.portal-info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.25rem;
+  margin-top: 0.5rem;
+}
+.portal-info-item {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(212, 166, 74, 0.08);
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  transition: all 0.3s ease;
+}
+.portal-info-item:hover {
+  background: rgba(212, 166, 74, 0.03);
+  border-color: rgba(212, 166, 74, 0.2);
+  transform: translateY(-2px);
+}
+.portal-info-item .label {
+  font-size: 0.72rem;
+  color: var(--color-gold, #d4a64a);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 600;
+}
+.portal-info-item .val {
+  font-size: 0.95rem;
+  color: #fff;
+  font-weight: 500;
 }
