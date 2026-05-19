@@ -30,8 +30,34 @@ export default function AdminDashboard() {
 
   const refresh = () => {
     setNews(getNews())
-    setStudents(getStudents())
     setTournaments(getTournaments())
+    
+    // Import classcore loader dynamically to prevent loading timing issues
+    import('../../data/classcore').then(mod => {
+      mod.fetchStudioData()
+        .then(data => {
+          const mapped = (data.students || []).map(s => {
+            const fn = s.first_name || s.data?.first_name || '';
+            const ln = s.last_name || s.data?.last_name || '';
+            return {
+              id: s.id,
+              name: s.full_name || `${fn} ${ln}`.trim() || 'Student',
+              phone: s.phone || s.data?.phone || '',
+              birthYear: s.data?.birth_date ? new Date(s.data.birth_date).getFullYear() : 2010,
+              classification: s.data?.dance_class || 'N კლასი',
+              photo: s.data?.photo_url || '',
+              active: s.status === 'active' || !s.status
+            }
+          });
+          setStudents(mapped);
+        })
+        .catch(err => {
+          console.error('Failed to load ClassCore students in admin:', err);
+          setStudents(getStudents());
+        });
+    }).catch(() => {
+      setStudents(getStudents());
+    });
   }
 
   const logout = () => { adminLogout(); navigate('/admin') }

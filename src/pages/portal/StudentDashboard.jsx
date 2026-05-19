@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import {
   fetchStudioData, getStudentName,
   getStudentSubscription, getStudentAttendance,
   getStudentGroups, getPortalSession,
   clearPortalSession, clearCache
 } from '../../data/classcore'
+import { getTournaments } from '../../data/db'
 import './portal.css'
 
 const DAYS_GEO = ['კვი','ორშ','სამ','ოთხ','ხუთ','პარ','შაბ']
@@ -14,6 +15,7 @@ const TABS = [
   { id: 'sub',     icon: '💳', label: 'აბონემენტი' },
   { id: 'schedule',icon: '📅', label: 'განრიგი' },
   { id: 'att',     icon: '📊', label: 'დასწრება' },
+  { id: 'trn',     icon: '🏆', label: 'ტურნირები' },
 ]
 
 export default function StudentDashboard() {
@@ -23,12 +25,17 @@ export default function StudentDashboard() {
   const [sub, setSub] = useState(null)
   const [att, setAtt] = useState([])
   const [groups, setGroups] = useState([])
+  const [tournaments, setTournaments] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [mobileOpen, setMobileOpen] = useState(false)
 
   useEffect(() => {
     const studentId = getPortalSession()
     if (!studentId) { navigate('/portal'); return }
+
+    // Read tournaments locally
+    setTournaments(getTournaments())
 
     fetchStudioData()
       .then(data => {
@@ -57,6 +64,12 @@ export default function StudentDashboard() {
     clearCache()
     navigate('/portal')
   }
+
+  // Prevent scroll when mobile menu is open
+  useEffect(() => {
+    document.body.style.overflow = mobileOpen ? 'hidden' : ''
+    return () => { document.body.style.overflow = '' }
+  }, [mobileOpen])
 
   if (loading) {
     return (
@@ -95,17 +108,63 @@ export default function StudentDashboard() {
   const absent  = recentAtt.filter(r => !r.present).length
   const pct     = recentAtt.length ? Math.round((present / recentAtt.length) * 100) : 0
 
+  // Tournaments filtering
+  const upcomingTrn = tournaments.filter(t => t.date >= today)
+  const pastTrn = tournaments.filter(t => t.date < today && t.results?.[student.id]?.length > 0)
+
   return (
     <div className="portal-wrap portal-shell">
+      {/* Editorial Luxury Header in Site's Style */}
       <header className="portal-header">
-        <div className="portal-header__brand">
-          <span className="portal-header__logo">ST</span>
+        <div className="portal-header__brand-container">
+          <Link to="/" className="portal-header__brand">
+            <img src="/images/logo-transparent.png" alt="ST Dance Studio" className="portal-header__logo-img" />
+            <div className="portal-header__brand-text" style={{ fontFamily: '"Times New Roman", Times, serif', textTransform: 'uppercase' }}>
+              <span className="portal-header__brand-name" style={{ color: 'var(--color-gold)', fontSize: '1.05rem', letterSpacing: '0.08em' }}>ST DANCE</span>
+              <div style={{ height: '1px', background: 'var(--color-gold)', margin: '1px 0' }}></div>
+              <span className="portal-header__brand-sub" style={{ color: '#fff', fontSize: '0.7rem', letterSpacing: '0.25em', textTransform: 'lowercase' }}>studio</span>
+            </div>
+          </Link>
+          <div className="portal-header__divider"></div>
           <span className="portal-header__name">სტუდენტის პორტალი</span>
         </div>
-        <button className="portal-header__logout" onClick={handleLogout}>გასვლა ↗</button>
+
+        <button className="portal-header__logout desktop-only" onClick={handleLogout}>გასვლა ↗</button>
+
+        {/* Burger Button for Mobile Menu */}
+        <button
+          className={`portal-burger mobile-only ${mobileOpen ? 'is-open' : ''}`}
+          onClick={() => setMobileOpen(v => !v)}
+          aria-label="Menu"
+        >
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
       </header>
 
+      {/* Mobile Drawer Menu in Site's Luxury Style */}
+      <div className={`portal-mobile-menu ${mobileOpen ? 'is-open' : ''}`}>
+        <nav className="portal-mobile-menu__nav">
+          {TABS.map((t, i) => (
+            <button
+              key={t.id}
+              className={`portal-mobile-menu__link ${tab === t.id ? 'is-active' : ''}`}
+              onClick={() => { setTab(t.id); setMobileOpen(false) }}
+              style={{ animationDelay: `${0.1 + i * 0.07}s` }}
+            >
+              <span className="portal-mobile-menu__num">0{i + 1}</span>
+              <span style={{ marginRight: '0.75rem' }}>{t.icon}</span> {t.label}
+            </button>
+          ))}
+        </nav>
+        <button className="portal-mobile-menu__logout" onClick={handleLogout}>
+          გასვლა ↗
+        </button>
+      </div>
+
       <div className="portal-body">
+        {/* Sidebar for Desktop */}
         <nav className="portal-sidenav">
           {TABS.map(t => (
             <button key={t.id} className={`portal-nav-item${tab===t.id?' active':''}`} onClick={() => setTab(t.id)}>
@@ -115,7 +174,7 @@ export default function StudentDashboard() {
         </nav>
 
         <main className="portal-content">
-          {/* Hero */}
+          {/* Hero Card */}
           <div className="portal-hero">
             <div className="portal-hero__photo">
               {studentData.photo_url
@@ -213,7 +272,7 @@ export default function StudentDashboard() {
             </div>
           )}
 
-          {/* Tab: Schedule (Groups) */}
+          {/* Tab: Schedule */}
           {tab === 'schedule' && (
             <div className="portal-card">
               <div className="portal-card__head"><span className="portal-card__icon">📅</span><span className="portal-card__title">ჩემი ჯგუფები</span></div>
@@ -292,6 +351,88 @@ export default function StudentDashboard() {
                 )}
               </div>
             </div>
+          )}
+
+          {/* Tab: Tournaments & Results (Requested!) */}
+          {tab === 'trn' && (
+            <>
+              {upcomingTrn.length > 0 && (
+                <div className="portal-card animate-fade-in">
+                  <div className="portal-card__head">
+                    <span className="portal-card__icon">🏆</span>
+                    <span className="portal-card__title">მომავალი ტურნირები</span>
+                  </div>
+                  <div className="portal-card__body">
+                    {upcomingTrn.map(t => {
+                      const myCats = t.studentCategories?.[student.id] || []
+                      return (
+                        <div key={t.id} className="trn-upcoming">
+                          <div className="trn-upcoming__name" style={{ fontFamily: 'var(--font-display)', fontSize: '1.25rem', fontWeight: 600 }}>{t.name}</div>
+                          <div className="trn-upcoming__date">📅 {t.date}</div>
+                          <div className="trn-upcoming__info">
+                            <span>🏛 {t.venue}</span>
+                            <span>📍 {t.address}</span>
+                            {t.fee && <span style={{ color: 'var(--color-gold)' }}>💰 {t.fee}₾</span>}
+                          </div>
+                          {myCats.length > 0 && (
+                            <div className="trn-upcoming__cats">
+                              <span style={{ fontSize: '0.72rem', color: '#6b665e', marginRight: '0.5rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>ჩემი კატეგორიები:</span>
+                              {myCats.map((c, i) => <span key={i} className="portal-badge portal-badge--gold">{c}</span>)}
+                            </div>
+                          )}
+                          {t.notes && <p style={{ fontSize: '0.8rem', color: '#a8a39a', marginBottom: '0.75rem', lineHeight: '1.5' }}>{t.notes}</p>}
+                          {t.mapUrl && (
+                            <a className="trn-map-btn" href={t.mapUrl} target="_blank" rel="noreferrer">📍 რუკაზე ნახვა</a>
+                          )}
+                        </div>
+                      )
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {pastTrn.length > 0 && (
+                <div className="portal-card animate-fade-in">
+                  <div className="portal-card__head">
+                    <span className="portal-card__icon">🥇</span>
+                    <span className="portal-card__title">ტურნირების შედეგები</span>
+                  </div>
+                  <div className="portal-card__body">
+                    {pastTrn.map(t => {
+                      const results = t.results?.[student.id] || []
+                      return results.map((r, i) => {
+                        const medal = r.place === 1 ? '🥇 I ადგილი' : r.place === 2 ? '🥈 II ადგილი' : r.place === 3 ? '🥉 III ადგილი' : null
+                        return (
+                          <div key={`${t.id}-${i}`} className="trn-history-item">
+                            <div className="trn-place">
+                              {r.place === 1 ? '🥇' : r.place === 2 ? '🥈' : r.place === 3 ? '🥉' : `#${r.place}`}
+                            </div>
+                            <div style={{ flex: 1 }}>
+                              <div className="trn-hist-cat" style={{ fontWeight: 600 }}>{r.category}</div>
+                              <div className="trn-hist-event">{t.name} · {t.date}</div>
+                            </div>
+                            <div style={{ textAlign: 'right' }}>
+                              <span className="portal-badge portal-badge--gold" style={{ fontSize: '0.75rem' }}>
+                                {medal || `#${r.place} ადგილი`}
+                              </span>
+                              <div style={{ fontSize: '0.68rem', color: 'var(--color-text-dim)', marginTop: '0.2rem' }}>სულ {r.total} მონაწილე</div>
+                            </div>
+                          </div>
+                        )
+                      })
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {upcomingTrn.length === 0 && pastTrn.length === 0 && (
+                <div className="portal-card">
+                  <div className="portal-card__body" style={{ color: '#6b665e', fontSize: '0.85rem', textAlign: 'center', padding: '2rem 0' }}>
+                    ტურნირების ინფორმაცია და შედეგები ჯერ არ არის დამატებული
+                  </div>
+                </div>
+              )}
+            </>
           )}
         </main>
       </div>
