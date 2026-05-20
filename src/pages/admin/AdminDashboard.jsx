@@ -842,52 +842,104 @@ function NewsForm({item,onSave,onCancel}) {
 
 /* ── Students Tab ── */
 function StudentsTab({students,onEdit,onDelete,onSendSms}) {
+  const [search, setSearch] = useState('');
+
+  const sortedAndFiltered = [...students]
+    .filter(s => {
+      const q = search.toLowerCase();
+      return (
+        s.name.toLowerCase().includes(q) || 
+        (s.phone && s.phone.includes(q)) ||
+        (s.birthYear && s.birthYear.toString().includes(q))
+      );
+    })
+    .sort((a, b) => a.name.localeCompare(b.name, 'ka'));
+
   return (
     <div>
-      <button className="admin-btn admin-btn--gold admin-btn--sm" style={{marginBottom:'1.5rem'}} onClick={()=>onEdit(0)}>+ ახალი სტუდენტი</button>
+      <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem', alignItems: 'center', flexWrap: 'wrap' }}>
+        <button className="admin-btn admin-btn--gold admin-btn--sm" style={{ marginBottom: 0 }} onClick={()=>onEdit(0)}>
+          + ახალი სტუდენტი
+        </button>
+        <div style={{ position: 'relative', flex: 1, maxWidth: '400px', minWidth: '250px' }}>
+          <input 
+            type="text" 
+            placeholder="🔍 მოძებნეთ მოსწავლე სახელით, ნომრით ან წლით..." 
+            value={search} 
+            onChange={e => setSearch(e.target.value)} 
+            style={{ 
+              width: '100%', 
+              padding: '10px 14px 10px 38px', 
+              background: 'rgba(255,255,255,0.03)', 
+              border: '1px solid rgba(212,166,74,0.2)', 
+              borderRadius: '4px', 
+              color: '#fff', 
+              fontSize: '0.9rem', 
+              outline: 'none',
+              transition: 'all 0.3s'
+            }} 
+          />
+          {search && (
+            <button 
+              type="button" 
+              onClick={() => setSearch('')}
+              style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', background: 'transparent', border: 'none', color: '#ff7070', cursor: 'pointer', fontSize: '0.8rem', fontWeight: 'bold' }}
+            >
+              ✕
+            </button>
+          )}
+        </div>
+      </div>
+      
       <div className="admin-section">
-        <table className="admin-table">
-          <thead><tr>
-            <th>სტუდენტი</th><th>ტელეფონი</th><th>კლასი</th><th>ამონ.</th><th>მზაობა</th><th>ენა</th><th></th>
-          </tr></thead>
-          <tbody>
-            {students.map(s=>{
-              const sub=getSubscription(s.id)
-              const rat=getTrainerRating(s.id)
-              const left=sub?sub.total-sub.used:0
-              return (
-                <tr key={s.id}>
-                  <td>
-                    <div className="admin-student-row">
-                      <div className="admin-avatar">{s.photo?<img src={s.photo} alt=""/>:s.name[0]}</div>
-                      <div><div className="admin-student-name">{s.name}</div><div className="admin-student-phone">{s.birthYear}</div></div>
-                    </div>
-                  </td>
-                  <td style={{color:'#a8a39a',fontSize:'0.83rem'}}>{s.phone}</td>
-                  <td><span className="badge badge--gold">{s.classification}</span></td>
-                  <td>
-                    {sub ? <span style={{color:left<=2?'#ff7070':'#50c878',fontWeight:700,fontSize:'0.9rem'}}>{left}/{sub.total}</span> : <span style={{color:'#6b665e'}}>—</span>}
-                  </td>
-                  <td>
-                    <div style={{display:'flex',alignItems:'center',gap:'0.5rem'}}>
-                      <span style={{color:rat.readiness>=7?'#50c878':rat.readiness>=4?'#d4a64a':'#ff7070',fontWeight:700}}>{rat.readiness}/10</span>
-                    </div>
-                  </td>
-                  <td>
-                    <span className="badge badge--muted" style={{textTransform:'uppercase'}}>{s.language || 'ka'}</span>
-                  </td>
-                  <td>
-                    <div className="row-actions">
-                      <button className="admin-btn admin-btn--ghost admin-btn--sm" style={{ padding: '4px 8px', marginRight: '4px' }} onClick={() => onSendSms(s.phone, s.name)}>💬 სმს</button>
-                      <button className="admin-btn admin-btn--ghost admin-btn--sm" onClick={()=>onEdit(s.id)}>✏</button>
-                      <button className="admin-btn admin-btn--danger admin-btn--sm" onClick={()=>onDelete(s.id)}>🗑</button>
-                    </div>
-                  </td>
-                </tr>
-              )
-            })}
-          </tbody>
-        </table>
+        {sortedAndFiltered.length === 0 ? (
+          <p style={{ color: '#6b665e', padding: '20px', textAlign: 'center' }}>მოსწავლეები ვერ მოიძებნა</p>
+        ) : (
+          <table className="admin-table">
+            <thead>
+              <tr>
+                <th>სტუდენტი</th><th>ტელეფონი</th><th>კლასი</th><th>ამონ.</th><th>მზაობა</th><th>ენა</th><th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {sortedAndFiltered.map(s=>{
+                const sub=getSubscription(s.id)
+                const rat=getTrainerRating(s.id)
+                const left=sub?sub.total-sub.used:0
+                return (
+                  <tr key={s.id}>
+                    <td>
+                      <div className="admin-student-row">
+                        <div className="admin-avatar">{s.photo?<img src={s.photo} alt=""/>:s.name[0]}</div>
+                        <div><div className="admin-student-name">{s.name}</div><div className="admin-student-phone">{s.birthYear}</div></div>
+                      </div>
+                    </td>
+                    <td style={{color:'#a8a39a',fontSize:'0.83rem'}}>{s.phone}</td>
+                    <td><span className="badge badge--gold">{s.classification}</span></td>
+                    <td>
+                      {sub ? <span style={{color:left<=2?'#ff7070':'#50c878',fontWeight:700,fontSize:'0.9rem'}}>{left}/{sub.total}</span> : <span style={{color:'#6b665e'}}>—</span>}
+                    </td>
+                    <td>
+                      <div style={{display:'flex',alignItems:'center',gap:'0.5rem'}}>
+                        <span style={{color:rat.readiness>=7?'#50c878':rat.readiness>=4?'#d4a64a':'#ff7070',fontWeight:700}}>{rat.readiness}/10</span>
+                      </div>
+                    </td>
+                    <td>
+                      <span className="badge badge--muted" style={{textTransform:'uppercase'}}>{s.language || 'ka'}</span>
+                    </td>
+                    <td>
+                      <div className="row-actions">
+                        <button className="admin-btn admin-btn--ghost admin-btn--sm" style={{ padding: '4px 8px', marginRight: '4px' }} onClick={() => onSendSms(s.phone, s.name)}>💬 სმს</button>
+                        <button className="admin-btn admin-btn--ghost admin-btn--sm" onClick={()=>onEdit(s.id)}>✏</button>
+                        <button className="admin-btn admin-btn--danger admin-btn--sm" onClick={()=>onDelete(s.id)}>🗑</button>
+                      </div>
+                    </td>
+                  </tr>
+                )
+              })}
+            </tbody>
+          </table>
+        )}
       </div>
     </div>
   )
@@ -1056,6 +1108,7 @@ function TournamentForm({item,students,showAlert,onSave,onCancel}) {
   const [newCatFeeAmount, setNewCatFeeAmount] = useState('')
   const [newCatFeeCurrency, setNewCatFeeCurrency] = useState('₾')
   const [editingCat, setEditingCat] = useState(null)
+  const [studentSearchQuery, setStudentSearchQuery] = useState('')
 
   const handleEditCategoryStart = (sid, idx, cat) => {
     let amount = ''
@@ -1350,9 +1403,47 @@ function TournamentForm({item,students,showAlert,onSave,onCancel}) {
         {/* Dropdown to Add Kid */}
         <div className="admin-field" style={{ marginBottom: '1.5rem' }}>
           <label>დაამატეთ ბავშვი ამ ტურნირზე</label>
-          <select value="" onChange={e=>{ handleAddStudent(e.target.value); e.target.value = ''; }} style={{background:'rgba(255,255,255,0.04)',border:'1px solid rgba(212,166,74,0.3)',color:'#f5f1e8',padding:'0.6rem',borderRadius:'4px',width:'100%'}}>
-            <option value="">აირჩიეთ მოსწავლე დასამატებლად...</option>
-            {students.map(s=><option key={s.id} value={s.id}>{s.name}</option>)}
+          <div style={{ display: 'flex', gap: '0.75rem', marginBottom: '0.5rem' }}>
+            <input 
+              type="text" 
+              placeholder="🔍 მოძებნეთ მოსწავლე სახელით..." 
+              value={studentSearchQuery} 
+              onChange={e => setStudentSearchQuery(e.target.value)} 
+              style={{ 
+                flex: 1,
+                padding: '8px 12px',
+                background: 'rgba(255,255,255,0.03)',
+                border: '1px solid rgba(212,166,74,0.15)',
+                borderRadius: '4px',
+                color: '#fff',
+                fontSize: '0.85rem'
+              }} 
+            />
+            {studentSearchQuery && (
+              <button 
+                type="button" 
+                className="admin-btn admin-btn--ghost" 
+                onClick={() => setStudentSearchQuery('')}
+                style={{ width: 'auto', padding: '0 1rem', marginBottom: 0 }}
+              >
+                გასუფთავება
+              </button>
+            )}
+          </div>
+          <select 
+            value="" 
+            onChange={e=>{ handleAddStudent(e.target.value); e.target.value = ''; setStudentSearchQuery(''); }} 
+            style={{background:'rgba(255,255,255,0.04)',border:'1px solid rgba(212,166,74,0.3)',color:'#f5f1e8',padding:'0.6rem',borderRadius:'4px',width:'100%'}}
+          >
+            <option value="">
+              {studentSearchQuery 
+                ? `ნაპოვნია მოსწავლეები (${students.filter(s => s.name.toLowerCase().includes(studentSearchQuery.toLowerCase())).length})` 
+                : 'აირჩიეთ მოსწავლე დასამატებლად...'}
+            </option>
+            {students
+              .filter(s => s.name.toLowerCase().includes(studentSearchQuery.toLowerCase()))
+              .sort((a, b) => a.name.localeCompare(b.name, 'ka'))
+              .map(s=><option key={s.id} value={s.id}>{s.name}</option>)}
           </select>
         </div>
 
