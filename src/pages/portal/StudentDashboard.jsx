@@ -305,6 +305,26 @@ export default function StudentDashboard() {
     return () => { document.body.style.overflow = '' }
   }, [mobileOpen])
 
+  // Auto-expand first upcoming tournament (moved here to comply with Rules of Hooks)
+  useEffect(() => {
+    if (tournaments.length > 0 && student) {
+      const today = new Date().toISOString().slice(0,10);
+      const upcoming = tournaments.filter(t => {
+        const isFuture = t.date >= today;
+        const isAssigned = !t.assignedStudents || t.assignedStudents.length === 0 || t.assignedStudents.includes(student.id);
+        return isFuture && isAssigned;
+      });
+      if (upcoming.length > 0) {
+        setExpandedTrns(prev => {
+          if (Object.keys(prev).length === 0) {
+            return { [upcoming[0].id]: true };
+          }
+          return prev;
+        });
+      }
+    }
+  }, [tournaments, student])
+
   const t = (key) => {
     const dict = TRANSLATIONS[lang] || TRANSLATIONS.ka;
     return dict[key] || TRANSLATIONS.ka[key] || '';
@@ -414,16 +434,7 @@ export default function StudentDashboard() {
     { id: 'trn',     icon: 'trn', label: t('tabs').trn },
   ];
 
-  useEffect(() => {
-    if (upcomingTrn.length > 0) {
-      setExpandedTrns(prev => {
-        if (Object.keys(prev).length === 0) {
-          return { [upcomingTrn[0].id]: true };
-        }
-        return prev;
-      });
-    }
-  }, [tournaments, student]);
+  // useEffect for expanding tournaments moved above conditional returns (Rules of Hooks)
 
   const toggleTrn = (id) => {
     setExpandedTrns(prev => ({
