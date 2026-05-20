@@ -157,13 +157,35 @@ export default function AdminDashboard() {
             return cloudStudent
           });
           setStudents(mapped);
-          if (data.tournaments) {
+          if (Array.isArray(data.tournaments) && data.tournaments.length > 0) {
+            // Backup current tournaments before overwriting, just in case!
+            const currentLocal = localStorage.getItem('std_tournaments');
+            if (currentLocal && currentLocal !== '[]') {
+              localStorage.setItem('std_tournaments_backup', currentLocal);
+            }
             localStorage.setItem('std_tournaments', JSON.stringify(data.tournaments));
             setTournaments(data.tournaments);
+          } else {
+            // If cloud has no tournaments, do NOT blindly overwrite with empty array!
+            // Load whatever is in localStorage
+            const localTrns = getTournaments();
+            if (localTrns && localTrns.length > 0) {
+              setTournaments(localTrns);
+            }
           }
-          if (data.news) {
+
+          if (Array.isArray(data.news) && data.news.length > 0) {
+            const currentLocalNews = localStorage.getItem('std_news');
+            if (currentLocalNews && currentLocalNews !== '[]') {
+              localStorage.setItem('std_news_backup', currentLocalNews);
+            }
             localStorage.setItem('std_news', JSON.stringify(data.news));
             setNews(data.news);
+          } else {
+            const localNews = getNews();
+            if (localNews && localNews.length > 0) {
+              setNews(localNews);
+            }
           }
         })
         .catch(err => {
