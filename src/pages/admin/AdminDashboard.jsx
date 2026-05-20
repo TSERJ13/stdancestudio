@@ -390,20 +390,34 @@ export default function AdminDashboard() {
             </span>
           </div>
           <div className="admin-topbar__actions">
-            {tab === 4 && !editingItem && (
-              <button className="admin-btn admin-btn--gold admin-btn--sm" onClick={() => setEditingItem({ tab: 'customForm', id: 0, defaultType: 'form' })}>
-                + ახალი ფორმა
-              </button>
-            )}
-            {tab === 5 && !editingItem && (
-              <button className="admin-btn admin-btn--gold admin-btn--sm" onClick={() => setEditingItem({ tab: 'customForm', id: 0, defaultType: 'poll' })}>
-                + ახალი გამოკითხვა
-              </button>
-            )}
-            {tab < 3 && (
-              <button className="admin-btn admin-btn--gold admin-btn--sm" onClick={() => setEditingItem({ tab: ['news', 'student', 'tournament'][tab], id: 0 })}>
-                + დამატება
-              </button>
+            {!editingItem && (
+              <>
+                {tab === 0 && (
+                  <button className="admin-btn admin-btn--gold admin-btn--sm" onClick={() => setEditingItem({ tab: 'news', id: 0 })}>
+                    + ახალი სიახლე
+                  </button>
+                )}
+                {tab === 1 && (
+                  <button className="admin-btn admin-btn--gold admin-btn--sm" onClick={() => setEditingItem({ tab: 'student', id: 0 })}>
+                    + ახალი სტუდენტი
+                  </button>
+                )}
+                {tab === 2 && (
+                  <button className="admin-btn admin-btn--gold admin-btn--sm" onClick={() => setEditingItem({ tab: 'tournament', id: 0 })}>
+                    + ახალი ტურნირი
+                  </button>
+                )}
+                {tab === 4 && (
+                  <button className="admin-btn admin-btn--gold admin-btn--sm" onClick={() => setEditingItem({ tab: 'customForm', id: 0, defaultType: 'form' })}>
+                    + ახალი ფორმა
+                  </button>
+                )}
+                {tab === 5 && (
+                  <button className="admin-btn admin-btn--gold admin-btn--sm" onClick={() => setEditingItem({ tab: 'customForm', id: 0, defaultType: 'poll' })}>
+                    + ახალი გამოკითხვა
+                  </button>
+                )}
+              </>
             )}
           </div>
         </div>
@@ -798,7 +812,6 @@ export default function AdminDashboard() {
 function NewsTab({news,onEdit,onDelete}) {
   return (
     <div>
-      <button className="admin-btn admin-btn--gold admin-btn--sm" style={{marginBottom:'1.5rem'}} onClick={()=>onEdit(0)}>+ ახალი სიახლე</button>
       {news.length===0 && <p style={{color:'#6b665e',fontSize:'0.85rem'}}>სიახლეები არ არის</p>}
       {news.map(n=>(
         <div key={n.id} className={`admin-news-card${n.important?' important':''}`}>
@@ -858,9 +871,6 @@ function StudentsTab({students,onEdit,onDelete,onSendSms}) {
   return (
     <div>
       <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem', alignItems: 'center', flexWrap: 'wrap' }}>
-        <button className="admin-btn admin-btn--gold admin-btn--sm" style={{ marginBottom: 0 }} onClick={()=>onEdit(0)}>
-          + ახალი სტუდენტი
-        </button>
         <div style={{ position: 'relative', flex: 1, maxWidth: '400px', minWidth: '250px' }}>
           <input 
             type="text" 
@@ -1048,7 +1058,6 @@ function TournamentsTab({tournaments,students,onEdit,onManageResults,onDelete}) 
   const today=new Date().toISOString().slice(0,10)
   return (
     <div>
-      <button className="admin-btn admin-btn--gold admin-btn--sm" style={{marginBottom:'1.5rem'}} onClick={()=>onEdit(0)}>+ ახალი ტურნირი</button>
       {tournaments.map(t=>(
         <div key={t.id} className="admin-trn-card">
           <div className="admin-trn-card__head">
