@@ -43,7 +43,7 @@ export default function Home() {
             </p>
 
             <div className="hero__actions fade-up" style={{ animationDelay: '0.75s' }}>
-              <Link to="/contact" className="btn btn-primary">
+              <Link to="/register" className="btn btn-primary">
                 {t('hero.cta')}
               </Link>
               <Link to="/about" className="btn btn-ghost">
@@ -218,7 +218,7 @@ export default function Home() {
               {t('home.ctaDesc')}
             </p>
           </div>
-          <Link to="/contact" className="btn btn-primary cta__btn">
+          <Link to="/register" className="btn btn-primary cta__btn">
             {t('home.ctaBtn')}
           </Link>
         </div>

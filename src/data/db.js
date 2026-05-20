@@ -197,7 +197,11 @@ export const getStudent   = (id) => (load(KEYS.STUDENTS) || []).find(s => s.id =
 export const saveStudent  = (student) => {
   const list = load(KEYS.STUDENTS) || [];
   const idx  = list.findIndex(s => s.id === student.id);
-  if (idx >= 0) list[idx] = student; else list.push({ ...student, id: 'stu_' + uid() });
+  if (idx >= 0) {
+    list[idx] = student;
+  } else {
+    list.push({ ...student, id: student.id || ('stu_' + uid()) });
+  }
   save(KEYS.STUDENTS, list);
 };
 export const deleteStudent = (id) => save(KEYS.STUDENTS, (load(KEYS.STUDENTS) || []).filter(s => s.id !== id));

@@ -14,7 +14,7 @@ const formatDate = (dateStr) => {
   if (!dateStr) return '';
   const parts = dateStr.toString().split('-');
   if (parts.length === 3 && parts[0].length === 4) {
-    return `${parts[2]}.${parts[1]}.${parts[0]}`;
+    return `${parts[2]}/${parts[1]}/${parts[0]}`;
   }
   return dateStr;
 };
@@ -212,6 +212,7 @@ export default function StudentDashboard() {
   const [error, setError] = useState(null)
   const [mobileOpen, setMobileOpen] = useState(false)
   const [lang, setLang] = useState('ka')
+  const [expandedTrns, setExpandedTrns] = useState({})
 
   useEffect(() => {
     const studentId = getPortalSession()
@@ -221,11 +222,28 @@ export default function StudentDashboard() {
 
     fetchStudioData()
       .then(data => {
-        const found = (data.students || []).find(s => s.id === studentId)
+        const cloudStudents = data.students || [];
+        const localStudents = JSON.parse(localStorage.getItem('std_students') || '[]');
+        
+        let found = cloudStudents.find(s => s.id === studentId);
         if (!found) {
           clearPortalSession()
           navigate('/portal')
           return
+        }
+
+        // Merge with local student details (especially language!)
+        const localS = localStudents.find(s => s.id === studentId);
+        if (localS) {
+          found = {
+            ...found,
+            phone: localS.phone || found.phone || found.data?.phone,
+            language: localS.language || found.language || found.data?.language || 'ka',
+            data: {
+              ...(found.data || {}),
+              language: localS.language || found.language || found.data?.language || 'ka'
+            }
+          };
         }
 
         setStudent(found)
@@ -240,19 +258,30 @@ export default function StudentDashboard() {
           setSiblings(sibs)
         }
 
-        // Auto-detect student language from ClassCore preference
+        // Apply student language preferred by Admin
         const ccLang = found.language || found.data?.language || 'ka';
-        const storedLang = localStorage.getItem('std_portal_lang');
-        if (storedLang) {
-          setLang(storedLang);
-        } else {
-          setLang(ccLang);
-          localStorage.setItem('std_portal_lang', ccLang);
-        }
+        setLang(ccLang);
+        localStorage.setItem('std_portal_lang', ccLang);
 
         if (Array.isArray(data.tournaments) && data.tournaments.length > 0) {
-          setTournaments(data.tournaments)
-          localStorage.setItem('std_tournaments', JSON.stringify(data.tournaments))
+          // Safe merge to prevent losing local-only assignments/categories if cloud sync is pending/failed
+          const localTournaments = JSON.parse(localStorage.getItem('std_tournaments') || '[]')
+          const mergedTournaments = data.tournaments.map(cloudT => {
+            const localT = localTournaments.find(t => t.id === cloudT.id)
+            if (localT) {
+              return {
+                ...cloudT,
+                assignedStudents: localT.assignedStudents || cloudT.assignedStudents || [],
+                assignedStudentsData: {
+                  ...(cloudT.assignedStudentsData || {}),
+                  ...(localT.assignedStudentsData || {})
+                }
+              }
+            }
+            return cloudT
+          })
+          setTournaments(mergedTournaments)
+          localStorage.setItem('std_tournaments', JSON.stringify(mergedTournaments))
         }
         
         setLoading(false)
@@ -313,7 +342,7 @@ export default function StudentDashboard() {
   const today = new Date().toISOString().slice(0,10)
 
   // Generate scheduled past dates that weren't attended as missed (absent)
-  const presentDatesSet = new Set(att.map(r => r.date))
+  const positivePresentDatesSet = new Set(att.filter(r => r.present).map(r => r.date))
   let startDateStr = ''
   if (sub && sub.starts) {
     startDateStr = sub.starts
@@ -344,19 +373,19 @@ export default function StudentDashboard() {
       if (scheduledDays.has(dayOfWeek)) {
         generatedAtt.push({
           date: dateStr,
-          present: presentDatesSet.has(dateStr)
+          present: positivePresentDatesSet.has(dateStr)
         })
       }
       curr.setDate(curr.getDate() + 1)
     }
   }
 
-  // Preserve any makeup present classes (even if not on a scheduled day)
+  // Preserve any makeup present classes or explicit absent classes (even if not on a scheduled day)
   att.forEach(a => {
     if (!generatedAtt.some(g => g.date === a.date)) {
       generatedAtt.push({
         date: a.date,
-        present: true
+        present: a.present
       })
     }
   })
@@ -384,6 +413,24 @@ export default function StudentDashboard() {
     { id: 'att',     icon: 'att', label: t('tabs').att },
     { id: 'trn',     icon: 'trn', label: t('tabs').trn },
   ];
+
+  useEffect(() => {
+    if (upcomingTrn.length > 0) {
+      setExpandedTrns(prev => {
+        if (Object.keys(prev).length === 0) {
+          return { [upcomingTrn[0].id]: true };
+        }
+        return prev;
+      });
+    }
+  }, [tournaments, student]);
+
+  const toggleTrn = (id) => {
+    setExpandedTrns(prev => ({
+      ...prev,
+      [id]: !prev[id]
+    }));
+  };
 
   return (
     <div className="portal-wrap portal-shell">
@@ -608,7 +655,7 @@ export default function StudentDashboard() {
                 <div className="portal-info-grid">
                   <div className="portal-info-item"><span className="label">{t('name')}</span><span className="val">{name}</span></div>
                   <div className="portal-info-item"><span className="label">{t('phone')}</span><span className="val">{student.phone || '—'}</span></div>
-                  <div className="portal-info-item"><span className="label">{t('birth_date')}</span><span className="val">{birthDate || '—'}</span></div>
+                  <div className="portal-info-item"><span className="label">{t('birth_date')}</span><span className="val">{formatDate(birthDate) || '—'}</span></div>
                   <div className="portal-info-item"><span className="label">{t('parent')}</span><span className="val">{parentName || '—'}</span></div>
                   <div className="portal-info-item"><span className="label">{t('groups')}</span><span className="val">{groups.map(g=>g.name).join(', ') || '—'}</span></div>
                   <div className="portal-info-item"><span className="label">{t('status')}</span><span className="val">{student.status === 'active' || !student.status ? t('active') : t('inactive')}</span></div>
@@ -644,7 +691,7 @@ export default function StudentDashboard() {
                         </div>
                         <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.82rem', marginTop: '0.5rem', color: '#a8a39a' }}>
                           <span>{t('used')}: {sub.used}</span>
-                          <span>{t('expires')}: {sub.expires || '—'}</span>
+                          <span>{t('expires')}: {formatDate(sub.expires) || '—'}</span>
                         </div>
                       </div>
                     </div>
@@ -705,7 +752,7 @@ export default function StudentDashboard() {
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))', gap: '0.75rem' }}>
                       {sortedUnifiedAtt.map((r, i) => (
                         <div key={i} className={`portal-att-pill ${r.present ? 'present' : 'absent'}`} style={{ display: 'flex', justifyContent: 'space-between', padding: '0.5rem 0.75rem', borderRadius: '4px', fontSize: '0.8rem', border: '1px solid ' + (r.present ? 'rgba(80,200,120,0.15)' : 'rgba(220,50,50,0.15)') }}>
-                          <span>{r.date}</span>
+                          <span>{formatDate(r.date)}</span>
                           <span style={{ fontWeight: 700 }}>{r.present ? '✓' : '×'}</span>
                         </div>
                       ))}
@@ -770,77 +817,111 @@ export default function StudentDashboard() {
                         }
                       }
 
+                      const isExpanded = !!expandedTrns[tItem.id]
+
                       return (
-                        <div key={tItem.id} className="trn-upcoming" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)', paddingBottom: '1.5rem', marginBottom: '1rem' }}>
-                          <div style={{ display: 'flex', gap: '1.25rem', flexWrap: 'wrap', marginBottom: '1.25rem' }}>
-                            {tItem.poster && (
-                              <div style={{ width: '110px', flexShrink: 0 }}>
-                                <img 
-                                  src={tItem.poster} 
-                                  alt={tItem.name} 
-                                  style={{ width: '100%', borderRadius: '6px', border: '1px solid rgba(212,166,74,0.22)', display: 'block', maxHeight: '160px', objectFit: 'contain', background: 'rgba(0,0,0,0.2)' }} 
-                                />
-                              </div>
-                            )}
-                            <div style={{ flex: 1, minWidth: '200px' }}>
-                              <div className="trn-upcoming__name" style={{ fontFamily: 'var(--font-display)', fontSize: '1.3rem', fontWeight: 600, color: '#f5f1e8' }}>{tItem.name}</div>
-                              <div className="trn-upcoming__date" style={{ fontSize: '0.85rem', color: '#a8a39a', marginTop: '0.25rem' }}>
+                        <div key={tItem.id} className="trn-upcoming" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)', paddingBottom: isExpanded ? '1.5rem' : '0.85rem', marginBottom: '1rem', transition: 'all 0.3s ease' }}>
+                          
+                          {/* Collapsible Header */}
+                          <div 
+                            onClick={() => toggleTrn(tItem.id)}
+                            style={{ 
+                              display: 'flex', 
+                              justifyContent: 'space-between', 
+                              alignItems: 'center', 
+                              cursor: 'pointer',
+                              userSelect: 'none'
+                            }}
+                          >
+                            <div style={{ flex: 1 }}>
+                              <div className="trn-upcoming__name" style={{ fontFamily: 'var(--font-display)', fontSize: '1.25rem', fontWeight: 600, color: '#f5f1e8', transition: 'color 0.2s' }}>{tItem.name}</div>
+                              <div className="trn-upcoming__date" style={{ fontSize: '0.82rem', color: '#a8a39a', marginTop: '0.2rem' }}>
                                 📅 {tItem.endDate && tItem.endDate !== tItem.date ? `${formatDate(tItem.date)} — ${formatDate(tItem.endDate)}` : formatDate(tItem.date)}
                               </div>
-                              <div className="trn-upcoming__info" style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', marginTop: '0.65rem' }}>
-                                <span>🏛 {tItem.venue}</span>
-                                <span>📍 {tItem.address}</span>
-                                {tItem.fee ? (
-                                  <span style={{ color: 'var(--color-gold)', fontWeight: 600 }}>
-                                    🎫 {t('ticket_price')}: {tItem.fee}{tItem.currency || '₾'}
-                                  </span>
-                                ) : null}
-                              </div>
+                            </div>
+                            <div style={{ marginLeft: '1rem', padding: '0.25rem', display: 'flex', alignItems: 'center' }}>
+                              <span style={{ 
+                                transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)', 
+                                transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)', 
+                                display: 'inline-block', 
+                                color: 'var(--color-gold)',
+                                fontSize: '0.85rem'
+                              }}>
+                                ▼
+                              </span>
                             </div>
                           </div>
 
-                          {myCats.length > 0 ? (
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', margin: '0.75rem 0' }}>
-                              <span style={{ fontSize: '0.72rem', color: '#6b665e', textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: 600 }}>
-                                {lang === 'ru' ? 'Мои категории и время:' : lang === 'en' ? 'My Categories & Time:' : 'ჩემი კატეგორიები და დრო:'}
-                              </span>
-                              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                                {myCats.map((cat, idx) => (
-                                  <div key={idx} style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', background: 'rgba(255,255,255,0.02)', padding: '0.85rem 1.1rem', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.03)' }}>
-                                    <div style={{ fontSize: '0.92rem', color: '#f5f1e8', fontWeight: 600, lineHeight: 1.45 }}>{cat.name}</div>
-                                    <div style={{ display: 'flex', gap: '0.45rem', alignItems: 'center', flexWrap: 'wrap' }}>
-                                      {cat.date && <span className="portal-badge" style={{ fontSize: '0.75rem', background: 'rgba(255,255,255,0.05)', color: '#a8a39a', border: '1px solid rgba(255,255,255,0.08)' }}>📅 {formatDate(cat.date)}</span>}
-                                      {cat.readyTime && <span className="portal-badge" style={{ fontSize: '0.75rem', background: 'rgba(212,166,74,0.08)', color: 'var(--color-gold)', border: '1px solid rgba(212,166,74,0.15)' }}>🎒 {lang === 'ru' ? 'Сбор:' : lang === 'en' ? 'Ready:' : 'მზადება:'} {cat.readyTime}</span>}
-                                      {cat.time && <span className="portal-badge portal-badge--gold" style={{ fontSize: '0.75rem' }}>🕒 {lang === 'ru' ? 'Старт:' : lang === 'en' ? 'Start:' : 'დაწყება:'} {cat.time}</span>}
-                                    </div>
-                                    {(cat.venue || cat.fee) && (
-                                      <div style={{ display: 'flex', gap: '1rem', fontSize: '0.78rem', color: '#a8a39a', borderTop: '1px solid rgba(255,255,255,0.03)', paddingTop: '0.45rem', marginTop: '0.2rem' }}>
-                                        {cat.venue && <span>🏛 {cat.venue}</span>}
-                                        {cat.fee && <span style={{ color: 'var(--color-gold)', fontWeight: 600 }}>💰 {lang === 'ru' ? 'Взнос:' : lang === 'en' ? 'Fee:' : 'გადასახადი:'} {cat.fee}</span>}
-                                      </div>
-                                    )}
+                          {/* Expanded Content */}
+                          {isExpanded && (
+                            <div className="animate-fade-in" style={{ marginTop: '1.25rem', borderTop: '1px solid rgba(255,255,255,0.04)', paddingTop: '1.25rem' }}>
+                              <div style={{ display: 'flex', gap: '1.25rem', flexWrap: 'wrap', marginBottom: '1.25rem' }}>
+                                {tItem.poster && (
+                                  <div style={{ width: '110px', flexShrink: 0 }}>
+                                    <img 
+                                      src={tItem.poster} 
+                                      alt={tItem.name} 
+                                      style={{ width: '100%', borderRadius: '6px', border: '1px solid rgba(212,166,74,0.22)', display: 'block', maxHeight: '160px', objectFit: 'contain', background: 'rgba(0,0,0,0.2)' }} 
+                                    />
                                   </div>
-                                ))}
+                                )}
+                                <div style={{ flex: 1, minWidth: '200px' }}>
+                                  <div className="trn-upcoming__info" style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+                                    <span>🏛 {tItem.venue}</span>
+                                    <span>📍 {tItem.address}</span>
+                                    {tItem.fee ? (
+                                      <span style={{ color: 'var(--color-gold)', fontWeight: 600 }}>
+                                        🎫 {t('ticket_price')}: {tItem.fee}{tItem.currency || '₾'}
+                                      </span>
+                                    ) : null}
+                                  </div>
+                                </div>
                               </div>
-                              {totalFeeText && (
-                                <div style={{ display: 'flex', justifyContent: 'flex-end', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '0.65rem', marginTop: '0.5rem' }}>
-                                  <span style={{ fontSize: '0.88rem', color: '#fff', fontWeight: 'bold', display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}>
-                                    💰 {lang === 'ru' ? 'Общий взнос:' : lang === 'en' ? 'Total fee:' : 'ჯამური გადასახადი:'} <span style={{ color: 'var(--color-gold)', fontSize: '1.05rem' }}>{totalFeeText}</span>
+
+                              {myCats.length > 0 ? (
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', margin: '0.75rem 0' }}>
+                                  <span style={{ fontSize: '0.72rem', color: '#6b665e', textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: 600 }}>
+                                    {lang === 'ru' ? 'Мои категории и время:' : lang === 'en' ? 'My Categories & Time:' : 'ჩემი კატეგორიები და დრო:'}
                                   </span>
+                                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                                    {myCats.map((cat, idx) => (
+                                      <div key={idx} style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', background: 'rgba(255,255,255,0.02)', padding: '0.85rem 1.1rem', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.03)' }}>
+                                        <div style={{ fontSize: '0.92rem', color: '#f5f1e8', fontWeight: 600, lineHeight: 1.45 }}>{cat.name}</div>
+                                        <div style={{ display: 'flex', gap: '0.45rem', alignItems: 'center', flexWrap: 'wrap' }}>
+                                          {cat.date && <span className="portal-badge" style={{ fontSize: '0.75rem', background: 'rgba(255,255,255,0.05)', color: '#a8a39a', border: '1px solid rgba(255,255,255,0.08)' }}>📅 {formatDate(cat.date)}</span>}
+                                          {cat.readyTime && <span className="portal-badge" style={{ fontSize: '0.75rem', background: 'rgba(212,166,74,0.08)', color: 'var(--color-gold)', border: '1px solid rgba(212,166,74,0.15)' }}>🎒 {lang === 'ru' ? 'Сбор:' : lang === 'en' ? 'Ready:' : 'მზადება:'} {cat.readyTime}</span>}
+                                          {cat.time && <span className="portal-badge portal-badge--gold" style={{ fontSize: '0.75rem' }}>🕒 {lang === 'ru' ? 'Старт:' : lang === 'en' ? 'Start:' : 'დაწყება:'} {cat.time}</span>}
+                                        </div>
+                                        {(cat.venue || cat.fee) && (
+                                          <div style={{ display: 'flex', gap: '1rem', fontSize: '0.78rem', color: '#a8a39a', borderTop: '1px solid rgba(255,255,255,0.03)', paddingTop: '0.45rem', marginTop: '0.2rem' }}>
+                                            {cat.venue && <span>🏛 {cat.venue}</span>}
+                                            {cat.fee && <span style={{ color: 'var(--color-gold)', fontWeight: 600 }}>💰 {lang === 'ru' ? 'Взнос:' : lang === 'en' ? 'Fee:' : 'გადასახადი:'} {cat.fee}</span>}
+                                          </div>
+                                        )}
+                                      </div>
+                                    ))}
+                                  </div>
+                                  {totalFeeText && (
+                                    <div style={{ display: 'flex', justifyContent: 'flex-end', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '0.65rem', marginTop: '0.5rem' }}>
+                                      <span style={{ fontSize: '0.88rem', color: '#fff', fontWeight: 'bold', display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}>
+                                        💰 {lang === 'ru' ? 'Общий взнос:' : lang === 'en' ? 'Total fee:' : 'ჯამური გადასახადი:'} <span style={{ color: 'var(--color-gold)', fontSize: '1.05rem' }}>{totalFeeText}</span>
+                                      </span>
+                                    </div>
+                                  )}
+                                </div>
+                              ) : (
+                                <div style={{ fontSize: '0.82rem', color: '#6b665e', fontStyle: 'italic', margin: '0.75rem 0' }}>
+                                  {lang === 'ru' ? 'Категории еще не назначены' : lang === 'en' ? 'No categories assigned yet' : 'კატეგორიები ჯერ არ არის მინიჭებული'}
                                 </div>
                               )}
-                            </div>
-                          ) : (
-                            <div style={{ fontSize: '0.82rem', color: '#6b665e', fontStyle: 'italic', margin: '0.75rem 0' }}>
-                              {lang === 'ru' ? 'Категории еще не назначены' : lang === 'en' ? 'No categories assigned yet' : 'კატეგორიები ჯერ არ არის მინიჭებული'}
-                            </div>
-                          )}
 
-                          {tItem.notes && tItem.notes.trim() && (
-                            <p style={{ fontSize: '0.8rem', color: '#a8a39a', marginBottom: '0.75rem', lineHeight: '1.5' }}>{tItem.notes}</p>
-                          )}
-                          {tItem.mapUrl && (
-                            <a className="trn-map-btn" href={tItem.mapUrl} target="_blank" rel="noreferrer">📍 {t('show_map')}</a>
+                              {tItem.notes && tItem.notes.trim() && (
+                                <p style={{ fontSize: '0.8rem', color: '#a8a39a', marginTop: '1rem', marginBottom: '0.75rem', lineHeight: '1.5' }}>{tItem.notes}</p>
+                              )}
+                              {tItem.mapUrl && (
+                                <a className="trn-map-btn" href={tItem.mapUrl} target="_blank" rel="noreferrer" style={{ marginTop: '0.75rem' }}>📍 {t('show_map')}</a>
+                              )}
+                            </div>
                           )}
                         </div>
                       )

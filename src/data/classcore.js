@@ -9,8 +9,8 @@ const STUDIO_SLUG = 'stdancestudio';
 const CACHE_KEY = 'cc_portal_cache';
 const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
-const SUPABASE_URL = 'https://xnhzqalncwcefnhoqzxe.supabase.co';
-const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhuaHpxYWxuY3djZWZuaG9xenhlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE3ODU5MjcsImV4cCI6MjA4NzM2MTkyN30.tapUV9nQIYkJif0lS9OQNFSBgIoZLuJhexcmtfj3h48';
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || 'https://lzwdgedxceajhdtijnpv.supabase.co';
+const ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx6d2RnZWR4Y2VhamhkdGlqbnB2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkyMjY0MDEsImV4cCI6MjA5NDgwMjQwMX0.-uSzc5DC-xQJ66miZZDaPsGhsPBBDFjGS2VAwd7bTik';
 
 /* ── Cache helpers ──────────────────────────────── */
 function getCached() {
@@ -38,41 +38,90 @@ export function clearCache() {
   sessionStorage.removeItem(CACHE_KEY);
 }
 
-/* ── Fetch all studio data from ClassCore ───────── */
+/* ── Fetch all studio data from ClassCore & merge custom Supabase data ───────── */
 export async function fetchStudioData() {
   // Check cache first
   const cached = getCached();
   if (cached) return cached;
 
-  const url = `${CLASSCORE_API}?slug=${STUDIO_SLUG}`;
-  const res = await fetch(url);
+  // 1. Fetch ClassCore general data (students, attendance, subscriptions, groups)
+  const ccUrl = `${CLASSCORE_API}?slug=${STUDIO_SLUG}`;
+  const ccRes = await fetch(ccUrl);
 
-  if (!res.ok) {
-    throw new Error(`ClassCore API error: ${res.status}`);
+  if (!ccRes.ok) {
+    throw new Error(`ClassCore API error: ${ccRes.status}`);
   }
 
-  const data = await res.json();
-  if (data.error) {
-    throw new Error(data.error);
+  const ccData = await ccRes.json();
+  if (ccData.error) {
+    throw new Error(ccData.error);
   }
 
-  setCache(data);
-  return data;
+  // 2. Fetch custom data from the new Supabase studio_settings
+  let cloudTournaments = [];
+  let cloudNews = [];
+  let studentLangs = {};
+
+  try {
+    const settingsUrl = `${SUPABASE_URL}/rest/v1/studio_settings?studio_slug=eq.${STUDIO_SLUG}`;
+    const dbRes = await fetch(settingsUrl, {
+      headers: {
+        'apikey': ANON_KEY,
+        'Authorization': `Bearer ${ANON_KEY}`
+      }
+    });
+    if (dbRes.ok) {
+      const list = await dbRes.json();
+      if (list && list.length > 0) {
+        const staffData = list[0].staff_data || {};
+        cloudTournaments = staffData.portal_tournaments || [];
+        cloudNews = staffData.portal_news || [];
+        studentLangs = staffData.student_languages || {};
+      }
+    }
+  } catch (err) {
+    console.error('⚠️ Failed to load custom settings from separate Supabase:', err);
+  }
+
+  // 3. Inject new tournaments, news, and student languages into the returned data
+  const mergedStudents = (ccData.students || []).map(s => {
+    const cloudLang = studentLangs[s.id] || s.language || s.data?.language || 'ka';
+    return {
+      ...s,
+      language: cloudLang,
+      data: {
+        ...(s.data || {}),
+        language: cloudLang
+      }
+    };
+  });
+
+  const mergedData = {
+    ...ccData,
+    students: mergedStudents,
+    tournaments: cloudTournaments,
+    news: cloudNews
+  };
+
+  setCache(mergedData);
+  return mergedData;
 }
 
 /* ── Cloud Syncing Helpers for Tournaments & News ── */
 export async function syncTournamentsToCloud(tournaments) {
   try {
-    // 1. Get the org_id first by fetching studio settings
+    // 1. Fetch current settings from new Supabase
     const settingsUrl = `${SUPABASE_URL}/rest/v1/studio_settings?studio_slug=eq.${STUDIO_SLUG}`;
     const getRes = await fetch(settingsUrl, {
-      headers: { 'apikey': ANON_KEY }
+      headers: { 
+        'apikey': ANON_KEY,
+        'Authorization': `Bearer ${ANON_KEY}`
+      }
     });
     if (!getRes.ok) throw new Error('Failed to load studio settings from cloud');
     const settingsList = await getRes.json();
     if (!settingsList || settingsList.length === 0) throw new Error('Studio settings not found on cloud');
     const settings = settingsList[0];
-    const orgId = settings.org_id;
 
     // 2. Patch staff_data with new tournaments list
     const currentStaffData = settings.staff_data || {};
@@ -81,10 +130,11 @@ export async function syncTournamentsToCloud(tournaments) {
       portal_tournaments: tournaments
     };
 
-    const patchRes = await fetch(`${SUPABASE_URL}/rest/v1/studio_settings?org_id=eq.${orgId}`, {
+    const patchRes = await fetch(`${SUPABASE_URL}/rest/v1/studio_settings?studio_slug=eq.${STUDIO_SLUG}`, {
       method: 'PATCH',
       headers: {
         'apikey': ANON_KEY,
+        'Authorization': `Bearer ${ANON_KEY}`,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({ staff_data: updatedStaffData })
@@ -102,16 +152,18 @@ export async function syncTournamentsToCloud(tournaments) {
 
 export async function syncNewsToCloud(news) {
   try {
-    // 1. Get the org_id first by fetching studio settings
+    // 1. Fetch current settings from new Supabase
     const settingsUrl = `${SUPABASE_URL}/rest/v1/studio_settings?studio_slug=eq.${STUDIO_SLUG}`;
     const getRes = await fetch(settingsUrl, {
-      headers: { 'apikey': ANON_KEY }
+      headers: { 
+        'apikey': ANON_KEY,
+        'Authorization': `Bearer ${ANON_KEY}`
+      }
     });
     if (!getRes.ok) throw new Error('Failed to load studio settings from cloud');
     const settingsList = await getRes.json();
     if (!settingsList || settingsList.length === 0) throw new Error('Studio settings not found on cloud');
     const settings = settingsList[0];
-    const orgId = settings.org_id;
 
     // 2. Patch staff_data with new news list
     const currentStaffData = settings.staff_data || {};
@@ -120,10 +172,11 @@ export async function syncNewsToCloud(news) {
       portal_news: news
     };
 
-    const patchRes = await fetch(`${SUPABASE_URL}/rest/v1/studio_settings?org_id=eq.${orgId}`, {
+    const patchRes = await fetch(`${SUPABASE_URL}/rest/v1/studio_settings?studio_slug=eq.${STUDIO_SLUG}`, {
       method: 'PATCH',
       headers: {
         'apikey': ANON_KEY,
+        'Authorization': `Bearer ${ANON_KEY}`,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({ staff_data: updatedStaffData })
@@ -267,3 +320,214 @@ export function getPortalSession() {
 export function clearPortalSession() {
   localStorage.removeItem(PORTAL_KEY);
 }
+
+export async function syncStudentToCloud(student) {
+  try {
+    const settingsUrl = `${SUPABASE_URL}/rest/v1/studio_settings?studio_slug=eq.${STUDIO_SLUG}`;
+    const getRes = await fetch(settingsUrl, {
+      headers: { 
+        'apikey': ANON_KEY,
+        'Authorization': `Bearer ${ANON_KEY}`
+      }
+    });
+    if (!getRes.ok) throw new Error('Failed to load studio settings');
+    const settingsList = await getRes.json();
+    if (!settingsList || settingsList.length === 0) throw new Error('Studio settings not found');
+    const settings = settingsList[0];
+    
+    const currentStaffData = settings.staff_data || {};
+    const currentLangs = currentStaffData.student_languages || {};
+    const updatedStaffData = {
+      ...currentStaffData,
+      student_languages: {
+        ...currentLangs,
+        [student.id]: student.language
+      }
+    };
+    
+    const patchRes = await fetch(`${SUPABASE_URL}/rest/v1/studio_settings?studio_slug=eq.${STUDIO_SLUG}`, {
+      method: 'PATCH',
+      headers: {
+        'apikey': ANON_KEY,
+        'Authorization': `Bearer ${ANON_KEY}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ staff_data: updatedStaffData })
+    });
+    
+    if (!patchRes.ok) throw new Error('Failed to update student language on cloud');
+    console.log('✅ Student language successfully synced to cloud!');
+    clearCache();
+    return true;
+  } catch (err) {
+    console.error('❌ Cloud student language sync error:', err);
+    return false;
+  }
+}
+
+/* ── Studio Registrations ────────────────────────── */
+export async function submitRegistration(regData) {
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/registrations`, {
+      method: 'POST',
+      headers: {
+        'apikey': ANON_KEY,
+        'Authorization': `Bearer ${ANON_KEY}`,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=representation'
+      },
+      body: JSON.stringify(regData)
+    });
+    if (!res.ok) throw new Error('Failed to submit registration');
+    return true;
+  } catch (err) {
+    console.error('❌ Cloud submitRegistration error:', err);
+    return false;
+  }
+}
+
+export async function fetchRegistrations() {
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/registrations?order=created_at.desc`, {
+      headers: {
+        'apikey': ANON_KEY,
+        'Authorization': `Bearer ${ANON_KEY}`
+      }
+    });
+    if (!res.ok) throw new Error('Failed to fetch registrations');
+    return await res.json();
+  } catch (err) {
+    console.error('❌ Cloud fetchRegistrations error:', err);
+    return [];
+  }
+}
+
+export async function updateRegistrationStatus(id, status) {
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/registrations?id=eq.${id}`, {
+      method: 'PATCH',
+      headers: {
+        'apikey': ANON_KEY,
+        'Authorization': `Bearer ${ANON_KEY}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ status })
+    });
+    if (!res.ok) throw new Error('Failed to update registration status');
+    return true;
+  } catch (err) {
+    console.error('❌ Cloud updateRegistrationStatus error:', err);
+    return false;
+  }
+}
+
+/* ── Custom Forms & Polls ────────────────────────── */
+export async function fetchCustomForms() {
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/custom_forms?order=created_at.desc`, {
+      headers: {
+        'apikey': ANON_KEY,
+        'Authorization': `Bearer ${ANON_KEY}`
+      }
+    });
+    if (!res.ok) throw new Error('Failed to fetch custom forms');
+    return await res.json();
+  } catch (err) {
+    console.error('❌ Cloud fetchCustomForms error:', err);
+    return [];
+  }
+}
+
+export async function fetchCustomFormBySlug(slug) {
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/custom_forms?slug=eq.${slug}`, {
+      headers: {
+        'apikey': ANON_KEY,
+        'Authorization': `Bearer ${ANON_KEY}`
+      }
+    });
+    if (!res.ok) throw new Error('Failed to fetch custom form');
+    const list = await res.json();
+    return list && list.length > 0 ? list[0] : null;
+  } catch (err) {
+    console.error('❌ Cloud fetchCustomFormBySlug error:', err);
+    return null;
+  }
+}
+
+export async function saveCustomForm(form) {
+  try {
+    const isNew = !form.id;
+    const url = isNew 
+      ? `${SUPABASE_URL}/rest/v1/custom_forms` 
+      : `${SUPABASE_URL}/rest/v1/custom_forms?id=eq.${form.id}`;
+      
+    const res = await fetch(url, {
+      method: isNew ? 'POST' : 'PATCH',
+      headers: {
+        'apikey': ANON_KEY,
+        'Authorization': `Bearer ${ANON_KEY}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(form)
+    });
+    if (!res.ok) throw new Error('Failed to save custom form');
+    return true;
+  } catch (err) {
+    console.error('❌ Cloud saveCustomForm error:', err);
+    return false;
+  }
+}
+
+export async function deleteCustomForm(id) {
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/custom_forms?id=eq.${id}`, {
+      method: 'DELETE',
+      headers: {
+        'apikey': ANON_KEY,
+        'Authorization': `Bearer ${ANON_KEY}`
+      }
+    });
+    if (!res.ok) throw new Error('Failed to delete custom form');
+    return true;
+  } catch (err) {
+    console.error('❌ Cloud deleteCustomForm error:', err);
+    return false;
+  }
+}
+
+export async function submitFormAnswer(submission) {
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/form_submissions`, {
+      method: 'POST',
+      headers: {
+        'apikey': ANON_KEY,
+        'Authorization': `Bearer ${ANON_KEY}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(submission)
+    });
+    if (!res.ok) throw new Error('Failed to submit form answers');
+    return true;
+  } catch (err) {
+    console.error('❌ Cloud submitFormAnswer error:', err);
+    return false;
+  }
+}
+
+export async function fetchFormSubmissions(slug) {
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/form_submissions?form_slug=eq.${slug}&order=created_at.desc`, {
+      headers: {
+        'apikey': ANON_KEY,
+        'Authorization': `Bearer ${ANON_KEY}`
+      }
+    });
+    if (!res.ok) throw new Error('Failed to fetch form submissions');
+    return await res.json();
+  } catch (err) {
+    console.error('❌ Cloud fetchFormSubmissions error:', err);
+    return [];
+  }
+}
+

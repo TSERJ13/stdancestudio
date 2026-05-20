@@ -15,7 +15,7 @@ const formatDate = (dateStr) => {
   if (!dateStr) return '';
   const parts = dateStr.toString().split('-');
   if (parts.length === 3 && parts[0].length === 4) {
-    return `${parts[2]}.${parts[1]}.${parts[0]}`;
+    return `${parts[2]}/${parts[1]}/${parts[0]}`;
   }
   return dateStr;
 };
@@ -29,11 +29,17 @@ const SVG_ICONS = {
   ),
   tournaments: (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '0.6rem' }}><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
+  ),
+  reg: (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '0.6rem' }}><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><circle cx="9" cy="9" r="1"/></svg>
+  ),
+  forms: (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '0.6rem' }}><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
   )
 };
 
-const TABS = ['სიახლეები','სტუდენტები','ტურნირები']
-const ICONS = ['news','students','tournaments']
+const TABS = ['სიახლეები','სტუდენტები','ტურნირები','რეგისტრაციები','გამოკითხვები & ფორმები']
+const ICONS = ['news','students','tournaments','reg','forms']
 
 export default function AdminDashboard() {
   const navigate = useNavigate()
@@ -41,6 +47,14 @@ export default function AdminDashboard() {
   const [news, setNews] = useState([])
   const [students, setStudents] = useState([])
   const [tournaments, setTournaments] = useState([])
+  const [registrations, setRegistrations] = useState([])
+  const [customForms, setCustomForms] = useState([])
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
+  const [showSubmissionsModal, setShowSubmissionsModal] = useState(false)
+  const [activeFormForSubmissions, setActiveFormForSubmissions] = useState(null)
+  const [formSubmissions, setFormSubmissions] = useState([])
+  const [loadingRegs, setLoadingRegs] = useState(false)
+  const [loadingForms, setLoadingForms] = useState(false)
   const [editingItem, setEditingItem] = useState(null) // { tab: 'news'|'student'|'tournament'|'results', id: 0|'id' }
   const [saving, setSaving] = useState(false)
 
@@ -57,10 +71,11 @@ export default function AdminDashboard() {
     import('../../data/classcore').then(mod => {
       mod.fetchStudioData()
         .then(data => {
+          const localStudents = getStudents();
           const mapped = (data.students || []).map(s => {
             const fn = s.first_name || s.data?.first_name || '';
             const ln = s.last_name || s.data?.last_name || '';
-            return {
+            const cloudStudent = {
               id: s.id,
               name: s.full_name || `${fn} ${ln}`.trim() || 'Student',
               phone: s.phone || s.data?.phone || '',
@@ -70,14 +85,53 @@ export default function AdminDashboard() {
               language: s.language || s.data?.language || 'ka',
               active: s.status === 'active' || !s.status
             }
+            
+            const localS = localStudents.find(x => x.id === s.id)
+            if (localS) {
+              return {
+                ...cloudStudent,
+                phone: localS.phone || cloudStudent.phone,
+                birthYear: localS.birthYear || cloudStudent.birthYear,
+                classification: localS.classification || cloudStudent.classification,
+                photo: localS.photo || cloudStudent.photo,
+                language: localS.language || cloudStudent.language,
+                active: localS.active !== undefined ? localS.active : cloudStudent.active
+              }
+            }
+            return cloudStudent
           });
           setStudents(mapped);
+          if (data.tournaments) {
+            localStorage.setItem('std_tournaments', JSON.stringify(data.tournaments));
+            setTournaments(data.tournaments);
+          }
+          if (data.news) {
+            localStorage.setItem('std_news', JSON.stringify(data.news));
+            setNews(data.news);
+          }
         })
         .catch(err => {
           console.error('Failed to load ClassCore students in admin:', err);
           setStudents(getStudents());
         });
-    }).catch(() => {
+
+      setLoadingRegs(true);
+      mod.fetchRegistrations()
+        .then(regs => {
+          setRegistrations(regs);
+          setLoadingRegs(false);
+        })
+        .catch(() => setLoadingRegs(false));
+
+      setLoadingForms(true);
+      mod.fetchCustomForms()
+        .then(forms => {
+          setCustomForms(forms);
+          setLoadingForms(false);
+        })
+        .catch(() => setLoadingForms(false));
+    }).catch((err) => {
+      console.error('Failed to import classcore:', err);
       setStudents(getStudents());
     });
   }
@@ -152,7 +206,7 @@ export default function AdminDashboard() {
 
   return (
     <div className="admin-wrap admin-shell">
-      <aside className="admin-sidebar">
+      <aside className={`admin-sidebar${isSidebarOpen ? ' open' : ''}`}>
         <div className="admin-sidebar__brand" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem', padding: '1.75rem 1rem', borderBottom: '1px solid rgba(212,166,74,0.12)', marginBottom: '1rem' }}>
           <img src="/images/logo-transparent.png" alt="ST Dance Studio" style={{ maxHeight: '55px', width: 'auto', display: 'block' }} />
           <div style={{ fontFamily: '"Times New Roman", Times, serif', textTransform: 'uppercase', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
@@ -164,7 +218,7 @@ export default function AdminDashboard() {
         </div>
         <nav className="admin-nav">
           {TABS.map((t,i) => (
-            <button key={i} className={`admin-nav__item${tab===i?' active':''}`} onClick={()=>{setTab(i); setEditingItem(null)}}>
+            <button key={i} className={`admin-nav__item${tab===i?' active':''}`} onClick={()=>{setTab(i); setEditingItem(null); setIsSidebarOpen(false);}}>
               <span className="admin-nav__icon" style={{ display: 'inline-flex', alignItems: 'center' }}>
                 {SVG_ICONS[ICONS[i]]}
               </span>
@@ -178,15 +232,30 @@ export default function AdminDashboard() {
           </button>
         </div>
       </aside>
+      {isSidebarOpen && <div className="admin-sidebar-overlay" onClick={() => setIsSidebarOpen(false)} />}
 
       <div className="admin-content">
         <div className="admin-topbar">
-          <span className="admin-topbar__title" style={{ display: 'inline-flex', alignItems: 'center' }}>
-            {SVG_ICONS[ICONS[tab === 3 ? 2 : tab]]}
-            <span style={{ marginLeft: '0.25rem' }}>{tab === 3 ? 'შედეგების მართვა' : TABS[tab]}</span>
-          </span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            <button 
+              className="admin-btn admin-btn--ghost admin-btn--sm mobile-only-toggle" 
+              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+              style={{ display: 'none', padding: '6px 10px', fontSize: '16px' }}
+            >
+              ☰
+            </button>
+            <span className="admin-topbar__title" style={{ display: 'inline-flex', alignItems: 'center' }}>
+              {SVG_ICONS[ICONS[tab === 5 ? 2 : tab]]}
+              <span style={{ marginLeft: '0.25rem' }}>{tab === 5 ? 'შედეგების მართვა' : TABS[tab]}</span>
+            </span>
+          </div>
           <div className="admin-topbar__actions">
-            {tab !== 3 && (
+            {tab === 4 && !editingItem && (
+              <button className="admin-btn admin-btn--gold admin-btn--sm" onClick={() => setEditingItem({ tab: 'customForm', id: 0 })}>
+                + ახალი ფორმა / გამოკითხვა
+              </button>
+            )}
+            {tab < 3 && tab !== 5 && (
               <button className="admin-btn admin-btn--gold admin-btn--sm" onClick={() => setEditingItem({ tab: ['news', 'student', 'tournament'][tab], id: 0 })}>
                 + დამატება
               </button>
@@ -207,7 +276,18 @@ export default function AdminDashboard() {
               {editingItem.tab === 'student' && (
                 <StudentForm 
                   item={editingItem.id === 0 ? {} : students.find(s => s.id === editingItem.id)} 
-                  onSave={s => { saveStudent(s); refresh(); setEditingItem(null); }} 
+                  onSave={async (s) => { 
+                    saveStudent(s); 
+                    try {
+                      const mod = await import('../../data/classcore')
+                      await mod.syncStudentToCloud(s)
+                      mod.clearCache()
+                    } catch (err) {
+                      console.error('Student cloud sync error:', err)
+                    }
+                    refresh(); 
+                    setEditingItem(null); 
+                  }} 
                   onCancel={() => setEditingItem(null)} 
                 />
               )}
@@ -227,16 +307,137 @@ export default function AdminDashboard() {
                   onCancel={() => setEditingItem(null)} 
                 />
               )}
+              {editingItem.tab === 'customForm' && (
+                <CustomFormForm 
+                  item={editingItem.id === 0 ? {} : customForms.find(f => f.id === editingItem.id)} 
+                  onSave={async (f) => {
+                    setSaving(true)
+                    try {
+                      const mod = await import('../../data/classcore')
+                      await mod.saveCustomForm(f)
+                    } catch (err) {
+                      console.error('Error saving custom form:', err)
+                    } finally {
+                      setSaving(false)
+                      setEditingItem(null)
+                      refresh()
+                    }
+                  }} 
+                  onCancel={() => setEditingItem(null)} 
+                />
+              )}
             </>
           ) : (
             <>
               {tab===0 && <NewsTab news={news} onEdit={id => setEditingItem({ tab: 'news', id })} onDelete={handleDeleteNews} />}
               {tab===1 && <StudentsTab students={students} onEdit={id => setEditingItem({ tab: 'student', id })} onDelete={id=>{deleteStudent(id);refresh()}} />}
               {tab===2 && <TournamentsTab tournaments={tournaments} students={students} onEdit={id => setEditingItem({ tab: 'tournament', id })} onManageResults={id => setEditingItem({ tab: 'results', id })} onDelete={handleDeleteTournament} />}
+              {tab===3 && (
+                <RegistrationsTab 
+                  registrations={registrations} 
+                  loading={loadingRegs}
+                  onStatusUpdate={async (id, status) => {
+                    setSaving(true)
+                    try {
+                      const mod = await import('../../data/classcore')
+                      await mod.updateRegistrationStatus(id, status)
+                    } catch (err) {
+                      console.error(err)
+                    } finally {
+                      setSaving(false)
+                      refresh()
+                    }
+                  }}
+                />
+              )}
+              {tab===4 && (
+                <CustomFormsTab 
+                  forms={customForms} 
+                  loading={loadingForms}
+                  onEdit={id => setEditingItem({ tab: 'customForm', id })}
+                  onDelete={async (id) => {
+                    if (!window.confirm('დარწმუნებული ხართ, რომ გსურთ წაშლა?')) return
+                    setSaving(true)
+                    try {
+                      const mod = await import('../../data/classcore')
+                      await mod.deleteCustomForm(id)
+                    } catch (err) {
+                      console.error(err)
+                    } finally {
+                      setSaving(false)
+                      refresh()
+                    }
+                  }}
+                  onViewSubmissions={async (slug) => {
+                    setSaving(true)
+                    try {
+                      const mod = await import('../../data/classcore')
+                      const list = await mod.fetchFormSubmissions(slug)
+                      setFormSubmissions(list)
+                      setActiveFormForSubmissions(customForms.find(f => f.slug === slug))
+                      setShowSubmissionsModal(true)
+                    } catch (err) {
+                      console.error(err)
+                    } finally {
+                      setSaving(false)
+                    }
+                  }}
+                />
+              )}
             </>
           )}
         </div>
       </div>
+      
+      {/* Submissions Modal */}
+      {showSubmissionsModal && activeFormForSubmissions && (
+        <div className="admin-modal-overlay">
+          <div className="admin-modal" style={{ maxWidth: '800px' }}>
+            <div className="admin-modal__head">
+              <span className="admin-modal__title">{activeFormForSubmissions.title} — პასუხები</span>
+              <button className="admin-modal__close" onClick={() => setShowSubmissionsModal(false)}>×</button>
+            </div>
+            <div className="admin-modal__body">
+              {formSubmissions.length === 0 ? (
+                <p style={{ color: '#6b665e', textAlign: 'center', padding: '30px 0' }}>პასუხები ჯერ არ ფიქსირდება</p>
+              ) : (
+                <div style={{ overflowX: 'auto' }}>
+                  <table className="admin-table">
+                    <thead>
+                      <tr>
+                        <th style={{ color: 'var(--gold)' }}>თარიღი</th>
+                        {activeFormForSubmissions.type === 'poll' ? (
+                          <th>არჩეული ვარიანტი</th>
+                        ) : (
+                          Array.isArray(activeFormForSubmissions.fields) && activeFormForSubmissions.fields.map((f, idx) => (
+                            <th key={idx}>{f.label}</th>
+                          ))
+                        )}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {formSubmissions.map((sub, idx) => (
+                        <tr key={idx}>
+                          <td style={{ color: 'rgba(255,255,255,0.5)', whiteSpace: 'nowrap' }}>
+                            {new Date(sub.created_at).toLocaleString('ka-GE', { hour12: false })}
+                          </td>
+                          {activeFormForSubmissions.type === 'poll' ? (
+                            <td style={{ color: 'var(--gold)', fontWeight: 'bold' }}>{sub.answers?.selectedOption || ''}</td>
+                          ) : (
+                            Array.isArray(activeFormForSubmissions.fields) && activeFormForSubmissions.fields.map((f, fIdx) => (
+                              <td key={fIdx}>{sub.answers?.[f.name || f.label] || '-'}</td>
+                            ))
+                          )}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
       {saving && (
         <div style={{
           position: 'fixed',
@@ -692,8 +893,39 @@ function TournamentForm({item,students,onSave,onCancel}) {
   }
 
   const handleSave = () => {
-    const tid = form.id || ('trn_' + Math.random().toString(36).slice(2,8))
-    onSave({...form, id: tid})
+    let finalForm = { ...form }
+    
+    // Auto-commit pending category if user forgot to click "+ დამატება" but entered details
+    if (activeStudentId && newCatName.trim()) {
+      const dateVal = newCatDate || form.date
+      const feeVal = newCatFeeAmount ? `${newCatFeeAmount} ${newCatFeeCurrency}` : ''
+      const newCategoryItem = {
+        name: newCatName.trim(),
+        date: dateVal,
+        readyTime: newCatReadyTime.trim(),
+        time: newCatTime.trim(),
+        venue: newCatVenue.trim(),
+        fee: feeVal
+      }
+
+      const currentData = finalForm.assignedStudentsData || {}
+      const studentObj = currentData[activeStudentId] || { categories: [] }
+      const currentCats = studentObj.categories || []
+
+      finalForm = {
+        ...finalForm,
+        assignedStudentsData: {
+          ...currentData,
+          [activeStudentId]: {
+            ...studentObj,
+            categories: [...currentCats, newCategoryItem]
+          }
+        }
+      }
+    }
+
+    const tid = finalForm.id || ('trn_' + Math.random().toString(36).slice(2,8))
+    onSave({...finalForm, id: tid})
   }
 
   return (
@@ -1270,4 +1502,419 @@ function ResultsForm({item,students,onSave,onCancel}) {
       </div>
     </div>
   )
+}
+
+/* ── Registrations Tab ── */
+function RegistrationsTab({ registrations, loading, onStatusUpdate }) {
+  if (loading) {
+    return <div style={{ color: 'var(--gold)', padding: '20px 0' }}>რეგისტრაციები იტვირთება...</div>;
+  }
+
+  if (registrations.length === 0) {
+    return (
+      <div style={{ padding: '3rem', textAlign: 'center', background: 'rgba(26,24,22,0.6)', border: '1px dashed rgba(212,166,74,0.15)', borderRadius: '4px', color: '#6b665e' }}>
+        სტუდიაში ონლაინ რეგისტრაციები ჯერ არ ფიქსირდება.
+      </div>
+    );
+  }
+
+  return (
+    <div className="admin-section">
+      <div className="admin-section__head">
+        <span className="admin-section__title">ონლაინ რეგისტრაციის განაცხადები ({registrations.length})</span>
+      </div>
+      <div className="admin-section__body" style={{ padding: 0, overflowX: 'auto' }}>
+        <table className="admin-table">
+          <thead>
+            <tr>
+              <th>ბავშვის სახელი</th>
+              <th>დაბადების თარიღი</th>
+              <th>ცვლა</th>
+              <th>მშობლის სახელი</th>
+              <th>მშობლის ტელეფონი</th>
+              <th>თარიღი</th>
+              <th>სტატუსი</th>
+              <th style={{ textAlign: 'right' }}>მოქმედება</th>
+            </tr>
+          </thead>
+          <tbody>
+            {registrations.map(reg => (
+              <tr key={reg.id}>
+                <td style={{ fontWeight: '600', color: '#fff' }}>{reg.student_name}</td>
+                <td>{formatDate(reg.birth_date)}</td>
+                <td>
+                  <span className="badge badge--muted">{reg.shift}</span>
+                </td>
+                <td>{reg.parent_name}</td>
+                <td>
+                  <a href={`tel:${reg.parent_phone}`} style={{ color: 'var(--gold)', textDecoration: 'none' }}>
+                    📞 {reg.parent_phone}
+                  </a>
+                </td>
+                <td style={{ color: 'rgba(255,255,255,0.4)', fontSize: '12px' }}>
+                  {new Date(reg.created_at).toLocaleDateString('ka-GE')}
+                </td>
+                <td>
+                  <span className={`badge badge--${reg.status === 'approved' ? 'green' : reg.status === 'rejected' ? 'red' : 'gold'}`}>
+                    {reg.status === 'approved' ? 'დადასტურებული' : reg.status === 'rejected' ? 'უარყოფილი' : 'მოდერაცია'}
+                  </span>
+                </td>
+                <td style={{ textAlign: 'right' }}>
+                  <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
+                    {reg.status !== 'approved' && (
+                      <button 
+                        onClick={() => onStatusUpdate(reg.id, 'approved')} 
+                        className="admin-btn admin-btn--sm"
+                        style={{ background: 'rgba(80,200,120,0.15)', border: '1px solid #50c878', color: '#50c878', padding: '4px 10px' }}
+                      >
+                        ✓ მიღება
+                      </button>
+                    )}
+                    {reg.status !== 'rejected' && (
+                      <button 
+                        onClick={() => onStatusUpdate(reg.id, 'rejected')} 
+                        className="admin-btn admin-btn--sm"
+                        style={{ background: 'rgba(220,50,50,0.15)', border: '1px solid #ff7070', color: '#ff7070', padding: '4px 10px' }}
+                      >
+                        ✕ უარყოფა
+                      </button>
+                    )}
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+/* ── Custom Forms Tab ── */
+function CustomFormsTab({ forms, loading, onEdit, onDelete, onViewSubmissions }) {
+  const [copiedSlug, setCopiedSlug] = useState('');
+
+  const copyLink = (slug) => {
+    const fullLink = `${window.location.origin}/f/${slug}`;
+    navigator.clipboard.writeText(fullLink);
+    setCopiedSlug(slug);
+    setTimeout(() => setCopiedSlug(''), 2000);
+  };
+
+  if (loading) {
+    return <div style={{ color: 'var(--gold)', padding: '20px 0' }}>ფორმები იტვირთება...</div>;
+  }
+
+  if (forms.length === 0) {
+    return (
+      <div style={{ padding: '3rem', textAlign: 'center', background: 'rgba(26,24,22,0.6)', border: '1px dashed rgba(212,166,74,0.15)', borderRadius: '4px', color: '#6b665e' }}>
+        თქვენ ჯერ არ შეგიქმნიათ გამოკითხვები ან სარეგისტრაციო ბლანკები.
+      </div>
+    );
+  }
+
+  return (
+    <div className="admin-section">
+      <div className="admin-section__head">
+        <span className="admin-section__title">შექმნილი ბლანკები და გამოკითხვები ({forms.length})</span>
+      </div>
+      <div className="admin-section__body" style={{ padding: 0, overflowX: 'auto' }}>
+        <table className="admin-table">
+          <thead>
+            <tr>
+              <th>სათაური</th>
+              <th>ბმულის დასასრული (SLUG)</th>
+              <th>ტიპი</th>
+              <th>თარიღი</th>
+              <th style={{ textAlign: 'right' }}>მოქმედება</th>
+            </tr>
+          </thead>
+          <tbody>
+            {forms.map(form => (
+              <tr key={form.id}>
+                <td style={{ fontWeight: '600', color: '#fff' }}>{form.title}</td>
+                <td>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <span style={{ color: 'var(--gold)', fontFamily: 'monospace' }}>/f/{form.slug}</span>
+                    <button 
+                      onClick={() => copyLink(form.slug)}
+                      className="admin-btn admin-btn--sm"
+                      style={{ padding: '2px 8px', fontSize: '11px', background: 'rgba(255,255,255,0.06)' }}
+                    >
+                      {copiedSlug === form.slug ? '✓ კოპირებულია' : '📋 ბმულის კოპირება'}
+                    </button>
+                  </div>
+                </td>
+                <td>
+                  <span className={`badge badge--${form.type === 'poll' ? 'gold' : 'muted'}`}>
+                    {form.type === 'poll' ? 'გამოკითხვა' : 'ბლანკი'}
+                  </span>
+                </td>
+                <td style={{ color: 'rgba(255,255,255,0.4)', fontSize: '12px' }}>
+                  {new Date(form.created_at).toLocaleDateString('ka-GE')}
+                </td>
+                <td style={{ textAlign: 'right' }}>
+                  <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
+                    <button 
+                      onClick={() => onViewSubmissions(form.slug)}
+                      className="admin-btn admin-btn--sm"
+                      style={{ background: 'rgba(212,166,74,0.15)', border: '1px solid rgba(212,166,74,0.3)', color: 'var(--gold)' }}
+                    >
+                      👁 პასუხები
+                    </button>
+                    <button 
+                      onClick={() => onEdit(form.id)}
+                      className="admin-btn admin-btn--sm"
+                      style={{ background: 'rgba(255,255,255,0.06)', color: '#fff' }}
+                    >
+                      ✏
+                    </button>
+                    <button 
+                      onClick={() => onDelete(form.id)}
+                      className="admin-btn admin-btn--danger admin-btn--sm"
+                      style={{ padding: '4px 10px' }}
+                    >
+                      🗑
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+/* ── Custom Form Builder Component ── */
+function CustomFormForm({ item, onSave, onCancel }) {
+  const [form, setForm] = useState({
+    id: item?.id || null,
+    title: item?.title || '',
+    description: item?.description || '',
+    slug: item?.slug || '',
+    type: item?.type || 'form',
+    fields: item?.fields || []
+  });
+
+  const [newOption, setNewOption] = useState('');
+  const [newField, setNewField] = useState({
+    label: '',
+    type: 'text',
+    required: false,
+    placeholder: '',
+    options: ''
+  });
+
+  const handleAddOption = () => {
+    if (!newOption.trim()) return;
+    setForm({
+      ...form,
+      fields: [...form.fields, newOption.trim()]
+    });
+    setNewOption('');
+  };
+
+  const handleRemoveOption = (index) => {
+    setForm({
+      ...form,
+      fields: form.fields.filter((_, i) => i !== index)
+    });
+  };
+
+  const handleAddField = () => {
+    if (!newField.label.trim()) return;
+    
+    const fieldObj = {
+      label: newField.label.trim(),
+      name: newField.label.trim().toLowerCase().replace(/\s+/g, '-'),
+      type: newField.type,
+      required: newField.required,
+      placeholder: newField.placeholder.trim(),
+      options: newField.type === 'select' ? newField.options.split(',').map(o => o.trim()).filter(Boolean) : []
+    };
+
+    setForm({
+      ...form,
+      fields: [...form.fields, fieldObj]
+    });
+
+    setNewField({
+      label: '',
+      type: 'text',
+      required: false,
+      placeholder: '',
+      options: ''
+    });
+  };
+
+  const handleRemoveField = (index) => {
+    setForm({
+      ...form,
+      fields: form.fields.filter((_, i) => i !== index)
+    });
+  };
+
+  const handleSave = (e) => {
+    e.preventDefault();
+    if (!form.title.trim()) { alert('გთხოვთ მიუთითოთ სათაური'); return; }
+    if (!form.slug.trim()) { alert('გთხოვთ მიუთითოთ ბმულის ბოლო (slug)'); return; }
+    
+    // Normalize slug
+    const cleanSlug = form.slug.trim().toLowerCase().replace(/[^a-z0-9-_]/g, '-').replace(/-+/g, '-');
+    
+    onSave({
+      ...form,
+      slug: cleanSlug
+    });
+  };
+
+  return (
+    <div className="admin-section">
+      <div className="admin-section__head">
+        <span className="admin-section__title">{form.id ? 'ბლანკის / გამოკითხვის რედაქტირება' : 'ახალი ბლანკი / გამოკითხვა'}</span>
+      </div>
+      <div className="admin-section__body">
+        <form onSubmit={handleSave} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+          
+          <div className="admin-grid-2">
+            <div className="admin-field">
+              <label>სათაური *</label>
+              <input 
+                type="text" 
+                value={form.title} 
+                onChange={e => setForm({ ...form, title: e.target.value, slug: form.id ? form.slug : e.target.value.toLowerCase().replace(/[^a-z0-9\s-_]/g, '').replace(/\s+/g, '-') })} 
+                placeholder="მაგ: სურვილის გამოკითხვა ტურნირზე" 
+                required 
+              />
+            </div>
+            <div className="admin-field">
+              <label>ბმულის დასასრული (URL SLUG) *</label>
+              <input 
+                type="text" 
+                value={form.slug} 
+                onChange={e => setForm({ ...form, slug: e.target.value })} 
+                placeholder="მაგ: tournament-june" 
+                required 
+              />
+            </div>
+          </div>
+
+          <div className="admin-field">
+            <label>მოკლე აღწერა / ინსტრუქცია</label>
+            <textarea 
+              value={form.description} 
+              onChange={e => setForm({ ...form, description: e.target.value })} 
+              placeholder="მიუთითეთ დეტალური აღწერა მოსწავლეებისთვის"
+            />
+          </div>
+
+          <div className="admin-field">
+            <label>ტიპი</label>
+            <select value={form.type} onChange={e => setForm({ ...form, type: e.target.value, fields: [] })} disabled={!!form.id}>
+              <option value="form">სარეგისტრაციო ბლანკი (კითხვარი)</option>
+              <option value="poll">გამოკითხვა (ხმის მიცემა)</option>
+            </select>
+          </div>
+
+          {/* TYPE == POLL: Options section */}
+          {form.type === 'poll' && (
+            <div style={{ background: 'rgba(255,255,255,0.01)', border: '1px solid rgba(212,166,74,0.15)', borderRadius: '6px', padding: '20px' }}>
+              <h4 style={{ color: 'var(--gold)', marginBottom: '15px', fontSize: '14px' }}>🗳 გამოკითხვის ვარიანტები (პასუხები)</h4>
+              
+              <div style={{ display: 'flex', gap: '10px', marginBottom: '15px' }}>
+                <input 
+                  type="text" 
+                  value={newOption} 
+                  onChange={e => setNewOption(e.target.value)} 
+                  placeholder="მაგ: დიახ, მსურს მონაწილეობა"
+                  style={{ flex: 1 }}
+                />
+                <button type="button" onClick={handleAddOption} className="admin-btn admin-btn--gold" style={{ width: 'auto', padding: '0 20px' }}>+ ვარიანტი</button>
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                {form.fields.map((opt, idx) => (
+                  <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 15px', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '4px' }}>
+                    <span style={{ color: '#fff' }}>{opt}</span>
+                    <button type="button" onClick={() => handleRemoveOption(idx)} className="admin-btn admin-btn--danger admin-btn--sm" style={{ padding: '4px 8px' }}>🗑</button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* TYPE == FORM: Fields builder section */}
+          {form.type === 'form' && (
+            <div style={{ background: 'rgba(255,255,255,0.01)', border: '1px solid rgba(212,166,74,0.15)', borderRadius: '6px', padding: '20px' }}>
+              <h4 style={{ color: 'var(--gold)', marginBottom: '15px', fontSize: '14px' }}>📋 ბლანკის ველების კონსტრუქტორი</h4>
+              
+              {/* Field adding controls */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '12px', background: 'rgba(255,255,255,0.02)', padding: '15px', borderRadius: '4px', marginBottom: '20px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                <div className="admin-field" style={{ marginBottom: 0 }}>
+                  <label>ველის დასახელება *</label>
+                  <input type="text" value={newField.label} onChange={e => setNewField({ ...newField, label: e.target.value })} placeholder="მაგ: მოსწავლის სახელი" />
+                </div>
+                
+                <div className="admin-field" style={{ marginBottom: 0 }}>
+                  <label>ველის ტიპი</label>
+                  <select value={newField.type} onChange={e => setNewField({ ...newField, type: e.target.value })}>
+                    <option value="text">ტექსტური ველი (მოკლე)</option>
+                    <option value="number">რიცხვითი ველი</option>
+                    <option value="date">თარიღი</option>
+                    <option value="textarea">დიდი ტექსტური ველი</option>
+                    <option value="select">ჩამოსაშლელი სია (Select)</option>
+                    <option value="checkbox">მოსანიშნი კვადრატი (Checkbox)</option>
+                  </select>
+                </div>
+
+                <div className="admin-field" style={{ marginBottom: 0 }}>
+                  <label>აუცილებელი ველი</label>
+                  <div style={{ marginTop: '8px' }}>
+                    <label className="admin-checkbox">
+                      <input type="checkbox" checked={newField.required} onChange={e => setNewField({ ...newField, required: e.target.checked })} />
+                      კი
+                    </label>
+                  </div>
+                </div>
+
+                {newField.type === 'select' && (
+                  <div className="admin-field" style={{ gridColumn: 'span 2', marginBottom: 0 }}>
+                    <label>ჩამოსაშლელი სიის ვარიანტები (მძიმით გამოყოფილი) *</label>
+                    <input type="text" value={newField.options} onChange={e => setNewField({ ...newField, options: e.target.value })} placeholder="ვარიანტი 1, ვარიანტი 2, ვარიანტი 3" />
+                  </div>
+                )}
+
+                <div style={{ gridColumn: '1 / -1', textAlign: 'right', marginTop: '10px' }}>
+                  <button type="button" onClick={handleAddField} className="admin-btn admin-btn--gold" style={{ width: 'auto', padding: '8px 25px' }}>+ ველის დამატება</button>
+                </div>
+              </div>
+
+              {/* Added fields list */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                {form.fields.map((f, idx) => (
+                  <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 15px', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '4px' }}>
+                    <div>
+                      <span style={{ color: '#fff', fontWeight: 'bold', marginRight: '10px' }}>{f.label}</span>
+                      <span className="badge badge--muted" style={{ marginRight: '10px' }}>{f.type}</span>
+                      {f.required && <span className="badge badge--red">აუცილებელი</span>}
+                      {f.type === 'select' && <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: '12px', marginLeft: '10px' }}>({f.options.join(', ')})</span>}
+                    </div>
+                    <button type="button" onClick={() => handleRemoveField(idx)} className="admin-btn admin-btn--danger admin-btn--sm" style={{ padding: '4px 8px' }}>🗑</button>
+                  </div>
+                ))}
+              </div>
+
+            </div>
+          )}
+
+          <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
+            <button type="submit" className="admin-btn admin-btn--gold" style={{ width: 'auto', padding: '12px 35px' }}>შენახვა</button>
+            <button type="button" onClick={onCancel} className="admin-btn admin-btn--ghost" style={{ width: 'auto', padding: '12px 35px' }}>გაუქმება</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
 }
