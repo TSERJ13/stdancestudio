@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { fetchCustomFormBySlug, submitFormAnswer } from '../data/classcore'
+import { useLanguage } from '../context/LanguageContext'
 import './InnerPage.css'
 
 export default function CustomFormView() {
   const { slug } = useParams()
+  const { t } = useLanguage()
   const [form, setForm] = useState(null)
   const [answers, setAnswers] = useState({})
   const [loading, setLoading] = useState(true)
@@ -30,15 +32,15 @@ export default function CustomFormView() {
           }
           setAnswers(initialAnswers)
         } else {
-          setError('ფორმები / გამოკითხვა ვერ მოიძებნა')
+          setError(t('customForm.notFound'))
         }
         setLoading(false)
       })
       .catch(() => {
-        setError('კავშირის შეცდომა')
+        setError(t('customForm.connectionError'))
         setLoading(false)
       })
-  }, [slug])
+  }, [slug, t])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -46,7 +48,7 @@ export default function CustomFormView() {
 
     // Validate
     if (form.type === 'poll' && !answers.selectedOption) {
-      setError('გთხოვთ აირჩიოთ ერთ-ერთი ვარიანტი')
+      setError(t('customForm.validationError'))
       return
     }
 
@@ -63,68 +65,116 @@ export default function CustomFormView() {
     if (res) {
       setSuccess(true)
     } else {
-      setError('მონაცემების გაგზავნა ვერ მოხერხდა. სცადეთ მოგვიანებით.')
+      setError(t('customForm.connectionError'))
     }
   }
 
   if (loading) {
     return (
-      <div className="inner-page" style={{ padding: '150px 20px', minHeight: '80vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-        <div style={{ color: 'var(--gold)', fontSize: '18px', letterSpacing: '1px' }}>იტვირთება...</div>
+      <div className="inner-page" style={{ padding: '150px 20px', minHeight: '85vh', display: 'flex', justifyContent: 'center', alignItems: 'center', background: 'radial-gradient(circle at center, #1c1a17 0%, #0a0908 100%)' }}>
+        <div style={{ color: 'var(--color-gold, #d4a64a)', fontSize: '18px', letterSpacing: '1px' }}>{t('customForm.submitting')}</div>
       </div>
     )
   }
 
   if (error || !form) {
     return (
-      <div className="inner-page" style={{ padding: '150px 20px', minHeight: '80vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-        <div style={{ maxWidth: '500px', width: '100%', background: 'rgba(20,20,20,0.85)', border: '1px solid #dc3545', borderRadius: '12px', padding: '30px', textAlign: 'center' }}>
+      <div className="inner-page" style={{ padding: '150px 20px', minHeight: '85vh', display: 'flex', justifyContent: 'center', alignItems: 'center', background: 'radial-gradient(circle at center, #1c1a17 0%, #0a0908 100%)' }}>
+        <div style={{ 
+          maxWidth: '500px', 
+          width: '100%', 
+          background: 'rgba(15, 14, 13, 0.9)', 
+          backdropFilter: 'blur(16px)', 
+          border: '1px solid rgba(220,53,69,0.3)', 
+          borderRadius: '12px', 
+          padding: '40px 30px', 
+          textAlign: 'center',
+          boxShadow: '0 20px 50px rgba(0,0,0,0.8)'
+        }}>
           <div style={{ fontSize: '48px', color: '#dc3545', marginBottom: '15px' }}>⚠</div>
-          <h3 style={{ color: '#fff', marginBottom: '10px' }}>შეცდომა</h3>
-          <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '14px' }}>{error || 'გვერდი ვერ მოიძებნა'}</p>
+          <h3 style={{ color: '#fff', marginBottom: '10px', fontSize: '20px' }}>{t('customForm.errorTitle')}</h3>
+          <p style={{ color: '#a8a39a', fontSize: '14.5px' }}>{error || t('customForm.notFound')}</p>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="inner-page" style={{ padding: '120px 20px 80px', minHeight: '80vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-      <div style={{ maxWidth: '600px', width: '100%', background: 'rgba(20,20,20,0.85)', backdropFilter: 'blur(10px)', border: '1px solid var(--gold)', borderRadius: '16px', padding: '40px 30px', boxShadow: '0 8px 32px rgba(0,0,0,0.5)' }}>
+    <div className="inner-page" style={{ padding: '120px 20px 80px', minHeight: '85vh', display: 'flex', justifyContent: 'center', alignItems: 'center', background: 'radial-gradient(circle at center, #1c1a17 0%, #0a0908 100%)' }}>
+      <div style={{ 
+        maxWidth: '560px', 
+        width: '100%', 
+        background: 'rgba(15, 14, 13, 0.9)', 
+        backdropFilter: 'blur(16px)', 
+        border: '1px solid rgba(212, 166, 74, 0.3)', 
+        borderRadius: '12px', 
+        padding: '45px 35px', 
+        boxShadow: '0 20px 50px rgba(0,0,0,0.85), inset 0 1px 0 rgba(255,255,255,0.05)',
+        position: 'relative',
+        overflow: 'hidden'
+      }}>
+        {/* Subtle Luxury Top Accent Line */}
+        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '3px', background: 'linear-gradient(90deg, transparent 0%, var(--color-gold, #d4a64a) 50%, transparent 100%)' }}></div>
         
         {success ? (
           <div style={{ textAlign: 'center', padding: '20px 0' }}>
-            <div style={{ fontSize: '64px', color: 'var(--gold)', marginBottom: '20px' }}>✓</div>
-            <h2 style={{ fontFamily: 'var(--font-title)', color: '#fff', marginBottom: '15px' }}>
-              {form.type === 'poll' ? 'ხმა მიღებულია!' : 'მონაცემები გაგზავნილია!'}
+            <div style={{ 
+              width: '80px', 
+              height: '80px', 
+              borderRadius: '50%', 
+              background: 'rgba(212, 166, 74, 0.1)', 
+              border: '2px solid var(--color-gold, #d4a64a)', 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center', 
+              margin: '0 auto 25px',
+              color: 'var(--color-gold, #d4a64a)',
+              fontSize: '36px',
+              fontWeight: 'bold',
+              boxShadow: '0 0 20px rgba(212, 166, 74, 0.2)'
+            }}>✓</div>
+            <h2 style={{ fontFamily: 'var(--font-title, "Times New Roman", serif)', color: '#fff', fontSize: '24px', marginBottom: '15px', letterSpacing: '0.5px' }}>
+              {form.type === 'poll' ? t('customForm.successPollTitle') : t('customForm.successFormTitle')}
             </h2>
-            <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '15px', lineHeight: '1.6' }}>
-              გმადლობთ მონაწილეობისთვის. თქვენი პასუხი წარმატებით შეინახა ბაზაში.
+            <p style={{ color: '#a8a39a', fontSize: '14.5px', lineHeight: '1.7', maxWidth: '420px', margin: '0 auto' }}>
+              {t('customForm.successDesc')}
             </p>
           </div>
         ) : (
           <form onSubmit={handleSubmit}>
             <div style={{ textAlign: 'center', marginBottom: '35px' }}>
-              <h1 style={{ fontFamily: 'var(--font-title)', color: '#fff', fontSize: '28px', marginBottom: '10px', letterSpacing: '1px' }}>{form.title}</h1>
+              <h1 style={{ 
+                fontFamily: 'var(--font-title, "Times New Roman", serif)', 
+                color: '#fff', 
+                fontSize: '32px', 
+                marginBottom: '8px', 
+                letterSpacing: '1.5px',
+                fontWeight: '400',
+                textTransform: 'uppercase'
+              }}>
+                {form.title}
+              </h1>
               {form.description && (
-                <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '14px', lineHeight: '1.5' }}>{form.description}</p>
+                <p style={{ color: '#a8a39a', fontSize: '14px', lineHeight: '1.6', marginTop: '10px' }}>{form.description}</p>
               )}
-              <div style={{ display: 'inline-block', marginTop: '12px', padding: '4px 12px', background: 'rgba(212,175,55,0.15)', border: '1px solid var(--gold)', borderRadius: '20px', color: 'var(--gold)', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '1px' }}>
-                {form.type === 'poll' ? 'გამოკითხვა' : 'სარეგისტრაციო ბლანკი'}
+              <div style={{ height: '1px', background: 'linear-gradient(90deg, transparent, rgba(212,166,74,0.4), transparent)', width: '60%', margin: '15px auto 10px' }}></div>
+              <div style={{ display: 'inline-block', padding: '4px 14px', background: 'rgba(212,175,55,0.08)', border: '1px solid rgba(212,166,74,0.3)', borderRadius: '20px', color: 'var(--color-gold, #d4a64a)', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '1.5px', fontWeight: '500' }}>
+                {form.type === 'poll' ? t('customForm.pollTitle') : t('customForm.formTitle')}
               </div>
             </div>
 
             {error && (
-              <div style={{ background: 'rgba(220,53,69,0.15)', border: '1px solid #dc3545', color: '#ff6b7b', padding: '12px', borderRadius: '8px', marginBottom: '25px', fontSize: '14px', textAlign: 'center' }}>
+              <div style={{ background: 'rgba(220,53,69,0.08)', border: '1px solid rgba(220,53,69,0.3)', color: '#ff6b7b', padding: '12px', borderRadius: '4px', marginBottom: '25px', fontSize: '13.5px', textAlign: 'center' }}>
                 {error}
               </div>
             )}
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '22px' }}>
               
               {form.type === 'poll' ? (
                 /* Render Poll Options */
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                  <label style={{ display: 'block', color: 'rgba(255,255,255,0.8)', fontSize: '14px', marginBottom: '4px', fontWeight: '500' }}>აირჩიეთ სასურველი ვარიანტი: *</label>
+                  <label style={{ display: 'block', color: '#a8a39a', fontSize: '13.5px', marginBottom: '6px', fontWeight: '500' }}>{t('customForm.selectOption')}</label>
                   {Array.isArray(form.fields) && form.fields.map((opt, i) => (
                     <button
                       key={i}
@@ -132,18 +182,19 @@ export default function CustomFormView() {
                       onClick={() => setAnswers({ selectedOption: opt })}
                       style={{
                         padding: '16px 20px',
-                        background: answers.selectedOption === opt ? 'rgba(212,175,55,0.15)' : '#111',
-                        border: answers.selectedOption === opt ? '1px solid var(--gold)' : '1px solid #333',
-                        borderRadius: '10px',
-                        color: answers.selectedOption === opt ? 'var(--gold)' : '#fff',
+                        background: answers.selectedOption === opt ? 'rgba(212,166,74,0.12)' : 'rgba(255,255,255,0.01)',
+                        border: answers.selectedOption === opt ? '1px solid var(--color-gold, #d4a64a)' : '1px solid rgba(255,255,255,0.06)',
+                        borderRadius: '4px',
+                        color: answers.selectedOption === opt ? 'var(--color-gold, #d4a64a)' : '#fff',
                         textAlign: 'left',
-                        fontSize: '15px',
+                        fontSize: '14.5px',
                         cursor: 'pointer',
-                        transition: 'all 0.2s',
+                        transition: 'all 0.25s ease',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'space-between',
-                        fontWeight: answers.selectedOption === opt ? '600' : '400'
+                        fontWeight: answers.selectedOption === opt ? '600' : '400',
+                        boxShadow: answers.selectedOption === opt ? '0 4px 15px rgba(212,166,74,0.1)' : 'none'
                       }}
                     >
                       <span>{opt}</span>
@@ -151,8 +202,8 @@ export default function CustomFormView() {
                         width: '18px', 
                         height: '18px', 
                         borderRadius: '50%', 
-                        border: answers.selectedOption === opt ? '5px solid var(--gold)' : '2px solid #555',
-                        background: '#111',
+                        border: answers.selectedOption === opt ? '5px solid var(--color-gold, #d4a64a)' : '2px solid rgba(255,255,255,0.2)',
+                        background: 'transparent',
                         transition: 'all 0.2s'
                       }} />
                     </button>
@@ -164,7 +215,7 @@ export default function CustomFormView() {
                   const key = f.name || f.label
                   return (
                     <div key={i}>
-                      <label style={{ display: 'block', color: 'rgba(255,255,255,0.8)', fontSize: '14px', marginBottom: '8px' }}>
+                      <label style={{ display: 'block', color: '#a8a39a', fontSize: '13.5px', marginBottom: '8px', fontWeight: '500' }}>
                         {f.label} {f.required ? '*' : ''}
                       </label>
                       
@@ -172,12 +223,30 @@ export default function CustomFormView() {
                         <select
                           value={answers[key] || ''}
                           onChange={e => setAnswers({ ...answers, [key]: e.target.value })}
-                          style={{ width: '100%', padding: '12px 16px', background: '#111', border: '1px solid #333', borderRadius: '8px', color: '#fff', fontSize: '15px', outline: 'none' }}
+                          style={{ 
+                            width: '100%', 
+                            padding: '13px 16px', 
+                            background: 'rgba(255,255,255,0.02)', 
+                            border: '1px solid rgba(212, 166, 74, 0.15)', 
+                            borderRadius: '4px', 
+                            color: '#fff', 
+                            fontSize: '14.5px', 
+                            outline: 'none',
+                            transition: 'all 0.3s'
+                          }}
+                          onFocus={e => {
+                            e.target.style.borderColor = 'var(--color-gold, #d4a64a)'
+                            e.target.style.boxShadow = '0 0 10px rgba(212,166,74,0.15)'
+                          }}
+                          onBlur={e => {
+                            e.target.style.borderColor = 'rgba(212, 166, 74, 0.15)'
+                            e.target.style.boxShadow = 'none'
+                          }}
                           required={f.required}
                         >
-                          <option value="">აირჩიეთ...</option>
+                          <option value="" style={{ background: '#111' }}>{t('customForm.choose')}</option>
                           {Array.isArray(f.options) && f.options.map((o, idx) => (
-                            <option key={idx} value={o}>{o}</option>
+                            <option key={idx} value={o} style={{ background: '#111' }}>{o}</option>
                           ))}
                         </select>
                       ) : f.type === 'textarea' ? (
@@ -185,7 +254,27 @@ export default function CustomFormView() {
                           value={answers[key] || ''}
                           onChange={e => setAnswers({ ...answers, [key]: e.target.value })}
                           placeholder={f.placeholder || ''}
-                          style={{ width: '100%', padding: '12px 16px', background: '#111', border: '1px solid #333', borderRadius: '8px', color: '#fff', fontSize: '15px', outline: 'none', height: '100px', resize: 'vertical' }}
+                          style={{ 
+                            width: '100%', 
+                            padding: '13px 16px', 
+                            background: 'rgba(255,255,255,0.02)', 
+                            border: '1px solid rgba(212, 166, 74, 0.15)', 
+                            borderRadius: '4px', 
+                            color: '#fff', 
+                            fontSize: '14.5px', 
+                            outline: 'none', 
+                            height: '100px', 
+                            resize: 'vertical',
+                            transition: 'all 0.3s'
+                          }}
+                          onFocus={e => {
+                            e.target.style.borderColor = 'var(--color-gold, #d4a64a)'
+                            e.target.style.boxShadow = '0 0 10px rgba(212,166,74,0.15)'
+                          }}
+                          onBlur={e => {
+                            e.target.style.borderColor = 'rgba(212, 166, 74, 0.15)'
+                            e.target.style.boxShadow = 'none'
+                          }}
                           required={f.required}
                         />
                       ) : (
@@ -194,7 +283,25 @@ export default function CustomFormView() {
                           value={answers[key] || ''}
                           onChange={e => setAnswers({ ...answers, [key]: e.target.value })}
                           placeholder={f.placeholder || ''}
-                          style={{ width: '100%', padding: '12px 16px', background: '#111', border: '1px solid #333', borderRadius: '8px', color: '#fff', fontSize: '15px', outline: 'none' }}
+                          style={{ 
+                            width: '100%', 
+                            padding: '13px 16px', 
+                            background: 'rgba(255,255,255,0.02)', 
+                            border: '1px solid rgba(212, 166, 74, 0.15)', 
+                            borderRadius: '4px', 
+                            color: '#fff', 
+                            fontSize: '14.5px', 
+                            outline: 'none',
+                            transition: 'all 0.3s'
+                          }}
+                          onFocus={e => {
+                            e.target.style.borderColor = 'var(--color-gold, #d4a64a)'
+                            e.target.style.boxShadow = '0 0 10px rgba(212,166,74,0.15)'
+                          }}
+                          onBlur={e => {
+                            e.target.style.borderColor = 'rgba(212, 166, 74, 0.15)'
+                            e.target.style.boxShadow = 'none'
+                          }}
                           required={f.required}
                         />
                       )}
@@ -208,10 +315,21 @@ export default function CustomFormView() {
             <button
               type="submit"
               disabled={submitting}
-              className="btn btn--gold"
-              style={{ width: '100%', marginTop: '35px', padding: '14px 0', fontSize: '15px', fontWeight: '600', letterSpacing: '1px', textTransform: 'uppercase' }}
+              className="btn btn-primary"
+              style={{ 
+                width: '100%', 
+                marginTop: '40px', 
+                padding: '15px 0', 
+                fontSize: '14px', 
+                fontWeight: '600', 
+                letterSpacing: '2px', 
+                textTransform: 'uppercase',
+                display: 'block',
+                textAlign: 'center',
+                cursor: 'pointer'
+              }}
             >
-              {submitting ? 'იგზავნება...' : (form.type === 'poll' ? 'ხმის მიცემა' : 'გაგზავნა')}
+              {submitting ? t('customForm.submitting') : (form.type === 'poll' ? t('customForm.submitPoll') : t('customForm.submitForm'))}
             </button>
           </form>
         )}

@@ -88,6 +88,22 @@ export const translations = {
       successTitle: 'რეგისტრაცია წარმატებით გაიგზავნა!',
       successDesc: 'თქვენი განაცხადი მიღებულია. სტუდიის ადმინისტრაცია მალე დაგიკავშირდებათ.',
       error: 'დაფიქსირდა შეცდომა. გთხოვთ სცადოთ თავიდან.'
+    },
+    customForm: {
+      notFound: 'ფორმა / გამოკითხვა ვერ მოიძებნა',
+      connectionError: 'კავშირის შეცდომა',
+      errorTitle: 'შეცდომა',
+      successPollTitle: 'ხმა მიღებულია!',
+      successFormTitle: 'მონაცემები გაგზავნილია!',
+      successDesc: 'გმადლობთ მონაწილეობისთვის. თქვენი პასუხი წარმატებით შეინახა ბაზაში.',
+      pollTitle: 'გამოკითხვა',
+      formTitle: 'სარეგისტრაციო ბლანკი',
+      selectOption: 'აირჩიეთ სასურველი ვარიანტი: *',
+      choose: 'აირჩიეთ...',
+      submitPoll: 'ხმის მიცემა',
+      submitForm: 'გაგზავნა',
+      submitting: 'იგზავნება...',
+      validationError: 'გთხოვთ აირჩიოთ ერთ-ერთი ვარიანტი'
     }
   },
   en: {
@@ -179,6 +195,22 @@ export const translations = {
       successTitle: 'Registration Submitted Successfully!',
       successDesc: 'Your application has been received. Our administration will contact you shortly.',
       error: 'An error occurred. Please try again.'
+    },
+    customForm: {
+      notFound: 'Form / Poll not found',
+      connectionError: 'Connection error',
+      errorTitle: 'Error',
+      successPollTitle: 'Vote Received!',
+      successFormTitle: 'Form Submitted!',
+      successDesc: 'Thank you for participating. Your response has been saved.',
+      pollTitle: 'Poll',
+      formTitle: 'Registration Form',
+      selectOption: 'Please select an option: *',
+      choose: 'Select...',
+      submitPoll: 'Submit Vote',
+      submitForm: 'Submit',
+      submitting: 'Submitting...',
+      validationError: 'Please select one of the options'
     }
   },
   ru: {
@@ -270,6 +302,22 @@ export const translations = {
       successTitle: 'Регистрация успешно отправлена!',
       successDesc: 'Ваша заявка принята. Администрация студии свяжется с вами в ближайшее время.',
       error: 'Произошла ошибка. Пожалуйста, попробуйте еще раз.'
+    },
+    customForm: {
+      notFound: 'Форма / Опрос не найден',
+      connectionError: 'Ошибка подключения',
+      errorTitle: 'Ошибка',
+      successPollTitle: 'Голос принят!',
+      successFormTitle: 'Форма отправлена!',
+      successDesc: 'Спасибо за участие. Ваш ответ был успешно сохранен.',
+      pollTitle: 'Опрос',
+      formTitle: 'Регистрационный бланк',
+      selectOption: 'Пожалуйста, выберите вариант: *',
+      choose: 'Выберите...',
+      submitPoll: 'Голосовать',
+      submitForm: 'Отправить',
+      submitting: 'Отправка...',
+      validationError: 'Пожалуйста, выберите один из вариантов'
     }
   }
 }
