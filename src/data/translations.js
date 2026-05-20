@@ -13,7 +13,7 @@ export const translations = {
       titleItalic: 'პარკეტი',
       titleEnd: 'ჩვენთან ერთად',
       desc: 'ST Dance Studio-ში ჩვენ ვეხმარებით ბავშვებს სპორტული ცეკვების ათვისებაში, სწორი დისციპლინისა და ტექნიკის ჩამოყალიბებაში.',
-      cta: 'გავიცნოთ ერთმანეთი',
+      cta: 'შემოგვიერთდი',
     },
     stats: {
       exp: 'წლიანი გამოცდილება',
@@ -67,6 +67,27 @@ export const translations = {
       ctaTitleItalic: 'პირველი ნაბიჯისთვის?',
       ctaDesc: 'დაგვიკავშირდით — საცდელი გაკვეთილი უფასოა.',
       ctaBtn: 'ჩაწერა საცდელ გაკვეთილზე',
+    },
+    register: {
+      title: 'ონლაინ რეგისტრაცია',
+      subtitle: 'სტუდიის მოსწავლის მიღება',
+      studentName: 'ბავშვის სახელი და გვარი *',
+      studentNamePlaceholder: 'მაგ: გიორგი კალანდაძე',
+      birthDate: 'დაბადების თარიღი *',
+      shiftTitle: 'რომელ ცვლაში სწავლობს ბავშვი? *',
+      shift1: 'I ცვლა',
+      shift2: 'II ცვლა',
+      shiftGarden: 'ბაღის მოსწავლე',
+      shiftFree: 'თავისუფალი გრაფიკი',
+      parentName: 'მშობლის სახელი და გვარი *',
+      parentNamePlaceholder: 'მაგ: მარიამ კალანდაძე',
+      parentPhone: 'მშობლის ტელეფონის ნომერი *',
+      parentPhonePlaceholder: 'მაგ: 599123456',
+      submit: 'განაცხადის გაგზავნა',
+      submitting: 'იგზავნება...',
+      successTitle: 'რეგისტრაცია წარმატებით გაიგზავნა!',
+      successDesc: 'თქვენი განაცხადი მიღებულია. სტუდიის ადმინისტრაცია მალე დაგიკავშირდებათ.',
+      error: 'დაფიქსირდა შეცდომა. გთხოვთ სცადოთ თავიდან.'
     }
   },
   en: {
@@ -83,7 +104,7 @@ export const translations = {
       titleItalic: 'Parquet',
       titleEnd: 'With Us',
       desc: 'At ST Dance Studio, we help children master sports dance, developing discipline and proper technique.',
-      cta: 'Join Now',
+      cta: 'Join Us',
     },
     stats: {
       exp: 'Years Experience',
@@ -137,6 +158,27 @@ export const translations = {
       ctaTitleItalic: 'First Step?',
       ctaDesc: 'Contact us — the trial lesson is free.',
       ctaBtn: 'Book Trial Lesson',
+    },
+    register: {
+      title: 'Online Registration',
+      subtitle: 'Studio Student Enrollment',
+      studentName: "Child's Name and Surname *",
+      studentNamePlaceholder: 'e.g. John Doe',
+      birthDate: 'Date of Birth *',
+      shiftTitle: 'Which school shift does the child attend? *',
+      shift1: 'Shift I',
+      shift2: 'Shift II',
+      shiftGarden: 'Kindergarten',
+      shiftFree: 'Flexible Schedule',
+      parentName: "Parent's Name and Surname *",
+      parentNamePlaceholder: 'e.g. Mary Doe',
+      parentPhone: "Parent's Phone Number *",
+      parentPhonePlaceholder: 'e.g. 599123456',
+      submit: 'Submit Application',
+      submitting: 'Submitting...',
+      successTitle: 'Registration Submitted Successfully!',
+      successDesc: 'Your application has been received. Our administration will contact you shortly.',
+      error: 'An error occurred. Please try again.'
     }
   },
   ru: {
@@ -153,7 +195,7 @@ export const translations = {
       titleItalic: 'Паркет',
       titleEnd: 'С Нами',
       desc: 'В ST Dance Studio мы помогаем детям освоить спортивные танцы, развивая дисциплину и правильную технику.',
-      cta: 'Записаться',
+      cta: 'Присоединяйся',
     },
     stats: {
       exp: 'Лет Опыта',
@@ -207,6 +249,27 @@ export const translations = {
       ctaTitleItalic: 'Первому Шагу?',
       ctaDesc: 'Свяжитесь с нами — пробный урок бесплатно.',
       ctaBtn: 'Записаться на урок',
+    },
+    register: {
+      title: 'Онлайн Регистрация',
+      subtitle: 'Прием учеников в студию',
+      studentName: 'Имя и фамилия ребенка *',
+      studentNamePlaceholder: 'напр. Георгий Каландадзе',
+      birthDate: 'Дата рождения *',
+      shiftTitle: 'В какую смену учится ребенок? *',
+      shift1: 'I смена',
+      shift2: 'II смена',
+      shiftGarden: 'Дошкольник',
+      shiftFree: 'Свободный график',
+      parentName: 'Имя и фамилия родителя *',
+      parentNamePlaceholder: 'напр. Мария Каландадзе',
+      parentPhone: 'Номер телефона родителя *',
+      parentPhonePlaceholder: 'напр. 599123456',
+      submit: 'Отправить заявку',
+      submitting: 'Отправка...',
+      successTitle: 'Регистрация успешно отправлена!',
+      successDesc: 'Ваша заявка принята. Администрация студии свяжется с вами в ближайшее время.',
+      error: 'Произошла ошибка. Пожалуйста, попробуйте еще раз.'
     }
   }
 }
