@@ -58,6 +58,61 @@ export default function AdminDashboard() {
   const [editingItem, setEditingItem] = useState(null) // { tab: 'news'|'student'|'tournament'|'results', id: 0|'id' }
   const [saving, setSaving] = useState(false)
 
+  const [smsModal, setSmsModal] = useState({ isOpen: false, toPhone: '', recipientName: '', text: '' });
+  const [sendingSms, setSendingSms] = useState(false);
+  const [smsError, setSmsError] = useState('');
+  const [smsSuccess, setSmsSuccess] = useState(false);
+
+  const handleOpenSmsModal = (phone, name) => {
+    setSmsModal({
+      isOpen: true,
+      toPhone: phone,
+      recipientName: name,
+      text: ''
+    });
+    setSmsError('');
+    setSmsSuccess(false);
+  };
+
+  const handleSendSmsSubmit = async () => {
+    if (!smsModal.text) return;
+    setSendingSms(true);
+    setSmsError('');
+    setSmsSuccess(false);
+    try {
+      const mod = await import('../../data/classcore');
+      const res = await mod.sendSms(smsModal.toPhone, smsModal.text);
+      if (res && (res.success || res.messageId || res.status === 'success' || res.status === 'sent' || res.status === 200 || !res.error)) {
+        setSmsSuccess(true);
+        setTimeout(() => {
+          setSmsModal({ isOpen: false, toPhone: '', recipientName: '', text: '' });
+          setSmsSuccess(false);
+        }, 1500);
+      } else {
+        setSmsError('სმს-ის გაგზავნა ვერ მოხერხდა. შეამოწმეთ ნომერი ან ბალანსი.');
+      }
+    } catch (err) {
+      console.error(err);
+      setSmsError('სმს-ის გაგზავნა ვერ მოხერხდა. კავშირის შეცდომა.');
+    } finally {
+      setSendingSms(false);
+    }
+  };
+
+  const handleDeleteRegistration = async (id) => {
+    if (!window.confirm('დარწმუნებული ხართ, რომ გსურთ რეგისტრაციის წაშლა?')) return;
+    setSaving(true);
+    try {
+      const mod = await import('../../data/classcore');
+      await mod.deleteRegistration(id);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setSaving(false);
+      refresh();
+    }
+  };
+
   useEffect(() => {
     if (!isAdminLoggedIn()) { navigate('/admin'); return }
     seedIfEmpty()
@@ -330,7 +385,7 @@ export default function AdminDashboard() {
           ) : (
             <>
               {tab===0 && <NewsTab news={news} onEdit={id => setEditingItem({ tab: 'news', id })} onDelete={handleDeleteNews} />}
-              {tab===1 && <StudentsTab students={students} onEdit={id => setEditingItem({ tab: 'student', id })} onDelete={id=>{deleteStudent(id);refresh()}} />}
+              {tab===1 && <StudentsTab students={students} onEdit={id => setEditingItem({ tab: 'student', id })} onDelete={id=>{deleteStudent(id);refresh()}} onSendSms={handleOpenSmsModal} />}
               {tab===2 && <TournamentsTab tournaments={tournaments} students={students} onEdit={id => setEditingItem({ tab: 'tournament', id })} onManageResults={id => setEditingItem({ tab: 'results', id })} onDelete={handleDeleteTournament} />}
               {tab===3 && (
                 <RegistrationsTab 
@@ -348,6 +403,8 @@ export default function AdminDashboard() {
                       refresh()
                     }
                   }}
+                  onDeleteRegistration={handleDeleteRegistration}
+                  onSendSms={handleOpenSmsModal}
                 />
               )}
               {tab===4 && (
@@ -438,6 +495,80 @@ export default function AdminDashboard() {
           </div>
         </div>
       )}
+       {smsModal.isOpen && (
+        <div style={{
+          position: 'fixed',
+          top: 0, left: 0, right: 0, bottom: 0,
+          background: 'rgba(0,0,0,0.85)',
+          backdropFilter: 'blur(8px)',
+          zIndex: 99999,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '20px'
+        }}>
+          <div style={{
+            maxWidth: '480px',
+            width: '100%',
+            background: '#151413',
+            border: '1px solid rgba(212, 166, 74, 0.3)',
+            borderRadius: '8px',
+            padding: '30px',
+            boxShadow: '0 20px 50px rgba(0,0,0,0.8)'
+          }}>
+            <h3 style={{ fontFamily: 'var(--font-title)', color: '#fff', fontSize: '20px', marginBottom: '15px', textTransform: 'uppercase', letterSpacing: '1px' }}>
+              💬 SMS-ის გაგზავნა
+            </h3>
+            <p style={{ color: '#a8a39a', fontSize: '13.5px', marginBottom: '20px' }}>
+              ადრესატი: <strong style={{ color: 'var(--gold)' }}>{smsModal.recipientName}</strong> ({smsModal.toPhone})
+            </p>
+            
+            {smsError && (
+              <div style={{ background: 'rgba(220,53,69,0.1)', border: '1px solid #dc3545', color: '#ff6b7b', padding: '10px', borderRadius: '4px', marginBottom: '15px', fontSize: '13px' }}>
+                {smsError}
+              </div>
+            )}
+            {smsSuccess && (
+              <div style={{ background: 'rgba(80,200,120,0.1)', border: '1px solid #50c878', color: '#50c878', padding: '10px', borderRadius: '4px', marginBottom: '15px', fontSize: '13px' }}>
+                სმს წარმატებით გაიგზავნა!
+              </div>
+            )}
+
+            <div style={{ marginBottom: '20px' }}>
+              <label style={{ display: 'block', color: '#a8a39a', fontSize: '13px', marginBottom: '6px' }}>ტექსტი (GoSMS):</label>
+              <textarea
+                value={smsModal.text}
+                onChange={e => setSmsModal({ ...smsModal, text: e.target.value })}
+                rows={5}
+                placeholder="ჩაწერეთ სმს-ის ტექსტი..."
+                style={{ width: '100%', padding: '12px', background: '#0a0908', border: '1px solid rgba(212,166,74,0.15)', borderRadius: '4px', color: '#fff', fontSize: '14.5px', outline: 'none' }}
+              />
+            </div>
+
+            <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
+              <button 
+                onClick={() => {
+                  setSmsModal({ isOpen: false, toPhone: '', recipientName: '', text: '' });
+                  setSmsError('');
+                  setSmsSuccess(false);
+                }}
+                className="admin-btn admin-btn--ghost"
+                style={{ padding: '8px 16px' }}
+              >
+                დახურვა
+              </button>
+              <button 
+                onClick={handleSendSmsSubmit}
+                disabled={sendingSms || !smsModal.text}
+                className="admin-btn admin-btn--gold"
+                style={{ padding: '8px 20px' }}
+              >
+                {sendingSms ? 'იგზავნება...' : 'გაგზავნა'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       {saving && (
         <div style={{
           position: 'fixed',
@@ -517,7 +648,7 @@ function NewsForm({item,onSave,onCancel}) {
 }
 
 /* ── Students Tab ── */
-function StudentsTab({students,onEdit,onDelete}) {
+function StudentsTab({students,onEdit,onDelete,onSendSms}) {
   return (
     <div>
       <button className="admin-btn admin-btn--gold admin-btn--sm" style={{marginBottom:'1.5rem'}} onClick={()=>onEdit(0)}>+ ახალი სტუდენტი</button>
@@ -554,6 +685,7 @@ function StudentsTab({students,onEdit,onDelete}) {
                   </td>
                   <td>
                     <div className="row-actions">
+                      <button className="admin-btn admin-btn--ghost admin-btn--sm" style={{ padding: '4px 8px', marginRight: '4px' }} onClick={() => onSendSms(s.phone, s.name)}>💬 სმს</button>
                       <button className="admin-btn admin-btn--ghost admin-btn--sm" onClick={()=>onEdit(s.id)}>✏</button>
                       <button className="admin-btn admin-btn--danger admin-btn--sm" onClick={()=>onDelete(s.id)}>🗑</button>
                     </div>
@@ -1505,87 +1637,210 @@ function ResultsForm({item,students,onSave,onCancel}) {
 }
 
 /* ── Registrations Tab ── */
-function RegistrationsTab({ registrations, loading, onStatusUpdate }) {
+function RegistrationsTab({ registrations, loading, onStatusUpdate, onDeleteRegistration, onSendSms }) {
+  const [filter, setFilter] = React.useState('all');
+
   if (loading) {
     return <div style={{ color: 'var(--gold)', padding: '20px 0' }}>რეგისტრაციები იტვირთება...</div>;
   }
 
-  if (registrations.length === 0) {
-    return (
-      <div style={{ padding: '3rem', textAlign: 'center', background: 'rgba(26,24,22,0.6)', border: '1px dashed rgba(212,166,74,0.15)', borderRadius: '4px', color: '#6b665e' }}>
-        სტუდიაში ონლაინ რეგისტრაციები ჯერ არ ფიქსირდება.
-      </div>
-    );
-  }
+  const filteredRegs = registrations.filter(reg => {
+    if (filter === 'all') return true;
+    if (filter === 'moderation') return reg.status === 'pending' || !reg.status;
+    if (filter === 'approved') return reg.status === 'approved';
+    if (filter === 'rejected') return reg.status === 'rejected';
+    return true;
+  });
+
+  const handlePrint = () => {
+    const printWindow = window.open('', '_blank');
+    const html = `
+      <html>
+        <head>
+          <title>ონლაინ რეგისტრაციები — ST Dance Studio</title>
+          <style>
+            body { font-family: 'Helvetica Neue', Arial, sans-serif; padding: 30px; color: #333; }
+            h1 { text-align: center; color: #111; margin-bottom: 5px; }
+            p.subtitle { text-align: center; font-size: 14px; color: #666; margin-bottom: 30px; }
+            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+            th, td { border: 1px solid #ddd; padding: 12px; text-align: left; font-size: 14px; }
+            th { background-color: #f7f7f7; font-weight: bold; }
+            tr:nth-child(even) { background-color: #fafafa; }
+            .badge { display: inline-block; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; text-transform: uppercase; }
+            .badge-pending { background: #fff3cd; color: #856404; }
+            .badge-approved { background: #d4edda; color: #155724; }
+            .badge-rejected { background: #f8d7da; color: #721c24; }
+          </style>
+        </head>
+        <body>
+          <h1>ST Dance Studio</h1>
+          <p class="subtitle">ონლაინ რეგისტრაციის განაცხადების სია — ბეჭდვის თარიღი: ${new Date().toLocaleDateString('ka-GE')}</p>
+          <table>
+            <thead>
+              <tr>
+                <th>ბავშვის სახელი</th>
+                <th>დაბადების თარიღი</th>
+                <th>ცვლა</th>
+                <th>მშობლის სახელი</th>
+                <th>მშობლის ტელეფონი</th>
+                <th>თარიღი</th>
+                <th>სტატუსი</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${filteredRegs.map(reg => `
+                <tr>
+                  <td><strong>${reg.student_name}</strong></td>
+                  <td>${formatDate(reg.birth_date)}</td>
+                  <td>${reg.shift}</td>
+                  <td>${reg.parent_name}</td>
+                  <td>${reg.parent_phone}</td>
+                  <td>${new Date(reg.created_at).toLocaleString('ka-GE')}</td>
+                  <td>
+                    <span class="badge badge-${reg.status === 'approved' ? 'approved' : reg.status === 'rejected' ? 'rejected' : 'pending'}">
+                      ${reg.status === 'approved' ? 'დადასტურებული' : reg.status === 'rejected' ? 'უარყოფილი' : 'მოდერაცია'}
+                    </span>
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+          <script>
+            window.onload = function() { window.print(); }
+          </script>
+        </body>
+      </html>
+    `;
+    printWindow.document.write(html);
+    printWindow.document.close();
+  };
 
   return (
     <div className="admin-section">
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
+        <div style={{ display: 'flex', gap: '8px' }}>
+          {[
+            { id: 'all', label: 'ყველა' },
+            { id: 'moderation', label: 'მოდერაცია' },
+            { id: 'approved', label: 'დადასტურებული' },
+            { id: 'rejected', label: 'უარყოფილი' }
+          ].map(tabOpt => (
+            <button
+              key={tabOpt.id}
+              onClick={() => setFilter(tabOpt.id)}
+              className="admin-btn admin-btn--sm"
+              style={{
+                background: filter === tabOpt.id ? 'var(--gold)' : 'rgba(255,255,255,0.05)',
+                border: filter === tabOpt.id ? '1px solid var(--gold)' : '1px solid rgba(255,255,255,0.1)',
+                color: filter === tabOpt.id ? '#000' : '#fff',
+                fontWeight: filter === tabOpt.id ? '600' : '400',
+                padding: '6px 14px',
+                borderRadius: '4px'
+              }}
+            >
+              {tabOpt.label}
+            </button>
+          ))}
+        </div>
+        <button 
+          onClick={handlePrint}
+          className="admin-btn admin-btn--gold admin-btn--sm"
+          style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 14px' }}
+        >
+          🖨 ამობეჭდვა
+        </button>
+      </div>
+
       <div className="admin-section__head">
-        <span className="admin-section__title">ონლაინ რეგისტრაციის განაცხადები ({registrations.length})</span>
+        <span className="admin-section__title">ონლაინ რეგისტრაციის განაცხადები ({filteredRegs.length})</span>
       </div>
-      <div className="admin-section__body" style={{ padding: 0, overflowX: 'auto' }}>
-        <table className="admin-table">
-          <thead>
-            <tr>
-              <th>ბავშვის სახელი</th>
-              <th>დაბადების თარიღი</th>
-              <th>ცვლა</th>
-              <th>მშობლის სახელი</th>
-              <th>მშობლის ტელეფონი</th>
-              <th>თარიღი</th>
-              <th>სტატუსი</th>
-              <th style={{ textAlign: 'right' }}>მოქმედება</th>
-            </tr>
-          </thead>
-          <tbody>
-            {registrations.map(reg => (
-              <tr key={reg.id}>
-                <td style={{ fontWeight: '600', color: '#fff' }}>{reg.student_name}</td>
-                <td>{formatDate(reg.birth_date)}</td>
-                <td>
-                  <span className="badge badge--muted">{reg.shift}</span>
-                </td>
-                <td>{reg.parent_name}</td>
-                <td>
-                  <a href={`tel:${reg.parent_phone}`} style={{ color: 'var(--gold)', textDecoration: 'none' }}>
-                    📞 {reg.parent_phone}
-                  </a>
-                </td>
-                <td style={{ color: 'rgba(255,255,255,0.4)', fontSize: '12px' }}>
-                  {new Date(reg.created_at).toLocaleDateString('ka-GE')}
-                </td>
-                <td>
-                  <span className={`badge badge--${reg.status === 'approved' ? 'green' : reg.status === 'rejected' ? 'red' : 'gold'}`}>
-                    {reg.status === 'approved' ? 'დადასტურებული' : reg.status === 'rejected' ? 'უარყოფილი' : 'მოდერაცია'}
-                  </span>
-                </td>
-                <td style={{ textAlign: 'right' }}>
-                  <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
-                    {reg.status !== 'approved' && (
-                      <button 
-                        onClick={() => onStatusUpdate(reg.id, 'approved')} 
-                        className="admin-btn admin-btn--sm"
-                        style={{ background: 'rgba(80,200,120,0.15)', border: '1px solid #50c878', color: '#50c878', padding: '4px 10px' }}
-                      >
-                        ✓ მიღება
-                      </button>
-                    )}
-                    {reg.status !== 'rejected' && (
-                      <button 
-                        onClick={() => onStatusUpdate(reg.id, 'rejected')} 
-                        className="admin-btn admin-btn--sm"
-                        style={{ background: 'rgba(220,50,50,0.15)', border: '1px solid #ff7070', color: '#ff7070', padding: '4px 10px' }}
-                      >
-                        ✕ უარყოფა
-                      </button>
-                    )}
-                  </div>
-                </td>
+      
+      {filteredRegs.length === 0 ? (
+        <div style={{ padding: '3rem', textAlign: 'center', background: 'rgba(26,24,22,0.6)', border: '1px dashed rgba(212,166,74,0.15)', borderRadius: '4px', color: '#6b665e' }}>
+          ამ კატეგორიაში განაცხადები ჯერ არ ფიქსირდება.
+        </div>
+      ) : (
+        <div className="admin-section__body" style={{ padding: 0, overflowX: 'auto' }}>
+          <table className="admin-table">
+            <thead>
+              <tr>
+                <th>ბავშვის სახელი</th>
+                <th>დაბადების თარიღი</th>
+                <th>ცვლა</th>
+                <th>მშობლის სახელი</th>
+                <th>მშობლის ტელეფონი</th>
+                <th>თარიღი</th>
+                <th>სტატუსი</th>
+                <th style={{ textAlign: 'right' }}>მოქმედება</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              {filteredRegs.map(reg => (
+                <tr key={reg.id}>
+                  <td style={{ fontWeight: '600', color: '#fff' }}>{reg.student_name}</td>
+                  <td>{formatDate(reg.birth_date)}</td>
+                  <td>
+                    <span className="badge badge--muted">{reg.shift}</span>
+                  </td>
+                  <td>{reg.parent_name}</td>
+                  <td>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <a href={`tel:${reg.parent_phone}`} style={{ color: 'var(--gold)', textDecoration: 'none' }}>
+                        📞 {reg.parent_phone}
+                      </a>
+                      <button 
+                        onClick={() => onSendSms(reg.parent_phone, reg.parent_name)}
+                        className="admin-btn admin-btn--ghost admin-btn--sm"
+                        style={{ padding: '2px 6px', fontSize: '11px' }}
+                      >
+                        💬 სმს
+                      </button>
+                    </div>
+                  </td>
+                  <td style={{ color: 'rgba(255,255,255,0.4)', fontSize: '12px', whiteSpace: 'nowrap' }}>
+                    {new Date(reg.created_at).toLocaleString('ka-GE')}
+                  </td>
+                  <td>
+                    <span className={`badge badge--${reg.status === 'approved' ? 'green' : reg.status === 'rejected' ? 'red' : 'gold'}`}>
+                      {reg.status === 'approved' ? 'დადასტურებული' : reg.status === 'rejected' ? 'უარყოფილი' : 'მოდერაცია'}
+                    </span>
+                  </td>
+                  <td style={{ textAlign: 'right' }}>
+                    <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
+                      {reg.status !== 'approved' && (
+                        <button 
+                          onClick={() => onStatusUpdate(reg.id, 'approved')} 
+                          className="admin-btn admin-btn--sm"
+                          style={{ background: 'rgba(80,200,120,0.15)', border: '1px solid #50c878', color: '#50c878', padding: '4px 10px' }}
+                        >
+                          ✓ მიღება
+                        </button>
+                      )}
+                      {reg.status !== 'rejected' && (
+                        <button 
+                          onClick={() => onStatusUpdate(reg.id, 'rejected')} 
+                          className="admin-btn admin-btn--sm"
+                          style={{ background: 'rgba(220,50,50,0.15)', border: '1px solid #ff7070', color: '#ff7070', padding: '4px 10px' }}
+                        >
+                          ✕ უარყოფა
+                        </button>
+                      )}
+                      <button 
+                        onClick={() => onDeleteRegistration(reg.id)}
+                        className="admin-btn admin-btn--danger admin-btn--sm"
+                        style={{ padding: '4px 8px' }}
+                        title="წაშლა"
+                      >
+                        🗑
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 }

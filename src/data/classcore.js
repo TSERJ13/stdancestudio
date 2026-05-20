@@ -365,6 +365,41 @@ export async function syncStudentToCloud(student) {
   }
 }
 
+/* ── GoSMS Integration ────────────────────────────── */
+export async function sendSms(toPhone, text) {
+  // Format phone: remove spaces, symbols, ensure it starts with 995
+  let cleanPhone = toPhone.replace(/\s+/g, '').replace(/[^0-9]/g, '');
+  if (!cleanPhone.startsWith('995')) {
+    if (cleanPhone.startsWith('5')) {
+      cleanPhone = '995' + cleanPhone;
+    }
+  }
+  
+  const apiKey = '6713cf7fa48a08ffc1e05e2c6e454e4abb2c7f54aad7bf557f14f23894cde991';
+  
+  try {
+    console.log('Sending SMS via GoSMS to:', cleanPhone);
+    const response = await fetch('https://api.gosms.ge/api/sendsms', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        api_key: apiKey,
+        from: 'stdance',
+        to: cleanPhone,
+        text: text
+      })
+    });
+    const data = await response.json();
+    console.log('✅ GoSMS Response:', data);
+    return data;
+  } catch (err) {
+    console.error('❌ GoSMS Error:', err);
+    return null;
+  }
+}
+
 /* ── Studio Registrations ────────────────────────── */
 export async function submitRegistration(regData) {
   try {
@@ -379,9 +414,58 @@ export async function submitRegistration(regData) {
       body: JSON.stringify(regData)
     });
     if (!res.ok) throw new Error('Failed to submit registration');
+    
+    // Async Welcoming Actions (SMS & Email)
+    try {
+      // 1. Send Welcome SMS to parent
+      const welcomeMessage = `მოგესალმებით, გილოცავთ ST Dance Studio-ში წარმატებულ რეგისტრაციას! თქვენი პირადი კაბინეტი უკვე შექმნილია. პორტალზე შესასვლელად ეწვიეთ: stdance.ge/portal და ავტორიზაციისთვის გამოიყენეთ თქვენი ტელეფონის ნომერი.`;
+      sendSms(regData.parent_phone, welcomeMessage);
+    } catch (smsErr) {
+      console.error('Failed to send welcome SMS:', smsErr);
+    }
+
+    try {
+      // 2. Send email notification via FormSubmit
+      fetch('https://formsubmit.co/ajax/stdancegroup@gmail.com', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          _subject: 'ახალი ონლაინ რეგისტრაცია: ' + regData.student_name,
+          "ბავშვის სახელი და გვარი": regData.student_name,
+          "დაბადების თარიღი": regData.birth_date,
+          "ცვლა": regData.shift,
+          "მშობლის სახელი": regData.parent_name,
+          "მშობლის ტელეფონი": regData.parent_phone,
+          "რეგისტრაციის დრო": new Date().toLocaleString('ka-GE')
+        })
+      });
+    } catch (emailErr) {
+      console.error('Failed to send email notification:', emailErr);
+    }
+
     return true;
   } catch (err) {
     console.error('❌ Cloud submitRegistration error:', err);
+    return false;
+  }
+}
+
+export async function deleteRegistration(id) {
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/registrations?id=eq.${id}`, {
+      method: 'DELETE',
+      headers: {
+        'apikey': ANON_KEY,
+        'Authorization': `Bearer ${ANON_KEY}`
+      }
+    });
+    if (!res.ok) throw new Error('Failed to delete registration');
+    return true;
+  } catch (err) {
+    console.error('❌ Cloud deleteRegistration error:', err);
     return false;
   }
 }
