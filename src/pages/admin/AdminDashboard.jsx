@@ -35,11 +35,14 @@ const SVG_ICONS = {
   ),
   forms: (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '0.6rem' }}><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+  ),
+  polls: (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '0.6rem' }}><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
   )
 };
 
-const TABS = ['სიახლეები','სტუდენტები','ტურნირები','რეგისტრაციები','გამოკითხვები & ფორმები']
-const ICONS = ['news','students','tournaments','reg','forms']
+const TABS = ['სიახლეები','სტუდენტები','ტურნირები','რეგისტრაციები','ფორმები','გამოკითხვები']
+const ICONS = ['news','students','tournaments','reg','forms','polls']
 
 export default function AdminDashboard() {
   const navigate = useNavigate()
@@ -341,17 +344,31 @@ export default function AdminDashboard() {
               ☰
             </button>
             <span className="admin-topbar__title" style={{ display: 'inline-flex', alignItems: 'center' }}>
-              {SVG_ICONS[ICONS[tab === 5 ? 2 : tab]]}
-              <span style={{ marginLeft: '0.25rem' }}>{tab === 5 ? 'შედეგების მართვა' : TABS[tab]}</span>
+              {editingItem && editingItem.tab === 'results' ? (
+                <>
+                  {SVG_ICONS['tournaments']}
+                  <span style={{ marginLeft: '0.25rem' }}>შედეგების მართვა</span>
+                </>
+              ) : (
+                <>
+                  {SVG_ICONS[ICONS[tab]]}
+                  <span style={{ marginLeft: '0.25rem' }}>{TABS[tab]}</span>
+                </>
+              )}
             </span>
           </div>
           <div className="admin-topbar__actions">
             {tab === 4 && !editingItem && (
-              <button className="admin-btn admin-btn--gold admin-btn--sm" onClick={() => setEditingItem({ tab: 'customForm', id: 0 })}>
-                + ახალი ფორმა / გამოკითხვა
+              <button className="admin-btn admin-btn--gold admin-btn--sm" onClick={() => setEditingItem({ tab: 'customForm', id: 0, defaultType: 'form' })}>
+                + ახალი ფორმა
               </button>
             )}
-            {tab < 3 && tab !== 5 && (
+            {tab === 5 && !editingItem && (
+              <button className="admin-btn admin-btn--gold admin-btn--sm" onClick={() => setEditingItem({ tab: 'customForm', id: 0, defaultType: 'poll' })}>
+                + ახალი გამოკითხვა
+              </button>
+            )}
+            {tab < 3 && (
               <button className="admin-btn admin-btn--gold admin-btn--sm" onClick={() => setEditingItem({ tab: ['news', 'student', 'tournament'][tab], id: 0 })}>
                 + დამატება
               </button>
@@ -406,6 +423,7 @@ export default function AdminDashboard() {
               {editingItem.tab === 'customForm' && (
                 <CustomFormForm 
                   item={editingItem.id === 0 ? {} : customForms.find(f => f.id === editingItem.id)} 
+                  defaultType={editingItem.defaultType}
                   onSave={async (f) => {
                     setSaving(true)
                     try {
@@ -450,9 +468,45 @@ export default function AdminDashboard() {
               )}
               {tab===4 && (
                 <CustomFormsTab 
-                  forms={customForms} 
+                  forms={customForms.filter(f => f.type === 'form' || !f.type)} 
                   loading={loadingForms}
-                  onEdit={id => setEditingItem({ tab: 'customForm', id })}
+                  tabType="form"
+                  onEdit={id => setEditingItem({ tab: 'customForm', id, defaultType: 'form' })}
+                  onDelete={async (id) => {
+                    if (!window.confirm('დარწმუნებული ხართ, რომ გსურთ წაშლა?')) return
+                    setSaving(true)
+                    try {
+                      const mod = await import('../../data/classcore')
+                      await mod.deleteCustomForm(id)
+                    } catch (err) {
+                      console.error(err)
+                    } finally {
+                      setSaving(false)
+                      refresh()
+                    }
+                  }}
+                  onViewSubmissions={async (slug) => {
+                    setSaving(true)
+                    try {
+                      const mod = await import('../../data/classcore')
+                      const list = await mod.fetchFormSubmissions(slug)
+                      setFormSubmissions(list)
+                      setActiveFormForSubmissions(customForms.find(f => f.slug === slug))
+                      setShowSubmissionsModal(true)
+                    } catch (err) {
+                      console.error(err)
+                    } finally {
+                      setSaving(false)
+                    }
+                  }}
+                />
+              )}
+              {tab===5 && (
+                <CustomFormsTab 
+                  forms={customForms.filter(f => f.type === 'poll')} 
+                  loading={loadingForms}
+                  tabType="poll"
+                  onEdit={id => setEditingItem({ tab: 'customForm', id, defaultType: 'poll' })}
                   onDelete={async (id) => {
                     if (!window.confirm('დარწმუნებული ხართ, რომ გსურთ წაშლა?')) return
                     setSaving(true)
@@ -1887,7 +1941,7 @@ function RegistrationsTab({ registrations, loading, onStatusUpdate, onDeleteRegi
 }
 
 /* ── Custom Forms Tab ── */
-function CustomFormsTab({ forms, loading, onEdit, onDelete, onViewSubmissions }) {
+function CustomFormsTab({ forms, loading, onEdit, onDelete, onViewSubmissions, tabType }) {
   const [copiedSlug, setCopiedSlug] = useState('');
 
   const copyLink = (slug) => {
@@ -1898,13 +1952,13 @@ function CustomFormsTab({ forms, loading, onEdit, onDelete, onViewSubmissions })
   };
 
   if (loading) {
-    return <div style={{ color: 'var(--gold)', padding: '20px 0' }}>ფორმები იტვირთება...</div>;
+    return <div style={{ color: 'var(--gold)', padding: '20px 0' }}>იტვირთება...</div>;
   }
 
   if (forms.length === 0) {
     return (
       <div style={{ padding: '3rem', textAlign: 'center', background: 'rgba(26,24,22,0.6)', border: '1px dashed rgba(212,166,74,0.15)', borderRadius: '4px', color: '#6b665e' }}>
-        თქვენ ჯერ არ შეგიქმნიათ გამოკითხვები ან სარეგისტრაციო ბლანკები.
+        {tabType === 'poll' ? 'თქვენ ჯერ არ შეგიქმნიათ გამოკითხვები.' : 'თქვენ ჯერ არ შეგიქმნიათ სარეგისტრაციო ბლანკები.'}
       </div>
     );
   }
@@ -1912,7 +1966,9 @@ function CustomFormsTab({ forms, loading, onEdit, onDelete, onViewSubmissions })
   return (
     <div className="admin-section">
       <div className="admin-section__head">
-        <span className="admin-section__title">შექმნილი ბლანკები და გამოკითხვები ({forms.length})</span>
+        <span className="admin-section__title">
+          {tabType === 'poll' ? `შექმნილი გამოკითხვები (${forms.length})` : `შექმნილი სარეგისტრაციო ბლანკები (${forms.length})`}
+        </span>
       </div>
       <div className="admin-section__body" style={{ padding: 0, overflowX: 'auto' }}>
         <table className="admin-table">
