@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
   isAdminLoggedIn, adminLogout, seedIfEmpty,
@@ -49,7 +49,8 @@ export default function AdminDashboard() {
   const [tournaments, setTournaments] = useState([])
   const [registrations, setRegistrations] = useState([])
   const [customForms, setCustomForms] = useState([])
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true)
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
   const [showSubmissionsModal, setShowSubmissionsModal] = useState(false)
   const [activeFormForSubmissions, setActiveFormForSubmissions] = useState(null)
   const [formSubmissions, setFormSubmissions] = useState([])
@@ -261,29 +262,41 @@ export default function AdminDashboard() {
 
   return (
     <div className="admin-wrap admin-shell">
-      <aside className={`admin-sidebar${isSidebarOpen ? ' open' : ''}`}>
-        <div className="admin-sidebar__brand" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem', padding: '1.75rem 1rem', borderBottom: '1px solid rgba(212,166,74,0.12)', marginBottom: '1rem' }}>
-          <img src="/images/logo-transparent.png" alt="ST Dance Studio" style={{ maxHeight: '55px', width: 'auto', display: 'block' }} />
-          <div style={{ fontFamily: '"Times New Roman", Times, serif', textTransform: 'uppercase', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
-            <span style={{ color: 'var(--color-gold, #d4a64a)', fontSize: '0.9rem', letterSpacing: '0.12em', fontWeight: 'bold' }}>ST DANCE</span>
-            <div style={{ height: '1px', background: 'var(--color-gold, #d4a64a)', width: '60%', margin: '2px 0' }}></div>
-            <span style={{ color: '#fff', fontSize: '0.6rem', letterSpacing: '0.3em', textTransform: 'lowercase' }}>studio</span>
-            <span style={{ color: '#6b665e', fontSize: '0.45rem', letterSpacing: '0.2em', textTransform: 'uppercase', marginTop: '0.35rem' }}>ADMIN PANEL</span>
-          </div>
+      <aside className={`admin-sidebar${isSidebarOpen ? ' open' : ''}${isSidebarCollapsed ? ' collapsed' : ''}`}>
+        <div className="admin-sidebar__brand" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem', padding: isSidebarCollapsed ? '1.25rem 0.5rem' : '1.75rem 1rem', borderBottom: '1px solid rgba(212,166,74,0.12)', marginBottom: '1rem' }}>
+          <img src="/images/logo-transparent.png" alt="ST Dance Studio" style={{ maxHeight: isSidebarCollapsed ? '32px' : '55px', width: 'auto', display: 'block', transition: 'all 0.3s' }} />
+          {!isSidebarCollapsed && (
+            <div style={{ fontFamily: '"Times New Roman", Times, serif', textTransform: 'uppercase', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
+              <span style={{ color: 'var(--color-gold, #d4a64a)', fontSize: '0.9rem', letterSpacing: '0.12em', fontWeight: 'bold' }}>ST DANCE</span>
+              <div style={{ height: '1px', background: 'var(--color-gold, #d4a64a)', width: '60%', margin: '2px 0' }}></div>
+              <span style={{ color: '#fff', fontSize: '0.6rem', letterSpacing: '0.3em', textTransform: 'lowercase' }}>studio</span>
+              <span style={{ color: '#6b665e', fontSize: '0.45rem', letterSpacing: '0.2em', textTransform: 'uppercase', marginTop: '0.35rem' }}>ADMIN PANEL</span>
+            </div>
+          )}
         </div>
         <nav className="admin-nav">
           {TABS.map((t,i) => (
-            <button key={i} className={`admin-nav__item${tab===i?' active':''}`} onClick={()=>{setTab(i); setEditingItem(null); setIsSidebarOpen(false);}}>
+            <button key={i} className={`admin-nav__item${tab===i?' active':''}`} onClick={()=>{setTab(i); setEditingItem(null); if(window.innerWidth<=768) setIsSidebarOpen(false);}} title={isSidebarCollapsed ? t : ''}>
               <span className="admin-nav__icon" style={{ display: 'inline-flex', alignItems: 'center' }}>
                 {SVG_ICONS[ICONS[i]]}
               </span>
-              {t}
+              {!isSidebarCollapsed && t}
             </button>
           ))}
         </nav>
         <div className="admin-sidebar__footer">
-          <button className="admin-btn admin-btn--ghost admin-btn--sm" onClick={logout} style={{width:'100%'}}>
-            გასვლა ↗
+          {!isSidebarCollapsed && (
+            <button className="admin-btn admin-btn--ghost admin-btn--sm" onClick={logout} style={{width:'100%'}}>
+              გასვლა ↗
+            </button>
+          )}
+          <button 
+            className="admin-btn admin-btn--ghost admin-btn--sm sidebar-collapse-btn" 
+            onClick={() => setIsSidebarCollapsed(c => !c)} 
+            style={{width:'100%', marginTop: isSidebarCollapsed ? 0 : '0.5rem', padding: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center'}}
+            title={isSidebarCollapsed ? 'მენიუს გაშლა' : 'მენიუს დაკეცვა'}
+          >
+            {isSidebarCollapsed ? '▶' : '◀ დაკეცვა'}
           </button>
         </div>
       </aside>
@@ -294,8 +307,8 @@ export default function AdminDashboard() {
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
             <button 
               className="admin-btn admin-btn--ghost admin-btn--sm mobile-only-toggle" 
-              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-              style={{ display: 'none', padding: '6px 10px', fontSize: '16px' }}
+              onClick={() => setIsSidebarOpen(o => !o)}
+              style={{ padding: '6px 10px', fontSize: '16px' }}
             >
               ☰
             </button>
