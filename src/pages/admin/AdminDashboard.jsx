@@ -284,7 +284,17 @@ export default function AdminDashboard() {
 
   return (
     <div className="admin-wrap admin-shell">
-      <aside className={`admin-sidebar${isSidebarOpen ? ' open' : ''}${isSidebarCollapsed ? ' collapsed' : ''}`}>
+      <aside className={`admin-sidebar${isSidebarOpen ? ' open' : ''}${isSidebarCollapsed ? ' collapsed' : ''}`} style={{ position: 'relative' }}>
+        {/* Floating Sidebar collapse handle sitting exactly on the vertical divider line in the middle vertically */}
+        <button 
+          type="button"
+          className="sidebar-toggle-handle" 
+          onClick={() => setIsSidebarCollapsed(c => !c)}
+          title={isSidebarCollapsed ? 'მენიუს გაშლა' : 'მენიუს დაკეცვა'}
+        >
+          {isSidebarCollapsed ? '▶' : '◀'}
+        </button>
+
         <div className="admin-sidebar__brand" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem', padding: isSidebarCollapsed ? '1.25rem 0.5rem' : '1.75rem 1rem', borderBottom: '1px solid rgba(212,166,74,0.12)', marginBottom: '1rem' }}>
           <img src="/images/logo-transparent.png" alt="ST Dance Studio" style={{ maxHeight: isSidebarCollapsed ? '32px' : '55px', width: 'auto', display: 'block', transition: 'all 0.3s' }} />
           {!isSidebarCollapsed && (
@@ -306,20 +316,16 @@ export default function AdminDashboard() {
             </button>
           ))}
         </nav>
-        <div className="admin-sidebar__footer">
-          {!isSidebarCollapsed && (
+        <div className="admin-sidebar__footer" style={{ borderTop: isSidebarCollapsed ? 'none' : '1px solid rgba(212,166,74,0.12)', padding: isSidebarCollapsed ? '0.5rem 0' : '1rem 1.25rem' }}>
+          {!isSidebarCollapsed ? (
             <button className="admin-btn admin-btn--ghost admin-btn--sm" onClick={logout} style={{width:'100%'}}>
               გასვლა ↗
             </button>
+          ) : (
+            <button className="admin-btn admin-btn--ghost admin-btn--sm" onClick={logout} style={{width:'100%', padding: '0.5rem 0', fontSize: '0.8rem'}} title="გასვლა">
+              ↗
+            </button>
           )}
-          <button 
-            className="admin-btn admin-btn--ghost admin-btn--sm sidebar-collapse-btn" 
-            onClick={() => setIsSidebarCollapsed(c => !c)} 
-            style={{width:'100%', marginTop: isSidebarCollapsed ? 0 : '0.5rem', padding: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center'}}
-            title={isSidebarCollapsed ? 'მენიუს გაშლა' : 'მენიუს დაკეცვა'}
-          >
-            {isSidebarCollapsed ? '▶' : '◀ დაკეცვა'}
-          </button>
         </div>
       </aside>
       {isSidebarOpen && <div className="admin-sidebar-overlay" onClick={() => setIsSidebarOpen(false)} />}
