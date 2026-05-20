@@ -62,6 +62,35 @@ export default function AdminDashboard() {
   const [editingItem, setEditingItem] = useState(null) // { tab: 'news'|'student'|'tournament'|'results', id: 0|'id' }
   const [saving, setSaving] = useState(false)
 
+  // Custom premium modal dialogs
+  const [dialog, setDialog] = useState(null) // { message, type: 'alert'|'confirm', onConfirm, onCancel }
+
+  const showAlert = (message, onOk = () => {}) => {
+    setDialog({
+      message,
+      type: 'alert',
+      onConfirm: () => {
+        setDialog(null);
+        onOk();
+      }
+    });
+  };
+
+  const showConfirm = (message, onYes = () => {}, onNo = () => {}) => {
+    setDialog({
+      message,
+      type: 'confirm',
+      onConfirm: () => {
+        setDialog(null);
+        onYes();
+      },
+      onCancel: () => {
+        setDialog(null);
+        onNo();
+      }
+    });
+  };
+
   const [smsModal, setSmsModal] = useState({ isOpen: false, toPhone: '', recipientName: '', text: '' });
   const [sendingSms, setSendingSms] = useState(false);
   const [smsError, setSmsError] = useState('');
@@ -104,17 +133,18 @@ export default function AdminDashboard() {
   };
 
   const handleDeleteRegistration = async (id) => {
-    if (!window.confirm('დარწმუნებული ხართ, რომ გსურთ რეგისტრაციის წაშლა?')) return;
-    setSaving(true);
-    try {
-      const mod = await import('../../data/classcore');
-      await mod.deleteRegistration(id);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setSaving(false);
-      refresh();
-    }
+    showConfirm('დარწმუნებული ხართ, რომ გსურთ რეგისტრაციის წაშლა?', async () => {
+      setSaving(true);
+      try {
+        const mod = await import('../../data/classcore');
+        await mod.deleteRegistration(id);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setSaving(false);
+        refresh();
+      }
+    });
   };
 
   useEffect(() => {
@@ -226,7 +256,7 @@ export default function AdminDashboard() {
       await mod.syncTournamentsToCloud(getTournaments())
     } catch (err) {
       console.error('Tournament sync error:', err)
-      alert('ღრუბელთან სინქრონიზაცია ვერ მოხერხდა, თუმცა ლოკალურად შენახულია. / Ошибка синхронизации.')
+      showAlert('ღრუბელთან სინქრონიზაცია ვერ მოხერხდა, თუმცა ლოკალურად შენახულია. / Ошибка синхронизации.')
     } finally {
       setSaving(false)
       setEditingItem(null)
@@ -235,19 +265,20 @@ export default function AdminDashboard() {
   }
 
   const handleDeleteTournament = async (id) => {
-    if (!window.confirm('დარწმუნებული ხართ, რომ გსურთ წაშლა? / Вы уверены?')) return
-    setSaving(true)
-    deleteTournament(id)
-    try {
-      const mod = await import('../../data/classcore')
-      mod.clearCache()
-      await mod.syncTournamentsToCloud(getTournaments())
-    } catch (err) {
-      console.error('Tournament delete sync error:', err)
-    } finally {
-      setSaving(false)
-      refresh()
-    }
+    showConfirm('დარწმუნებული ხართ, რომ გსურთ წაშლა? / Вы уверены?', async () => {
+      setSaving(true)
+      deleteTournament(id)
+      try {
+        const mod = await import('../../data/classcore')
+        mod.clearCache()
+        await mod.syncTournamentsToCloud(getTournaments())
+      } catch (err) {
+        console.error('Tournament delete sync error:', err)
+      } finally {
+        setSaving(false)
+        refresh()
+      }
+    })
   }
 
   const handleSaveNews = async (n) => {
@@ -259,7 +290,7 @@ export default function AdminDashboard() {
       await mod.syncNewsToCloud(getNews())
     } catch (err) {
       console.error('News sync error:', err)
-      alert('ღრუბელთან სინქრონიზაცია ვერ მოხერხდა, თუმცა ლოკალურად შენახულია.')
+      showAlert('ღრუბელთან სინქრონიზაცია ვერ მოხერხდა, თუმცა ლოკალურად შენახულია.')
     } finally {
       setSaving(false)
       setEditingItem(null)
@@ -268,19 +299,20 @@ export default function AdminDashboard() {
   }
 
   const handleDeleteNews = async (id) => {
-    if (!window.confirm('დარწმუნებული ხართ, რომ გსურთ წაშლა? / Вы уверены?')) return
-    setSaving(true)
-    deleteNews(id)
-    try {
-      const mod = await import('../../data/classcore')
-      mod.clearCache()
-      await mod.syncNewsToCloud(getNews())
-    } catch (err) {
-      console.error('News delete sync error:', err)
-    } finally {
-      setSaving(false)
-      refresh()
-    }
+    showConfirm('დარწმუნებული ხართ, რომ გსურთ წაშლა? / Вы уверены?', async () => {
+      setSaving(true)
+      deleteNews(id)
+      try {
+        const mod = await import('../../data/classcore')
+        mod.clearCache()
+        await mod.syncNewsToCloud(getNews())
+      } catch (err) {
+        console.error('News delete sync error:', err)
+      } finally {
+        setSaving(false)
+        refresh()
+      }
+    })
   }
 
   const logout = () => { adminLogout(); navigate('/admin') }
@@ -408,6 +440,7 @@ export default function AdminDashboard() {
                 <TournamentForm 
                   item={editingItem.id === 0 ? {} : tournaments.find(t => t.id === editingItem.id)} 
                   students={students} 
+                  showAlert={showAlert}
                   onSave={t => { handleSaveTournament(t); setEditingItem(null); }} 
                   onCancel={() => setEditingItem(null)} 
                 />
@@ -424,6 +457,7 @@ export default function AdminDashboard() {
                 <CustomFormForm 
                   item={editingItem.id === 0 ? {} : customForms.find(f => f.id === editingItem.id)} 
                   defaultType={editingItem.defaultType}
+                  showAlert={showAlert}
                   onSave={async (f) => {
                     setSaving(true)
                     try {
@@ -473,17 +507,18 @@ export default function AdminDashboard() {
                   tabType="form"
                   onEdit={id => setEditingItem({ tab: 'customForm', id, defaultType: 'form' })}
                   onDelete={async (id) => {
-                    if (!window.confirm('დარწმუნებული ხართ, რომ გსურთ წაშლა?')) return
-                    setSaving(true)
-                    try {
-                      const mod = await import('../../data/classcore')
-                      await mod.deleteCustomForm(id)
-                    } catch (err) {
-                      console.error(err)
-                    } finally {
-                      setSaving(false)
-                      refresh()
-                    }
+                    showConfirm('დარწმუნებული ხართ, რომ გსურთ წაშლა?', async () => {
+                      setSaving(true)
+                      try {
+                        const mod = await import('../../data/classcore')
+                        await mod.deleteCustomForm(id)
+                      } catch (err) {
+                        console.error(err)
+                      } finally {
+                        setSaving(false)
+                        refresh()
+                      }
+                    })
                   }}
                   onViewSubmissions={async (slug) => {
                     setSaving(true)
@@ -508,17 +543,18 @@ export default function AdminDashboard() {
                   tabType="poll"
                   onEdit={id => setEditingItem({ tab: 'customForm', id, defaultType: 'poll' })}
                   onDelete={async (id) => {
-                    if (!window.confirm('დარწმუნებული ხართ, რომ გსურთ წაშლა?')) return
-                    setSaving(true)
-                    try {
-                      const mod = await import('../../data/classcore')
-                      await mod.deleteCustomForm(id)
-                    } catch (err) {
-                      console.error(err)
-                    } finally {
-                      setSaving(false)
-                      refresh()
-                    }
+                    showConfirm('დარწმუნებული ხართ, რომ გსურთ წაშლა?', async () => {
+                      setSaving(true)
+                      try {
+                        const mod = await import('../../data/classcore')
+                        await mod.deleteCustomForm(id)
+                      } catch (err) {
+                        console.error(err)
+                      } finally {
+                        setSaving(false)
+                        refresh()
+                      }
+                    })
                   }}
                   onViewSubmissions={async (slug) => {
                     setSaving(true)
@@ -660,6 +696,68 @@ export default function AdminDashboard() {
               >
                 {sendingSms ? 'იგზავნება...' : 'გაგზავნა'}
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {dialog && (
+        <div style={{
+          position: 'fixed',
+          top: 0, left: 0, right: 0, bottom: 0,
+          background: 'rgba(0,0,0,0.85)',
+          backdropFilter: 'blur(8px)',
+          zIndex: 999999,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '20px'
+        }}>
+          <div style={{
+            maxWidth: '420px',
+            width: '100%',
+            background: '#151413',
+            border: '1px solid rgba(212, 166, 74, 0.3)',
+            borderRadius: '8px',
+            padding: '30px',
+            boxShadow: '0 20px 50px rgba(0,0,0,0.8)',
+            textAlign: 'center'
+          }}>
+            <div style={{ fontSize: '2.5rem', marginBottom: '15px' }}>
+              {dialog.type === 'confirm' ? '❓' : 'ℹ️'}
+            </div>
+            <p style={{ color: '#fff', fontSize: '1.05rem', lineHeight: '1.6', marginBottom: '25px', whiteSpace: 'pre-line', fontFamily: 'inherit' }}>
+              {dialog.message}
+            </p>
+            <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
+              {dialog.type === 'confirm' ? (
+                <>
+                  <button 
+                    type="button" 
+                    className="admin-btn admin-btn--gold" 
+                    onClick={dialog.onConfirm}
+                    style={{ width: 'auto', padding: '10px 24px', minWidth: '110px' }}
+                  >
+                    კი / Да
+                  </button>
+                  <button 
+                    type="button" 
+                    className="admin-btn admin-btn--ghost" 
+                    onClick={dialog.onCancel}
+                    style={{ width: 'auto', padding: '10px 24px', minWidth: '110px' }}
+                  >
+                    გაუქმება
+                  </button>
+                </>
+              ) : (
+                <button 
+                  type="button" 
+                  className="admin-btn admin-btn--gold" 
+                  onClick={dialog.onConfirm}
+                  style={{ width: 'auto', padding: '10px 30px', minWidth: '120px' }}
+                >
+                  კარგი / OK
+                </button>
+              )}
             </div>
           </div>
         </div>
@@ -931,7 +1029,7 @@ function TournamentsTab({tournaments,students,onEdit,onManageResults,onDelete}) 
   )
 }
 
-function TournamentForm({item,students,onSave,onCancel}) {
+function TournamentForm({item,students,showAlert,onSave,onCancel}) {
   const isNew=!item?.id
   const [form,setForm]=useState({
     id:item?.id||'',name:item?.name||'',date:item?.date||new Date().toISOString().slice(0,10),
@@ -984,7 +1082,7 @@ function TournamentForm({item,students,onSave,onCancel}) {
   const handleEditCategorySave = () => {
     if (!editingCat) return
     if (!editingCat.name.trim()) {
-      alert('გთხოვთ შეიყვანოთ კატეგორიის სახელი')
+      showAlert('გთხოვთ შეიყვანოთ კატეგორიის სახელი')
       return
     }
 
@@ -1058,7 +1156,7 @@ function TournamentForm({item,students,onSave,onCancel}) {
 
   const handleAddCategoryToStudent = (sid) => {
     if (!newCatName.trim()) {
-      alert('გთხოვთ შეიყვანოთ კატეგორიის სახელი / Пожалуйста, введите название категории');
+      showAlert('გთხოვთ შეიყვანოთ კატეგორიის სახელი / Пожалуйста, введите название категории');
       return
     }
 
@@ -1161,7 +1259,68 @@ function TournamentForm({item,students,onSave,onCancel}) {
       <div className="admin-section__body">
         
         {/* Tournament General Details */}
-        <div className="admin-field"><label>ტურნირის სახელი</label><input value={form.name} onChange={e=>set('name',e.target.value)} /></div>
+        {/* Tournament General Details */}
+        <div className="admin-grid-2" style={{ marginBottom: '1.25rem' }}>
+          <div className="admin-field" style={{ marginBottom: 0 }}>
+            <label>ტურნირის სახელი</label>
+            <input value={form.name} onChange={e=>set('name',e.target.value)} />
+          </div>
+          <div className="admin-field" style={{ marginBottom: 0 }}>
+            <label>ტურნირის პოსტერი (ლინკი ან ატვირთეთ ფაილი)</label>
+            <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+              <input 
+                type="text" 
+                value={form.poster} 
+                onChange={e=>set('poster',e.target.value)} 
+                placeholder="სურათის ლინკი ან ატვირთეთ..." 
+                style={{ flex: 1 }} 
+              />
+              <button 
+                type="button" 
+                className="admin-btn admin-btn--gold"
+                onClick={() => document.getElementById('poster-file-input').click()}
+                style={{ width: 'auto', minWidth: '110px', display: 'flex', alignItems: 'center', gap: '4px', justifyContent: 'center', height: '42px' }}
+              >
+                📷 ატვირთვა
+              </button>
+              <input 
+                id="poster-file-input" 
+                type="file" 
+                accept="image/*" 
+                style={{ display: 'none' }} 
+                onChange={(e) => {
+                  const file = e.target.files[0]
+                  if (file) {
+                    const reader = new FileReader()
+                    reader.onload = (uploadEvent) => {
+                      set('poster', uploadEvent.target.result)
+                    }
+                    reader.readAsDataURL(file)
+                  }
+                }} 
+              />
+              {form.poster && (
+                <button 
+                  type="button" 
+                  className="admin-btn admin-btn--danger"
+                  style={{ width: '42px', height: '42px', minWidth: '42px', padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                  onClick={() => set('poster', '')}
+                  title="წაშლა"
+                >
+                  ✕
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {form.poster && (
+          <div style={{ marginTop: '-0.5rem', marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '1rem', paddingLeft: 'calc(50% + 0.75rem)' }}>
+            <img src={form.poster} alt="Preview" style={{ maxHeight: '80px', borderRadius: '4px', border: '1px solid rgba(212,166,74,0.3)', display: 'block' }} />
+            <span style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.4)' }}>პოსტერის წინასწარი ხედი / Preview</span>
+          </div>
+        )}
+
         <div className="admin-grid-2">
           <div className="admin-field"><label>დაწყების თარიღი</label><input type="date" value={form.date} onChange={e=>set('date',e.target.value)} /></div>
           <div className="admin-field"><label>დასრულების თარიღი (თუ 2 დღიანია)</label><input type="date" value={form.endDate} onChange={e=>set('endDate',e.target.value)} /></div>
@@ -1181,54 +1340,6 @@ function TournamentForm({item,students,onSave,onCancel}) {
         <div className="admin-grid-2">
           <div className="admin-field"><label>მისამართი</label><input value={form.address} onChange={e=>set('address',e.target.value)} /></div>
           <div className="admin-field"><label>Google Maps URL</label><input value={form.mapUrl} onChange={e=>set('mapUrl',e.target.value)} placeholder="https://maps.app.goo.gl/..." /></div>
-        </div>
-        <div className="admin-field">
-          <label>ტურნირის პოსტერი / Афиша турнира (სურათის ლინკი ან ატვირთეთ ფაილი)</label>
-          <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-            <input 
-              type="text" 
-              value={form.poster} 
-              onChange={e=>set('poster',e.target.value)} 
-              placeholder="https://example.com/poster.jpg ან ატვირთეთ" 
-              style={{ flex: 1 }} 
-            />
-            <button 
-              type="button" 
-              className="admin-btn admin-btn--ghost admin-btn--sm"
-              onClick={() => document.getElementById('poster-file-input').click()}
-              style={{ minWidth: '150px' }}
-            >
-              📷 ატვირთვა / Загрузить
-            </button>
-            <input 
-              id="poster-file-input" 
-              type="file" 
-              accept="image/*" 
-              style={{ display: 'none' }} 
-              onChange={(e) => {
-                const file = e.target.files[0]
-                if (file) {
-                  const reader = new FileReader()
-                  reader.onload = (uploadEvent) => {
-                    set('poster', uploadEvent.target.result)
-                  }
-                  reader.readAsDataURL(file)
-                }
-              }} 
-            />
-          </div>
-          {form.poster && (
-            <div style={{ marginTop: '0.65rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
-              <img src={form.poster} alt="Preview" style={{ maxHeight: '100px', borderRadius: '4px', border: '1px solid rgba(212,166,74,0.3)', display: 'block' }} />
-              <button 
-                type="button" 
-                style={{ background: 'transparent', border: 'none', color: '#ff7070', cursor: 'pointer', fontSize: '0.8rem', fontWeight: 'bold' }}
-                onClick={() => set('poster', '')}
-              >
-                წაშლა / Удалить ✕
-              </button>
-            </div>
-          )}
         </div>
         <div className="admin-field"><label>შენიშვნები (არ გამოჩნდება თუ ცარიელია)</label><textarea value={form.notes} onChange={e=>set('notes',e.target.value)} rows={2} /></div>
 
@@ -2040,13 +2151,13 @@ function CustomFormsTab({ forms, loading, onEdit, onDelete, onViewSubmissions, t
 }
 
 /* ── Custom Form Builder Component ── */
-function CustomFormForm({ item, onSave, onCancel }) {
+function CustomFormForm({ item, onSave, onCancel, defaultType, showAlert }) {
   const [form, setForm] = useState({
     id: item?.id || null,
     title: item?.title || '',
     description: item?.description || '',
     slug: item?.slug || '',
-    type: item?.type || 'form',
+    type: item?.type || defaultType || 'form',
     fields: item?.fields || []
   });
 
@@ -2110,8 +2221,8 @@ function CustomFormForm({ item, onSave, onCancel }) {
 
   const handleSave = (e) => {
     e.preventDefault();
-    if (!form.title.trim()) { alert('გთხოვთ მიუთითოთ სათაური'); return; }
-    if (!form.slug.trim()) { alert('გთხოვთ მიუთითოთ ბმულის ბოლო (slug)'); return; }
+    if (!form.title.trim()) { showAlert('გთხოვთ მიუთითოთ სათაური'); return; }
+    if (!form.slug.trim()) { showAlert('გთხოვთ მიუთითოთ ბმულის ბოლო (slug)'); return; }
     
     // Normalize slug
     const cleanSlug = form.slug.trim().toLowerCase().replace(/[^a-z0-9-_]/g, '-').replace(/-+/g, '-');
