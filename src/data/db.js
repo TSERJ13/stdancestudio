@@ -19,7 +19,7 @@ export default KEYS;
 
 /* ── Helpers ─────────────────────────────────────── */
 const load  = (key) => { try { return JSON.parse(localStorage.getItem(key)) ?? null; } catch { return null; } };
-const save  = (key, val) => localStorage.setItem(key, JSON.stringify(val));
+const save  = (key, val) => { try { localStorage.setItem(key, JSON.stringify(val)); } catch(e) { console.warn(`Quota exceeded for ${key}`, e); } };
 const uid   = () => Math.random().toString(36).slice(2, 10);
 
 /* ── Seed demo data if DB is empty ──────────────── */

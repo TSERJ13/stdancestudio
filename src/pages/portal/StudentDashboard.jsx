@@ -236,7 +236,12 @@ export default function StudentDashboard() {
     fetchStudioData()
       .then(data => {
         const cloudStudents = data.students || [];
-        const localStudents = JSON.parse(localStorage.getItem('std_students') || '[]');
+        let localStudents = [];
+        try {
+          localStudents = JSON.parse(localStorage.getItem('std_students') || '[]');
+        } catch(e) {
+          console.warn('Failed to parse std_students from local storage', e);
+        }
         
         let found = cloudStudents.find(s => s.id === studentId);
         if (!found) {
@@ -274,11 +279,20 @@ export default function StudentDashboard() {
         // Apply student language preferred by Admin
         const ccLang = found.language || found.data?.language || 'ka';
         setLang(ccLang);
-        localStorage.setItem('std_portal_lang', ccLang);
+        try {
+          localStorage.setItem('std_portal_lang', ccLang);
+        } catch (e) {
+          console.warn('Local storage quota exceeded for lang', e);
+        }
 
         if (Array.isArray(data.tournaments) && data.tournaments.length > 0) {
           // Safe merge to prevent losing local-only assignments/categories if cloud sync is pending/failed
-          const localTournaments = JSON.parse(localStorage.getItem('std_tournaments') || '[]')
+          let localTournaments = [];
+          try {
+            localTournaments = JSON.parse(localStorage.getItem('std_tournaments') || '[]');
+          } catch(e) {
+            console.warn('Failed to parse std_tournaments from local storage', e);
+          }
           const mergedTournaments = data.tournaments.map(cloudT => {
             const localT = localTournaments.find(t => t.id === cloudT.id)
             if (localT) {
@@ -294,7 +308,11 @@ export default function StudentDashboard() {
             return cloudT
           })
           setTournaments(mergedTournaments)
-          localStorage.setItem('std_tournaments', JSON.stringify(mergedTournaments))
+          try {
+            localStorage.setItem('std_tournaments', JSON.stringify(mergedTournaments))
+          } catch (e) {
+            console.warn('Local storage quota exceeded for tournaments', e);
+          }
         }
         
         setLoading(false)

@@ -24,7 +24,12 @@ export default function PortalLogin() {
       const found = findAllStudentsByPhone(data.students || [], phone)
 
       // Merge local language setting into each found student
-      const localStudents = JSON.parse(localStorage.getItem('std_students') || '[]')
+      let localStudents = [];
+      try {
+        localStudents = JSON.parse(localStorage.getItem('std_students') || '[]');
+      } catch(e) {
+        console.warn('Failed to parse std_students from local storage in login', e);
+      }
       const merged = found.map(s => {
         const localS = localStudents.find(ls => ls.id === s.id)
         return {
@@ -35,11 +40,11 @@ export default function PortalLogin() {
 
       if (merged.length === 1) {
         savePortalSession(merged[0].id)
-        localStorage.setItem('std_portal_logged_phone', phone)
+        try { localStorage.setItem('std_portal_logged_phone', phone) } catch(e){}
         navigate('/portal/dashboard')
       } else if (merged.length > 1) {
         setMatches(merged)
-        localStorage.setItem('std_portal_logged_phone', phone)
+        try { localStorage.setItem('std_portal_logged_phone', phone) } catch(e){}
       } else {
         setErr('ამ ნომრით სტუდენტი ვერ მოიძებნა')
       }

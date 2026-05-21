@@ -219,7 +219,11 @@ export default function AdminDashboard() {
                 mergedTournaments.push(localT);
               }
             });
-            localStorage.setItem('std_tournaments', JSON.stringify(mergedTournaments));
+            try {
+              localStorage.setItem('std_tournaments', JSON.stringify(mergedTournaments));
+            } catch(e) {
+              console.warn('Quota exceeded for tournaments', e);
+            }
             setTournaments(mergedTournaments);
           } else {
             // If cloud has no tournaments, do NOT blindly overwrite with empty array!
@@ -232,10 +236,14 @@ export default function AdminDashboard() {
 
           if (Array.isArray(data.news) && data.news.length > 0) {
             const currentLocalNews = localStorage.getItem('std_news');
-            if (currentLocalNews && currentLocalNews !== '[]') {
-              localStorage.setItem('std_news_backup', currentLocalNews);
+            try {
+              if (currentLocalNews && currentLocalNews !== '[]') {
+                localStorage.setItem('std_news_backup', currentLocalNews);
+              }
+              localStorage.setItem('std_news', JSON.stringify(data.news));
+            } catch(e) {
+              console.warn('Quota exceeded for news', e);
             }
-            localStorage.setItem('std_news', JSON.stringify(data.news));
             setNews(data.news);
           } else {
             const localNews = getNews();
