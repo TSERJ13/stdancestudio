@@ -1097,7 +1097,7 @@ function StudentForm({item,onSave,onCancel}) {
 function TournamentsTab({tournaments,students,onEdit,onManageResults,onDelete}) {
   const today=new Date().toISOString().slice(0,10)
   
-  const handlePrint = (t) => {
+  const handlePrint = (t, lang = 'ka') => {
     const performances = [];
     if (t.assignedStudentsData) {
       Object.entries(t.assignedStudentsData).forEach(([sid, data]) => {
@@ -1169,10 +1169,23 @@ function TournamentsTab({tournaments,students,onEdit,onManageResults,onDelete}) 
       return;
     }
 
+    const dict = {
+      title: lang === 'ru' ? `Расписание - ${t.name}` : `განრიგი - ${t.name}`,
+      subtitle: lang === 'ru' ? 'Расписание выступлений участников' : 'მონაწილეების გამოსვლის განრიგი',
+      btn: lang === 'ru' ? '🖨 Печать / PDF' : '🖨 ბეჭდვა / PDF',
+      thDate: lang === 'ru' ? 'Дата' : 'თარიღი',
+      thTime: lang === 'ru' ? 'Время' : 'გამოსვლის დრო',
+      thReady: lang === 'ru' ? 'Готовность' : 'მზადყოფნა',
+      thCat: lang === 'ru' ? 'Категория' : 'კატეგორია',
+      thStudent: lang === 'ru' ? 'Участник' : 'სტუდენტი',
+      thVenue: lang === 'ru' ? 'Площадка' : 'ადგილი',
+      empty: lang === 'ru' ? 'Расписание не добавлено' : 'განრიგი არ არის დამატებული'
+    };
+
     win.document.write(`
       <html>
         <head>
-          <title>განრიგი - ${t.name}</title>
+          <title>${dict.title}</title>
           <style>
             body { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; padding: 20px; color: #333; }
             h1 { text-align: center; color: #000; margin-bottom: 5px; }
@@ -1193,19 +1206,19 @@ function TournamentsTab({tournaments,students,onEdit,onManageResults,onDelete}) 
         </head>
         <body>
           <h1>${t.name}</h1>
-          <h2>მონაწილეების გამოსვლის განრიგი</h2>
+          <h2>${dict.subtitle}</h2>
           <div class="controls">
-            <button class="print-btn" onclick="window.print()">🖨 ბეჭდვა / PDF</button>
+            <button class="print-btn" onclick="window.print()">${dict.btn}</button>
           </div>
           <table>
             <thead>
               <tr>
-                <th>თარიღი</th>
-                <th>გამოსვლის დრო</th>
-                <th>მზადყოფნა</th>
-                <th>კატეგორია</th>
-                <th>სტუდენტი</th>
-                <th>ადგილი</th>
+                <th>${dict.thDate}</th>
+                <th>${dict.thTime}</th>
+                <th>${dict.thReady}</th>
+                <th>${dict.thCat}</th>
+                <th>${dict.thStudent}</th>
+                <th>${dict.thVenue}</th>
               </tr>
             </thead>
             <tbody>
@@ -1225,7 +1238,7 @@ function TournamentsTab({tournaments,students,onEdit,onManageResults,onDelete}) 
                   <td>${p.venue}</td>
                 </tr>
               `}).join('')}
-              ${performances.length === 0 ? '<tr><td colspan="6" style="text-align:center">განრიგი არ არის დამატებული</td></tr>' : ''}
+              ${performances.length === 0 ? `<tr><td colspan="6" style="text-align:center">${dict.empty}</td></tr>` : ''}
             </tbody>
           </table>
           <script>
@@ -1263,7 +1276,8 @@ function TournamentsTab({tournaments,students,onEdit,onManageResults,onDelete}) 
           <div className="admin-trn-card__actions" style={{ marginTop: '1rem', display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
             <button className="admin-btn admin-btn--ghost admin-btn--sm" onClick={()=>onEdit(t.id)}>✏ რედაქტირება და განრიგი</button>
             <button className="admin-btn admin-btn--gold admin-btn--sm" onClick={()=>onManageResults(t.id)}>🏆 შედეგები</button>
-            <button className="admin-btn admin-btn--ghost admin-btn--sm" onClick={()=>handlePrint(t)}>🖨 ბეჭდვა (PDF)</button>
+            <button className="admin-btn admin-btn--ghost admin-btn--sm" onClick={()=>handlePrint(t, 'ka')}>🖨 ბეჭდვა (GE)</button>
+            <button className="admin-btn admin-btn--ghost admin-btn--sm" onClick={()=>handlePrint(t, 'ru')}>🖨 Печать (RU)</button>
             <button className="admin-btn admin-btn--danger admin-btn--sm" onClick={()=>onDelete(t.id)}>🗑 წაშლა</button>
           </div>
         </div>
