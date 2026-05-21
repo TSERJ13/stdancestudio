@@ -161,7 +161,8 @@ export default function AdminDashboard() {
       mod.fetchStudioData()
         .then(data => {
           const localStudents = getStudents();
-          const mapped = (data.students || []).map(s => {
+          const cloudStudents = data.students || [];
+          const mapped = cloudStudents.map(s => {
             const fn = s.first_name || s.data?.first_name || '';
             const ln = s.last_name || s.data?.last_name || '';
             const cloudStudent = {
@@ -175,7 +176,7 @@ export default function AdminDashboard() {
               active: s.status === 'active' || !s.status
             }
             
-            const localS = localStudents.find(x => x.id === s.id)
+            const localS = localStudents.find(x => String(x.id) === String(s.id))
             if (localS) {
               return {
                 ...cloudStudent,
@@ -189,6 +190,14 @@ export default function AdminDashboard() {
             }
             return cloudStudent
           });
+
+          // Add local-only students that haven't synced to cloud
+          localStudents.forEach(ls => {
+            if (!mapped.find(ms => String(ms.id) === String(ls.id))) {
+              mapped.push(ls);
+            }
+          });
+
           setStudents(mapped);
           if (Array.isArray(data.tournaments) && data.tournaments.length > 0) {
             // Always deep-merge cloud data with local: local assignedStudentsData wins
@@ -1093,7 +1102,7 @@ function TournamentsTab({tournaments,students,onEdit,onManageResults,onDelete}) 
     if (t.assignedStudentsData) {
       Object.entries(t.assignedStudentsData).forEach(([sid, data]) => {
         const student = students.find(s => String(s.id) === String(sid));
-        const sName = student ? student.name : 'უცნობი სტუდენტი';
+        const sName = student ? student.name : `უცნობი სტუდენტი (ID: ${sid})`;
         if (data.categories && Array.isArray(data.categories)) {
           data.categories.forEach(cat => {
             performances.push({
@@ -1112,7 +1121,7 @@ function TournamentsTab({tournaments,students,onEdit,onManageResults,onDelete}) 
     if (t.studentCategories) {
       Object.entries(t.studentCategories).forEach(([sid, cats]) => {
         const student = students.find(s => String(s.id) === String(sid));
-        const sName = student ? student.name : 'უცნობი სტუდენტი';
+        const sName = student ? student.name : `უცნობი სტუდენტი (ID: ${sid})`;
         if (Array.isArray(cats)) {
           cats.forEach(catName => {
             const exists = performances.some(p => p.studentName === sName && p.categoryName === catName);
@@ -1126,6 +1135,22 @@ function TournamentsTab({tournaments,students,onEdit,onManageResults,onDelete}) 
                 venue: t.venue || ''
               });
             }
+          });
+        }
+      });
+    }
+
+    if (t.categories && Array.isArray(t.categories)) {
+      t.categories.forEach(catName => {
+        const exists = performances.some(p => p.categoryName === catName);
+        if (!exists) {
+          performances.push({
+            studentName: '—',
+            categoryName: catName,
+            date: t.date,
+            time: '',
+            readyTime: '',
+            venue: t.venue || ''
           });
         }
       });
