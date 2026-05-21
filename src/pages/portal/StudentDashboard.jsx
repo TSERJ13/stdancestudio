@@ -392,13 +392,42 @@ export default function StudentDashboard() {
         scheduledDays.add(Number(s.day))
       })
     }
+    // Fallback: check nested data.schedule or data.days formats from ClassCore
+    const altSchedule = g.data?.schedule || g.data?.days || g.days
+    if (!g.schedule && Array.isArray(altSchedule)) {
+      altSchedule.forEach(s => {
+        const dayNum = typeof s === 'object' ? (s.day ?? s.weekday ?? s.day_of_week) : s
+        if (dayNum !== undefined) scheduledDays.add(Number(dayNum))
+      })
+    }
   })
+
+  // If still no schedule data from groups, infer from attendance pattern
+  // (which days of the week did this student attend most consistently?)
+  let inferredSchedule = false
+  if (scheduledDays.size === 0 && att.length >= 2) {
+    const dayFreq = {}
+    att.filter(a => a.present).forEach(a => {
+      const d = new Date(a.date).getDay()
+      dayFreq[d] = (dayFreq[d] || 0) + 1
+    })
+    // Use days that appear at least twice (consistent pattern)
+    const maxFreq = Math.max(...Object.values(dayFreq))
+    if (maxFreq >= 2) {
+      Object.entries(dayFreq).forEach(([day, freq]) => {
+        if (freq >= Math.max(2, maxFreq * 0.5)) {
+          scheduledDays.add(Number(day))
+        }
+      })
+      inferredSchedule = true
+    }
+  }
 
   const generatedAtt = []
   const start = new Date(startDateStr)
   const end = new Date() // today
 
-  if (!isNaN(start.getTime()) && start < end) {
+  if (scheduledDays.size > 0 && !isNaN(start.getTime()) && start < end) {
     const curr = new Date(start)
     while (curr < end) {
       const dateStr = curr.toISOString().slice(0, 10)
@@ -426,7 +455,7 @@ export default function StudentDashboard() {
   const sortedUnifiedAtt = generatedAtt.sort((a, b) => b.date.localeCompare(a.date))
   const present = sortedUnifiedAtt.filter(r => r.present).length
   const absent  = sortedUnifiedAtt.filter(r => !r.present).length
-  const pct     = sortedUnifiedAtt.length ? Math.round((present / sortedUnifiedAtt.length) * 100) : 0
+  const pct     = sortedUnifiedAtt.length ? Math.round((present / sortedUnifiedAtt.length) * 100) : null
 
   const upcomingTrn = tournaments.filter(t => {
     const isFuture = t.date >= today;
@@ -659,6 +688,7 @@ export default function StudentDashboard() {
               <div style={{ fontSize: '0.8rem', color: '#a8a39a' }}>
                 {age && <span>{age} {t('years')}</span>}
                 {birthYear && <span style={{ marginLeft: '0.5rem', color: 'rgba(212,166,74,0.7)', fontWeight: 500 }}>· {getAgeCategory(birthYear)}</span>}
+                {birthDate && <span style={{ marginLeft: '0.5rem', color: '#6b665e' }}>· {formatDate(birthDate)}</span>}
               </div>
               <div className="portal-hero__meta">
                 <span className="portal-badge portal-badge--gold">{studentData.dance_class || 'N Class'}</span>
@@ -676,19 +706,45 @@ export default function StudentDashboard() {
                 {/* Subscription pill */}
                 <div style={{ flex: '1 1 120px', background: 'rgba(212,166,74,0.07)', border: '1px solid rgba(212,166,74,0.18)', borderRadius: '12px', padding: '1rem 1.25rem', textAlign: 'center' }}>
                   <div style={{ fontSize: '0.72rem', color: '#6b665e', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '0.4rem' }}>{t('remaining')}</div>
-                  <div style={{ fontSize: '2.5rem', fontWeight: 300, color: sub && (sub.total - sub.used) <= 2 ? '#ff7070' : 'var(--color-gold)', lineHeight: 1 }}>
-                    {sub ? sub.total - sub.used : '—'}
-                  </div>
-                  <div style={{ fontSize: '0.72rem', color: '#a8a39a', marginTop: '0.25rem' }}>{sub ? `${t('total')} ${sub.total}` : t('no_sub')}</div>
-                  {sub && sub.expires && (
-                    <div style={{ fontSize: '0.68rem', color: '#6b665e', marginTop: '0.2rem' }}>{t('expires')}: {formatDate(sub.expires)}</div>
+                  {sub ? (
+                    <>
+                      <div style={{ lineHeight: 1 }}>
+                        <span style={{ fontSize: '2.5rem', fontWeight: 300, color: (sub.total - sub.used) <= 3 ? '#ff7070' : 'var(--color-gold)' }}>
+                          {sub.total - sub.used}
+                        </span>
+                        <span style={{ fontSize: '1.1rem', fontWeight: 300, color: '#6b665e' }}>/{sub.total}</span>
+                      </div>
+                      {sub.expires && (() => {
+                        const daysToExpiry = Math.ceil((new Date(sub.expires) - new Date()) / (1000 * 60 * 60 * 24))
+                        const expiryRed = daysToExpiry <= 3
+                        return (
+                          <div style={{ fontSize: '0.68rem', color: expiryRed ? '#ff7070' : '#6b665e', marginTop: '0.2rem', fontWeight: expiryRed ? 600 : 400 }}>
+                            {t('expires')}: {formatDate(sub.expires)}
+                          </div>
+                        )
+                      })()}
+                    </>
+                  ) : (
+                    <>
+                      <div style={{ fontSize: '2.5rem', fontWeight: 300, color: '#6b665e', lineHeight: 1 }}>—</div>
+                      <div style={{ fontSize: '0.72rem', color: '#6b665e', marginTop: '0.25rem' }}>{t('no_sub')}</div>
+                    </>
                   )}
                 </div>
                 {/* Attendance pill */}
                 <div style={{ flex: '1 1 120px', background: 'rgba(80,200,120,0.06)', border: '1px solid rgba(80,200,120,0.15)', borderRadius: '12px', padding: '1rem 1.25rem', textAlign: 'center' }}>
                   <div style={{ fontSize: '0.72rem', color: '#6b665e', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '0.4rem' }}>{t('attendance')}</div>
-                  <div style={{ fontSize: '2.5rem', fontWeight: 300, color: pct >= 70 ? '#50c878' : pct >= 50 ? '#d4a64a' : '#ff7070', lineHeight: 1 }}>{pct}%</div>
-                  <div style={{ fontSize: '0.72rem', color: '#a8a39a', marginTop: '0.25rem' }}>{present} / {present + absent}</div>
+                  {pct !== null ? (
+                    <>
+                      <div style={{ fontSize: '2.5rem', fontWeight: 300, color: pct >= 70 ? '#50c878' : pct >= 50 ? '#d4a64a' : '#ff7070', lineHeight: 1 }}>{pct}%</div>
+                      <div style={{ fontSize: '0.72rem', color: '#a8a39a', marginTop: '0.25rem' }}>{present} / {present + absent}</div>
+                    </>
+                  ) : (
+                    <>
+                      <div style={{ fontSize: '2.5rem', fontWeight: 300, color: '#6b665e', lineHeight: 1 }}>—</div>
+                      <div style={{ fontSize: '0.72rem', color: '#6b665e', marginTop: '0.25rem' }}>{present} {lang === 'ru' ? 'зан.' : lang === 'en' ? 'cls.' : 'გაკ.'}</div>
+                    </>
+                  )}
                 </div>
                 {/* Groups pill */}
                 <div style={{ flex: '2 1 200px', background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '12px', padding: '1rem 1.25rem' }}>
@@ -725,7 +781,7 @@ export default function StudentDashboard() {
                       <div style={{ fontSize: '1rem', fontWeight: 700, color: '#f5f1e8' }}>{next.name}</div>
                       <div style={{ fontSize: '0.78rem', color: '#a8a39a', marginTop: '0.2rem', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
                         <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
-                        {formatDate(next.date)}{myCatsCount > 0 && <span style={{ marginLeft: '0.5rem', color: '#d4a64a' }}>· {myCatsCount} კატ.</span>}
+                        {formatDate(next.date)}{myCatsCount > 0 && <span style={{ marginLeft: '0.5rem', color: '#d4a64a' }}>· {myCatsCount} {lang === 'ru' ? 'кат.' : lang === 'en' ? 'cat.' : 'კატ.'}</span>}
                       </div>
                     </div>
                     <div style={{ textAlign: 'right', flexShrink: 0 }}>
