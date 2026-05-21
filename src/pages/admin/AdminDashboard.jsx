@@ -1092,7 +1092,7 @@ function TournamentsTab({tournaments,students,onEdit,onManageResults,onDelete}) 
     const performances = [];
     if (t.assignedStudentsData) {
       Object.entries(t.assignedStudentsData).forEach(([sid, data]) => {
-        const student = students.find(s => s.id === sid);
+        const student = students.find(s => String(s.id) === String(sid));
         const sName = student ? student.name : 'უცნობი სტუდენტი';
         if (data.categories && Array.isArray(data.categories)) {
           data.categories.forEach(cat => {
@@ -1104,6 +1104,28 @@ function TournamentsTab({tournaments,students,onEdit,onManageResults,onDelete}) 
               readyTime: cat.readyTime || '',
               venue: cat.venue || t.venue || ''
             });
+          });
+        }
+      });
+    }
+
+    if (t.studentCategories) {
+      Object.entries(t.studentCategories).forEach(([sid, cats]) => {
+        const student = students.find(s => String(s.id) === String(sid));
+        const sName = student ? student.name : 'უცნობი სტუდენტი';
+        if (Array.isArray(cats)) {
+          cats.forEach(catName => {
+            const exists = performances.some(p => p.studentName === sName && p.categoryName === catName);
+            if (!exists) {
+              performances.push({
+                studentName: sName,
+                categoryName: catName,
+                date: t.date,
+                time: '',
+                readyTime: '',
+                venue: t.venue || ''
+              });
+            }
           });
         }
       });
