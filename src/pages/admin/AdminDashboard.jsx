@@ -1087,6 +1087,109 @@ function StudentForm({item,onSave,onCancel}) {
 /* ── Tournaments Tab ── */
 function TournamentsTab({tournaments,students,onEdit,onManageResults,onDelete}) {
   const today=new Date().toISOString().slice(0,10)
+  
+  const handlePrint = (t) => {
+    const performances = [];
+    if (t.assignedStudentsData) {
+      Object.entries(t.assignedStudentsData).forEach(([sid, data]) => {
+        const student = students.find(s => s.id === sid);
+        const sName = student ? student.name : 'უცნობი სტუდენტი';
+        if (data.categories && Array.isArray(data.categories)) {
+          data.categories.forEach(cat => {
+            performances.push({
+              studentName: sName,
+              categoryName: cat.name,
+              date: cat.date || t.date,
+              time: cat.time || '',
+              readyTime: cat.readyTime || '',
+              venue: cat.venue || t.venue || ''
+            });
+          });
+        }
+      });
+    }
+
+    performances.sort((a, b) => {
+      if (a.date !== b.date) return (a.date || '').localeCompare(b.date || '');
+      const aTime = a.time || '23:59';
+      const bTime = b.time || '23:59';
+      return aTime.localeCompare(bTime);
+    });
+
+    const win = window.open('', '_blank');
+    if (!win) {
+      alert('გთხოვთ დაუშვათ pop-up ფანჯრები / Пожалуйста, разрешите всплывающие окна');
+      return;
+    }
+
+    win.document.write(`
+      <html>
+        <head>
+          <title>განრიგი - ${t.name}</title>
+          <style>
+            body { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; padding: 20px; color: #333; }
+            h1 { text-align: center; color: #000; margin-bottom: 5px; }
+            h2 { text-align: center; color: #555; font-weight: normal; margin-top: 0; margin-bottom: 30px; font-size: 16px; }
+            table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 14px; }
+            th, td { border: 1px solid #ddd; padding: 10px 8px; text-align: left; }
+            th { background-color: #f5f5f5; font-weight: bold; color: #000; }
+            .time { font-weight: bold; }
+            .ready-time { color: #d9534f; font-weight: bold; }
+            .student-name { font-weight: 600; color: #000; }
+            .controls { text-align:center; margin-bottom: 20px; }
+            .print-btn { padding: 10px 20px; font-size: 16px; cursor: pointer; background: #000; color: #fff; border: none; border-radius: 4px; }
+            @media print {
+              body { padding: 0; }
+              .controls { display: none; }
+            }
+          </style>
+        </head>
+        <body>
+          <h1>${t.name}</h1>
+          <h2>მონაწილეების გამოსვლის განრიგი</h2>
+          <div class="controls">
+            <button class="print-btn" onclick="window.print()">🖨 ბეჭდვა / PDF</button>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>თარიღი</th>
+                <th>გამოსვლის დრო</th>
+                <th>მზადყოფნა</th>
+                <th>კატეგორია</th>
+                <th>სტუდენტი</th>
+                <th>ადგილი</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${performances.map(p => {
+                let formattedDate = p.date;
+                if (p.date && p.date.includes('-')) {
+                  const parts = p.date.split('-');
+                  if (parts.length === 3) formattedDate = \`\${parts[2]}/\${parts[1]}/\${parts[0]}\`;
+                }
+                return \`
+                <tr>
+                  <td>\${formattedDate}</td>
+                  <td class="time">\${p.time || '-'}</td>
+                  <td class="ready-time">\${p.readyTime || '-'}</td>
+                  <td>\${p.categoryName}</td>
+                  <td class="student-name">\${p.studentName}</td>
+                  <td>\${p.venue}</td>
+                </tr>
+              \`}).join('')}
+              ${performances.length === 0 ? '<tr><td colspan="6" style="text-align:center">განრიგი არ არის დამატებული</td></tr>' : ''}
+            </tbody>
+          </table>
+          <script>
+            setTimeout(() => { window.print(); }, 500);
+          </script>
+        </body>
+      </html>
+    `);
+    win.document.close();
+  };
+
   return (
     <div>
       {tournaments.map(t=>(
@@ -1113,6 +1216,7 @@ function TournamentsTab({tournaments,students,onEdit,onManageResults,onDelete}) 
           <div className="admin-trn-card__actions" style={{ marginTop: '1rem', display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
             <button className="admin-btn admin-btn--ghost admin-btn--sm" onClick={()=>onEdit(t.id)}>✏ რედაქტირება და განრიგი</button>
             <button className="admin-btn admin-btn--gold admin-btn--sm" onClick={()=>onManageResults(t.id)}>🏆 შედეგები</button>
+            <button className="admin-btn admin-btn--ghost admin-btn--sm" onClick={()=>handlePrint(t)}>🖨 ბეჭდვა (PDF)</button>
             <button className="admin-btn admin-btn--danger admin-btn--sm" onClick={()=>onDelete(t.id)}>🗑 წაშლა</button>
           </div>
         </div>
