@@ -213,6 +213,7 @@ export default function StudentDashboard() {
   const [mobileOpen, setMobileOpen] = useState(false)
   const [lang, setLang] = useState('ka')
   const [expandedTrns, setExpandedTrns] = useState({})
+  const [infoOpen, setInfoOpen] = useState(false)
 
   useEffect(() => {
     const studentId = getPortalSession()
@@ -657,20 +658,88 @@ export default function StudentDashboard() {
           </div>
 
           {tab === 'info' && (
-            <div className="portal-card animate-fade-in">
-              <div className="portal-card__head">
-                <span className="portal-nav-icon" style={{ display: 'inline-flex', alignItems: 'center', color: 'var(--color-gold)', marginRight: '0.5rem' }}>{SVG_ICONS.info}</span>
-                <span className="portal-card__title">{t('info_title')}</span>
-              </div>
-              <div className="portal-card__body">
-                <div className="portal-info-grid">
-                  <div className="portal-info-item"><span className="label">{t('name')}</span><span className="val">{name}</span></div>
-                  <div className="portal-info-item"><span className="label">{t('phone')}</span><span className="val">{student.phone || '—'}</span></div>
-                  <div className="portal-info-item"><span className="label">{t('birth_date')}</span><span className="val">{formatDate(birthDate) || '—'}</span></div>
-                  <div className="portal-info-item"><span className="label">{t('parent')}</span><span className="val">{parentName || '—'}</span></div>
-                  <div className="portal-info-item"><span className="label">{t('groups')}</span><span className="val">{groups.map(g=>g.name).join(', ') || '—'}</span></div>
-                  <div className="portal-info-item"><span className="label">{t('status')}</span><span className="val">{student.status === 'active' || !student.status ? t('active') : t('inactive')}</span></div>
+            <div className="animate-fade-in">
+              {/* Quick stat summary pills */}
+              <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', marginBottom: '1.25rem' }}>
+                {/* Subscription pill */}
+                <div style={{ flex: '1 1 120px', background: 'rgba(212,166,74,0.07)', border: '1px solid rgba(212,166,74,0.18)', borderRadius: '12px', padding: '1rem 1.25rem', textAlign: 'center' }}>
+                  <div style={{ fontSize: '0.72rem', color: '#6b665e', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '0.4rem' }}>{t('remaining')}</div>
+                  <div style={{ fontSize: '2.5rem', fontWeight: 300, color: sub && (sub.total - sub.used) <= 2 ? '#ff7070' : 'var(--color-gold)', lineHeight: 1 }}>
+                    {sub ? sub.total - sub.used : '—'}
+                  </div>
+                  <div style={{ fontSize: '0.72rem', color: '#a8a39a', marginTop: '0.25rem' }}>{sub ? `${t('total')} ${sub.total}` : t('no_sub')}</div>
                 </div>
+                {/* Attendance pill */}
+                <div style={{ flex: '1 1 120px', background: 'rgba(80,200,120,0.06)', border: '1px solid rgba(80,200,120,0.15)', borderRadius: '12px', padding: '1rem 1.25rem', textAlign: 'center' }}>
+                  <div style={{ fontSize: '0.72rem', color: '#6b665e', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '0.4rem' }}>{t('attendance')}</div>
+                  <div style={{ fontSize: '2.5rem', fontWeight: 300, color: pct >= 70 ? '#50c878' : pct >= 50 ? '#d4a64a' : '#ff7070', lineHeight: 1 }}>{pct}%</div>
+                  <div style={{ fontSize: '0.72rem', color: '#a8a39a', marginTop: '0.25rem' }}>{present} / {present + absent}</div>
+                </div>
+                {/* Groups pill */}
+                <div style={{ flex: '2 1 200px', background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '12px', padding: '1rem 1.25rem' }}>
+                  <div style={{ fontSize: '0.72rem', color: '#6b665e', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '0.4rem' }}>{t('my_groups')}</div>
+                  {groups.length > 0 ? groups.map(g => (
+                    <div key={g.id} style={{ fontSize: '0.88rem', color: '#f5f1e8', fontWeight: 600, marginBottom: '0.2rem' }}>
+                      {g.name}
+                      {g.schedule && Array.isArray(g.schedule) && g.schedule.length > 0 && (
+                        <span style={{ fontSize: '0.75rem', color: '#a8a39a', fontWeight: 400, marginLeft: '0.5rem' }}>
+                          {g.schedule.map(s => (TRANSLATIONS[lang]?.days || TRANSLATIONS.ka.days)[s.day]).join(', ')}
+                        </span>
+                      )}
+                    </div>
+                  )) : <div style={{ fontSize: '0.85rem', color: '#6b665e' }}>{t('no_group')}</div>}
+                </div>
+              </div>
+
+              {/* Nearest upcoming tournament banner */}
+              {upcomingTrn.length > 0 && (() => {
+                const next = upcomingTrn[0];
+                const myData = next.assignedStudentsData?.[student.id] || {};
+                const myCatsCount = Array.isArray(myData.categories) ? myData.categories.length : 0;
+                const daysLeft = Math.ceil((new Date(next.date) - new Date()) / (1000 * 60 * 60 * 24));
+                return (
+                  <div style={{ background: 'linear-gradient(135deg, rgba(212,166,74,0.12) 0%, rgba(212,166,74,0.04) 100%)', border: '1px solid rgba(212,166,74,0.3)', borderRadius: '12px', padding: '1.1rem 1.25rem', marginBottom: '1.25rem', display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap', cursor: 'pointer' }}
+                    onClick={() => setTab('trn')}
+                  >
+                    {next.poster && <img src={next.poster} alt="" style={{ width: '52px', height: '52px', objectFit: 'contain', borderRadius: '6px', flexShrink: 0 }} />}
+                    <div style={{ flex: 1, minWidth: '160px' }}>
+                      <div style={{ fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '0.12em', color: '#d4a64a', marginBottom: '0.2rem' }}>🏆 {t('upcoming_tournaments')}</div>
+                      <div style={{ fontSize: '1rem', fontWeight: 700, color: '#f5f1e8' }}>{next.name}</div>
+                      <div style={{ fontSize: '0.78rem', color: '#a8a39a', marginTop: '0.2rem' }}>📅 {formatDate(next.date)}{myCatsCount > 0 && <span style={{ marginLeft: '0.75rem', color: '#d4a64a' }}>· {myCatsCount} კატ.</span>}</div>
+                    </div>
+                    <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                      <div style={{ fontSize: '1.8rem', fontWeight: 300, color: daysLeft <= 7 ? '#ff7070' : '#d4a64a', lineHeight: 1 }}>{daysLeft}</div>
+                      <div style={{ fontSize: '0.7rem', color: '#6b665e' }}>{lang === 'ru' ? 'дней' : lang === 'en' ? 'days' : 'დღე'}</div>
+                    </div>
+                  </div>
+                );
+              })()}
+
+              {/* Collapsible personal info */}
+              <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '10px', overflow: 'hidden' }}>
+                <button
+                  type="button"
+                  onClick={() => setInfoOpen(v => !v)}
+                  style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.85rem 1.25rem', background: 'transparent', border: 'none', color: '#a8a39a', cursor: 'pointer', fontSize: '0.85rem', letterSpacing: '0.08em', textTransform: 'uppercase' }}
+                >
+                  <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    {SVG_ICONS.info} {t('info_title')}
+                  </span>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ transform: infoOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.3s' }}>
+                    <polyline points="6 9 12 15 18 9"/>
+                  </svg>
+                </button>
+                {infoOpen && (
+                  <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', padding: '1rem 1.25rem' }}>
+                    <div className="portal-info-grid">
+                      <div className="portal-info-item"><span className="label">{t('name')}</span><span className="val">{name}</span></div>
+                      <div className="portal-info-item"><span className="label">{t('phone')}</span><span className="val">{student.phone || '—'}</span></div>
+                      <div className="portal-info-item"><span className="label">{t('birth_date')}</span><span className="val">{formatDate(birthDate) || '—'}</span></div>
+                      <div className="portal-info-item"><span className="label">{t('parent')}</span><span className="val">{parentName || '—'}</span></div>
+                      <div className="portal-info-item"><span className="label">{t('status')}</span><span className="val">{student.status === 'active' || !student.status ? t('active') : t('inactive')}</span></div>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           )}
@@ -850,16 +919,10 @@ export default function StudentDashboard() {
                                 📅 {tItem.endDate && tItem.endDate !== tItem.date ? `${formatDate(tItem.date)} — ${formatDate(tItem.endDate)}` : formatDate(tItem.date)}
                               </div>
                             </div>
-                            <div style={{ marginLeft: '1rem', padding: '0.25rem', display: 'flex', alignItems: 'center' }}>
-                              <span style={{ 
-                                transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)', 
-                                transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)', 
-                                display: 'inline-block', 
-                                color: 'var(--color-gold)',
-                                fontSize: '0.85rem'
-                              }}>
-                                ▼
-                              </span>
+                            <div style={{ marginLeft: '1rem', width: '32px', height: '32px', borderRadius: '50%', background: 'rgba(212,166,74,0.1)', border: '1px solid rgba(212,166,74,0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, transition: 'background 0.2s' }}>
+                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#d4a64a" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)', display: 'block' }}>
+                                <polyline points="6 9 12 15 18 9"/>
+                              </svg>
                             </div>
                           </div>
 
