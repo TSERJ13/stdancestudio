@@ -191,13 +191,36 @@ export default function AdminDashboard() {
           });
           setStudents(mapped);
           if (Array.isArray(data.tournaments) && data.tournaments.length > 0) {
-            // Backup current tournaments before overwriting, just in case!
-            const currentLocal = localStorage.getItem('std_tournaments');
-            if (currentLocal && currentLocal !== '[]') {
-              localStorage.setItem('std_tournaments_backup', currentLocal);
-            }
-            localStorage.setItem('std_tournaments', JSON.stringify(data.tournaments));
-            setTournaments(data.tournaments);
+            // Always deep-merge cloud data with local: local assignedStudentsData wins
+            // because it's the most recently edited by the admin
+            const localTrns = getTournaments();
+            const mergedTournaments = data.tournaments.map(cloudT => {
+              const localT = localTrns.find(lt => lt.id === cloudT.id);
+              if (localT) {
+                // Merge: use cloud as base, but local assignedStudents* fields always win
+                return {
+                  ...cloudT,
+                  assignedStudents: (localT.assignedStudents && localT.assignedStudents.length > 0)
+                    ? localT.assignedStudents
+                    : (cloudT.assignedStudents || []),
+                  assignedStudentsData: (localT.assignedStudentsData && Object.keys(localT.assignedStudentsData).length > 0)
+                    ? localT.assignedStudentsData
+                    : (cloudT.assignedStudentsData || {}),
+                  // Keep any local poster/notes that might be newer
+                  poster: localT.poster || cloudT.poster || '',
+                  notes: localT.notes || cloudT.notes || '',
+                };
+              }
+              return cloudT;
+            });
+            // Add any local-only tournaments that aren't in cloud yet
+            localTrns.forEach(localT => {
+              if (!mergedTournaments.find(t => t.id === localT.id)) {
+                mergedTournaments.push(localT);
+              }
+            });
+            localStorage.setItem('std_tournaments', JSON.stringify(mergedTournaments));
+            setTournaments(mergedTournaments);
           } else {
             // If cloud has no tournaments, do NOT blindly overwrite with empty array!
             // Load whatever is in localStorage
