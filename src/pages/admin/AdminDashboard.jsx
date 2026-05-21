@@ -1166,18 +1166,18 @@ function TournamentsTab({tournaments,students,onEdit,onManageResults,onDelete}) 
                 let formattedDate = p.date;
                 if (p.date && p.date.includes('-')) {
                   const parts = p.date.split('-');
-                  if (parts.length === 3) formattedDate = \`\${parts[2]}/\${parts[1]}/\${parts[0]}\`;
+                  if (parts.length === 3) formattedDate = `${parts[2]}/${parts[1]}/${parts[0]}`;
                 }
-                return \`
+                return `
                 <tr>
-                  <td>\${formattedDate}</td>
-                  <td class="time">\${p.time || '-'}</td>
-                  <td class="ready-time">\${p.readyTime || '-'}</td>
-                  <td>\${p.categoryName}</td>
-                  <td class="student-name">\${p.studentName}</td>
-                  <td>\${p.venue}</td>
+                  <td>${formattedDate}</td>
+                  <td class="time">${p.time || '-'}</td>
+                  <td class="ready-time">${p.readyTime || '-'}</td>
+                  <td>${p.categoryName}</td>
+                  <td class="student-name">${p.studentName}</td>
+                  <td>${p.venue}</td>
                 </tr>
-              \`}).join('')}
+              `}).join('')}
               ${performances.length === 0 ? '<tr><td colspan="6" style="text-align:center">განრიგი არ არის დამატებული</td></tr>' : ''}
             </tbody>
           </table>
