@@ -7,7 +7,9 @@
 const CLASSCORE_API = 'https://classcore.ge/api/public/student-portal';
 const STUDIO_SLUG = 'stdancestudio';
 const CACHE_KEY = 'cc_portal_cache';
-const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutes in-session
+const PERSIST_KEY = 'cc_portal_cache_persist'; // localStorage long-term fallback
+const FETCH_TIMEOUT_MS = 15000; // 15 second timeout
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || 'https://lzwdgedxceajhdtijnpv.supabase.co';
 const ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx6d2RnZWR4Y2VhamhkdGlqbnB2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkyMjY0MDEsImV4cCI6MjA5NDgwMjQwMX0.-uSzc5DC-xQJ66miZZDaPsGhsPBBDFjGS2VAwd7bTik';
@@ -28,83 +30,125 @@ function getCached() {
   }
 }
 
+function getPersistCache() {
+  try {
+    const raw = localStorage.getItem(PERSIST_KEY);
+    if (!raw) return null;
+    const { data } = JSON.parse(raw);
+    return data || null;
+  } catch {
+    return null;
+  }
+}
+
 function setCache(data) {
   try {
-    sessionStorage.setItem(CACHE_KEY, JSON.stringify({ data, ts: Date.now() }));
+    const payload = JSON.stringify({ data, ts: Date.now() });
+    sessionStorage.setItem(CACHE_KEY, payload);
+    // Also persist to localStorage as offline/slow-network fallback
+    localStorage.setItem(PERSIST_KEY, JSON.stringify({ data, ts: Date.now() }));
   } catch { /* ignore quota errors */ }
 }
 
 export function clearCache() {
   sessionStorage.removeItem(CACHE_KEY);
+  // Keep localStorage persist — it's an offline fallback
+}
+
+async function fetchWithTimeout(url, options = {}, ms = FETCH_TIMEOUT_MS) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), ms);
+  try {
+    const res = await fetch(url, { ...options, signal: controller.signal });
+    return res;
+  } finally {
+    clearTimeout(timer);
+  }
 }
 
 /* ── Fetch all studio data from ClassCore & merge custom Supabase data ───────── */
 export async function fetchStudioData() {
-  // Check cache first
+  // 1. Check in-memory session cache (instant)
   const cached = getCached();
   if (cached) return cached;
 
-  // 1. Fetch ClassCore general data (students, attendance, subscriptions, groups)
-  const ccUrl = `${CLASSCORE_API}?slug=${STUDIO_SLUG}`;
-  const ccRes = await fetch(ccUrl);
+  // 2. Check persistent localStorage cache
+  const stale = getPersistCache();
 
-  if (!ccRes.ok) {
-    throw new Error(`ClassCore API error: ${ccRes.status}`);
-  }
+  const doFetch = async () => {
+    // Fetch ClassCore data with timeout
+    const ccUrl = `${CLASSCORE_API}?slug=${STUDIO_SLUG}`;
+    const ccRes = await fetchWithTimeout(ccUrl);
 
-  const ccData = await ccRes.json();
-  if (ccData.error) {
-    throw new Error(ccData.error);
-  }
+    if (!ccRes.ok) throw new Error(`ClassCore API error: ${ccRes.status}`);
 
-  // 2. Fetch custom data from the new Supabase studio_settings
-  let cloudTournaments = [];
-  let cloudNews = [];
-  let studentLangs = {};
+    const ccData = await ccRes.json();
+    if (ccData.error) throw new Error(ccData.error);
 
-  try {
-    const settingsUrl = `${SUPABASE_URL}/rest/v1/studio_settings?studio_slug=eq.${STUDIO_SLUG}`;
-    const dbRes = await fetch(settingsUrl, {
-      headers: {
-        'apikey': ANON_KEY,
-        'Authorization': `Bearer ${ANON_KEY}`
+    // Fetch Supabase studio settings with timeout
+    let cloudTournaments = [];
+    let cloudNews = [];
+    let studentLangs = {};
+
+    try {
+      const settingsUrl = `${SUPABASE_URL}/rest/v1/studio_settings?studio_slug=eq.${STUDIO_SLUG}`;
+      const dbRes = await fetchWithTimeout(settingsUrl, {
+        headers: {
+          'apikey': ANON_KEY,
+          'Authorization': `Bearer ${ANON_KEY}`
+        }
+      });
+      if (dbRes.ok) {
+        const list = await dbRes.json();
+        if (list && list.length > 0) {
+          const staffData = list[0].staff_data || {};
+          cloudTournaments = staffData.portal_tournaments || [];
+          cloudNews = staffData.portal_news || [];
+          studentLangs = staffData.student_languages || {};
+        }
       }
-    });
-    if (dbRes.ok) {
-      const list = await dbRes.json();
-      if (list && list.length > 0) {
-        const staffData = list[0].staff_data || {};
-        cloudTournaments = staffData.portal_tournaments || [];
-        cloudNews = staffData.portal_news || [];
-        studentLangs = staffData.student_languages || {};
-      }
+    } catch (err) {
+      console.error('⚠️ Failed to load custom settings from Supabase:', err);
     }
-  } catch (err) {
-    console.error('⚠️ Failed to load custom settings from separate Supabase:', err);
-  }
 
-  // 3. Inject new tournaments, news, and student languages into the returned data
-  const mergedStudents = (ccData.students || []).map(s => {
-    const cloudLang = studentLangs[s.id] || s.language || s.data?.language || 'ka';
-    return {
-      ...s,
-      language: cloudLang,
-      data: {
-        ...(s.data || {}),
-        language: cloudLang
-      }
+    const mergedStudents = (ccData.students || []).map(s => {
+      const cloudLang = studentLangs[s.id] || s.language || s.data?.language || 'ka';
+      return {
+        ...s,
+        language: cloudLang,
+        data: { ...(s.data || {}), language: cloudLang }
+      };
+    });
+
+    const mergedData = {
+      ...ccData,
+      students: mergedStudents,
+      tournaments: cloudTournaments,
+      news: cloudNews
     };
-  });
 
-  const mergedData = {
-    ...ccData,
-    students: mergedStudents,
-    tournaments: cloudTournaments,
-    news: cloudNews
+    setCache(mergedData);
+    return mergedData;
   };
 
-  setCache(mergedData);
-  return mergedData;
+  if (stale) {
+    // Return stale data instantly — refresh in background silently
+    doFetch().catch(err => console.warn('Background refresh failed:', err));
+    return stale;
+  }
+
+  // No cache — must fetch (with timeout)
+  try {
+    return await doFetch();
+  } catch (err) {
+    // Last resort: return any persisted data even if old
+    const lastResort = getPersistCache();
+    if (lastResort) {
+      console.warn('⚠️ Network error, serving stale cache:', err.message);
+      return lastResort;
+    }
+    throw err;
+  }
 }
 
 /* ── Cloud Syncing Helpers for Tournaments & News ── */
