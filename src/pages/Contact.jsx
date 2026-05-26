@@ -56,6 +56,21 @@ export default function Contact() {
                 <a href={contact.youtube} target="_blank" rel="noreferrer">YouTube</a>
               </div>
             </div>
+
+            <div className="contact-map" style={{ marginTop: '3rem' }}>
+              <span className="contact-list__label">Map</span>
+              <div style={{ marginTop: '1rem', border: '1px solid var(--color-line)', borderRadius: '4px', overflow: 'hidden', height: '250px' }}>
+                <iframe
+                  src="https://maps.google.com/maps?q=E.%20Takaishvili%2055,%20Batumi&t=&z=15&ie=UTF8&iwloc=&output=embed"
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0, filter: 'grayscale(1) invert(0.9) contrast(1.2)' }}
+                  allowFullScreen=""
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                ></iframe>
+              </div>
+            </div>
           </div>
 
           <div className="contact-form-wrap">

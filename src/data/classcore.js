@@ -152,7 +152,7 @@ export async function fetchStudioData() {
 }
 
 /* ── Cloud Syncing Helpers for Tournaments & News ── */
-export async function syncTournamentsToCloud(tournaments) {
+export async function syncTournamentToCloud(tournament) {
   try {
     // 1. Fetch current settings from new Supabase
     const settingsUrl = `${SUPABASE_URL}/rest/v1/studio_settings?studio_slug=eq.${STUDIO_SLUG}`;
@@ -167,11 +167,21 @@ export async function syncTournamentsToCloud(tournaments) {
     if (!settingsList || settingsList.length === 0) throw new Error('Studio settings not found on cloud');
     const settings = settingsList[0];
 
-    // 2. Patch staff_data with new tournaments list
+    // 2. Patch staff_data with updated tournament
     const currentStaffData = settings.staff_data || {};
+    let cloudTournaments = currentStaffData.portal_tournaments || [];
+    
+    // Check if tournament exists, update it or add it
+    const idx = cloudTournaments.findIndex(t => t.id === tournament.id);
+    if (idx >= 0) {
+      cloudTournaments[idx] = tournament;
+    } else {
+      cloudTournaments.push(tournament);
+    }
+
     const updatedStaffData = {
       ...currentStaffData,
-      portal_tournaments: tournaments
+      portal_tournaments: cloudTournaments
     };
 
     const patchRes = await fetch(`${SUPABASE_URL}/rest/v1/studio_settings?studio_slug=eq.${STUDIO_SLUG}`, {
@@ -184,12 +194,56 @@ export async function syncTournamentsToCloud(tournaments) {
       body: JSON.stringify({ staff_data: updatedStaffData })
     });
 
-    if (!patchRes.ok) throw new Error('Failed to sync tournaments to cloud');
-    console.log('✅ Tournaments successfully synced to cloud!');
+    if (!patchRes.ok) throw new Error('Failed to sync tournament to cloud');
+    console.log('✅ Tournament successfully synced to cloud!');
     clearCache();
     return true;
   } catch (err) {
     console.error('❌ Cloud tournament sync error:', err);
+    return false;
+  }
+}
+
+export async function deleteTournamentFromCloud(id) {
+  try {
+    const settingsUrl = `${SUPABASE_URL}/rest/v1/studio_settings?studio_slug=eq.${STUDIO_SLUG}`;
+    const getRes = await fetch(settingsUrl, {
+      headers: { 
+        'apikey': ANON_KEY,
+        'Authorization': `Bearer ${ANON_KEY}`
+      }
+    });
+    if (!getRes.ok) throw new Error('Failed to load studio settings from cloud');
+    const settingsList = await getRes.json();
+    if (!settingsList || settingsList.length === 0) throw new Error('Studio settings not found on cloud');
+    const settings = settingsList[0];
+
+    const currentStaffData = settings.staff_data || {};
+    let cloudTournaments = currentStaffData.portal_tournaments || [];
+    
+    cloudTournaments = cloudTournaments.filter(t => t.id !== id);
+
+    const updatedStaffData = {
+      ...currentStaffData,
+      portal_tournaments: cloudTournaments
+    };
+
+    const patchRes = await fetch(`${SUPABASE_URL}/rest/v1/studio_settings?studio_slug=eq.${STUDIO_SLUG}`, {
+      method: 'PATCH',
+      headers: {
+        'apikey': ANON_KEY,
+        'Authorization': `Bearer ${ANON_KEY}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ staff_data: updatedStaffData })
+    });
+
+    if (!patchRes.ok) throw new Error('Failed to delete tournament from cloud');
+    console.log('✅ Tournament successfully deleted from cloud!');
+    clearCache();
+    return true;
+  } catch (err) {
+    console.error('❌ Cloud tournament delete error:', err);
     return false;
   }
 }

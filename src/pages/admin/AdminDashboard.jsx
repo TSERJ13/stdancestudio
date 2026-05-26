@@ -206,18 +206,19 @@ export default function AdminDashboard() {
             const mergedTournaments = data.tournaments.map(cloudT => {
               const localT = localTrns.find(lt => lt.id === cloudT.id);
               if (localT) {
-                // Merge: use cloud as base, but local assignedStudents* fields always win
+                // Merge: prioritize cloud over local to prevent stale cache data loss
                 return {
                   ...cloudT,
-                  assignedStudents: (localT.assignedStudents && localT.assignedStudents.length > 0)
-                    ? localT.assignedStudents
-                    : (cloudT.assignedStudents || []),
-                  assignedStudentsData: (localT.assignedStudentsData && Object.keys(localT.assignedStudentsData).length > 0)
-                    ? localT.assignedStudentsData
-                    : (cloudT.assignedStudentsData || {}),
-                  // Keep any local poster/notes that might be newer
-                  poster: localT.poster || cloudT.poster || '',
-                  notes: localT.notes || cloudT.notes || '',
+                  // Keep local assignedStudents only if cloud is completely empty and local has data
+                  assignedStudents: (cloudT.assignedStudents && cloudT.assignedStudents.length > 0)
+                    ? cloudT.assignedStudents
+                    : (localT.assignedStudents || []),
+                  assignedStudentsData: (cloudT.assignedStudentsData && Object.keys(cloudT.assignedStudentsData).length > 0)
+                    ? cloudT.assignedStudentsData
+                    : (localT.assignedStudentsData || {}),
+                  // Keep any local poster/notes that might be missing in cloud
+                  poster: cloudT.poster || localT.poster || '',
+                  notes: cloudT.notes || localT.notes || '',
                 };
               }
               return cloudT;
@@ -293,7 +294,7 @@ export default function AdminDashboard() {
     try {
       const mod = await import('../../data/classcore')
       mod.clearCache()
-      await mod.syncTournamentsToCloud(getTournaments())
+      await mod.syncTournamentToCloud(t)
     } catch (err) {
       console.error('Tournament sync error:', err)
       showAlert('ღრუბელთან სინქრონიზაცია ვერ მოხერხდა, თუმცა ლოკალურად შენახულია. / Ошибка синхронизации.')
@@ -311,7 +312,7 @@ export default function AdminDashboard() {
       try {
         const mod = await import('../../data/classcore')
         mod.clearCache()
-        await mod.syncTournamentsToCloud(getTournaments())
+        await mod.deleteTournamentFromCloud(id)
       } catch (err) {
         console.error('Tournament delete sync error:', err)
       } finally {
