@@ -44,7 +44,7 @@ export default function Contact() {
               </li>
               <li>
                 <span className="contact-list__label">{t('contact.address')}</span>
-                <p>{contact.address}</p>
+                <p>{t('contact.addressText')}</p>
               </li>
             </ul>
 

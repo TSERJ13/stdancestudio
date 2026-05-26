@@ -55,7 +55,7 @@ export default function Footer() {
             </li>
             <li>
               <span>{t('contact.address')}</span>
-              <p>{contact.address}</p>
+              <p>{t('contact.addressText')}</p>
             </li>
           </ul>
         </div>
