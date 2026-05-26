@@ -7,7 +7,8 @@ import './Home.css'
 export default function Home() {
   const { stats, programs, teachers, testimonials } = siteContent
   const [testimonialIdx, setTestimonialIdx] = useState(0)
-  const { t } = useLanguage()
+  const { lang, t } = useLanguage()
+  const basePath = lang === 'ka' ? '' : `/${lang}`
 
   useEffect(() => {
     const id = setInterval(() => {
@@ -43,10 +44,10 @@ export default function Home() {
             </p>
 
             <div className="hero__actions fade-up" style={{ animationDelay: '0.75s' }}>
-              <Link to="/register" className="btn btn-primary">
+              <Link to={`${basePath}/register`} className="btn btn-primary">
                 {t('hero.cta')}
               </Link>
-              <Link to="/about" className="btn btn-ghost">
+              <Link to={`${basePath}/about`} className="btn btn-ghost">
                 {t('nav.about')}
               </Link>
             </div>
@@ -108,7 +109,7 @@ export default function Home() {
             <p>
               {t('about.desc2')}
             </p>
-            <Link to="/about" className="btn btn-arrow">
+            <Link to={`${basePath}/about`} className="btn btn-arrow">
               {t('about.more')}
             </Link>
           </div>
@@ -140,7 +141,7 @@ export default function Home() {
           </div>
 
           <div className="section-foot">
-            <Link to="/about" className="btn btn-ghost">
+            <Link to={`${basePath}/about`} className="btn btn-ghost">
               {t('about.more')}
             </Link>
           </div>
@@ -218,7 +219,7 @@ export default function Home() {
               {t('home.ctaDesc')}
             </p>
           </div>
-          <Link to="/register" className="btn btn-primary cta__btn">
+          <Link to={`${basePath}/register`} className="btn btn-primary cta__btn">
             {t('home.ctaBtn')}
           </Link>
         </div>

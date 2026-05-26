@@ -23,6 +23,20 @@ function ScrollToTop() {
   return null
 }
 
+const AppRoutes = () => (
+  <Routes>
+    <Route path="/" element={<Home />} />
+    <Route path="about" element={<About />} />
+    <Route path="schedule" element={<Schedule />} />
+    <Route path="payment" element={<Payment />} />
+    <Route path="success" element={<Success />} />
+    <Route path="contact" element={<Contact />} />
+    <Route path="register" element={<Register />} />
+    <Route path="f/:slug" element={<CustomFormView />} />
+    <Route path="*" element={<NotFound />} />
+  </Routes>
+)
+
 export default function App() {
   const { pathname } = useLocation()
   const isStandalone = pathname.startsWith('/admin') || pathname.startsWith('/portal')
@@ -40,15 +54,9 @@ export default function App() {
       ) : (
         <Layout>
           <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/schedule" element={<Schedule />} />
-            <Route path="/payment" element={<Payment />} />
-            <Route path="/success" element={<Success />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/f/:slug" element={<CustomFormView />} />
-            <Route path="*" element={<NotFound />} />
+            <Route path="/ru/*" element={<AppRoutes />} />
+            <Route path="/en/*" element={<AppRoutes />} />
+            <Route path="/*" element={<AppRoutes />} />
           </Routes>
         </Layout>
       )}

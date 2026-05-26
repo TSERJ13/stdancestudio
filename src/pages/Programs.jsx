@@ -1,9 +1,12 @@
 import { siteContent } from '../data/content'
 import { Link } from 'react-router-dom'
+import { useLanguage } from '../context/LanguageContext'
 import './InnerPage.css'
 
 export default function Programs() {
   const { programs } = siteContent
+  const { lang, t } = useLanguage()
+  const basePath = lang === 'ka' ? '' : `/${lang}`
 
   return (
     <>
@@ -49,7 +52,7 @@ export default function Programs() {
           <div className="programs-cta">
             <h3 className="display">არ იცი რომელი აირჩიო?</h3>
             <p>დაგეხმარებით — ერთი საცდელი გაკვეთილი და ყველაფერი გასაგები გახდება.</p>
-            <Link to="/contact" className="btn btn-primary">საცდელი გაკვეთილი</Link>
+            <Link to={`${basePath}/contact`} className="btn btn-primary">საცდელი გაკვეთილი</Link>
           </div>
         </div>
       </section>

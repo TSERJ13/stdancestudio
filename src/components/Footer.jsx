@@ -5,14 +5,16 @@ import './Footer.css'
 
 export default function Footer() {
   const { contact } = siteContent
-  const { t } = useLanguage()
+  const { lang, t } = useLanguage()
+
+  const basePath = lang === 'ka' ? '' : `/${lang}`
 
   const navItems = [
-    { label: t('nav.home'), to: '/' },
-    { label: t('nav.about'), to: '/about' },
-    { label: t('nav.schedule'), to: '/schedule' },
-    { label: t('nav.payment'), to: '/payment' },
-    { label: t('nav.contact'), to: '/contact' },
+    { label: t('nav.home'), to: `${basePath}/` },
+    { label: t('nav.about'), to: `${basePath}/about` },
+    { label: t('nav.schedule'), to: `${basePath}/schedule` },
+    { label: t('nav.payment'), to: `${basePath}/payment` },
+    { label: t('nav.contact'), to: `${basePath}/contact` },
   ]
 
   return (

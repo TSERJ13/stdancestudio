@@ -1,7 +1,11 @@
 import { Link } from 'react-router-dom'
+import { useLanguage } from '../context/LanguageContext'
 import './InnerPage.css'
 
 export default function Success() {
+  const { lang } = useLanguage()
+  const basePath = lang === 'ka' ? '' : `/${lang}`
+
   return (
     <section className="page-hero" style={{ minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center' }}>
       <div className="container">
@@ -28,7 +32,7 @@ export default function Success() {
           დამატებითი კითხვების შემთხვევაში, გთხოვთ დაგვიკავშირდეთ.
         </p>
         <div style={{ animation: 'fadeUp 1.2s var(--ease) backwards', animationDelay: '0.6s' }}>
-          <Link to="/" className="btn btn-primary">
+          <Link to={`${basePath}/`} className="btn btn-primary">
             მთავარ გვერდზე დაბრუნება
           </Link>
         </div>

@@ -1,22 +1,38 @@
 import { useState, useEffect } from 'react'
-import { NavLink, Link } from 'react-router-dom'
+import { NavLink, Link, useNavigate, useLocation } from 'react-router-dom'
 import { useLanguage } from '../context/LanguageContext'
 import './Header.css'
 
 const FloatingLangSwitcher = () => {
-  const { lang, setLang } = useLanguage()
+  const { lang } = useLanguage()
   const [expanded, setExpanded] = useState(false)
+  const navigate = useNavigate()
+  const location = useLocation()
 
   const handleLangClick = (newLang) => {
     if (!expanded) {
       setExpanded(true)
     } else {
-      setLang(newLang)
       setExpanded(false)
+      if (newLang !== lang) {
+        let path = location.pathname
+        
+        if (path.startsWith('/ru/') || path === '/ru') {
+          path = path.replace(/^\/ru/, '')
+        } else if (path.startsWith('/en/') || path === '/en') {
+          path = path.replace(/^\/en/, '')
+        }
+        
+        if (path === '') path = '/'
+        
+        if (newLang !== 'ka') {
+           path = `/${newLang}${path === '/' ? '' : path}`
+        }
+        navigate(path)
+      }
     }
   }
 
-  // Auto-close when clicking outside might be good, but for now toggle is fine
   return (
     <div className={`floating-lang ${expanded ? 'is-expanded' : 'is-collapsed'}`}>
       <button 
@@ -44,7 +60,7 @@ const FloatingLangSwitcher = () => {
 export default function Header() {
   const [scrolled, setScrolled] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
-  const { t } = useLanguage()
+  const { t, lang } = useLanguage()
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40)
@@ -57,19 +73,21 @@ export default function Header() {
     return () => { document.body.style.overflow = '' }
   }, [mobileOpen])
 
+  const basePath = lang === 'ka' ? '' : `/${lang}`
+
   const navItems = [
-    { label: t('nav.home'), to: '/' },
-    { label: t('nav.about'), to: '/about' },
-    { label: t('nav.schedule'), to: '/schedule' },
-    { label: t('nav.payment'), to: '/payment' },
-    { label: t('nav.contact'), to: '/contact' },
+    { label: t('nav.home'), to: `${basePath}/` },
+    { label: t('nav.about'), to: `${basePath}/about` },
+    { label: t('nav.schedule'), to: `${basePath}/schedule` },
+    { label: t('nav.payment'), to: `${basePath}/payment` },
+    { label: t('nav.contact'), to: `${basePath}/contact` },
   ]
 
   return (
     <>
       <header className={`header ${scrolled ? 'is-scrolled' : ''}`}>
         <div className="header__inner container">
-          <Link to="/" className="header__brand" onClick={() => setMobileOpen(false)}>
+          <Link to={`${basePath}/`} className="header__brand" onClick={() => setMobileOpen(false)}>
             <img src="/images/logo-transparent.png" alt="ST Dance Studio" className="header__logo" />
             <div className="header__brand-text" style={{ fontFamily: '"Times New Roman", Times, serif', textTransform: 'uppercase' }}>
               <span className="header__brand-name" style={{ color: 'var(--color-gold)', fontSize: '1.1rem', letterSpacing: '0.1em' }}>ST DANCE</span>
@@ -86,14 +104,14 @@ export default function Header() {
                 className={({ isActive }) =>
                   `header__link ${isActive ? 'is-active' : ''}`
                 }
-                end={item.to === '/'}
+                end={item.to === `${basePath}/`}
               >
                 {item.label}
               </NavLink>
             ))}
           </nav>
 
-          <Link to="/contact" className="btn btn-primary header__cta">
+          <Link to={`${basePath}/contact`} className="btn btn-primary header__cta">
             {t('nav.contact')}
           </Link>
 
@@ -120,7 +138,7 @@ export default function Header() {
                 className={({ isActive }) =>
                   `mobile-menu__link ${isActive ? 'is-active' : ''}`
                 }
-                end={item.to === '/'}
+                end={item.to === `${basePath}/`}
               >
                 <span className="mobile-menu__num">0{i + 1}</span>
                 {item.label}
@@ -128,7 +146,7 @@ export default function Header() {
             ))}
           </nav>
           <Link
-            to="/contact"
+            to={`${basePath}/contact`}
             onClick={() => setMobileOpen(false)}
             className="btn btn-primary mobile-menu__cta"
           >
