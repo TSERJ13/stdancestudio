@@ -524,7 +524,7 @@ export async function submitRegistration(regData) {
 
     try {
       // 2. Send email notification via FormSubmit
-      fetch('https://formsubmit.co/ajax/stdancegroup@gmail.com', {
+      fetch('https://formsubmit.co/ajax/stdancegroupdue@gmail.com', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
