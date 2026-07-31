@@ -517,6 +517,7 @@ export async function submitRegistration(regData) {
         'Accept': 'application/json'
       },
       body: JSON.stringify({
+        name: 'სარეგისტრაციო ფორმა',
         _subject: 'ახალი ონლაინ რეგისტრაცია: ' + regData.student_name,
         "ბავშვის სახელი და გვარი": regData.student_name,
         "დაბადების თარიღი": regData.birth_date,
