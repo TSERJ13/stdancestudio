@@ -501,52 +501,39 @@ export async function sendSms(toPhone, text) {
 /* ── Studio Registrations ────────────────────────── */
 export async function submitRegistration(regData) {
   try {
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/registrations`, {
-      method: 'POST',
-      headers: {
-        'apikey': ANON_KEY,
-        'Authorization': `Bearer ${ANON_KEY}`,
-        'Content-Type': 'application/json',
-        'Prefer': 'return=representation'
-      },
-      body: JSON.stringify(regData)
-    });
-    if (!res.ok) throw new Error('Failed to submit registration');
-    
-    // Async Welcoming Actions (SMS & Email)
+    // 1. Send Welcome SMS to parent (async, doesn't block email notification)
     try {
-      // 1. Send Welcome SMS to parent
       const welcomeMessage = `მოგესალმებით, გილოცავთ ST Dance Studio-ში წარმატებულ რეგისტრაციას! თქვენი პირადი კაბინეტი უკვე შექმნილია. პორტალზე შესასვლელად ეწვიეთ: stdance.ge/portal და ავტორიზაციისთვის გამოიყენეთ თქვენი ტელეფონის ნომერი.`;
       sendSms(regData.parent_phone, welcomeMessage);
     } catch (smsErr) {
       console.error('Failed to send welcome SMS:', smsErr);
     }
 
-    try {
-      // 2. Send email notification via FormSubmit
-      fetch('https://formsubmit.co/ajax/stdancegroupdue@gmail.com', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        body: JSON.stringify({
-          _subject: 'ახალი ონლაინ რეგისტრაცია: ' + regData.student_name,
-          "ბავშვის სახელი და გვარი": regData.student_name,
-          "დაბადების თარიღი": regData.birth_date,
-          "ცვლა": regData.shift,
-          "მშობლის სახელი": regData.parent_name,
-          "მშობლის ტელეფონი": regData.parent_phone,
-          "რეგისტრაციის დრო": new Date().toLocaleString('ka-GE')
-        })
-      });
-    } catch (emailErr) {
-      console.error('Failed to send email notification:', emailErr);
+    // 2. Send email notification via FormSubmit directly (bypassing Supabase)
+    const emailRes = await fetch('https://formsubmit.co/ajax/stdancegroupdue@gmail.com', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify({
+        _subject: 'ახალი ონლაინ რეგისტრაცია: ' + regData.student_name,
+        "ბავშვის სახელი და გვარი": regData.student_name,
+        "დაბადების თარიღი": regData.birth_date,
+        "ცვლა": regData.shift,
+        "მშობლის სახელი": regData.parent_name,
+        "მშობლის ტელეფონი": regData.parent_phone,
+        "რეგისტრაციის დრო": new Date().toLocaleString('ka-GE')
+      })
+    });
+
+    if (!emailRes.ok) {
+      throw new Error('FormSubmit responded with error');
     }
 
     return true;
   } catch (err) {
-    console.error('❌ Cloud submitRegistration error:', err);
+    console.error('❌ Direct submitRegistration error (Bypassed Supabase):', err);
     return false;
   }
 }
