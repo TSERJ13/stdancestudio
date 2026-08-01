@@ -60,7 +60,7 @@ export default function Contact() {
             <div className="contact-map" style={{ marginTop: '3rem' }}>
               <span className="contact-list__label">Map</span>
               <a 
-                href="https://maps.app.goo.gl/6LhoKYxtvTNnawCH9" 
+                href="https://maps.app.goo.gl/iyBGVtNeiNUGZmq86" 
                 target="_blank" 
                 rel="noreferrer"
                 style={{ display: 'block', marginTop: '1rem', border: '1px solid var(--color-line)', borderRadius: '4px', overflow: 'hidden', height: '250px', position: 'relative' }}

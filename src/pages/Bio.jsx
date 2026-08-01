@@ -1081,7 +1081,7 @@ export default function Bio() {
             </a>
 
             <a
-              href="https://maps.google.com/?q=55+Eka+Takaishvili+St,+Batumi"
+              href="https://maps.app.goo.gl/iyBGVtNeiNUGZmq86"
               target="_blank"
               rel="noopener noreferrer"
               className="bio-btn-action"
@@ -1265,7 +1265,7 @@ export default function Bio() {
           {/* FULL-WIDTH MAP BENTO CARD */}
           {(activeTab === 'all' || activeTab === 'contact') && (
             <a
-              href="https://maps.google.com/?q=55+Eka+Takaishvili+St,+Batumi"
+              href="https://maps.app.goo.gl/iyBGVtNeiNUGZmq86"
               target="_blank"
               rel="noopener noreferrer"
               className="bento-map-card"
