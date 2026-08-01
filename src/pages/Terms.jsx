@@ -23,7 +23,7 @@ export default function Terms() {
       section4Title: '4. ავტომატიზებული სერვისები',
       section4Text: 'ჩვენი Instagram Direct ასისტენტი იყენებს ხელოვნურ ინტელექტს (AI) ზოგად კითხვებზე სწრაფი პასუხის გასაცემად. სპეციფიკურ საკითხებზე სტუდიის ადმინისტრაცია პირადად დაგიკავშირდებათ.',
       section5Title: '5. საკონტაქტო ინფორმაცია',
-      section5Text: 'კითხვების შემთხვევაში შეგიძლიათ დაგვიკავშირდეთ: ელ-ფოსტა: stdancestudio13@gmail.com, მისამართი: ბათუმი, ე. თაყაიშვილის 55, ტელეფონი: +995 558 77 77 00.'
+      section5Text: 'კითხვების შემთხვევაში შეგიძლიათ დაგვიკავშირდეთ: ელ-ფოსტა: stdancestudio13@gmail.com, მისამართი: ბათუმი, ე. თაყაიშვილის 55, ტელეფონი: +995 514 19 99 66.'
     },
     en: {
       title: 'Terms of Service',
@@ -43,7 +43,7 @@ export default function Terms() {
       section4Title: '4. Automated Communication Services',
       section4Text: 'Our automated Instagram Direct assistant utilizes Artificial Intelligence (AI) to handle general inquiries. For custom requests or official matters, studio administration will follow up directly.',
       section5Title: '5. Contact Information',
-      section5Text: 'For inquiries regarding these Terms, please contact us at: Email: stdancestudio13@gmail.com, Address: E. Takaishvili 55, Batumi, Phone: +995 558 77 77 00.'
+      section5Text: 'For inquiries regarding these Terms, please contact us at: Email: stdancestudio13@gmail.com, Address: E. Takaishvili 55, Batumi, Phone: +995 514 19 99 66.'
     },
     ru: {
       title: 'Условия обслуживания',
@@ -63,7 +63,7 @@ export default function Terms() {
       section4Title: '4. Автоматизированные сервисы',
       section4Text: 'Наш ассистент в Instagram Direct использует ИИ для ответов на общие вопросы. По индивидуальным вопросам с вами свяжется администрация студии.',
       section5Title: '5. Контактная информация',
-      section5Text: 'По вопросам Условий обращайтесь к нам: Эл. почта: stdancestudio13@gmail.com, Адрес: Батуми, ул. Е. Такаишвили 55, Телефон: +995 558 77 77 00.'
+      section5Text: 'По вопросам Условий обращайтесь к нам: Эл. почта: stdancestudio13@gmail.com, Адрес: Батуми, ул. Е. Такаишвили 55, Телефон: +995 514 19 99 66.'
     }
   }
 

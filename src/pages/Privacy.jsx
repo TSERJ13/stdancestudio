@@ -27,7 +27,7 @@ export default function Privacy() {
       section3Title: '3. მონაცემთა უსაფრთხოება და მესამე პირები',
       section3Text: 'ჩვენ არ ვყიდით და არ გადავცემთ თქვენს პერსონალურ მონაცემებს მესამე პირებს მარკეტინგული მიზნებისთვის. მონაცემები შეიძლება დამუშავდეს მხოლოდ უსაფრთხო ტექნოლოგიურ პარტნიორებთან (მაგ. Meta Graph API და Google Gemini) ავტომატიზებული პასუხების უზრუნველსაყოფად.',
       section4Title: '4. თქვენი უფლებები',
-      section4Text: 'თქვენ უფლება გაქვთ მოითხოვოთ თქვენი პერსონალური მონაცემების ნახვა, შესწორება ან სრული წაშლა ჩვენი ბაზიდან. ამისთვის დაგვიკავშირდით ელ-ფოსტაზე: stdancestudio13@gmail.com ან ტელეფონზე: +995 558 77 77 00.'
+      section4Text: 'თქვენ უფლება გაქვთ მოითხოვოთ თქვენი პერსონალური მონაცემების ნახვა, შესწორება ან სრული წაშლა ჩვენი ბაზიდან. ამისთვის დაგვიკავშირდით ელ-ფოსტაზე: stdancestudio13@gmail.com ან ტელეფონზე: +995 514 19 99 66.'
     },
     en: {
       title: 'Privacy Policy',
@@ -51,7 +51,7 @@ export default function Privacy() {
       section3Title: '3. Data Security & Third Parties',
       section3Text: 'We do not sell or trade your personal information to third parties for marketing purposes. Data processing is handled securely using trusted technical infrastructure (such as Meta Graph API and Google Gemini) solely to fulfill automated inquiry services.',
       section4Title: '4. Your Rights',
-      section4Text: 'You have the right to inspect, update, or request the deletion of your personal data at any time. To exercise your rights, please contact us at stdancestudio13@gmail.com or call +995 558 77 77 00.'
+      section4Text: 'You have the right to inspect, update, or request the deletion of your personal data at any time. To exercise your rights, please contact us at stdancestudio13@gmail.com or call +995 514 19 99 66.'
     },
     ru: {
       title: 'Политика конфиденциальности',
@@ -75,7 +75,7 @@ export default function Privacy() {
       section3Title: '3. Безопасность данных и третьи лица',
       section3Text: 'Мы не продаем и не передаем ваши персональные данные третьим лицам в маркетинговых целях. Обработка данных осуществляется надежными сервисами (такими как Meta Graph API и Google Gemini) исключительно для автоматизированных ответов.',
       section4Title: '4. Ваши права',
-      section4Text: 'Вы имеете право запросить просмотр, исправление или полное удаление ваших персональных данных. Для этого свяжитесь с нами по эл. почте: stdancestudio13@gmail.com или по телефону: +995 558 77 77 00.'
+      section4Text: 'Вы имеете право запросить просмотр, исправление или полное удаление ваших персональных данных. Для этого свяжитесь с нами по эл. почте: stdancestudio13@gmail.com или по телефону: +995 514 19 99 66.'
     }
   }
 
