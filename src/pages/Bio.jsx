@@ -6,6 +6,159 @@ import './Bio.css'
 
 const GEMINI_KEY = atob('QVEuQWI4Uk42SnhSZVRtaWZfOEFCSHBnUWhLRS11dmhlUG5YMTdYSkhBaTZNQjZQQm9ZUg==')
 
+// Smart Instant Knowledge Engine fallback for 100% uptime
+function getSmartKnowledgeAnswer(query, lang) {
+  const q = query.toLowerCase()
+
+  // Price & Tuition
+  if (
+    q.includes('ფას') ||
+    q.includes('ღირს') ||
+    q.includes('აბონემენტ') ||
+    q.includes('გადახდ') ||
+    q.includes('price') ||
+    q.includes('cost') ||
+    q.includes('сколько') ||
+    q.includes('цена') ||
+    q.includes('стоит')
+  ) {
+    if (lang === 'ka') {
+      return '💰 სტუდიის ფასები:\n• თვიური აბონემენტი: 130 ლარი (30 დღე)\n• დედმამიშვილებზე: 100 ლარი 1 მოსწავლეზე (200 ლარი 2 დედმამიშვილზე)\n• ინდივიდუალური გაკვეთილი: 1 გაკვეთილი = 70₾ | 4 გაკვეთილი = 240₾ | 8 გაკვეთილი = 400₾\n• საცდელი გაკვეთილი 100%-ით უფასოა!'
+    } else if (lang === 'en') {
+      return '💰 Pricing Details:\n• Monthly Subscription: 130 GEL (30 days)\n• Siblings Discount: 100 GEL per student (200 GEL for two)\n• Private Lessons: 1 class = 70₾ | 4 classes = 240₾ | 8 classes = 400₾\n• First Trial Lesson is 100% Free!'
+    } else {
+      return '💰 Цены студии:\n• Месячный абонемент: 130 GEL (30 дней)\n• Скидка для братьев/сестер: 100 GEL за ученика (200 GEL за двоих)\n• Индивидуальные уроки: 1 урок = 70₾ | 4 урока = 240₾ | 8 уроков = 400₾\n• Первый пробный урок 100% бесплатный!'
+    }
+  }
+
+  // Location & Address
+  if (
+    q.includes('სად') ||
+    q.includes('მისამართ') ||
+    q.includes('მდებარეობ') ||
+    q.includes('where') ||
+    q.includes('location') ||
+    q.includes('address') ||
+    q.includes('где') ||
+    q.includes('адрес')
+  ) {
+    if (lang === 'ka') {
+      return '📍 მისამართი: ქ. ბათუმი, ექვთიმე თაყაიშვილის ქუჩა №55 (3-სართულიანი თეთრი შენობის მე-3 სართული, შესასვლელი ბალოტისფერი სახლის ჭიშკრიდან). ტელ: +995 514 19 99 66.'
+    } else if (lang === 'en') {
+      return '📍 Location: 55 Eka Takaishvili St, Batumi (3rd floor of the 3-story white building, entrance through the olive gate). Tel: +995 514 19 99 66.'
+    } else {
+      return '📍 Адрес: Батуми, ул. Екатирене Такаишвили №55 (3-й этаж 3-этажного белого здания, вход через оливковые ворота). Тел: +995 514 19 99 66.'
+    }
+  }
+
+  // Schedule & Days
+  if (
+    q.includes('განრიგ') ||
+    q.includes('როდის') ||
+    q.includes('დღე') ||
+    q.includes('საათ') ||
+    q.includes('schedule') ||
+    q.includes('days') ||
+    q.includes('when') ||
+    q.includes('расписание') ||
+    q.includes('когда')
+  ) {
+    if (lang === 'ka') {
+      return '📅 ჯგუფების განრიგი:\n• Baby (4.5-6 წელი): სამშ. & ხუთშ. 17:30 (45 წთ) + შაბ. 10:00\n• Bronze (დამწყებები 1-ელი წელი): სამშ. & ხუთშ. 18:15\n• Pre-Silver (1 წელი ნასიარულები): ორშ., ოთხშ., პარ. 17:30\n• Silver (2+ წელი): ორშ., ოთხშ., პარ. 19:30\n• Golden (5+ წელი): ორშ., ოთხშ., პარ. 16:30\n• წყვილები: ორშ., ოთხშ., პარ. 18:30\n• Hobby Class (მოყვარულები): სამშ. & ხუთშ. 19:15'
+    } else if (lang === 'en') {
+      return '📅 Class Schedule:\n• Baby (4.5-6 yrs): Tue & Thu 17:30 (45 mins) + Sat 10:00\n• Bronze (Beginners 1st yr): Tue & Thu 18:15\n• Pre-Silver (1 yr exp): Mon, Wed, Fri 17:30\n• Silver (2+ yrs exp): Mon, Wed, Fri 19:30\n• Golden (5+ yrs exp): Mon, Wed, Fri 16:30\n• Couples: Mon, Wed, Fri 18:30\n• Hobby Class (Adults): Tue & Thu 19:15'
+    } else {
+      return '📅 Расписание групп:\n• Baby (4.5-6 лет): Вт и Чт 17:30 (45 мин) + Сб 10:00\n• Bronze (1-й год): Вт и Чт 18:15\n• Pre-Silver (1 год опыта): Пн, Ср, Пт 17:30\n• Silver (2+ года опыта): Пн, Ср, Пт 19:30\n• Golden (5+ лет опыта): Пн, Ср, Пт 16:30\n• Пары: Пн, Ср, Пт 18:30\n• Hobby Class (Любители): Вт и Чт 19:15'
+    }
+  }
+
+  // Age limits
+  if (
+    q.includes('ასაკ') ||
+    q.includes('ბავშვ') ||
+    q.includes('პატარ') ||
+    q.includes('age') ||
+    q.includes('kids') ||
+    q.includes('возраст') ||
+    q.includes('дети')
+  ) {
+    if (lang === 'ka') {
+      return '👶 მივიღებთ ბავშვებსა და მოზარდებს 4-დან 16 წლამდე! ყველაზე პატარებისთვის (4.5 - 6 წელი) მოქმედებს Baby ჯგუფი.'
+    } else if (lang === 'en') {
+      return '👶 We enroll children and teenagers aged 4 to 16! For the youngest (4.5 - 6 yrs), we have a dedicated Baby Class.'
+    } else {
+      return '👶 Принимаем детей и подростков от 4 до 16 лет! Для самых маленьких (4.5 - 6 лет) работает группа Baby.'
+    }
+  }
+
+  // Dress code & shoes
+  if (
+    q.includes('ტანსაცმელ') ||
+    q.includes('ჩავიცვ') ||
+    q.includes('ფეხსაცმელ') ||
+    q.includes('ფორმ') ||
+    q.includes('dress') ||
+    q.includes('clothes') ||
+    q.includes('shoes') ||
+    q.includes('одежда') ||
+    q.includes('обувь')
+  ) {
+    if (lang === 'ka') {
+      return '👕 დრესკოდი: სავალდებულოა სამეჯლისო ცეკვების სავარჯიშო ტანსაცმელი (ფერი თავისუფალია). საცეკვაო ფეხსაცმლის შეძენა შესაძლებელია უშუალოდ სტუდიის მაღაზიაში.'
+    } else if (lang === 'en') {
+      return '👕 Dress Code: Ballroom dance practice clothes are required (any color). Dance shoes are available directly in our studio store.'
+    } else {
+      return '👕 Дресс-код: Обязательна тренировочная одежда для бальных танцев (цвет любой). Танцевальную обувь можно приобрести прямо в магазине нашей студии.'
+    }
+  }
+
+  // Competitions & Tournaments
+  if (
+    q.includes('ტურნირი') ||
+    q.includes('შეჯიბრ') ||
+    q.includes('ჩემპიონ') ||
+    q.includes('tournament') ||
+    q.includes('competition') ||
+    q.includes('турнир')
+  ) {
+    if (lang === 'ka') {
+      return '🏆 ტურნირები: აჭარის მასშტაბით ტურნირებში მონაწილეობა სავალდებულოა! გაცდენების 30%-ზე მეტის შემთხვევაში ბავშვი ტურნირზე არ დაიშვება.'
+    } else if (lang === 'en') {
+      return '🏆 Tournaments: Participation in Adjara regional tournaments is mandatory! Absenteeism over 30% disqualifies participation.'
+    } else {
+      return '🏆 Турниры: Участие в турнирах Аджарии обязательно! При пропуске более 30% занятий ребенок к турниру не допускается.'
+    }
+  }
+
+  // Trial class & Registration
+  if (
+    q.includes('საცდელ') ||
+    q.includes('რეგისტრაცი') ||
+    q.includes('უფასო') ||
+    q.includes('trial') ||
+    q.includes('register') ||
+    q.includes('пробн') ||
+    q.includes('регистраци')
+  ) {
+    if (lang === 'ka') {
+      return '✨ პირველი საცდელი გაკვეთილი 100%-ით უფასოა! ჩასაწერად შეავსეთ ფორმა: stdance.ge/register ან მოგვწერეთ WhatsApp-ში: +995 514 19 99 66.'
+    } else if (lang === 'en') {
+      return '✨ First trial lesson is 100% Free! Register online at stdance.ge/register or WhatsApp us at +995 514 19 99 66.'
+    } else {
+      return '✨ Первый пробный урок 100% Бесплатный! Запишитесь на stdance.ge/register или напишите в WhatsApp: +995 514 19 99 66.'
+    }
+  }
+
+  // Default fallback answer
+  if (lang === 'ka') {
+    return '✨ ST Dance Studio — ბათუმის სპორტული და სამეჯლისო ცეკვების სტუდია (ე. თაყაიშვილის 55). საცდელი გაკვეთილი უფასოა! დეტალებისთვის დაგვიკავშირდით: +995 514 19 99 66 ან მოგვწერეთ WhatsApp-ში.'
+  } else if (lang === 'en') {
+    return '✨ ST Dance Studio — Ballroom & Sports Dance Studio in Batumi (55 E. Takaishvili St). Trial class is free! Contact us: +995 514 19 99 66 or WhatsApp.'
+  } else {
+    return '✨ ST Dance Studio — Студия спортивных танцев в Батуми (ул. Е. Такаишвили 55). Пробный урок бесплатный! Тел: +995 514 19 99 66 или WhatsApp.'
+  }
+}
+
 export default function Bio() {
   const { lang } = useLanguage()
   const basePath = lang === 'ka' ? '' : `/${lang}`
@@ -39,7 +192,7 @@ export default function Bio() {
     }
   }, [messages, isAiLoading])
 
-  // Call Gemini REST API
+  // Call Gemini REST API with Instant Smart Knowledge Fallback
   const handleSendAiMessage = async (userMsg) => {
     const query = userMsg || aiInput
     if (!query.trim() || isAiLoading) return
@@ -71,24 +224,19 @@ export default function Bio() {
       )
 
       const data = await res.json()
-      const reply =
-        data.candidates?.[0]?.content?.parts?.[0]?.text ||
-        (lang === 'ka'
-          ? 'ბოდიში, პასუხის მიღება ვერ მოხერხდა. გთხოვთ მოგვწეროთ WhatsApp-ში ან დარეკოთ: +995 514 19 99 66.'
-          : 'Sorry, I could not fetch a response. Please WhatsApp or call us at +995 514 19 99 66.')
+      const reply = data.candidates?.[0]?.content?.parts?.[0]?.text
 
-      setMessages([...newMsgs, { role: 'bot', text: reply }])
+      if (reply) {
+        setMessages([...newMsgs, { role: 'bot', text: reply }])
+      } else {
+        // Fallback to Instant Smart Knowledge Engine
+        const fallbackReply = getSmartKnowledgeAnswer(query, lang)
+        setMessages([...newMsgs, { role: 'bot', text: fallbackReply }])
+      }
     } catch (err) {
-      setMessages([
-        ...newMsgs,
-        {
-          role: 'bot',
-          text:
-            lang === 'ka'
-              ? 'გთხოვთ მოგვწეროთ პირდაპირ WhatsApp-ში ან დარეკოთ: +995 514 19 99 66.'
-              : 'Please contact us directly on WhatsApp or call: +995 514 19 99 66.'
-        }
-      ])
+      // Fallback to Instant Smart Knowledge Engine
+      const fallbackReply = getSmartKnowledgeAnswer(query, lang)
+      setMessages([...newMsgs, { role: 'bot', text: fallbackReply }])
     } finally {
       setIsAiLoading(false)
     }
@@ -650,7 +798,7 @@ export default function Bio() {
                 <div className="bio-ai-title">{t.aiTitle}</div>
               </div>
             </div>
-            <div className="bio-ai-tag">Gemini 2.0 AI</div>
+            <div className="bio-ai-tag">Gemini AI Engine</div>
           </div>
 
           {/* Chat Messages Viewport */}
