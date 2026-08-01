@@ -70,14 +70,15 @@ Click the Online Registration button to sign up.`
     q.includes('ჩაწერ') ||
     q.includes('register') ||
     q.includes('записаться') ||
-    q.includes('зарегистрир')
+    q.includes('зарегистриრ') ||
+    q.includes('записать')
   ) {
     if (lang === 'ka') {
-      return 'ონლაინ რეგისტრაციისთვის შეგიძლიათ გამოიყენოთ გვერდზე განთავსებული "ონლაინ რეგისტრაციის" ღილაკი ან განრიგის ჩანართი.'
+      return 'სიამოვნებით! ონლაინ რეგისტრაციის ფორმა გაგიხსენით. გთხოვთ შეავსოთ მოსწავლის მონაცემები.'
     } else if (lang === 'en') {
-      return 'For online registration, please click the "Online Registration" button on the page.'
+      return 'With pleasure! The online registration form is now open for you. Please fill in the details.'
     } else {
-      return 'Для онлайн-регистрации нажмите кнопку "Онлайн Регистрация" на странице.'
+      return 'С удовольствием! Форма онлайн-регистрации открыта. Пожалуйста, заполните данные.'
     }
   }
 
@@ -512,7 +513,7 @@ export default function Bio() {
   const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false)
   const [isLocationModalOpen, setIsLocationModalOpen] = useState(false)
   const [isContactModalOpen, setIsContactModalOpen] = useState(false)
-  const [activeInstaTab, setActiveInstaTab] = useState('grid') // 'grid', 'reels', 'tagged'
+  const [activeInstaTab, setActiveInstaTab] = useState('grid')
 
   // Registration Form State
   const [regForm, setRegForm] = useState({
@@ -716,7 +717,7 @@ export default function Bio() {
     }
   }
 
-  // Call Gemini REST API with Instant Smart Knowledge Fallback
+  // Call Gemini REST API with Instant Smart Knowledge Fallback & Instant Modal Open for Registration Intent
   const handleSendAiMessage = async (userMsg) => {
     const query = userMsg || aiInput
     if (!query.trim() || isAiLoading) return
@@ -724,6 +725,32 @@ export default function Bio() {
     const newMsgs = [...messages, { role: 'user', text: query }]
     setMessages(newMsgs)
     setAiInput('')
+
+    // CHECK REGISTRATION INTENT IMMEDIATELY (opens Registration Modal instantly!)
+    const qLower = query.toLowerCase()
+    if (
+      qLower.includes('რეგისტრაცი') ||
+      qLower.includes('დამარეგისტრირ') ||
+      qLower.includes('ჩაწერ') ||
+      qLower.includes('register') ||
+      qLower.includes('записаться') ||
+      qLower.includes('зарегистриრ') ||
+      qLower.includes('записать')
+    ) {
+      // 1. Immediately open registration modal drawer
+      setIsRegModalOpen(true)
+
+      // 2. Add instant friendly confirmation response in chat
+      const confirmReply =
+        lang === 'ka'
+          ? 'სიამოვნებით! ონლაინ რეგისტრაციის ფორმა უკვე გაგიხსენით. გთხოვთ შეავსოთ მოსწავლის მონაცემები.'
+          : lang === 'en'
+          ? 'With pleasure! The online registration form is now open for you. Please fill in the details.'
+          : 'С удовольствием! Форма онлайн-регистрации открыта. Пожалуйста, заполните данные.'
+
+      setMessages([...newMsgs, { role: 'bot', text: confirmReply }])
+      return
+    }
 
     setIsAiLoading(true)
 
