@@ -6,6 +6,8 @@ export const translations = {
       schedule: 'განრიგი',
       payment: 'გადახდა',
       contact: 'კონტაქტი',
+      privacy: 'კონფიდენციალურობის პოლიტიკა',
+      terms: 'მომსახურების პირობები',
     },
     hero: {
       eyebrow: 'სპორტული ცეკვების სტუდია',
@@ -114,6 +116,8 @@ export const translations = {
       schedule: 'Schedule',
       payment: 'Payment',
       contact: 'Contact',
+      privacy: 'Privacy Policy',
+      terms: 'Terms of Service',
     },
     hero: {
       eyebrow: 'Sports Dance Studio',
@@ -222,6 +226,8 @@ export const translations = {
       schedule: 'Расписание',
       payment: 'Оплата',
       contact: 'Контакт',
+      privacy: 'Политика конфиденциальности',
+      terms: 'Условия обслуживания',
     },
     hero: {
       eyebrow: 'Студия спортивных танцев',
