@@ -618,34 +618,34 @@ export default function Bio() {
     }
   ]
 
-  // Native Instagram Profile 3-Column Grid Data with Interactive Embed Links
+  // REAL INSTAGRAM POSTS FROM USER REQUEST (EXACT EMBED URLS)
   const instaGridItems = [
     {
       id: 1,
       img: '/images/about-kids.jpg',
-      type: 'reel',
-      embedUrl: 'https://www.instagram.com/reel/DbdH5LcOCh3/embed',
-      url: 'https://www.instagram.com/reel/DbdH5LcOCh3/',
-      title: 'ST Dance Studio Reel Showcase',
-      likes: '184',
-      comments: '22'
+      type: 'photo',
+      embedUrl: 'https://www.instagram.com/p/DYy9WNRDjyT/embed',
+      url: 'https://www.instagram.com/p/DYy9WNRDjyT/',
+      title: 'ST Dance Studio Batumi',
+      likes: '240',
+      comments: '35'
     },
     {
       id: 2,
       img: '/images/studio.jpg',
       type: 'photo',
-      embedUrl: 'https://www.instagram.com/p/DYy9WNRDjyT/embed',
-      url: 'https://www.instagram.com/p/DYy9WNRDjyT/',
+      embedUrl: 'https://www.instagram.com/p/DSm1G4SFT-i/embed',
+      url: 'https://www.instagram.com/p/DSm1G4SFT-i/',
       title: 'ST Dance Studio Training Hall',
-      likes: '240',
-      comments: '35'
+      likes: '310',
+      comments: '42'
     },
     {
       id: 3,
       img: '/images/competition.png',
-      type: 'carousel',
-      embedUrl: 'https://www.instagram.com/p/DYy9WNRDjyT/embed',
-      url: 'https://www.instagram.com/stdancestudio/',
+      type: 'photo',
+      embedUrl: 'https://www.instagram.com/p/CwbIKwVIK6C/embed',
+      url: 'https://www.instagram.com/p/CwbIKwVIK6C/',
       title: 'ST Dance Competition Awards',
       likes: '356',
       comments: '48'
@@ -653,20 +653,20 @@ export default function Bio() {
     {
       id: 4,
       img: '/images/dancer-1.png',
-      type: 'reel',
-      embedUrl: 'https://www.instagram.com/reel/DbdH5LcOCh3/embed',
-      url: 'https://www.instagram.com/stdancestudio/',
-      title: 'Solo Category Practice',
+      type: 'photo',
+      embedUrl: 'https://www.instagram.com/p/CuVJP7poqe2/embed',
+      url: 'https://www.instagram.com/p/CuVJP7poqe2/',
+      title: 'ST Dance Studio Dancers',
       likes: '210',
       comments: '19'
     },
     {
       id: 5,
       img: '/images/dancer-2.png',
-      type: 'carousel',
-      embedUrl: 'https://www.instagram.com/p/DYy9WNRDjyT/embed',
-      url: 'https://www.instagram.com/stdancestudio/',
-      title: 'Couples Group Performance',
+      type: 'photo',
+      embedUrl: 'https://www.instagram.com/p/CuPJ6q8o-ds/embed',
+      url: 'https://www.instagram.com/p/CuPJ6q8o-ds/',
+      title: 'ST Dance Studio Class',
       likes: '298',
       comments: '41'
     },
@@ -674,41 +674,11 @@ export default function Bio() {
       id: 6,
       img: '/images/hero-1.png',
       type: 'reel',
-      embedUrl: 'https://www.instagram.com/reel/DbdH5LcOCh3/embed',
-      url: 'https://www.instagram.com/stdancestudio/',
-      title: 'Masterclass Intensive',
+      embedUrl: 'https://www.instagram.com/reel/CtHujjZIL3Z/embed',
+      url: 'https://www.instagram.com/reel/CtHujjZIL3Z/',
+      title: 'ST Dance Studio Reel Showcase',
       likes: '480',
       comments: '63'
-    },
-    {
-      id: 7,
-      img: '/images/hero-2.png',
-      type: 'photo',
-      embedUrl: 'https://www.instagram.com/p/DYy9WNRDjyT/embed',
-      url: 'https://www.instagram.com/stdancestudio/',
-      title: 'Studio Atmosphere',
-      likes: '195',
-      comments: '27'
-    },
-    {
-      id: 8,
-      img: '/images/sergi.jpg',
-      type: 'reel',
-      embedUrl: 'https://www.instagram.com/reel/DbdH5LcOCh3/embed',
-      url: 'https://www.instagram.com/stdancestudio/',
-      title: 'Head Coach Sergo Tsivtsivadze',
-      likes: '620',
-      comments: '94'
-    },
-    {
-      id: 9,
-      img: '/images/nini.jpg',
-      type: 'photo',
-      embedUrl: 'https://www.instagram.com/p/DYy9WNRDjyT/embed',
-      url: 'https://www.instagram.com/stdancestudio/',
-      title: 'Young Dancers Class',
-      likes: '310',
-      comments: '52'
     }
   ]
 
@@ -1067,22 +1037,6 @@ export default function Bio() {
           </div>
         </header>
 
-        {/* 3D STUDIO TOUR HERO BUTTON CARD */}
-        <section className="bio-3d-banner" onClick={() => setIs3DTourModalOpen(true)}>
-          <div className="bio-3d-icon-box">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
-              <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
-              <line x1="12" y1="22.08" x2="12" y2="12"></line>
-            </svg>
-          </div>
-          <div className="bio-3d-text-wrap">
-            <div className="bio-3d-title">3D დარბაზის ტური (360° View)</div>
-            <div className="bio-3d-sub">დაათვალიერეთ ST Dance Studio-ს დარბაზი 3D ფორმატში</div>
-          </div>
-          <div className="bio-3d-arrow">➔</div>
-        </section>
-
         {/* EMBEDDED AI CHAT BOT BENTO CARD */}
         <section className="bio-ai-card">
           <div className="bio-ai-header">
@@ -1225,7 +1179,7 @@ export default function Bio() {
             </button>
           </div>
 
-          {/* 3-COLUMN INSTAGRAM POSTS GRID WITH INTERACTIVE EMBED VIEWER */}
+          {/* 3-COLUMN INSTAGRAM POSTS GRID WITH REAL USER INSTAGRAM EMBEDS */}
           <div className="insta-3col-grid">
             {instaGridItems.map((item) => (
               <div
@@ -1271,6 +1225,22 @@ export default function Bio() {
           >
             <span>იხილეთ ყველა პოსტი & რილსი Instagram-ზე (@stdancestudio) ➔</span>
           </a>
+        </section>
+
+        {/* 3D STUDIO TOUR BANNER (PLACED LOWER DOWN BEFORE FOOTER) */}
+        <section className="bio-3d-banner" onClick={() => setIs3DTourModalOpen(true)}>
+          <div className="bio-3d-icon-box">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+              <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+              <line x1="12" y1="22.08" x2="12" y2="12"></line>
+            </svg>
+          </div>
+          <div className="bio-3d-text-wrap">
+            <div className="bio-3d-title">3D დარბაზის ტური (360° View)</div>
+            <div className="bio-3d-sub">დაათვალიერეთ ST Dance Studio-ს დარბაზი 3D ფორმატში</div>
+          </div>
+          <div className="bio-3d-arrow">➔</div>
         </section>
 
         {/* SOCIAL FOOTER ICONS */}
