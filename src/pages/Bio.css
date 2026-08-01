@@ -821,6 +821,66 @@
   transform: scale(1.06);
 }
 
+/* CLEAN INSTAGRAM GRID CARD (no iframe) */
+.insta-clean-card {
+  position: relative;
+  border-radius: 10px;
+  overflow: hidden;
+  cursor: pointer;
+  aspect-ratio: 1;
+  transition: transform 0.22s ease, box-shadow 0.22s ease;
+}
+
+.insta-clean-card:hover {
+  transform: scale(1.04);
+  box-shadow: 0 8px 28px rgba(197, 160, 89, 0.22);
+}
+
+.insta-clean-bg {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #405de6 0%, #833ab4 30%, #c13584 55%, #e1306c 75%, #fd1d1d 90%, #f56040 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px;
+}
+
+.insta-clean-logo {
+  color: rgba(255, 255, 255, 0.85);
+  width: 28px;
+  height: 28px;
+}
+
+.insta-clean-logo svg {
+  width: 100%;
+  height: 100%;
+}
+
+.insta-clean-type {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  color: rgba(255, 255, 255, 0.95);
+  font-size: 0.58rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: 4px;
+  padding: 2px 5px;
+}
+
+.insta-clean-user {
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 0.5rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+
 .insta-full-feed-link {
   display: block;
   width: 100%;

@@ -663,14 +663,29 @@ export default function Bio() {
       permalink: 'https://www.instagram.com/reel/CtHujjZIL3Z/',
       embedUrl: 'https://www.instagram.com/reel/CtHujjZIL3Z/embed',
     },
+    {
+      id: 7,
+      type: 'post',
+      shortcode: 'Cs1ds_Vo48t',
+      permalink: 'https://www.instagram.com/p/Cs1ds_Vo48t/',
+      embedUrl: 'https://www.instagram.com/p/Cs1ds_Vo48t/embed',
+    },
+    {
+      id: 8,
+      type: 'post',
+      shortcode: 'CqBh8nAofgP',
+      permalink: 'https://www.instagram.com/p/CqBh8nAofgP/',
+      embedUrl: 'https://www.instagram.com/p/CqBh8nAofgP/embed',
+    },
+    {
+      id: 9,
+      type: 'post',
+      shortcode: 'CuVJP7poqe2',
+      permalink: 'https://www.instagram.com/p/CuVJP7poqe2/',
+      embedUrl: 'https://www.instagram.com/p/CuVJP7poqe2/embed',
+    },
   ]
 
-  // 3 additional studio local photo cards
-  const extraPhotoItems = [
-    { id: 7, img: '/images/competition.png', label: 'ჩემპიონატი' },
-    { id: 8, img: '/images/about-kids.jpg', label: 'ბავშვთა ჯგუფი' },
-    { id: 9, img: '/images/dancer-2.png', label: 'სტუდია' },
-  ]
 
   // AI Chat state
   const [aiInput, setAiInput] = useState('')
@@ -1169,46 +1184,37 @@ export default function Bio() {
             </button>
           </div>
 
-          {/* REAL INSTAGRAM EMBED FEED — 6 posts provided by user + 3 local studio photos */}
+          {/* 9 CLEAN INSTAGRAM GRID CARDS — no iframe, no frame, click opens modal */}
           <div className="insta-embed-feed">
-
-            {/* ROW 1: 6 real Instagram embeds in 3-column mini iframe grid */}
-            {realInstaEmbeds.map((item) => (
-              <div key={item.id} className="insta-embed-card" onClick={() => setSelectedInstaPost(item)}>
-                <div className="insta-embed-frame-wrap">
-                  <iframe
-                    src={item.embedUrl}
-                    className="insta-embed-frame"
-                    frameBorder="0"
-                    scrolling="no"
-                    allowTransparency={true}
-                    allow="encrypted-media"
-                    title={`Instagram Post ${item.shortcode}`}
-                  />
-                  {/* Transparent click overlay so clicking opens the modal */}
-                  <div className="insta-embed-click-shield" />
+            {realInstaEmbeds.map((item) => {
+              const isReel = item.type === 'reel'
+              return (
+                <div
+                  key={item.id}
+                  className="insta-clean-card"
+                  onClick={() => setSelectedInstaPost(item)}
+                >
+                  {/* Instagram gradient background */}
+                  <div className="insta-clean-bg">
+                    <div className="insta-clean-logo">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                        <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+                        <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+                        <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+                      </svg>
+                    </div>
+                    <div className="insta-clean-type">
+                      {isReel ? (
+                        <><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg> Reel</>
+                      ) : (
+                        <>Post</>  
+                      )}
+                    </div>
+                    <div className="insta-clean-user">@stdancestudio</div>
+                  </div>
                 </div>
-                <div className="insta-embed-card-footer">
-                  <span className="insta-embed-type-badge">
-                    {item.type === 'reel' ? (
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
-                    ) : (
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect></svg>
-                    )}
-                    {item.type === 'reel' ? 'Reel' : 'Post'}
-                  </span>
-                  <a href={item.permalink} target="_blank" rel="noopener noreferrer" className="insta-embed-open-link" onClick={e => e.stopPropagation()}>Instagram ➔</a>
-                </div>
-              </div>
-            ))}
-
-            {/* 3 additional local studio photo cards */}
-            {extraPhotoItems.map((item) => (
-              <div key={item.id} className="insta-extra-photo-card">
-                <img src={item.img} alt={item.label} className="insta-extra-photo-img" />
-                <div className="insta-extra-photo-label">{item.label}</div>
-              </div>
-            ))}
+              )
+            })}
           </div>
 
           {/* Footer Direct Profile CTA */}
