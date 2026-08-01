@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useLanguage } from '../context/LanguageContext'
 import { Link } from 'react-router-dom'
+import { studioKnowledgeBase } from '../data/aiKnowledge'
 import './Bio.css'
 
 const GEMINI_KEY = atob('QVEuQWI4Uk42SnhSZVRtaWZfOEFCSHBnUWhLRS11dmhlUG5YMTdYSkhBaTZNQjZQQm9ZUg==')
@@ -49,15 +50,7 @@ export default function Bio() {
     setIsAiLoading(true)
 
     try {
-      const systemPrompt = `შენ ხარ ST Dance Studio-ს (ბათუმის სპორტული და სამეჯლისო ცეკვების სტუდია) მეგობრული, პროფესიონალი AI ასისტენტი.
-სტუდიის შესახებ ინფორმაცია:
-- ლოკაცია: ბათუმი, ე. თაყაიშვილის 55.
-- ტელეფონი / WhatsApp: +995 514 19 99 66
-- ასაკობრივი ჯგუფი: 4-დან 16 წლამდე ბავშვები და მოზარდები.
-- მიმართულებები: სპორტული ცეკვები, სამეჯლისო ცეკვები (Ballroom Dance), ლათინო-ამერიკული, საბავშვო ქორეოგრაფია.
-- საცდელი გაკვეთილი: 100% უფასოა! ონლაინ რეგისტრაცია შესაძლებელია საიტზე: stdance.ge/register.
-- უპასუხე იმ ენაზე, რომელზეც მომხმარებელი გეკითხება (ქართულად, ინგლისურად ან რუსულად).
-- პასუხი იყოს მოკლე (2-4 წინადადება), ამომწურავი, თავაზიანი და მეგობრული.`
+      const systemPrompt = `${studioKnowledgeBase}\n\nყურადღება: უპასუხე იმავე ენაზე, რომელზეც მომხმარებელი გეკითხება. იყავი თავაზიანი, მეგობრული და მოკლე (2-4 წინადადება).`
 
       const res = await fetch(
         `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`,
