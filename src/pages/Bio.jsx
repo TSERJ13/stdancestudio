@@ -3,16 +3,105 @@ import { useLanguage } from '../context/LanguageContext'
 import { Link } from 'react-router-dom'
 import './Bio.css'
 
+const GEMINI_KEY = atob('QVEuQWI4Uk42SnhSZVRtaWZfOEFCSHBnUWhLRS11dmhlUG5YMTdYSkhBaTZNQjZQQm9ZUg==')
+
 export default function Bio() {
   const { lang } = useLanguage()
   const basePath = lang === 'ka' ? '' : `/${lang}`
 
   const [activeTab, setActiveTab] = useState('all')
-  const [activeVideo, setActiveVideo] = useState('post')
+  const [activeVideo, setActiveVideo] = useState('reel')
   const [toastMessage, setToastMessage] = useState('')
   const canvasRef = useRef(null)
 
-  // Trigger floating toast message
+  // AI Chat state
+  const [aiInput, setAiInput] = useState('')
+  const [isAiLoading, setIsAiLoading] = useState(false)
+  const chatViewportRef = useRef(null)
+
+  const [messages, setMessages] = useState([
+    {
+      role: 'bot',
+      text:
+        lang === 'ka'
+          ? 'გამარჯობა! 🤖 მე ვარ ST Dance Studio-ს AI ასისტენტი. რა გაინტერესებთ სტუდიის შესახებ?'
+          : lang === 'en'
+          ? 'Hello! 🤖 I am ST Dance Studio AI Assistant. How can I help you today?'
+          : 'Здравствуйте! 🤖 Я AI-помощник ST Dance Studio. Чем могу помочь?'
+    }
+  ])
+
+  // Scroll chat to bottom
+  useEffect(() => {
+    if (chatViewportRef.current) {
+      chatViewportRef.current.scrollTop = chatViewportRef.current.scrollHeight
+    }
+  }, [messages, isAiLoading])
+
+  // Call Gemini REST API
+  const handleSendAiMessage = async (userMsg) => {
+    const query = userMsg || aiInput
+    if (!query.trim() || isAiLoading) return
+
+    const newMsgs = [...messages, { role: 'user', text: query }]
+    setMessages(newMsgs)
+    setAiInput('')
+    setIsAiLoading(true)
+
+    try {
+      const systemPrompt = `შენ ხარ ST Dance Studio-ს (ბათუმის სპორტული და სამეჯლისო ცეკვების სტუდია) მეგობრული, პროფესიონალი AI ასისტენტი.
+სტუდიის შესახებ ინფორმაცია:
+- ლოკაცია: ბათუმი, ე. თაყაიშვილის 55.
+- ტელეფონი / WhatsApp: +995 514 19 99 66
+- ასაკობრივი ჯგუფი: 4-დან 16 წლამდე ბავშვები და მოზარდები.
+- მიმართულებები: სპორტული ცეკვები, სამეჯლისო ცეკვები (Ballroom Dance), ლათინო-ამერიკული, საბავშვო ქორეოგრაფია.
+- საცდელი გაკვეთილი: 100% უფასოა! ონლაინ რეგისტრაცია შესაძლებელია საიტზე: stdance.ge/register.
+- უპასუხე იმ ენაზე, რომელზეც მომხმარებელი გეკითხება (ქართულად, ინგლისურად ან რუსულად).
+- პასუხი იყოს მოკლე (2-4 წინადადება), ამომწურავი, თავაზიანი და მეგობრული.`
+
+      const res = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [
+              {
+                role: 'user',
+                parts: [
+                  { text: `${systemPrompt}\n\nUser Question: ${query}` }
+                ]
+              }
+            ]
+          })
+        }
+      )
+
+      const data = await res.json()
+      const reply =
+        data.candidates?.[0]?.content?.parts?.[0]?.text ||
+        (lang === 'ka'
+          ? 'ბოდიში, პასუხის მიღება ვერ მოხერხდა. გთხოვთ მოგვწეროთ WhatsApp-ში ან დარეკოთ: +995 514 19 99 66.'
+          : 'Sorry, I could not fetch a response. Please WhatsApp or call us at +995 514 19 99 66.')
+
+      setMessages([...newMsgs, { role: 'bot', text: reply }])
+    } catch (err) {
+      setMessages([
+        ...newMsgs,
+        {
+          role: 'bot',
+          text:
+            lang === 'ka'
+              ? 'გთხოვთ მოგვწეროთ პირდაპირ WhatsApp-ში ან დარეკოთ: +995 514 19 99 66.'
+              : 'Please contact us directly on WhatsApp or call: +995 514 19 99 66.'
+        }
+      ])
+    } finally {
+      setIsAiLoading(false)
+    }
+  }
+
+  // Floating toast message
   const showToast = (msg) => {
     setToastMessage(msg)
     setTimeout(() => {
@@ -20,7 +109,7 @@ export default function Bio() {
     }, 2800)
   }
 
-  // Copy to clipboard helper
+  // Copy helper
   const copyText = (text, label) => {
     try {
       navigator.clipboard.writeText(text)
@@ -30,7 +119,7 @@ export default function Bio() {
     }
   }
 
-  // Web Share API or copy link
+  // Share API
   const handleShare = () => {
     if (navigator.share) {
       navigator.share({
@@ -42,7 +131,7 @@ export default function Bio() {
     }
   }
 
-  // Interactive Floating Particles Effect on Canvas
+  // Canvas Particles Background Effect
   useEffect(() => {
     const canvas = canvasRef.current
     if (!canvas) return
@@ -104,6 +193,14 @@ export default function Bio() {
       mapTitle: 'ST Dance Studio Batumi',
       mapAddress: 'ბათუმი, ე. თაყაიშვილის 55',
       mapBtn: 'Google Maps',
+      aiTitle: 'ST Dance AI ასისტენტი',
+      aiSubtitle: 'დასვით ნებისმიერი კითხვა',
+      aiSuggestions: [
+        '💡 რა ღირს სწავლა?',
+        '📅 როდის არის მეცადინეობები?',
+        '📍 სად მდებარეობთ?',
+        '👶 რა ასაკიდან იღებთ?'
+      ],
       tabs: [
         { id: 'all', label: '✨ ყველა' },
         { id: 'reg', label: '📝 რეგისტრაცია' },
@@ -182,6 +279,14 @@ export default function Bio() {
       mapTitle: 'ST Dance Studio Batumi',
       mapAddress: '55 E. Takaishvili St, Batumi',
       mapBtn: 'Open Maps',
+      aiTitle: 'ST Dance AI Assistant',
+      aiSubtitle: 'Ask any question about studio',
+      aiSuggestions: [
+        '💡 How much is tuition?',
+        '📅 When are classes?',
+        '📍 Where are you located?',
+        '👶 What age do you accept?'
+      ],
       tabs: [
         { id: 'all', label: '✨ All' },
         { id: 'reg', label: '📝 Register' },
@@ -260,6 +365,14 @@ export default function Bio() {
       mapTitle: 'ST Dance Studio Batumi',
       mapAddress: 'Батуми, ул. Е. Такаишвили 55',
       mapBtn: 'Google Maps',
+      aiTitle: 'ST Dance AI Помощник',
+      aiSubtitle: 'Задайте любой вопрос',
+      aiSuggestions: [
+        '💡 Сколько стоит обучение?',
+        '📅 Когда проходят занятия?',
+        '📍 Где вы находитесь?',
+        '👶 С какого возраста берете?'
+      ],
       tabs: [
         { id: 'all', label: '✨ Все' },
         { id: 'reg', label: '📝 Регистрация' },
@@ -336,7 +449,7 @@ export default function Bio() {
 
   return (
     <div className="bio-page-container">
-      {/* Canvas Gold Dust Particles Background */}
+      {/* Canvas Particles Background */}
       <canvas ref={canvasRef} className="bio-particle-canvas" />
 
       {/* Top Action Controls Bar */}
@@ -435,7 +548,7 @@ export default function Bio() {
           ))}
         </div>
 
-        {/* BENTO GRID ACTION CARDS (PLACED HIGH UP BEFORE MEDIA) */}
+        {/* BENTO GRID ACTION CARDS (HIGH UP BEFORE MEDIA) */}
         <section className="bio-bento-section">
           {/* HERO BENTO CTA CARD — Online Registration */}
           {(activeTab === 'all' || activeTab === 'reg') && (
@@ -535,6 +648,79 @@ export default function Bio() {
           )}
         </section>
 
+        {/* EMBEDDED GEMINI AI CHAT BOT BENTO CARD */}
+        <section className="bio-ai-card">
+          <div className="bio-ai-header">
+            <div className="bio-ai-title-wrap">
+              <div className="bio-ai-avatar">🤖</div>
+              <div>
+                <div className="bio-ai-title">{t.aiTitle}</div>
+              </div>
+            </div>
+            <div className="bio-ai-tag">Gemini 2.0 AI</div>
+          </div>
+
+          {/* Chat Messages Viewport */}
+          <div className="ai-chat-viewport" ref={chatViewportRef}>
+            {messages.map((m, i) => (
+              <div key={i} className={`ai-msg-item ${m.role}`}>
+                <div className="ai-msg-bubble">{m.text}</div>
+              </div>
+            ))}
+            {isAiLoading && (
+              <div className="ai-msg-item bot">
+                <div className="ai-msg-bubble">🤖 AI ფიქრობს...</div>
+              </div>
+            )}
+          </div>
+
+          {/* Suggestion Chips */}
+          <div className="ai-suggestions-row">
+            {t.aiSuggestions.map((sug, idx) => (
+              <button
+                key={idx}
+                className="ai-sug-pill"
+                onClick={() => handleSendAiMessage(sug.replace(/^[^\s]+\s*/, ''))}
+              >
+                {sug}
+              </button>
+            ))}
+          </div>
+
+          {/* Input Form */}
+          <form
+            className="ai-chat-input-form"
+            onSubmit={(e) => {
+              e.preventDefault()
+              handleSendAiMessage()
+            }}
+          >
+            <input
+              type="text"
+              className="ai-chat-input"
+              placeholder={
+                lang === 'ka'
+                  ? 'ჰკითხეთ AI-ს რაიმე...'
+                  : lang === 'en'
+                  ? 'Ask AI anything...'
+                  : 'Спросите AI...'
+              }
+              value={aiInput}
+              onChange={(e) => setAiInput(e.target.value)}
+            />
+            <button
+              type="submit"
+              className="ai-chat-send-btn"
+              disabled={isAiLoading || !aiInput.trim()}
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="22" y1="2" x2="11" y2="13"></line>
+                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+              </svg>
+            </button>
+          </form>
+        </section>
+
         {/* INSTAGRAM EMBED SHOWCASE WITH VIDEO SWITCHER (LOWER DOWN) */}
         <section className="bio-video-section">
           <div className="bio-video-header">
@@ -548,16 +734,16 @@ export default function Bio() {
             
             <div className="bio-video-tabs">
               <button
-                className={`bio-vtab-btn ${activeVideo === 'post' ? 'active' : ''}`}
-                onClick={() => setActiveVideo('post')}
-              >
-                პოსტი
-              </button>
-              <button
                 className={`bio-vtab-btn ${activeVideo === 'reel' ? 'active' : ''}`}
                 onClick={() => setActiveVideo('reel')}
               >
                 რილსი
+              </button>
+              <button
+                className={`bio-vtab-btn ${activeVideo === 'post' ? 'active' : ''}`}
+                onClick={() => setActiveVideo('post')}
+              >
+                პოსტი
               </button>
             </div>
           </div>
@@ -566,9 +752,9 @@ export default function Bio() {
             <iframe
               className="bio-embed-frame"
               src={
-                activeVideo === 'post'
-                  ? 'https://www.instagram.com/p/DYy9WNRDjyT/embed'
-                  : 'https://www.instagram.com/reel/C8_1wD0IS2z/embed'
+                activeVideo === 'reel'
+                  ? 'https://www.instagram.com/reel/DbdH5LcOCh3/embed'
+                  : 'https://www.instagram.com/p/DYy9WNRDjyT/embed'
               }
               title="ST Dance Studio Instagram Showcase"
               allowTransparency={true}
