@@ -625,6 +625,7 @@ export default function Bio() {
       id: 1,
       type: 'post',
       shortcode: 'DYy9WNRDjyT',
+      thumbnail: '/images/hero-1.png',
       permalink: 'https://www.instagram.com/p/DYy9WNRDjyT/',
       embedUrl: 'https://www.instagram.com/p/DYy9WNRDjyT/embed',
     },
@@ -632,6 +633,7 @@ export default function Bio() {
       id: 2,
       type: 'post',
       shortcode: 'DSm1G4SFT-i',
+      thumbnail: '/images/about-kids.jpg',
       permalink: 'https://www.instagram.com/p/DSm1G4SFT-i/',
       embedUrl: 'https://www.instagram.com/p/DSm1G4SFT-i/embed',
     },
@@ -639,6 +641,7 @@ export default function Bio() {
       id: 3,
       type: 'post',
       shortcode: 'CwbIKwVIK6C',
+      thumbnail: '/images/competition.png',
       permalink: 'https://www.instagram.com/p/CwbIKwVIK6C/',
       embedUrl: 'https://www.instagram.com/p/CwbIKwVIK6C/embed',
     },
@@ -646,6 +649,7 @@ export default function Bio() {
       id: 4,
       type: 'post',
       shortcode: 'CuVJP7poqe2',
+      thumbnail: '/images/dancer-1.png',
       permalink: 'https://www.instagram.com/p/CuVJP7poqe2/',
       embedUrl: 'https://www.instagram.com/p/CuVJP7poqe2/embed',
     },
@@ -653,6 +657,7 @@ export default function Bio() {
       id: 5,
       type: 'post',
       shortcode: 'CuPJ6q8o-ds',
+      thumbnail: '/images/dancer-2.png',
       permalink: 'https://www.instagram.com/p/CuPJ6q8o-ds/',
       embedUrl: 'https://www.instagram.com/p/CuPJ6q8o-ds/embed',
     },
@@ -660,6 +665,7 @@ export default function Bio() {
       id: 6,
       type: 'reel',
       shortcode: 'CtHujjZIL3Z',
+      thumbnail: '/images/hero-2.png',
       permalink: 'https://www.instagram.com/reel/CtHujjZIL3Z/',
       embedUrl: 'https://www.instagram.com/reel/CtHujjZIL3Z/embed',
     },
@@ -667,6 +673,7 @@ export default function Bio() {
       id: 7,
       type: 'post',
       shortcode: 'Cs1ds_Vo48t',
+      thumbnail: '/images/nini.jpg',
       permalink: 'https://www.instagram.com/p/Cs1ds_Vo48t/',
       embedUrl: 'https://www.instagram.com/p/Cs1ds_Vo48t/embed',
     },
@@ -674,6 +681,7 @@ export default function Bio() {
       id: 8,
       type: 'post',
       shortcode: 'CqBh8nAofgP',
+      thumbnail: '/images/sergi.jpg',
       permalink: 'https://www.instagram.com/p/CqBh8nAofgP/',
       embedUrl: 'https://www.instagram.com/p/CqBh8nAofgP/embed',
     },
@@ -681,6 +689,7 @@ export default function Bio() {
       id: 9,
       type: 'post',
       shortcode: 'CuVJP7poqe2',
+      thumbnail: '/images/about-kids-clean.jpg',
       permalink: 'https://www.instagram.com/p/CuVJP7poqe2/',
       embedUrl: 'https://www.instagram.com/p/CuVJP7poqe2/embed',
     },
@@ -1184,37 +1193,32 @@ export default function Bio() {
             </button>
           </div>
 
-          {/* 9 CLEAN INSTAGRAM GRID CARDS — no iframe, no frame, click opens modal */}
+          {/* 9-CARD PHOTO GRID — local thumbnails, click opens IG embed modal */}
           <div className="insta-embed-feed">
-            {realInstaEmbeds.map((item) => {
-              const isReel = item.type === 'reel'
-              return (
-                <div
-                  key={item.id}
-                  className="insta-clean-card"
-                  onClick={() => setSelectedInstaPost(item)}
-                >
-                  {/* Instagram gradient background */}
-                  <div className="insta-clean-bg">
-                    <div className="insta-clean-logo">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                        <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
-                        <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
-                        <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
-                      </svg>
-                    </div>
-                    <div className="insta-clean-type">
-                      {isReel ? (
-                        <><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg> Reel</>
-                      ) : (
-                        <>Post</>  
-                      )}
-                    </div>
-                    <div className="insta-clean-user">@stdancestudio</div>
+            {realInstaEmbeds.map((item) => (
+              <div
+                key={item.id}
+                className="insta-photo-card"
+                onClick={() => setSelectedInstaPost(item)}
+              >
+                <img
+                  src={item.thumbnail}
+                  alt={`@stdancestudio post ${item.id}`}
+                  className="insta-photo-img"
+                />
+                {/* reel badge */}
+                {item.type === 'reel' && (
+                  <div className="insta-photo-reel-badge">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
                   </div>
+                )}
+                {/* hover overlay */}
+                <div className="insta-photo-hover">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+                  <span>გახსნა</span>
                 </div>
-              )
-            })}
+              </div>
+            ))}
           </div>
 
           {/* Footer Direct Profile CTA */}

@@ -880,6 +880,68 @@
   letter-spacing: 0.04em;
 }
 
+/* REAL PHOTO THUMBNAIL CARDS */
+.insta-photo-card {
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  aspect-ratio: 1;
+  background: #101018;
+  transition: transform 0.22s ease, box-shadow 0.22s ease;
+}
+
+.insta-photo-card:hover {
+  transform: scale(1.03);
+  box-shadow: 0 6px 22px rgba(197, 160, 89, 0.25);
+}
+
+.insta-photo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.4s ease;
+}
+
+.insta-photo-card:hover .insta-photo-img {
+  transform: scale(1.07);
+}
+
+.insta-photo-reel-badge {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background: rgba(0,0,0,0.55);
+  border-radius: 4px;
+  padding: 3px 4px;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  z-index: 2;
+}
+
+.insta-photo-hover {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  z-index: 3;
+  color: #ffffff;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.insta-photo-card:hover .insta-photo-hover {
+  opacity: 1;
+}
 
 .insta-full-feed-link {
   display: block;
