@@ -18,12 +18,12 @@ export default function Bio() {
       videoTitle: 'სტუდიის ვიდეო / სიახლეები',
       mapTitle: 'ST Dance Studio Batumi',
       mapAddress: 'ბათუმი, ე. თაყაიშვილის 55',
-      mapBtn: 'Google Maps-ზე გახსნა',
+      mapBtn: 'Google Maps',
       cards: [
         {
           id: 'schedule',
-          title: 'მეცადინეობების განრიგი',
-          desc: 'გაეცანით ჯგუფებსა და საათებს',
+          title: 'განრიგი',
+          desc: 'ჯგუფები და საათები',
           to: `${basePath}/schedule`,
           icon: (
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -36,8 +36,8 @@ export default function Bio() {
         },
         {
           id: 'payment',
-          title: 'ონლაინ გადახდა',
-          desc: 'სწრაფი და უსაფრთხო ანგარიშსწორება',
+          title: 'გადახდა',
+          desc: 'ონლაინ ანგარიშსწორება',
           to: `${basePath}/payment`,
           icon: (
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -48,8 +48,8 @@ export default function Bio() {
         },
         {
           id: 'about',
-          title: 'ჩვენ შესახებ & გუნდი',
-          desc: 'გაიცანით პროფესიონალი მწვრთნელები',
+          title: 'ჩვენ შესახებ',
+          desc: 'გუნდი და მწვრთნელები',
           to: `${basePath}/about`,
           icon: (
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -60,22 +60,11 @@ export default function Bio() {
         {
           id: 'whatsapp',
           title: 'WhatsApp ჩატი',
-          desc: 'მოგვწერეთ პირდაპირ ჩატში',
+          desc: 'პირდაპირი მიმოწერა',
           href: 'https://wa.me/995514199966',
           icon: (
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
-            </svg>
-          )
-        },
-        {
-          id: 'call',
-          title: 'დარეკვა ადმინისტრაციასთან',
-          desc: '+995 514 19 99 66',
-          href: 'tel:+995514199966',
-          icon: (
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"></path>
             </svg>
           )
         }
@@ -92,12 +81,12 @@ export default function Bio() {
       videoTitle: 'Studio Video & Highlights',
       mapTitle: 'ST Dance Studio Batumi',
       mapAddress: '55 E. Takaishvili St, Batumi',
-      mapBtn: 'Open in Google Maps',
+      mapBtn: 'Open Maps',
       cards: [
         {
           id: 'schedule',
-          title: 'Class Schedule',
-          desc: 'Explore groups and training hours',
+          title: 'Schedule',
+          desc: 'Groups & Class Hours',
           to: `${basePath}/schedule`,
           icon: (
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -110,8 +99,8 @@ export default function Bio() {
         },
         {
           id: 'payment',
-          title: 'Online Payment',
-          desc: 'Quick and secure checkout',
+          title: 'Payment',
+          desc: 'Quick & Secure Checkout',
           to: `${basePath}/payment`,
           icon: (
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -122,8 +111,8 @@ export default function Bio() {
         },
         {
           id: 'about',
-          title: 'About Us & Trainers',
-          desc: 'Meet our professional instructors',
+          title: 'About Us',
+          desc: 'Team & Instructors',
           to: `${basePath}/about`,
           icon: (
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -134,22 +123,11 @@ export default function Bio() {
         {
           id: 'whatsapp',
           title: 'WhatsApp Chat',
-          desc: 'Chat with us directly',
+          desc: 'Direct Message',
           href: 'https://wa.me/995514199966',
           icon: (
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
-            </svg>
-          )
-        },
-        {
-          id: 'call',
-          title: 'Call Administration',
-          desc: '+995 514 19 99 66',
-          href: 'tel:+995514199966',
-          icon: (
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"></path>
             </svg>
           )
         }
@@ -166,12 +144,12 @@ export default function Bio() {
       videoTitle: 'Видео / Новости студии',
       mapTitle: 'ST Dance Studio Batumi',
       mapAddress: 'Батуми, ул. Е. Такаишвили 55',
-      mapBtn: 'Открыть в Google Maps',
+      mapBtn: 'Google Maps',
       cards: [
         {
           id: 'schedule',
-          title: 'Расписание Занятий',
-          desc: 'Ознакомьтесь с группами и часами',
+          title: 'Расписание',
+          desc: 'Группы и часы',
           to: `${basePath}/schedule`,
           icon: (
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -184,8 +162,8 @@ export default function Bio() {
         },
         {
           id: 'payment',
-          title: 'Онлайн Оплата',
-          desc: 'Быстрый и безопасный расчет',
+          title: 'Оплата',
+          desc: 'Онлайн расчет',
           to: `${basePath}/payment`,
           icon: (
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -196,8 +174,8 @@ export default function Bio() {
         },
         {
           id: 'about',
-          title: 'О нас и Тренерах',
-          desc: 'Познакомьтесь с нашей командой',
+          title: 'О нас',
+          desc: 'Команда и тренеры',
           to: `${basePath}/about`,
           icon: (
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -208,22 +186,11 @@ export default function Bio() {
         {
           id: 'whatsapp',
           title: 'WhatsApp Чат',
-          desc: 'Напишите нам напрямую',
+          desc: 'Прямая связь',
           href: 'https://wa.me/995514199966',
           icon: (
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
-            </svg>
-          )
-        },
-        {
-          id: 'call',
-          title: 'Позвонить Администратору',
-          desc: '+995 514 19 99 66',
-          href: 'tel:+995514199966',
-          icon: (
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"></path>
             </svg>
           )
         }
@@ -235,41 +202,42 @@ export default function Bio() {
 
   return (
     <div className="bio-page-container">
-      {/* Top Floating Language Switcher */}
-      <div className="bio-lang-switcher">
-        <Link to="/bio" className={`bio-lang-btn ${lang === 'ka' ? 'active' : ''}`}>
+      {/* Floating Glass Language Bar */}
+      <div className="bio-lang-bar">
+        <Link to="/bio" className={`bio-lang-link ${lang === 'ka' ? 'active' : ''}`}>
           GE
         </Link>
-        <Link to="/en/bio" className={`bio-lang-btn ${lang === 'en' ? 'active' : ''}`}>
+        <Link to="/en/bio" className={`bio-lang-link ${lang === 'en' ? 'active' : ''}`}>
           EN
         </Link>
-        <Link to="/ru/bio" className={`bio-lang-btn ${lang === 'ru' ? 'active' : ''}`}>
+        <Link to="/ru/bio" className={`bio-lang-link ${lang === 'ru' ? 'active' : ''}`}>
           RU
         </Link>
       </div>
 
       <div className="bio-wrapper">
-        {/* Header */}
+        {/* Header & Crest Profile */}
         <header className="bio-header">
-          <div className="bio-profile-avatar-wrap">
+          <div className="bio-avatar-container">
+            <div className="bio-avatar-ring"></div>
             <img
               src="/images/logo-transparent.png"
-              alt="ST Dance Studio Logo"
-              className="bio-profile-avatar"
+              alt="ST Dance Studio Crest"
+              className="bio-avatar-img"
             />
-            <div className="bio-verified-badge">✓</div>
+            <div className="bio-verified-check">✓</div>
           </div>
 
-          <h1 className="bio-title-main">{t.title}</h1>
-          <p className="bio-title-sub">{t.subtitle}</p>
+          <h1 className="bio-brand-title">{t.title}</h1>
+          <p className="bio-brand-subtitle">{t.subtitle}</p>
 
-          {/* Quick Interactive Chips */}
-          <div className="bio-quick-chips">
+          {/* Interactive Chips */}
+          <div className="bio-chips-row">
             <a
               href="https://maps.google.com/?q=55+Eka+Takaishvili+St,+Batumi"
               target="_blank"
               rel="noopener noreferrer"
-              className="bio-chip"
+              className="bio-status-chip"
             >
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
@@ -277,7 +245,7 @@ export default function Bio() {
               </svg>
               <span>{t.location}</span>
             </a>
-            <a href="tel:+995514199966" className="bio-chip">
+            <a href="tel:+995514199966" className="bio-status-chip">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"></path>
               </svg>
@@ -286,19 +254,19 @@ export default function Bio() {
           </div>
         </header>
 
-        {/* Action Bento Cards (Placed HIGH UP right after profile) */}
-        <main className="bio-bento-grid">
-          {/* Primary Bento Hero CTA Card - Register */}
-          <Link to={`${basePath}/register`} className="bio-bento-hero">
-            <div className="bio-hero-content">
-              <div className="bio-hero-badge">
-                <span className="bio-pulse-dot"></span>
+        {/* BENTO GRID ACTION CARDS (PLACED HIGH UP BEFORE MEDIA) */}
+        <section className="bio-bento-section">
+          {/* HERO BENTO CTA CARD — Online Registration */}
+          <Link to={`${basePath}/register`} className="bento-hero-card">
+            <div className="bento-hero-info">
+              <div className="bento-hero-badge">
+                <span className="radar-pulse"></span>
                 <span>{t.ctaBadge}</span>
               </div>
-              <div className="bio-hero-title">{t.ctaTitle}</div>
-              <div className="bio-hero-subtitle">{t.ctaSubtitle}</div>
+              <div className="bento-hero-title">{t.ctaTitle}</div>
+              <div className="bento-hero-desc">{t.ctaSubtitle}</div>
             </div>
-            <div className="bio-hero-arrow">
+            <div className="bento-hero-btn">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <line x1="5" y1="12" x2="19" y2="12"></line>
                 <polyline points="12 5 19 12 12 19"></polyline>
@@ -306,92 +274,98 @@ export default function Bio() {
             </div>
           </Link>
 
-          {/* Secondary Bento Action Items */}
-          {t.cards.map((card) => {
-            if (card.to) {
+          {/* 2-COLUMN BENTO GRID FOR CORE ACTIONS */}
+          <div className="bento-grid-2col">
+            {t.cards.map((card) => {
+              if (card.to) {
+                return (
+                  <Link key={card.id} to={card.to} className="bento-mini-card">
+                    <div className="bento-mini-top">
+                      <div className="bento-icon-box">{card.icon}</div>
+                      <div className="bento-mini-arrow">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <polyline points="9 18 15 12 9 6"></polyline>
+                        </svg>
+                      </div>
+                    </div>
+                    <div className="bento-mini-bottom">
+                      <div className="bento-mini-title">{card.title}</div>
+                      <div className="bento-mini-desc">{card.desc}</div>
+                    </div>
+                  </Link>
+                )
+              }
               return (
-                <Link key={card.id} to={card.to} className="bio-bento-item">
-                  <div className="bio-bento-icon">{card.icon}</div>
-                  <div className="bio-bento-info">
-                    <div className="bio-bento-title">{card.title}</div>
-                    <div className="bio-bento-desc">{card.desc}</div>
+                <a
+                  key={card.id}
+                  href={card.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bento-mini-card"
+                >
+                  <div className="bento-mini-top">
+                    <div className="bento-icon-box">{card.icon}</div>
+                    <div className="bento-mini-arrow">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                      </svg>
+                    </div>
                   </div>
-                  <div className="bio-bento-chevron">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <polyline points="9 18 15 12 9 6"></polyline>
-                    </svg>
+                  <div className="bento-mini-bottom">
+                    <div className="bento-mini-title">{card.title}</div>
+                    <div className="bento-mini-desc">{card.desc}</div>
                   </div>
-                </Link>
+                </a>
               )
-            }
-            return (
-              <a
-                key={card.id}
-                href={card.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="bio-bento-item"
-              >
-                <div className="bio-bento-icon">{card.icon}</div>
-                <div className="bio-bento-info">
-                  <div className="bio-bento-title">{card.title}</div>
-                  <div className="bio-bento-desc">{card.desc}</div>
-                </div>
-                <div className="bio-bento-chevron">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <polyline points="9 18 15 12 9 6"></polyline>
-                  </svg>
-                </div>
-              </a>
-            )
-          })}
+            })}
+          </div>
 
-          {/* Dedicated Interactive Location / Google Maps Bento Card */}
+          {/* FULL-WIDTH INTERACTIVE MAP BENTO CARD */}
           <a
             href="https://maps.google.com/?q=55+Eka+Takaishvili+St,+Batumi"
             target="_blank"
             rel="noopener noreferrer"
-            className="bio-map-card"
+            className="bento-map-card"
           >
-            <div className="bio-map-header">
-              <div className="bio-map-title-wrap">
-                <div className="bio-map-icon">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <div className="bento-map-header">
+              <div className="bento-map-left">
+                <div className="bento-map-pin-icon">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
                     <circle cx="12" cy="10" r="3"></circle>
                   </svg>
                 </div>
                 <div>
-                  <div className="bio-map-title">{t.mapTitle}</div>
-                  <div className="bio-map-address">{t.mapAddress}</div>
+                  <div className="bento-map-name">{t.mapTitle}</div>
+                  <div className="bento-map-sub">{t.mapAddress}</div>
                 </div>
               </div>
-              <div className="bio-map-action-btn">
+              <div className="bento-map-button">
                 <span>{t.mapBtn}</span>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <polyline points="9 18 15 12 9 6"></polyline>
                 </svg>
               </div>
             </div>
           </a>
-        </main>
+        </section>
 
-        {/* Embedded Instagram Reel / Post DYy9WNRDjyT Showcase (Lower Down) */}
-        <section className="bio-video-card">
-          <div className="bio-video-card-header">
-            <div className="bio-video-card-title">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-champagne)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        {/* INSTAGRAM EMBED SHOWCASE CARD (LOWER DOWN) */}
+        <section className="bio-video-section">
+          <div className="bio-video-header">
+            <div className="bio-video-title-wrap">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-gold-main)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <polygon points="23 7 16 12 23 17 23 7"></polygon>
                 <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
               </svg>
               <span>{t.videoTitle}</span>
             </div>
-            <span className="bio-ig-tag">@stdancestudio</span>
+            <span className="bio-ig-pill">@stdancestudio</span>
           </div>
 
-          <div className="bio-embed-container">
+          <div className="bio-embed-frame-wrap">
             <iframe
-              className="bio-embed-iframe"
+              className="bio-embed-frame"
               src="https://www.instagram.com/p/DYy9WNRDjyT/embed"
               title="ST Dance Studio Instagram Post DYy9WNRDjyT"
               allowTransparency={true}
@@ -402,13 +376,13 @@ export default function Bio() {
           </div>
         </section>
 
-        {/* Social Links Bar */}
-        <div className="bio-social-bar">
+        {/* SOCIAL FOOTER ICONS */}
+        <footer className="bio-social-footer">
           <a
             href="https://www.instagram.com/stdancestudio/"
             target="_blank"
             rel="noopener noreferrer"
-            className="bio-social-icon-btn"
+            className="bio-social-btn"
             aria-label="Instagram"
           >
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -421,7 +395,7 @@ export default function Bio() {
             href="https://facebook.com"
             target="_blank"
             rel="noopener noreferrer"
-            className="bio-social-icon-btn"
+            className="bio-social-btn"
             aria-label="Facebook"
           >
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -432,7 +406,7 @@ export default function Bio() {
             href="https://youtube.com"
             target="_blank"
             rel="noopener noreferrer"
-            className="bio-social-icon-btn"
+            className="bio-social-btn"
             aria-label="YouTube"
           >
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -444,14 +418,14 @@ export default function Bio() {
             href="https://wa.me/995514199966"
             target="_blank"
             rel="noopener noreferrer"
-            className="bio-social-icon-btn"
+            className="bio-social-btn"
             aria-label="WhatsApp"
           >
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
             </svg>
           </a>
-        </div>
+        </footer>
       </div>
     </div>
   )

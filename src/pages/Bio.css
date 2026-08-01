@@ -1,16 +1,47 @@
-/* 2026 High-End Bento Grid & Minimalist Luxury Link-in-Bio Page */
-.bio-page-container {
-  --color-bg: #060609;
-  --color-card-bg: rgba(18, 18, 26, 0.7);
-  --color-card-hover: rgba(28, 28, 42, 0.9);
-  --color-champagne: #e5c158;
-  --color-champagne-light: #f8ecbe;
-  --color-champagne-glow: rgba(229, 193, 88, 0.25);
-  --color-subtext: #9494a8;
-  --border-gold: rgba(229, 193, 88, 0.25);
-  --border-subtle: rgba(255, 255, 255, 0.08);
+/* ==========================================================================
+   ST DANCE STUDIO — HIGH-FASHION LUXURY BENTO LINK-IN-BIO DESIGN SYSTEM
+   ========================================================================== */
 
-  background-color: var(--color-bg);
+:root {
+  --color-bg-base: #050508;
+  --color-gold-deep: #997316;
+  --color-gold-main: #d4af37;
+  --color-gold-light: #fff0b3;
+  --color-gold-bright: #ffe680;
+
+  --grad-gold-metallic: linear-gradient(
+    110deg,
+    #997316 0%,
+    #d4af37 20%,
+    #fff5cc 45%,
+    #f3e5ab 55%,
+    #d4af37 80%,
+    #997316 100%
+  );
+
+  --grad-gold-soft: linear-gradient(135deg, rgba(212, 175, 55, 0.18) 0%, rgba(153, 115, 22, 0.04) 100%);
+  --grad-card-dark: linear-gradient(145deg, rgba(22, 22, 32, 0.8) 0%, rgba(12, 12, 18, 0.9) 100%);
+  
+  --shadow-gold-glow: 0 0 35px rgba(212, 175, 55, 0.22);
+  --shadow-card-depth: 0 20px 50px rgba(0, 0, 0, 0.85);
+
+  --border-gold-subtle: rgba(212, 175, 55, 0.25);
+  --border-gold-bright: rgba(255, 224, 102, 0.6);
+  --border-glass: rgba(255, 255, 255, 0.08);
+
+  --font-display: 'Cinzel', 'Playfair Display', serif;
+  --font-body: 'Outfit', 'Inter', -apple-system, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.bio-page-container {
+  background-color: var(--color-bg-base);
   color: #ffffff;
   min-height: 100vh;
   width: 100%;
@@ -19,29 +50,42 @@
   align-items: flex-start;
   position: relative;
   overflow-x: hidden;
-  padding: 3.5rem 1.25rem 4rem 1.25rem;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  padding: 4rem 1rem 5rem 1rem;
+  font-family: var(--font-body);
 }
 
-/* Dynamic Ambient Glow */
+/* Atmospheric Ambient Canvas Light Particles */
 .bio-page-container::before {
   content: '';
   position: fixed;
-  top: -10%;
+  top: -15%;
   left: 50%;
   transform: translateX(-50%);
-  width: 600px;
-  height: 600px;
-  background: radial-gradient(circle, rgba(229, 193, 88, 0.1) 0%, rgba(6, 6, 9, 0) 70%);
+  width: 700px;
+  height: 700px;
+  background: radial-gradient(circle, rgba(212, 175, 55, 0.12) 0%, rgba(5, 5, 8, 0) 70%);
   border-radius: 50%;
   pointer-events: none;
   z-index: 0;
-  animation: bioLightPulse 10s infinite alternate ease-in-out;
+  animation: auraGlowPulse 12s infinite alternate ease-in-out;
 }
 
-@keyframes bioLightPulse {
-  0% { transform: translateX(-50%) scale(1); opacity: 0.6; }
-  100% { transform: translateX(-50%) scale(1.25); opacity: 1; }
+.bio-page-container::after {
+  content: '';
+  position: fixed;
+  bottom: -20%;
+  left: 20%;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(140, 80, 255, 0.06) 0%, rgba(5, 5, 8, 0) 70%);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+@keyframes auraGlowPulse {
+  0% { transform: translateX(-50%) scale(1); opacity: 0.5; }
+  100% { transform: translateX(-50%) scale(1.3); opacity: 0.9; }
 }
 
 .bio-wrapper {
@@ -54,469 +98,567 @@
   align-items: center;
 }
 
-/* Floating Language Switcher */
-.bio-lang-switcher {
-  position: absolute;
-  top: 0.75rem;
-  right: 0.75rem;
+/* Floating Glass Language Bar */
+.bio-lang-bar {
+  position: fixed;
+  top: 1.25rem;
+  right: 1.25rem;
   display: flex;
-  background: rgba(18, 18, 26, 0.85);
-  border: 1px solid var(--border-subtle);
-  border-radius: 24px;
-  padding: 3px;
-  backdrop-filter: blur(16px);
-  z-index: 10;
+  background: rgba(14, 14, 22, 0.85);
+  border: 1px solid var(--border-gold-subtle);
+  border-radius: 30px;
+  padding: 4px;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  z-index: 100;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
 }
 
-.bio-lang-btn {
+.bio-lang-link {
   background: transparent;
   border: none;
-  color: var(--color-subtext);
-  font-size: 0.72rem;
+  color: #8a8a9e;
+  font-size: 0.74rem;
   font-weight: 600;
-  letter-spacing: 0.05em;
-  padding: 5px 12px;
-  border-radius: 18px;
+  letter-spacing: 0.08em;
+  padding: 6px 14px;
+  border-radius: 20px;
   cursor: pointer;
   text-decoration: none;
-  transition: all 0.25s ease;
+  transition: all 0.3s ease;
 }
 
-.bio-lang-btn.active {
-  background: rgba(229, 193, 88, 0.2);
-  color: var(--color-champagne-light);
-  border: 1px solid rgba(229, 193, 88, 0.4);
-  font-weight: 700;
+.bio-lang-link.active {
+  background: var(--grad-gold-metallic);
+  background-size: 200% auto;
+  color: #000000;
+  font-weight: 800;
+  box-shadow: 0 2px 12px rgba(212, 175, 55, 0.4);
 }
 
-/* Profile Header Section */
+/* Header & Crest Profile */
 .bio-header {
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
   width: 100%;
-  margin-bottom: 1.8rem;
+  margin-bottom: 2rem;
 }
 
-.bio-profile-avatar-wrap {
+.bio-avatar-container {
   position: relative;
-  margin-bottom: 1.1rem;
-  margin-top: 0.5rem;
+  margin-bottom: 1.3rem;
+  margin-top: 1rem;
 }
 
-.bio-profile-avatar {
-  width: 95px;
-  height: 95px;
+.bio-avatar-img {
+  width: 105px;
+  height: 105px;
   border-radius: 50%;
   object-fit: contain;
-  background: radial-gradient(circle, #151522 0%, #060609 100%);
-  padding: 8px;
-  border: 1px solid rgba(229, 193, 88, 0.4);
-  box-shadow: 0 0 30px rgba(0, 0, 0, 0.8), 0 0 15px rgba(229, 193, 88, 0.15);
-  transition: transform 0.35s ease, border-color 0.35s ease;
+  background: radial-gradient(circle, #181826 0%, #08080d 100%);
+  padding: 10px;
+  border: 2px solid transparent;
+  box-shadow: var(--shadow-gold-glow), var(--shadow-card-depth);
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-.bio-profile-avatar-wrap:hover .bio-profile-avatar {
-  transform: scale(1.05);
-  border-color: var(--color-champagne);
+.bio-avatar-ring {
+  position: absolute;
+  inset: -5px;
+  border-radius: 50%;
+  background: var(--grad-gold-metallic);
+  background-size: 200% 200%;
+  z-index: -1;
+  animation: rotateRing 8s linear infinite, shimmerGold 4s linear infinite;
 }
 
-.bio-verified-badge {
+@keyframes rotateRing {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes shimmerGold {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.bio-avatar-container:hover .bio-avatar-img {
+  transform: scale(1.06);
+}
+
+.bio-verified-check {
   position: absolute;
   bottom: 2px;
   right: 2px;
-  background: var(--color-champagne);
+  background: var(--grad-gold-metallic);
   color: #000;
-  width: 22px;
-  height: 22px;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 11px;
   font-weight: 900;
-  border: 2px solid #060609;
+  border: 2.5 solid #050508;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.8);
 }
 
-.bio-title-main {
-  font-size: 1.55rem;
+.bio-brand-title {
+  font-family: var(--font-display);
+  font-size: 1.75rem;
   font-weight: 800;
-  letter-spacing: 0.14em;
-  color: #ffffff;
-  margin-bottom: 0.35rem;
+  letter-spacing: 0.18em;
+  background: var(--grad-gold-metallic);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmerGold 5s infinite linear;
+  margin-bottom: 0.3rem;
   text-transform: uppercase;
 }
 
-.bio-title-sub {
-  color: var(--color-subtext);
-  font-size: 0.86rem;
+.bio-brand-subtitle {
+  color: #a0a0b5;
+  font-size: 0.88rem;
   font-weight: 400;
-  letter-spacing: 0.04em;
-  margin-bottom: 1rem;
+  letter-spacing: 0.06em;
+  margin-bottom: 1.1rem;
 }
 
-/* Quick Interactive Chips Bar */
-.bio-quick-chips {
+/* Interactive Floating Status Chips */
+.bio-chips-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 10px;
   justify-content: center;
 }
 
-.bio-chip {
+.bio-status-chip {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid var(--border-subtle);
-  color: #d0d0e0;
+  gap: 7px;
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid var(--border-glass);
+  color: #d8d8eb;
   font-size: 0.78rem;
-  padding: 6px 14px;
-  border-radius: 20px;
+  font-weight: 500;
+  padding: 7px 16px;
+  border-radius: 25px;
   text-decoration: none;
-  backdrop-filter: blur(10px);
-  transition: all 0.25s ease;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.bio-chip:hover {
-  background: rgba(229, 193, 88, 0.12);
-  border-color: rgba(229, 193, 88, 0.35);
-  color: var(--color-champagne-light);
+.bio-status-chip:hover {
+  background: var(--grad-gold-soft);
+  border-color: var(--border-gold-subtle);
+  color: var(--color-gold-light);
   transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(212, 175, 55, 0.15);
 }
 
-.bio-chip svg {
-  color: var(--color-champagne);
+.bio-status-chip svg {
+  color: var(--color-gold-main);
 }
 
-/* Bento Grid Action Cards (High Up, Before Video) */
-.bio-bento-grid {
+/* ==========================================================================
+   BENTO GRID LAYOUT (HIGH IMPACT LINKS BEFORE MEDIA)
+   ========================================================================== */
+
+.bio-bento-section {
+  width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 0.85rem;
-  width: 100%;
-  margin-bottom: 1.8rem;
+  gap: 1rem;
+  margin-bottom: 2rem;
 }
 
-/* Primary Bento CTA Card - Online Registration */
-.bio-bento-hero {
+/* HERO BENTO CTA CARD (Online Registration) */
+.bento-hero-card {
   position: relative;
-  background: linear-gradient(135deg, rgba(32, 32, 48, 0.95) 0%, rgba(18, 18, 28, 0.98) 100%);
-  border: 1px solid rgba(229, 193, 88, 0.5);
-  border-radius: 18px;
-  padding: 1.25rem 1.4rem;
+  background: linear-gradient(135deg, rgba(28, 28, 42, 0.9) 0%, rgba(14, 14, 22, 0.95) 100%);
+  border: 1px solid var(--border-gold-subtle);
+  border-radius: 22px;
+  padding: 1.4rem 1.5rem;
   color: #ffffff;
   text-decoration: none;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 25px rgba(229, 193, 88, 0.1);
+  box-shadow: var(--shadow-card-depth), 0 0 30px rgba(212, 175, 55, 0.08);
   overflow: hidden;
-  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(20px);
+  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
 
-.bio-bento-hero::before {
+.bento-hero-card::before {
   content: '';
   position: absolute;
   top: 0;
   left: 0;
-  width: 4px;
+  width: 5px;
   height: 100%;
-  background: linear-gradient(to bottom, var(--color-champagne), #aa771c);
+  background: var(--grad-gold-metallic);
 }
 
-.bio-bento-hero:hover {
-  transform: translateY(-3px);
-  border-color: var(--color-champagne);
-  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.7), 0 0 30px rgba(229, 193, 88, 0.25);
-  background: linear-gradient(135deg, rgba(42, 42, 62, 0.95) 0%, rgba(24, 24, 38, 0.98) 100%);
+.bento-hero-card::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    60deg,
+    transparent 40%,
+    rgba(255, 245, 204, 0.15) 50%,
+    transparent 60%
+  );
+  transform: rotate(30deg);
+  animation: heroShine 5s infinite;
 }
 
-.bio-hero-content {
+@keyframes heroShine {
+  0% { transform: translateX(-100%) rotate(30deg); }
+  25% { transform: translateX(100%) rotate(30deg); }
+  100% { transform: translateX(100%) rotate(30deg); }
+}
+
+.bento-hero-card:hover {
+  transform: translateY(-4px) scale(1.01);
+  border-color: var(--border-gold-bright);
+  box-shadow: var(--shadow-card-depth), 0 0 35px rgba(212, 175, 55, 0.25);
+}
+
+.bento-hero-info {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 5px;
   z-index: 1;
 }
 
-.bio-hero-badge {
+.bento-hero-badge {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  color: var(--color-champagne-light);
-  font-size: 0.72rem;
-  font-weight: 600;
-  letter-spacing: 0.05em;
+  background: rgba(212, 175, 55, 0.12);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  color: var(--color-gold-bright);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  padding: 3px 10px;
+  border-radius: 12px;
+  width: fit-content;
   text-transform: uppercase;
 }
 
-.bio-pulse-dot {
-  width: 6px;
-  height: 6px;
-  background: var(--color-champagne);
+.radar-pulse {
+  position: relative;
+  width: 7px;
+  height: 7px;
+  background: #ff4d4d;
   border-radius: 50%;
-  box-shadow: 0 0 8px var(--color-champagne);
-  animation: bioBlink 1.5s infinite;
 }
 
-@keyframes bioBlink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.3; }
+.radar-pulse::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 1px solid #ff4d4d;
+  animation: radarWave 1.6s infinite ease-out;
 }
 
-.bio-hero-title {
-  font-size: 1.1rem;
+@keyframes radarWave {
+  0% { transform: scale(0.5); opacity: 1; }
+  100% { transform: scale(2.2); opacity: 0; }
+}
+
+.bento-hero-title {
+  font-size: 1.18rem;
   font-weight: 700;
   color: #ffffff;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.01em;
 }
 
-.bio-hero-subtitle {
-  font-size: 0.8rem;
-  color: var(--color-subtext);
+.bento-hero-desc {
+  font-size: 0.82rem;
+  color: #a0a0b8;
 }
 
-.bio-hero-arrow {
-  width: 40px;
-  height: 40px;
+.bento-hero-btn {
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
-  background: rgba(229, 193, 88, 0.15);
-  border: 1px solid rgba(229, 193, 88, 0.35);
-  color: var(--color-champagne-light);
+  background: var(--grad-gold-metallic);
+  background-size: 200% auto;
+  color: #000000;
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1;
-  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(212, 175, 55, 0.35);
+  transition: transform 0.3s ease;
 }
 
-.bio-bento-hero:hover .bio-hero-arrow {
-  background: var(--color-champagne);
-  color: #000;
-  transform: translateX(4px);
+.bento-hero-card:hover .bento-hero-btn {
+  transform: translateX(4px) scale(1.08);
 }
 
-/* Secondary Bento Items */
-.bio-bento-item {
-  background: var(--color-card-bg);
-  border: 1px solid var(--border-subtle);
-  border-radius: 14px;
-  padding: 1rem 1.2rem;
+/* 2-COLUMN BENTO GRID FOR CORE ACTIONS */
+.bento-grid-2col {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.9rem;
+  width: 100%;
+}
+
+.bento-mini-card {
+  position: relative;
+  background: var(--grad-card-dark);
+  border: 1px solid var(--border-glass);
+  border-radius: 18px;
+  padding: 1.15rem 1.1rem;
   color: #ffffff;
   text-decoration: none;
   display: flex;
-  align-items: center;
-  gap: 1rem;
-  backdrop-filter: blur(16px);
-  transition: all 0.3s ease;
-}
-
-.bio-bento-item:hover {
-  background: var(--color-card-hover);
-  border-color: rgba(229, 193, 88, 0.35);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
-}
-
-.bio-bento-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid var(--border-subtle);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--color-champagne);
-  flex-shrink: 0;
-  transition: all 0.3s ease;
-}
-
-.bio-bento-item:hover .bio-bento-icon {
-  background: rgba(229, 193, 88, 0.15);
-  border-color: rgba(229, 193, 88, 0.4);
-  color: #ffffff;
-}
-
-.bio-bento-info {
-  display: flex;
   flex-direction: column;
-  gap: 2px;
-  flex-grow: 1;
-}
-
-.bio-bento-title {
-  font-size: 0.98rem;
-  font-weight: 600;
-  color: #ffffff;
-}
-
-.bio-bento-desc {
-  font-size: 0.78rem;
-  color: var(--color-subtext);
-}
-
-.bio-bento-chevron {
-  color: rgba(255, 255, 255, 0.25);
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-}
-
-.bio-bento-item:hover .bio-bento-chevron {
-  color: var(--color-champagne);
-  transform: translateX(3px);
-}
-
-/* Interactive Map Bento Card */
-.bio-map-card {
-  background: var(--color-card-bg);
-  border: 1px solid var(--border-gold);
-  border-radius: 16px;
-  padding: 1.1rem;
+  justify-content: space-between;
+  gap: 1.1rem;
   backdrop-filter: blur(16px);
-  display: flex;
-  flex-direction: column;
-  gap: 0.85rem;
-  text-decoration: none;
-  color: #ffffff;
-  transition: all 0.3s ease;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
 }
 
-.bio-map-card:hover {
-  background: var(--color-card-hover);
-  border-color: var(--color-champagne);
-  transform: translateY(-2px);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(229, 193, 88, 0.12);
+.bento-mini-card:hover {
+  background: linear-gradient(145deg, rgba(32, 32, 48, 0.9) 0%, rgba(18, 18, 28, 0.95) 100%);
+  border-color: var(--border-gold-subtle);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-card-depth), 0 0 20px rgba(212, 175, 55, 0.12);
 }
 
-.bio-map-header {
+.bento-mini-top {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  width: 100%;
 }
 
-.bio-map-title-wrap {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.bio-map-icon {
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
-  background: rgba(229, 193, 88, 0.12);
-  border: 1px solid rgba(229, 193, 88, 0.3);
-  color: var(--color-champagne-light);
+.bento-icon-box {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: rgba(212, 175, 55, 0.08);
+  border: 1px solid rgba(212, 175, 55, 0.2);
   display: flex;
   align-items: center;
   justify-content: center;
+  color: var(--color-gold-light);
+  transition: all 0.3s ease;
 }
 
-.bio-map-title {
+.bento-mini-card:hover .bento-icon-box {
+  background: var(--grad-gold-metallic);
+  color: #000;
+  border-color: transparent;
+  box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+}
+
+.bento-mini-arrow {
+  color: rgba(255, 255, 255, 0.25);
+  transition: all 0.3s ease;
+}
+
+.bento-mini-card:hover .bento-mini-arrow {
+  color: var(--color-gold-main);
+  transform: translateX(3px);
+}
+
+.bento-mini-bottom {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.bento-mini-title {
   font-size: 0.98rem;
   font-weight: 700;
   color: #ffffff;
 }
 
-.bio-map-address {
-  font-size: 0.78rem;
-  color: var(--color-subtext);
+.bento-mini-desc {
+  font-size: 0.76rem;
+  color: #8c8c9e;
 }
 
-.bio-map-action-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: rgba(229, 193, 88, 0.15);
-  border: 1px solid rgba(229, 193, 88, 0.35);
-  color: var(--color-champagne-light);
-  font-size: 0.78rem;
-  font-weight: 600;
-  padding: 6px 14px;
+/* FULL-WIDTH INTERACTIVE GOOGLE MAPS BENTO CARD */
+.bento-map-card {
+  position: relative;
+  background: linear-gradient(145deg, rgba(24, 24, 36, 0.85) 0%, rgba(12, 12, 18, 0.95) 100%);
+  border: 1px solid var(--border-gold-subtle);
   border-radius: 20px;
-  width: fit-content;
-  transition: all 0.25s ease;
-}
-
-.bio-map-card:hover .bio-map-action-btn {
-  background: var(--color-champagne);
-  color: #000;
-}
-
-/* Instagram Post Embed Section (Lower Down) */
-.bio-video-card {
-  width: 100%;
-  background: var(--color-card-bg);
-  border: 1px solid var(--border-subtle);
-  border-radius: 16px;
-  padding: 1.1rem;
-  backdrop-filter: blur(16px);
-  margin-bottom: 1.8rem;
+  padding: 1.25rem 1.35rem;
+  color: #ffffff;
+  text-decoration: none;
   display: flex;
   flex-direction: column;
-  gap: 0.85rem;
+  gap: 1rem;
+  backdrop-filter: blur(16px);
+  transition: all 0.35s ease;
+  overflow: hidden;
+  box-shadow: var(--shadow-card-depth);
 }
 
-.bio-video-card-header {
+.bento-map-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 140px;
+  height: 140px;
+  background: radial-gradient(circle, rgba(212, 175, 55, 0.1) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.bento-map-card:hover {
+  border-color: var(--border-gold-bright);
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-card-depth), 0 0 25px rgba(212, 175, 55, 0.18);
+}
+
+.bento-map-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
-.bio-video-card-title {
+.bento-map-left {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 0.95rem;
-  font-weight: 600;
+  gap: 12px;
+}
+
+.bento-map-pin-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: rgba(212, 175, 55, 0.12);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  color: var(--color-gold-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bento-map-name {
+  font-size: 1.02rem;
+  font-weight: 700;
   color: #ffffff;
 }
 
-.bio-ig-tag {
-  color: var(--color-champagne);
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.03em;
+.bento-map-sub {
+  font-size: 0.8rem;
+  color: #8c8c9e;
 }
 
-.bio-embed-container {
-  width: 100%;
-  border-radius: 12px;
-  overflow: hidden;
-  background: #000;
-  min-height: 480px;
-  display: flex;
+.bento-map-button {
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
+  gap: 7px;
+  background: var(--grad-gold-metallic);
+  background-size: 200% auto;
+  color: #000000;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 8px 16px;
+  border-radius: 20px;
+  box-shadow: 0 4px 15px rgba(212, 175, 55, 0.25);
+  transition: all 0.3s ease;
 }
 
-.bio-embed-iframe {
+.bento-map-card:hover .bento-map-button {
+  transform: scale(1.04);
+}
+
+/* INSTAGRAM EMBED SHOWCASE CARD (LOWER DOWN) */
+.bio-video-section {
   width: 100%;
-  height: 520px;
-  border: none;
-  border-radius: 12px;
-}
-
-/* Social Icon Bar */
-.bio-social-bar {
+  background: var(--grad-card-dark);
+  border: 1px solid var(--border-glass);
+  border-radius: 22px;
+  padding: 1.25rem;
+  backdrop-filter: blur(16px);
+  margin-bottom: 2rem;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column;
   gap: 1rem;
+  box-shadow: var(--shadow-card-depth);
+}
+
+.bio-video-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.bio-video-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 0.98rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.bio-ig-pill {
+  background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+  color: #ffffff;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 12px;
+}
+
+.bio-embed-frame-wrap {
+  width: 100%;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #000000;
+  min-height: 520px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border-glass);
+}
+
+.bio-embed-frame {
+  width: 100%;
+  height: 530px;
+  border: none;
+}
+
+/* SOCIAL FOOTER ICONS */
+.bio-social-footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.2rem;
   margin-bottom: 1.5rem;
   width: 100%;
 }
 
-.bio-social-icon-btn {
-  width: 44px;
-  height: 44px;
+.bio-social-btn {
+  width: 46px;
+  height: 46px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid var(--border-subtle);
-  color: var(--color-subtext);
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid var(--border-glass);
+  color: #9999ac;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -524,9 +666,10 @@
   transition: all 0.3s ease;
 }
 
-.bio-social-icon-btn:hover {
-  background: rgba(229, 193, 88, 0.12);
-  border-color: rgba(229, 193, 88, 0.4);
-  color: var(--color-champagne-light);
-  transform: translateY(-3px);
+.bio-social-btn:hover {
+  background: rgba(212, 175, 55, 0.15);
+  border-color: var(--border-gold-subtle);
+  color: var(--color-gold-light);
+  transform: translateY(-3px) scale(1.08);
+  box-shadow: 0 6px 20px rgba(212, 175, 55, 0.2);
 }
