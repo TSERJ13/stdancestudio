@@ -7,11 +7,63 @@ import './Bio.css'
 
 const GEMINI_KEY = atob('QVEuQWI4Uk42SnhSZVRtaWZfOEFCSHBnUWhLRS11dmhlUG5YMTdYSkhBaTZNQjZQQm9ZUg==')
 
-// Clean Smart Instant Knowledge Engine fallback (NO EMOJIS)
+// Truly Intelligent Smart Instant Knowledge Engine (No Emojis)
 function getSmartKnowledgeAnswer(query, lang) {
   const q = query.toLowerCase()
 
-  // Register trigger
+  // 1. General Greetings & Offerings ("რას გვთავაზობ?", "რა სერვისები გაქვთ?", "რას ასწავლით?", "რა შეთავაზება გაქვთ?")
+  if (
+    q.includes('გვთავაზობ') ||
+    q.includes('შეთავაზებ') ||
+    q.includes('სერვის') ||
+    q.includes('რას ასწავლ') ||
+    q.includes('რა გაქვთ') ||
+    q.includes('რა არის') ||
+    q.includes('offer') ||
+    q.includes('services') ||
+    q.includes('предлагаете') ||
+    q.includes('услуги')
+  ) {
+    if (lang === 'ka') {
+      return `ST DANCE STUDIO გთავაზობთ სამეჯლისო და სპორტული ცეკვების პროფესიონალურ სწავლებას ბათუმში:
+
+1. საბავშვო ჯგუფები (4.5-დან 16 წლამდე: Baby, Bronze, Pre-Silver, Silver, Golden)
+2. წყვილების ჯგუფი (ლათინოამერიკული და სტანდარტული ცეკვები)
+3. Solo კატეგორია (გოგონებისა და ბიჭებისთვის წყვილის გარეშე)
+4. Hobby Class (მოყვარულთა და ზრდასრულთა ჯგუფი)
+5. ინდივიდუალური გაკვეთილები (პერსონალური მწვრთნელი)
+6. მონაწილეობა ტურნირებში, საცეკვაო ბანაკებსა (Camps) და შოუ-პროგრამებში
+7. 100%-ით უფასო პირველი საცდელი გაკვეთილი!
+
+ჩასაწერად მოგვწერეთ "დამარეგისტრირე" და გახსნით სარეგისტრაციო ფორმას.`
+    } else if (lang === 'en') {
+      return `ST DANCE STUDIO offers professional Ballroom & Latin Sports Dance instruction in Batumi:
+
+1. Kids Groups (Ages 4.5 to 16: Baby, Bronze, Pre-Silver, Silver, Golden)
+2. Couples Group (Latin & Standard Dances)
+3. Solo Category (For girls & boys without a partner)
+4. Hobby Class (Adults & Amateurs)
+5. Private Lessons (Personal Coaching)
+6. Competitions, Dance Camps, and Show Performances
+7. 100% Free First Trial Lesson!
+
+Reply "Register me" to open the registration form.`
+    } else {
+      return `ST DANCE STUDIO предлагает профессиональное обучение бальным и спортивным танцам в Батуми:
+
+1. Детские группы (от 4.5 до 16 лет: Baby, Bronze, Pre-Silver, Silver, Golden)
+2. Группы для пар (Латина и Стандарт)
+3. Категория Solo (для девочек и мальчиков без партнера)
+4. Hobby Class (для взрослых и любителей)
+5. Индивидуальные уроки (Персональный тренер)
+6. Участие в турнирах, танцевальных лагерях (Camps) и шоу
+7. 100% Бесплатный первый пробный урок!
+
+Напишите "Зарегистрировать" для открытия формы записи.`
+    }
+  }
+
+  // 2. Register trigger
   if (
     q.includes('რეგისტრაცი') ||
     q.includes('დამარეგისტრირ') ||
@@ -29,7 +81,7 @@ function getSmartKnowledgeAnswer(query, lang) {
     }
   }
 
-  // 1. Solo Category & Couples
+  // 3. Solo Category & Couples
   if (
     q.includes('წყვილ') ||
     q.includes('სოლო') ||
@@ -48,7 +100,7 @@ function getSmartKnowledgeAnswer(query, lang) {
     }
   }
 
-  // 2. Parents Attendance
+  // 4. Parents Attendance
   if (
     q.includes('მშობელ') ||
     q.includes('დასწრებ') ||
@@ -65,7 +117,7 @@ function getSmartKnowledgeAnswer(query, lang) {
     }
   }
 
-  // 3. Costumes & Dresses
+  // 5. Costumes & Dresses
   if (
     q.includes('კოსტიუმ') ||
     q.includes('კაბ') ||
@@ -84,7 +136,7 @@ function getSmartKnowledgeAnswer(query, lang) {
     }
   }
 
-  // 4. Sickness & Makeup classes
+  // 6. Sickness & Makeup classes
   if (
     q.includes('ავად') ||
     q.includes('ცნობ') ||
@@ -104,7 +156,7 @@ function getSmartKnowledgeAnswer(query, lang) {
     }
   }
 
-  // 5. Items required for practice
+  // 7. Items required for practice
   if (
     q.includes('თან') ||
     q.includes('ნივთ') ||
@@ -124,7 +176,7 @@ function getSmartKnowledgeAnswer(query, lang) {
     }
   }
 
-  // 6. Dance Camps & Intensives
+  // 8. Dance Camps & Intensives
   if (
     q.includes('ბანაკ') ||
     q.includes('შეკრებ') ||
@@ -142,7 +194,7 @@ function getSmartKnowledgeAnswer(query, lang) {
     }
   }
 
-  // 7. Certificates & Awards
+  // 9. Certificates & Awards
   if (
     q.includes('სერტიფიკატ') ||
     q.includes('დიპლომ') ||
@@ -162,7 +214,7 @@ function getSmartKnowledgeAnswer(query, lang) {
     }
   }
 
-  // Schedule & Pricing per specific group
+  // 10. Schedule & Pricing per specific group
   if (
     q.includes('განრიგ') ||
     q.includes('როდის') ||
@@ -287,7 +339,7 @@ Reply "Register me" to sign up instantly!`
     }
   }
 
-  // Trainer & Leadership (სერგო წივწივაძე)
+  // 11. Trainer & Leadership (სერგო წივწივაძე)
   if (
     q.includes('მწვრთნელ') ||
     q.includes('ტრენერ') ||
@@ -310,7 +362,7 @@ Reply "Register me" to sign up instantly!`
     }
   }
 
-  // Dance Styles & Directions
+  // 12. Dance Styles & Directions
   if (
     q.includes('ქართულ') ||
     q.includes('ჰიპ') ||
@@ -332,7 +384,7 @@ Reply "Register me" to sign up instantly!`
     }
   }
 
-  // Siblings Discount
+  // 13. Siblings Discount
   if (
     q.includes('დედმამიშვილ') ||
     q.includes('და-ძმ') ||
@@ -353,7 +405,7 @@ Reply "Register me" to sign up instantly!`
     }
   }
 
-  // Private Lessons
+  // 14. Private Lessons
   if (
     q.includes('ინდივიდუალური') ||
     q.includes('პირადი') ||
@@ -383,7 +435,7 @@ Reply "Register me" to sign up instantly!`
     }
   }
 
-  // Price & Tuition General
+  // 15. Price & Tuition General
   if (
     q.includes('ფას') ||
     q.includes('ღირს') ||
@@ -425,7 +477,7 @@ Reply "Register me" to sign up!`
     }
   }
 
-  // Location & Address
+  // 16. Location & Address
   if (
     q.includes('სად') ||
     q.includes('მისამართ') ||
@@ -445,13 +497,25 @@ Reply "Register me" to sign up!`
     }
   }
 
-  // Default fallback answer
+  // Smart General Dynamic Response (Replacing the old generic fallback)
   if (lang === 'ka') {
-    return 'ST Dance Studio — ბათუმის სპორტული და სამეჯლისო ცეკვების სტუდია (ე. თაყაიშვილის 55). საცდელი გაკვეთილი უფასოა! დეტალებისთვის დაგვიკავშირდით: +995 514 19 99 66 ან მოგვწერეთ "დამარეგისტრირე".'
+    return `ST DANCE STUDIO გთავაზობთ სამეჯლისო და სპორტული ცეკვების სწავლებას 4.5-დან 16 წლამდე ბავშვებისთვის, წყვილებისთვის და მოყვარულებისთვის (Hobby Class).
+
+პირველი საცდელი გაკვეთილი 100%-ით უფასოა!
+
+ჩასაწერად მოგვწერეთ "დამარეგისტრირე" ან ჰკითხეთ AI-ს ფასების, განრიგის ან მისამართის შესახებ.`
   } else if (lang === 'en') {
-    return 'ST Dance Studio — Ballroom & Sports Dance Studio in Batumi (55 E. Takaishvili St). Trial class is free! Contact us: +995 514 19 99 66 or reply "Register me".'
+    return `ST DANCE STUDIO offers Ballroom & Sports Dance training for kids 4.5 to 16 yrs, couples, and adults (Hobby Class).
+
+First trial class is 100% Free!
+
+Reply "Register me" to sign up or ask AI about schedule, pricing, or location.`
   } else {
-    return 'ST Dance Studio — Студия спортивных танцев в Батуми (ул. Е. Такаишвили 55). Пробный урок бесплатный! Тел: +995 514 19 99 66 или напишите "Зарегистрировать".'
+    return `ST DANCE STUDIO предлагает обучение бальным и спортивным танцам для детей от 4.5 до 16 лет, пар и взрослых (Hobby Class).
+
+Первый пробный урок 100% бесплатный!
+
+Напишите "Зарегистрировать" для записи или спросите AI о расписании, ценах или адресе.`
   }
 }
 
@@ -567,7 +631,7 @@ export default function Bio() {
     setIsAiLoading(true)
 
     try {
-      const systemPrompt = `${studioKnowledgeBase}\n\nყურადღება: უპასუხე იმავე ენაზე, რომელზეც მომხმარებელი გეკითხება. არ გამოიყენო ემოჯიები! იყავი თავაზიანი, მეგობრული და მკაფიო.`
+      const systemPrompt = `${studioKnowledgeBase}\n\nყურადღება: უპასუხე იმავე ენაზე, რომელზეც მომხმარებელი გეკითხება. არ გამოიყენო ემოჯიები! იყავი თავაზიანი, მეგობრული, ამომწურავი და მკაფიო.`
 
       const res = await fetch(
         `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`,
@@ -700,10 +764,10 @@ export default function Bio() {
       aiTag: 'AI ასისტენტი',
       aiSubtitle: 'დასვით ნებისმიერი კითხვა',
       aiSuggestions: [
+        'რას გვთავაზობთ?',
         'დამარეგისტრირე',
         'განრიგი & ფასები',
-        'რა ღირს სწავლა?',
-        'სად მდებარეობთ?'
+        'რა ღირს სწავლა?'
       ],
       tabs: [
         { id: 'all', label: 'ყველა' },
@@ -787,10 +851,10 @@ export default function Bio() {
       aiTag: 'AI Assistant',
       aiSubtitle: 'Ask any question about studio',
       aiSuggestions: [
+        'What do you offer?',
         'Register me',
         'Schedule & Prices',
-        'How much is tuition?',
-        'Where are you located?'
+        'How much is tuition?'
       ],
       tabs: [
         { id: 'all', label: 'All' },
@@ -874,10 +938,10 @@ export default function Bio() {
       aiTag: 'AI Помощник',
       aiSubtitle: 'Задайте любой вопрос',
       aiSuggestions: [
+        'Что предлагаете?',
         'Записать меня',
         'Расписание и цены',
-        'Сколько стоит обучение?',
-        'Где вы находитесь?'
+        'Сколько стоит обучение?'
       ],
       tabs: [
         { id: 'all', label: 'Все' },
