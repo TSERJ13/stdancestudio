@@ -497,7 +497,7 @@ Reply "Register me" to sign up!`
     }
   }
 
-  // Smart General Dynamic Response (Replacing the old generic fallback)
+  // Smart General Dynamic Response
   if (lang === 'ka') {
     return `ST DANCE STUDIO გთავაზობთ სამეჯლისო და სპორტული ცეკვების სწავლებას 4.5-დან 16 წლამდე ბავშვებისთვის, წყვილებისთვის და მოყვარულებისთვის (Hobby Class).
 
@@ -539,6 +539,69 @@ export default function Bio() {
   const [regLoading, setRegLoading] = useState(false)
   const [regSuccess, setRegSuccess] = useState(false)
   const [regError, setRegError] = useState('')
+
+  // Schedule Modal State
+  const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false)
+
+  // Studio Schedule Groups Data
+  const studioGroupsList = [
+    {
+      name: 'Baby ჯგუფი',
+      age: '4.5 – 6 წელი (პატარები)',
+      days: 'სამშაბათი & ხუთშაბათი 17:30 (45 წთ) + შაბათი 10:00',
+      price: '130₾ / თვე (100₾ დედმამიშვილზე)',
+      val: 'Baby ჯგუფი (4.5-6 წელი) | 17:30 (130₾/თვე)'
+    },
+    {
+      name: 'Bronze (ბრონზა) ჯგუფი',
+      age: 'დამწყებები (1-ელი წელი)',
+      days: 'სამშაბათი & ხუთშაბათი 18:15 – 19:15',
+      price: '130₾ / თვე (100₾ დედმამიშვილზე)',
+      val: 'Bronze ჯგუფი (დამწყებები) | 18:15 (130₾/თვე)'
+    },
+    {
+      name: 'Pre-Silver (პრე-სილვერი) ჯგუფი',
+      age: '1 წელი ნასიარულები',
+      days: 'ორშაბათი, ოთხშაბათი, პარასკევი 17:30',
+      price: '130₾ / თვე',
+      val: 'Pre-Silver ჯგუფი (1 წელი) | 17:30 (130₾/თვე)'
+    },
+    {
+      name: 'Silver (სილვერი) ჯგუფი',
+      age: '2+ წელი ნასიარულები',
+      days: 'ორშაბათი, ოთხშაბათი, პარასკევი 19:30',
+      price: '130₾ / თვე',
+      val: 'Silver ჯგუფი (2+ წელი) | 19:30 (130₾/თვე)'
+    },
+    {
+      name: 'Golden (გოლდენი) ჯგუფი',
+      age: '5+ წელი ნასიარულები',
+      days: 'ორშაბათი, ოთხშაბათი, პარასკევი 16:30',
+      price: '130₾ / თვე',
+      val: 'Golden ჯგუფი (5+ წელი) | 16:30 (130₾/თვე)'
+    },
+    {
+      name: 'წყვილების ჯგუფი',
+      age: 'სამეჯლისო-სპორტული წყვილები',
+      days: 'ორშაბათი, ოთხშაბათი, პარასკევი 18:30',
+      price: '130₾ / თვე',
+      val: 'წყვილების ჯგუფი | 18:30 (130₾/თვე)'
+    },
+    {
+      name: 'Hobby Class (მოყვარულები)',
+      age: 'ზრდასრულები & მოყვარულები',
+      days: 'სამშაბათი & ხუთშაბათი 19:15 – 20:15',
+      price: '130₾ / თვე',
+      val: 'Hobby Class (მოყვარულები/ზრდასრულები) | 19:15 (130₾/თვე)'
+    },
+    {
+      name: 'ინდივიდუალური გაკვეთილები',
+      age: 'პერსონალური მწვრთნელი',
+      days: 'თავისუფალი გრაფიკი (შეთანხმებით)',
+      price: '1 გაკვეთილი = 70₾ | 4 = 240₾ | 8 = 400₾',
+      val: 'ინდივიდუალური გაკვეთილები (70₾ - 400₾)'
+    }
+  ]
 
   // Instagram Carousel state with AUTOPLAY
   const [carouselIndex, setCarouselIndex] = useState(0)
@@ -786,7 +849,7 @@ export default function Bio() {
           category: 'info',
           title: 'განრიგი',
           desc: 'ჯგუფები და საათები',
-          to: `${basePath}/schedule`,
+          action: () => setIsScheduleModalOpen(true),
           icon: (
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
@@ -873,7 +936,7 @@ export default function Bio() {
           category: 'info',
           title: 'Schedule',
           desc: 'Groups & Class Hours',
-          to: `${basePath}/schedule`,
+          action: () => setIsScheduleModalOpen(true),
           icon: (
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
@@ -960,7 +1023,7 @@ export default function Bio() {
           category: 'info',
           title: 'Расписание',
           desc: 'Группы и часы',
-          to: `${basePath}/schedule`,
+          action: () => setIsScheduleModalOpen(true),
           icon: (
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
@@ -1219,6 +1282,28 @@ export default function Bio() {
           {/* 2-COLUMN BENTO GRID FOR CORE ACTIONS */}
           <div className="bento-grid-2col">
             {filteredCards.map((card) => {
+              if (card.action) {
+                return (
+                  <div
+                    key={card.id}
+                    className="bento-mini-card"
+                    onClick={card.action}
+                  >
+                    <div className="bento-mini-top">
+                      <div className="bento-icon-box">{card.icon}</div>
+                      <div className="bento-mini-arrow">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <polyline points="9 18 15 12 9 6"></polyline>
+                        </svg>
+                      </div>
+                    </div>
+                    <div className="bento-mini-bottom">
+                      <div className="bento-mini-title">{card.title}</div>
+                      <div className="bento-mini-desc">{card.desc}</div>
+                    </div>
+                  </div>
+                )
+              }
               if (card.to) {
                 return (
                   <Link key={card.id} to={card.to} className="bento-mini-card">
@@ -1394,6 +1479,46 @@ export default function Bio() {
           </a>
         </footer>
       </div>
+
+      {/* INLINE SCHEDULE MODAL / DRAWER */}
+      {isScheduleModalOpen && (
+        <div className="bio-modal-overlay" onClick={() => setIsScheduleModalOpen(false)}>
+          <div className="bio-modal-card" onClick={(e) => e.stopPropagation()}>
+            <button className="bio-modal-close" onClick={() => setIsScheduleModalOpen(false)}>
+              ✕
+            </button>
+
+            <div className="bio-modal-header">
+              <h2 className="bio-modal-title">ჯგუფების განრიგი & ფასები</h2>
+              <p className="bio-modal-sub">ST Dance Studio Batumi</p>
+            </div>
+
+            <div className="bio-schedule-list">
+              {studioGroupsList.map((g, idx) => (
+                <div key={idx} className="bio-sched-card">
+                  <div>
+                    <div className="bio-sched-group-name">{g.name}</div>
+                    <div className="bio-sched-meta">{g.age}</div>
+                    <div className="bio-sched-days">{g.days}</div>
+                    <div className="bio-sched-meta" style={{ marginTop: '4px', fontWeight: 'bold' }}>{g.price}</div>
+                  </div>
+
+                  <button
+                    className="bio-sched-reg-btn"
+                    onClick={() => {
+                      setRegForm({ ...regForm, shift: g.val })
+                      setIsScheduleModalOpen(false)
+                      setIsRegModalOpen(true)
+                    }}
+                  >
+                    ჩაწერა ➔
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* INLINE REGISTRATION MODAL / DRAWER */}
       {isRegModalOpen && (
