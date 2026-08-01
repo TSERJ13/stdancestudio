@@ -12,6 +12,7 @@ import Register from './pages/Register'
 import CustomFormView from './pages/CustomFormView'
 import Privacy from './pages/Privacy'
 import Terms from './pages/Terms'
+import Bio from './pages/Bio'
 import AdminLogin from './pages/admin/AdminLogin'
 import AdminDashboard from './pages/admin/AdminDashboard'
 import PortalLogin from './pages/portal/PortalLogin'
@@ -36,6 +37,8 @@ const AppRoutes = () => (
     <Route path="register" element={<Register />} />
     <Route path="privacy" element={<Privacy />} />
     <Route path="terms" element={<Terms />} />
+    <Route path="bio" element={<Bio />} />
+    <Route path="link" element={<Bio />} />
     <Route path="f/:slug" element={<CustomFormView />} />
     <Route path="*" element={<NotFound />} />
   </Routes>
