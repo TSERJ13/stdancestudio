@@ -619,106 +619,57 @@ export default function Bio() {
   ]
 
   // REAL INSTAGRAM POSTS & MEDIA FROM USER REQUEST (COMPLETE 9 ITEMS FOR 3X3 GRID)
-  const instaGridItems = [
+  // The 6 EXACT real Instagram posts the user provided as embeds
+  const realInstaEmbeds = [
     {
       id: 1,
+      type: 'post',
       shortcode: 'DYy9WNRDjyT',
-      img: '/images/about-kids.jpg',
-      type: 'photo',
+      permalink: 'https://www.instagram.com/p/DYy9WNRDjyT/',
       embedUrl: 'https://www.instagram.com/p/DYy9WNRDjyT/embed',
-      url: 'https://www.instagram.com/p/DYy9WNRDjyT/',
-      title: 'ST Dance Studio Batumi',
-      likes: '240',
-      comments: '35'
     },
     {
       id: 2,
+      type: 'post',
       shortcode: 'DSm1G4SFT-i',
-      img: '/images/studio.jpg',
-      type: 'photo',
+      permalink: 'https://www.instagram.com/p/DSm1G4SFT-i/',
       embedUrl: 'https://www.instagram.com/p/DSm1G4SFT-i/embed',
-      url: 'https://www.instagram.com/p/DSm1G4SFT-i/',
-      title: 'ST Dance Studio Training Hall',
-      likes: '310',
-      comments: '42'
     },
     {
       id: 3,
+      type: 'post',
       shortcode: 'CwbIKwVIK6C',
-      img: '/images/competition.png',
-      type: 'photo',
+      permalink: 'https://www.instagram.com/p/CwbIKwVIK6C/',
       embedUrl: 'https://www.instagram.com/p/CwbIKwVIK6C/embed',
-      url: 'https://www.instagram.com/p/CwbIKwVIK6C/',
-      title: 'ST Dance Competition Awards',
-      likes: '356',
-      comments: '48'
     },
     {
       id: 4,
+      type: 'post',
       shortcode: 'CuVJP7poqe2',
-      img: '/images/dancer-1.png',
-      type: 'photo',
+      permalink: 'https://www.instagram.com/p/CuVJP7poqe2/',
       embedUrl: 'https://www.instagram.com/p/CuVJP7poqe2/embed',
-      url: 'https://www.instagram.com/p/CuVJP7poqe2/',
-      title: 'ST Dance Studio Dancers',
-      likes: '210',
-      comments: '19'
     },
     {
       id: 5,
+      type: 'post',
       shortcode: 'CuPJ6q8o-ds',
-      img: '/images/dancer-2.png',
-      type: 'photo',
+      permalink: 'https://www.instagram.com/p/CuPJ6q8o-ds/',
       embedUrl: 'https://www.instagram.com/p/CuPJ6q8o-ds/embed',
-      url: 'https://www.instagram.com/p/CuPJ6q8o-ds/',
-      title: 'ST Dance Studio Class',
-      likes: '298',
-      comments: '41'
     },
     {
       id: 6,
+      type: 'reel',
       shortcode: 'CtHujjZIL3Z',
-      img: '/images/hero-1.png',
-      type: 'reel',
+      permalink: 'https://www.instagram.com/reel/CtHujjZIL3Z/',
       embedUrl: 'https://www.instagram.com/reel/CtHujjZIL3Z/embed',
-      url: 'https://www.instagram.com/reel/CtHujjZIL3Z/',
-      title: 'ST Dance Studio Reel Performance',
-      likes: '480',
-      comments: '63'
     },
-    {
-      id: 7,
-      shortcode: 'DbdH5LcOCh3',
-      img: '/images/sergi.jpg',
-      type: 'reel',
-      embedUrl: 'https://www.instagram.com/reel/DbdH5LcOCh3/embed',
-      url: 'https://www.instagram.com/reel/DbdH5LcOCh3/',
-      title: 'Head Coach Sergo Tsivtsivadze',
-      likes: '620',
-      comments: '94'
-    },
-    {
-      id: 8,
-      shortcode: 'DYy9WNRDjyT',
-      img: '/images/nini.jpg',
-      type: 'photo',
-      embedUrl: 'https://www.instagram.com/p/DYy9WNRDjyT/embed',
-      url: 'https://www.instagram.com/p/DYy9WNRDjyT/',
-      title: 'Young Dancers Training',
-      likes: '310',
-      comments: '52'
-    },
-    {
-      id: 9,
-      shortcode: 'DSm1G4SFT-i',
-      img: '/images/hero-2.png',
-      type: 'carousel',
-      embedUrl: 'https://www.instagram.com/p/DSm1G4SFT-i/embed',
-      url: 'https://www.instagram.com/p/DSm1G4SFT-i/',
-      title: 'ST Dance Studio Atmosphere',
-      likes: '415',
-      comments: '68'
-    }
+  ]
+
+  // 3 additional studio local photo cards
+  const extraPhotoItems = [
+    { id: 7, img: '/images/competition.png', label: 'ჩემპიონატი' },
+    { id: 8, img: '/images/about-kids.jpg', label: 'ბავშვთა ჯგუფი' },
+    { id: 9, img: '/images/dancer-2.png', label: 'სტუდია' },
   ]
 
   // AI Chat state
@@ -1218,43 +1169,44 @@ export default function Bio() {
             </button>
           </div>
 
-          {/* 3-COLUMN INSTAGRAM POSTS GRID WITH 9 COMPLETE HIGH-RES INSTAGRAM POSTS */}
-          <div className="insta-3col-grid">
-            {instaGridItems.map((item) => (
-              <div
-                key={item.id}
-                className="insta-grid-item"
-                onClick={() => setSelectedInstaPost(item)}
-              >
-                <img
-                  src={item.img}
-                  alt={`ST Dance Studio Post ${item.id}`}
-                  className="insta-grid-img"
-                />
-                
-                {/* Reel / Multi-photo Icon Badge */}
-                <div className="insta-type-icon">
-                  {item.type === 'reel' ? (
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
-                      <polygon points="5 3 19 12 5 21 5 3"></polygon>
-                    </svg>
-                  ) : item.type === 'carousel' ? (
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
-                      <rect x="2" y="2" width="16" height="16" rx="2"></rect>
-                      <path d="M22 6v14a2 2 0 0 1-2 2H6"></path>
-                    </svg>
-                  ) : null}
-                </div>
+          {/* REAL INSTAGRAM EMBED FEED — 6 posts provided by user + 3 local studio photos */}
+          <div className="insta-embed-feed">
 
-                {/* Hover Overlay */}
-                <div className="insta-grid-hover-overlay">
-                  <div className="insta-hover-stat">
-                    <span>♥</span> {item.likes}
-                  </div>
-                  <div className="insta-hover-stat">
-                    <span>💬</span> {item.comments}
-                  </div>
+            {/* ROW 1: 6 real Instagram embeds in 3-column mini iframe grid */}
+            {realInstaEmbeds.map((item) => (
+              <div key={item.id} className="insta-embed-card" onClick={() => setSelectedInstaPost(item)}>
+                <div className="insta-embed-frame-wrap">
+                  <iframe
+                    src={item.embedUrl}
+                    className="insta-embed-frame"
+                    frameBorder="0"
+                    scrolling="no"
+                    allowTransparency={true}
+                    allow="encrypted-media"
+                    title={`Instagram Post ${item.shortcode}`}
+                  />
+                  {/* Transparent click overlay so clicking opens the modal */}
+                  <div className="insta-embed-click-shield" />
                 </div>
+                <div className="insta-embed-card-footer">
+                  <span className="insta-embed-type-badge">
+                    {item.type === 'reel' ? (
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                    ) : (
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect></svg>
+                    )}
+                    {item.type === 'reel' ? 'Reel' : 'Post'}
+                  </span>
+                  <a href={item.permalink} target="_blank" rel="noopener noreferrer" className="insta-embed-open-link" onClick={e => e.stopPropagation()}>Instagram ➔</a>
+                </div>
+              </div>
+            ))}
+
+            {/* 3 additional local studio photo cards */}
+            {extraPhotoItems.map((item) => (
+              <div key={item.id} className="insta-extra-photo-card">
+                <img src={item.img} alt={item.label} className="insta-extra-photo-img" />
+                <div className="insta-extra-photo-label">{item.label}</div>
               </div>
             ))}
           </div>
