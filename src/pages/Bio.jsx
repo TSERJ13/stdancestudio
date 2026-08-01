@@ -507,8 +507,13 @@ export default function Bio() {
   const [toastMessage, setToastMessage] = useState('')
   const canvasRef = useRef(null)
 
-  // Registration Modal State
+  // Modals States
   const [isRegModalOpen, setIsRegModalOpen] = useState(false)
+  const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false)
+  const [isLocationModalOpen, setIsLocationModalOpen] = useState(false)
+  const [isContactModalOpen, setIsContactModalOpen] = useState(false)
+
+  // Registration Form State
   const [regForm, setRegForm] = useState({
     student_name: '',
     birth_date: '',
@@ -519,9 +524,6 @@ export default function Bio() {
   const [regLoading, setRegLoading] = useState(false)
   const [regSuccess, setRegSuccess] = useState(false)
   const [regError, setRegError] = useState('')
-
-  // Schedule Modal State
-  const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false)
 
   // Studio Schedule Groups Data
   const studioGroupsList = [
@@ -790,16 +792,12 @@ export default function Bio() {
       mapBtn: 'Google Maps',
       aiTitle: 'ST Dance AI',
       aiTag: 'AI ასისტენტი',
+      aiSubtitle: 'დასვით ნებისმიერი კითხვა',
       aiSuggestions: [
         'რას გვთავაზობთ?',
         'დამარეგისტრირე',
         'განრიგი & ფასები',
         'რა ღირს სწავლა?'
-      ],
-      stats: [
-        { num: '12+', label: 'წლის გამოცდილება' },
-        { num: '300+', label: 'აქტიური მოსწავლე' },
-        { num: '50+', label: 'ჯილდო & თასი' }
       ]
     },
     en: {
@@ -816,11 +814,6 @@ export default function Bio() {
         'Register me',
         'Schedule & Prices',
         'How much is tuition?'
-      ],
-      stats: [
-        { num: '12+', label: 'Years Experience' },
-        { num: '300+', label: 'Active Students' },
-        { num: '50+', label: 'Trophies Won' }
       ]
     },
     ru: {
@@ -837,11 +830,6 @@ export default function Bio() {
         'Записать меня',
         'Расписание и цены',
         'Сколько стоит обучение?'
-      ],
-      stats: [
-        { num: '12+', label: 'Лет Опыта' },
-        { num: '300+', label: 'Учеников' },
-        { num: '50+', label: 'Наград' }
       ]
     }
   }
@@ -902,7 +890,7 @@ export default function Bio() {
           <h1 className="bio-brand-title">{t.title}</h1>
           <p className="bio-brand-subtitle">{t.subtitle}</p>
 
-          {/* TOP PRIMARY NAVIGATION MENU (REPLACING OLD PHONE & ADDRESS BUTTONS) */}
+          {/* TOP PRIMARY NAVIGATION MENU GRID */}
           <div className="bio-header-nav-grid">
             <button
               className="bio-header-nav-btn highlight"
@@ -928,44 +916,30 @@ export default function Bio() {
               <span>{lang === 'ka' ? 'განრიგი & ფასები' : lang === 'en' ? 'Schedule & Prices' : 'Расписание и цены'}</span>
             </button>
 
-            <a
-              href="https://maps.app.goo.gl/iyBGVtNeiNUGZmq86"
-              target="_blank"
-              rel="noopener noreferrer"
+            <button
               className="bio-header-nav-btn"
+              onClick={() => setIsLocationModalOpen(true)}
             >
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
                 <circle cx="12" cy="10" r="3"></circle>
               </svg>
               <span>{lang === 'ka' ? 'მისამართი' : lang === 'en' ? 'Address' : 'Адрес'}</span>
-            </a>
+            </button>
 
-            <a
-              href="https://wa.me/995514199966"
-              target="_blank"
-              rel="noopener noreferrer"
+            <button
               className="bio-header-nav-btn"
+              onClick={() => setIsContactModalOpen(true)}
             >
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+                <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"></path>
               </svg>
               <span>{lang === 'ka' ? 'კონტაქტები' : lang === 'en' ? 'Contacts' : 'Контакты'}</span>
-            </a>
+            </button>
           </div>
         </header>
 
-        {/* Live Stats Counter Bar */}
-        <div className="bio-stats-bar">
-          {t.stats.map((st, idx) => (
-            <div key={idx} className="bio-stat-item">
-              <div className="bio-stat-num">{st.num}</div>
-              <div className="bio-stat-label">{st.label}</div>
-            </div>
-          ))}
-        </div>
-
-        {/* EMBEDDED AI CHAT BOT BENTO CARD */}
+        {/* EMBEDDED AI CHAT BOT BENTO CARD (HEIGHT TALLER FOR VISIBLE HISTORY) */}
         <section className="bio-ai-card">
           <div className="bio-ai-header">
             <div className="bio-ai-title-wrap">
@@ -977,8 +951,8 @@ export default function Bio() {
             <div className="bio-ai-tag">{t.aiTag}</div>
           </div>
 
-          {/* Chat Messages Viewport */}
-          <div className="ai-chat-viewport" ref={chatViewportRef}>
+          {/* Extended Height Chat Messages Viewport for Visible History */}
+          <div className="ai-chat-viewport tall" ref={chatViewportRef}>
             {messages.map((m, i) => (
               <div key={i} className={`ai-msg-item ${m.role}`}>
                 <div className="ai-msg-bubble">{m.text}</div>
@@ -1004,7 +978,7 @@ export default function Bio() {
             ))}
           </div>
 
-          {/* Input Form with Prevented Window Scroll */}
+          {/* Input Form */}
           <form
             className="ai-chat-input-form"
             onSubmit={(e) => {
@@ -1041,37 +1015,6 @@ export default function Bio() {
               </svg>
             </button>
           </form>
-        </section>
-
-        {/* FULL-WIDTH MAP BENTO CARD */}
-        <section className="bio-bento-section">
-          <a
-            href="https://maps.app.goo.gl/iyBGVtNeiNUGZmq86"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="bento-map-card"
-          >
-            <div className="bento-map-header">
-              <div className="bento-map-left">
-                <div className="bento-map-pin-icon">
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                    <circle cx="12" cy="10" r="3"></circle>
-                  </svg>
-                </div>
-                <div>
-                  <div className="bento-map-name">{t.mapTitle}</div>
-                  <div className="bento-map-sub">{t.mapAddress}</div>
-                </div>
-              </div>
-              <div className="bento-map-button">
-                <span>{t.mapBtn}</span>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <polyline points="9 18 15 12 9 6"></polyline>
-                </svg>
-              </div>
-            </div>
-          </a>
         </section>
 
         {/* INSTAGRAM AUTOPLAY CAROUSEL SHOWCASE SECTION */}
@@ -1121,6 +1064,15 @@ export default function Bio() {
               ></iframe>
             </div>
           </div>
+
+          <a
+            href="https://www.instagram.com/stdancestudio/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="bio-insta-full-btn"
+          >
+            <span>ნახეთ სრული Instagram ფიდი (@stdancestudio) ➔</span>
+          </a>
         </section>
 
         {/* SOCIAL FOOTER ICONS */}
@@ -1175,7 +1127,169 @@ export default function Bio() {
         </footer>
       </div>
 
-      {/* INLINE SCHEDULE MODAL / DRAWER */}
+      {/* 1. INLINE CONTACTS MODAL (phone, whatsapp, telegram, instagram, facebook, threads) */}
+      {isContactModalOpen && (
+        <div className="bio-modal-overlay" onClick={() => setIsContactModalOpen(false)}>
+          <div className="bio-modal-card" onClick={(e) => e.stopPropagation()}>
+            <button className="bio-modal-close" onClick={() => setIsContactModalOpen(false)}>
+              ✕
+            </button>
+
+            <div className="bio-modal-header">
+              <h2 className="bio-modal-title">სტუდიის კონტაქტები</h2>
+              <p className="bio-modal-sub">დაგვიკავშირდით სასურველი არხით</p>
+            </div>
+
+            <div className="bio-contact-modal-list">
+              {/* 1. Phone */}
+              <a href="tel:+995514199966" className="bio-contact-item">
+                <div className="bio-contact-icon-box">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"></path>
+                  </svg>
+                </div>
+                <div className="bio-contact-info">
+                  <div className="bio-contact-title">ტელეფონის ნომერი</div>
+                  <div className="bio-contact-sub">+995 514 19 99 66</div>
+                </div>
+                <div className="bio-contact-arrow">➔</div>
+              </a>
+
+              {/* 2. WhatsApp */}
+              <a href="https://wa.me/995514199966" target="_blank" rel="noopener noreferrer" className="bio-contact-item">
+                <div className="bio-contact-icon-box">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+                  </svg>
+                </div>
+                <div className="bio-contact-info">
+                  <div className="bio-contact-title">WhatsApp</div>
+                  <div className="bio-contact-sub">პირდაპირი მიმოწერა</div>
+                </div>
+                <div className="bio-contact-arrow">➔</div>
+              </a>
+
+              {/* 3. Telegram */}
+              <a href="https://t.me/stdancestudio" target="_blank" rel="noopener noreferrer" className="bio-contact-item">
+                <div className="bio-contact-icon-box">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="22" y1="2" x2="11" y2="13"></line>
+                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                  </svg>
+                </div>
+                <div className="bio-contact-info">
+                  <div className="bio-contact-title">Telegram</div>
+                  <div className="bio-contact-sub">@stdancestudio</div>
+                </div>
+                <div className="bio-contact-arrow">➔</div>
+              </a>
+
+              {/* 4. Instagram */}
+              <a href="https://www.instagram.com/stdancestudio/" target="_blank" rel="noopener noreferrer" className="bio-contact-item">
+                <div className="bio-contact-icon-box">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                  </svg>
+                </div>
+                <div className="bio-contact-info">
+                  <div className="bio-contact-title">Instagram</div>
+                  <div className="bio-contact-sub">@stdancestudio</div>
+                </div>
+                <div className="bio-contact-arrow">➔</div>
+              </a>
+
+              {/* 5. Facebook */}
+              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="bio-contact-item">
+                <div className="bio-contact-icon-box">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+                  </svg>
+                </div>
+                <div className="bio-contact-info">
+                  <div className="bio-contact-title">Facebook</div>
+                  <div className="bio-contact-sub">ST Dance Studio</div>
+                </div>
+                <div className="bio-contact-arrow">➔</div>
+              </a>
+
+              {/* 6. Threads */}
+              <a href="https://www.threads.net/@stdancestudio" target="_blank" rel="noopener noreferrer" className="bio-contact-item">
+                <div className="bio-contact-icon-box">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="9"></circle>
+                    <path d="M12 8c-2.2 0-4 1.8-4 4s1.8 4 4 4 4-1.8 4-4"></path>
+                  </svg>
+                </div>
+                <div className="bio-contact-info">
+                  <div className="bio-contact-title">Threads</div>
+                  <div className="bio-contact-sub">@stdancestudio</div>
+                </div>
+                <div className="bio-contact-arrow">➔</div>
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 2. INLINE LOCATION MODAL (address + map iframe + direct map link) */}
+      {isLocationModalOpen && (
+        <div className="bio-modal-overlay" onClick={() => setIsLocationModalOpen(false)}>
+          <div className="bio-modal-card" onClick={(e) => e.stopPropagation()}>
+            <button className="bio-modal-close" onClick={() => setIsLocationModalOpen(false)}>
+              ✕
+            </button>
+
+            <div className="bio-modal-header">
+              <h2 className="bio-modal-title">სტუდიის მისამართი</h2>
+              <p className="bio-modal-sub">ST Dance Studio Batumi</p>
+            </div>
+
+            <div className="bio-location-content">
+              <div className="bio-loc-address-box">
+                <div className="bio-loc-icon">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                    <circle cx="12" cy="10" r="3"></circle>
+                  </svg>
+                </div>
+                <div>
+                  <div className="bio-loc-address-title">ქ. ბათუმი, ექვთიმე თაყაიშვილის №55</div>
+                  <div className="bio-loc-address-desc">
+                    3-სართულიანი თეთრი შენობის მე-3 სართული (შესასვლელი ბალოტისფერი სახლის ჭიშკრიდან).
+                  </div>
+                </div>
+              </div>
+
+              {/* Embedded Small Map Frame */}
+              <div className="bio-loc-map-frame">
+                <iframe
+                  src="https://maps.google.com/maps?q=E.%20Takaishvili%2055,%20Batumi&t=&z=16&ie=UTF8&iwloc=&output=embed"
+                  width="100%"
+                  height="210"
+                  style={{ border: 0, borderRadius: '14px', filter: 'grayscale(0.8) invert(0.9) contrast(1.2)' }}
+                  allowFullScreen=""
+                  loading="lazy"
+                  title="ST Dance Studio Location Map"
+                ></iframe>
+              </div>
+
+              <a
+                href="https://maps.app.goo.gl/iyBGVtNeiNUGZmq86"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bio-form-submit-btn"
+                style={{ display: 'block', textAlign: 'center', textDecoration: 'none', marginTop: '1rem' }}
+              >
+                Google Maps-ში გახსნა ➔
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 3. INLINE SCHEDULE MODAL (with SVG icons instead of emojis) */}
       {isScheduleModalOpen && (
         <div className="bio-modal-overlay" onClick={() => setIsScheduleModalOpen(false)}>
           <div className="bio-modal-card" onClick={(e) => e.stopPropagation()}>
@@ -1191,11 +1305,38 @@ export default function Bio() {
             <div className="bio-schedule-list">
               {studioGroupsList.map((g, idx) => (
                 <div key={idx} className="bio-sched-card">
-                  <div>
+                  <div className="bio-sched-content">
                     <div className="bio-sched-group-name">{g.name}</div>
-                    <div className="bio-sched-meta">{g.age}</div>
-                    <div className="bio-sched-days">{g.days}</div>
-                    <div className="bio-sched-meta" style={{ marginTop: '4px', fontWeight: 'bold' }}>{g.price}</div>
+                    
+                    {/* SVG Icon for Age */}
+                    <div className="bio-sched-meta-item">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                      </svg>
+                      <span>{g.age}</span>
+                    </div>
+
+                    {/* SVG Icon for Days/Hours */}
+                    <div className="bio-sched-meta-item">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                      </svg>
+                      <span>{g.days}</span>
+                    </div>
+
+                    {/* SVG Icon for Price */}
+                    <div className="bio-sched-meta-item price">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <rect x="2" y="6" width="20" height="12" rx="2"></rect>
+                        <circle cx="12" cy="12" r="2"></circle>
+                        <path d="M6 12h.01M18 12h.01"></path>
+                      </svg>
+                      <span>{g.price}</span>
+                    </div>
                   </div>
 
                   <button
@@ -1215,7 +1356,7 @@ export default function Bio() {
         </div>
       )}
 
-      {/* INLINE REGISTRATION MODAL / DRAWER */}
+      {/* 4. INLINE REGISTRATION MODAL */}
       {isRegModalOpen && (
         <div className="bio-modal-overlay" onClick={() => setIsRegModalOpen(false)}>
           <div className="bio-modal-card" onClick={(e) => e.stopPropagation()}>

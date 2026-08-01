@@ -294,43 +294,6 @@
   color: #000000;
 }
 
-/* Live Stats Bar */
-.bio-stats-bar {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
-  width: 100%;
-  margin: 1.2rem 0;
-}
-
-.bio-stat-item {
-  background: rgba(18, 18, 26, 0.6);
-  border: 1px solid var(--border-glass);
-  border-radius: 14px;
-  padding: 10px 8px;
-  text-align: center;
-  backdrop-filter: blur(12px);
-  transition: all 0.3s ease;
-}
-
-.bio-stat-item:hover {
-  border-color: var(--border-gold-subtle);
-  background: rgba(24, 24, 34, 0.8);
-}
-
-.bio-stat-num {
-  font-family: var(--font-display);
-  font-size: 1.15rem;
-  font-weight: 700;
-  color: var(--color-gold-main);
-}
-
-.bio-stat-label {
-  font-size: 0.7rem;
-  color: #808096;
-  margin-top: 2px;
-}
-
 /* AI CHATBOT BENTO CARD */
 .bio-ai-card {
   width: 100%;
@@ -388,18 +351,22 @@
   border-radius: 12px;
 }
 
+/* Extended Height Chat Messages Viewport for Visible History */
 .ai-chat-viewport {
   background: rgba(8, 8, 12, 0.8);
   border: 1px solid var(--border-glass);
   border-radius: 14px;
   padding: 12px;
-  max-height: 220px;
-  min-height: 120px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: 10px;
   scrollbar-width: thin;
+}
+
+.ai-chat-viewport.tall {
+  min-height: 200px;
+  max-height: 300px;
 }
 
 .ai-msg-item {
@@ -518,302 +485,6 @@
   cursor: not-allowed;
 }
 
-/* Category Filter Tabs */
-.bio-filter-tabs {
-  display: flex;
-  gap: 6px;
-  width: 100%;
-  overflow-x: auto;
-  padding-bottom: 4px;
-  margin-bottom: 1.2rem;
-  scrollbar-width: none;
-}
-
-.bio-filter-tabs::-webkit-scrollbar {
-  display: none;
-}
-
-.bio-tab-btn {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid var(--border-glass);
-  color: #8a8a9e;
-  font-size: 0.78rem;
-  font-weight: 600;
-  padding: 7px 16px;
-  border-radius: 20px;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: all 0.3s ease;
-}
-
-.bio-tab-btn.active {
-  background: rgba(197, 160, 89, 0.15);
-  border-color: var(--color-gold-main);
-  color: var(--color-gold-light);
-}
-
-/* Bento Grid */
-.bio-bento-section {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 0.9rem;
-  margin-bottom: 1.8rem;
-}
-
-/* HERO BENTO CTA CARD */
-.bento-hero-card {
-  position: relative;
-  background: linear-gradient(135deg, rgba(22, 22, 32, 0.95) 0%, rgba(10, 10, 15, 0.98) 100%);
-  border: 1px solid var(--border-gold-subtle);
-  border-radius: 20px;
-  padding: 1.3rem 1.4rem;
-  color: #ffffff;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  box-shadow: var(--shadow-card-depth);
-  overflow: hidden;
-  backdrop-filter: blur(20px);
-  transition: all 0.35s ease;
-}
-
-.bento-hero-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 3px;
-  height: 100%;
-  background: var(--color-gold-main);
-}
-
-.bento-hero-card:hover {
-  transform: translateY(-3px);
-  border-color: var(--color-gold-main);
-  box-shadow: var(--shadow-card-depth), 0 0 25px rgba(197, 160, 89, 0.15);
-}
-
-.bento-hero-info {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  z-index: 1;
-}
-
-.bento-hero-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: rgba(197, 160, 89, 0.1);
-  border: 1px solid rgba(197, 160, 89, 0.25);
-  color: var(--color-gold-light);
-  font-size: 0.68rem;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  padding: 3px 9px;
-  border-radius: 12px;
-  width: fit-content;
-  text-transform: uppercase;
-}
-
-.radar-pulse {
-  position: relative;
-  width: 6px;
-  height: 6px;
-  background: #ff5252;
-  border-radius: 50%;
-}
-
-.bento-hero-title {
-  font-size: 1.15rem;
-  font-weight: 700;
-  color: #ffffff;
-}
-
-.bento-hero-desc {
-  font-size: 0.8rem;
-  color: #9090a4;
-}
-
-.bento-hero-btn {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: rgba(197, 160, 89, 0.15);
-  border: 1px solid var(--color-gold-main);
-  color: var(--color-gold-light);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1;
-  transition: all 0.3s ease;
-}
-
-.bento-hero-card:hover .bento-hero-btn {
-  background: var(--color-gold-main);
-  color: #000;
-  transform: scale(1.05);
-}
-
-/* 2-COLUMN BENTO GRID */
-.bento-grid-2col {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 0.9rem;
-  width: 100%;
-}
-
-.bento-mini-card {
-  position: relative;
-  background: var(--grad-card-dark);
-  border: 1px solid var(--border-glass);
-  border-radius: 16px;
-  padding: 1.1rem 1rem;
-  color: #ffffff;
-  text-decoration: none;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  gap: 1rem;
-  backdrop-filter: blur(16px);
-  transition: all 0.3s ease;
-  overflow: hidden;
-  cursor: pointer;
-}
-
-.bento-mini-card:hover {
-  background: rgba(24, 24, 34, 0.85);
-  border-color: var(--border-gold-subtle);
-  transform: translateY(-3px);
-}
-
-.bento-mini-top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-}
-
-.bento-icon-box {
-  width: 38px;
-  height: 38px;
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid var(--border-glass);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--color-gold-light);
-  transition: all 0.3s ease;
-}
-
-.bento-mini-card:hover .bento-icon-box {
-  background: rgba(197, 160, 89, 0.15);
-  border-color: var(--border-gold-subtle);
-  color: var(--color-gold-light);
-}
-
-.bento-mini-arrow {
-  color: rgba(255, 255, 255, 0.2);
-  transition: all 0.3s ease;
-}
-
-.bento-mini-card:hover .bento-mini-arrow {
-  color: var(--color-gold-main);
-  transform: translateX(3px);
-}
-
-.bento-mini-bottom {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.bento-mini-title {
-  font-size: 0.95rem;
-  font-weight: 700;
-  color: #ffffff;
-}
-
-.bento-mini-desc {
-  font-size: 0.75rem;
-  color: #848498;
-}
-
-/* MAP BENTO CARD */
-.bento-map-card {
-  position: relative;
-  background: var(--grad-card-dark);
-  border: 1px solid var(--border-gold-subtle);
-  border-radius: 18px;
-  padding: 1.2rem 1.25rem;
-  color: #ffffff;
-  text-decoration: none;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  backdrop-filter: blur(16px);
-  transition: all 0.3s ease;
-  overflow: hidden;
-  box-shadow: var(--shadow-card-depth);
-}
-
-.bento-map-card:hover {
-  border-color: var(--color-gold-main);
-  transform: translateY(-3px);
-}
-
-.bento-map-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.bento-map-left {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.bento-map-pin-icon {
-  width: 38px;
-  height: 38px;
-  border-radius: 10px;
-  background: rgba(197, 160, 89, 0.1);
-  border: 1px solid var(--border-gold-subtle);
-  color: var(--color-gold-light);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.bento-map-name {
-  font-size: 0.98rem;
-  font-weight: 700;
-  color: #ffffff;
-}
-
-.bento-map-sub {
-  font-size: 0.78rem;
-  color: #848498;
-}
-
-.bento-map-button {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: rgba(197, 160, 89, 0.15);
-  border: 1px solid var(--border-gold-subtle);
-  color: var(--color-gold-light);
-  font-size: 0.76rem;
-  font-weight: 600;
-  padding: 7px 14px;
-  border-radius: 18px;
-  transition: all 0.3s ease;
-}
-
 /* INSTAGRAM FEED CAROUSEL SHOWCASE */
 .bio-carousel-section {
   width: 100%;
@@ -822,7 +493,7 @@
   border-radius: 20px;
   padding: 1.2rem;
   backdrop-filter: blur(16px);
-  margin-bottom: 2rem;
+  margin-bottom: 1.8rem;
   display: flex;
   flex-direction: column;
   gap: 1rem;
@@ -891,8 +562,60 @@
   border: none;
 }
 
+.bio-insta-full-btn {
+  display: block;
+  width: 100%;
+  background: rgba(197, 160, 89, 0.12);
+  border: 1px solid var(--border-gold-subtle);
+  color: var(--color-gold-light);
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 10px 14px;
+  border-radius: 14px;
+  text-align: center;
+  text-decoration: none;
+  transition: all 0.25s ease;
+}
+
+.bio-insta-full-btn:hover {
+  background: var(--color-gold-main);
+  border-color: var(--color-gold-main);
+  color: #000000;
+}
+
+/* SOCIAL FOOTER ICONS */
+.bio-social-footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.2rem;
+  margin-bottom: 1.5rem;
+  width: 100%;
+}
+
+.bio-social-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-glass);
+  color: #88889a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.bio-social-btn:hover {
+  background: rgba(197, 160, 89, 0.12);
+  border-color: var(--border-gold-subtle);
+  color: var(--color-gold-light);
+  transform: translateY(-2px);
+}
+
 /* ==========================================================================
-   INLINE MODALS (ELEGANT DARK OBSIDIAN MODALS WITH CHAMPAGNE ACCENTS)
+   INLINE MODALS
    ========================================================================== */
 .bio-modal-overlay {
   position: fixed;
@@ -972,7 +695,118 @@
   color: #9090a4;
 }
 
-/* Schedule Modal List */
+/* 1. CONTACTS MODAL LIST */
+.bio-contact-modal-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.bio-contact-item {
+  background: rgba(8, 8, 14, 0.7);
+  border: 1px solid var(--border-glass);
+  border-radius: 14px;
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: #ffffff;
+  transition: all 0.25s ease;
+}
+
+.bio-contact-item:hover {
+  background: rgba(18, 18, 28, 0.9);
+  border-color: var(--border-gold-subtle);
+  transform: translateX(3px);
+}
+
+.bio-contact-icon-box {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: rgba(197, 160, 89, 0.12);
+  border: 1px solid var(--border-gold-subtle);
+  color: var(--color-gold-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.bio-contact-info {
+  flex-grow: 1;
+}
+
+.bio-contact-title {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.bio-contact-sub {
+  font-size: 0.76rem;
+  color: #8c8c9e;
+  margin-top: 1px;
+}
+
+.bio-contact-arrow {
+  color: var(--color-gold-main);
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+/* 2. LOCATION MODAL CONTENT */
+.bio-location-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.bio-loc-address-box {
+  background: rgba(8, 8, 14, 0.7);
+  border: 1px solid var(--border-glass);
+  border-radius: 14px;
+  padding: 14px;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.bio-loc-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: rgba(197, 160, 89, 0.12);
+  border: 1px solid var(--border-gold-subtle);
+  color: var(--color-gold-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.bio-loc-address-title {
+  font-size: 0.94rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.bio-loc-address-desc {
+  font-size: 0.78rem;
+  color: #8c8c9e;
+  margin-top: 3px;
+  line-height: 1.4;
+}
+
+.bio-loc-map-frame {
+  width: 100%;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid var(--border-glass);
+}
+
+/* 3. SCHEDULE MODAL WITH SVG ICONS */
 .bio-schedule-list {
   display: flex;
   flex-direction: column;
@@ -996,25 +830,38 @@
   background: rgba(18, 18, 28, 0.85);
 }
 
-.bio-sched-group-name {
-  font-size: 0.94rem;
-  font-weight: 700;
-  color: #ffffff;
+.bio-sched-content {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
 }
 
-.bio-sched-meta {
+.bio-sched-group-name {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 2px;
+}
+
+.bio-sched-meta-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   font-size: 0.76rem;
+  color: #9a9ab0;
+}
+
+.bio-sched-meta-item.price {
   color: var(--color-gold-light);
+  font-weight: 700;
   margin-top: 2px;
 }
 
-.bio-sched-days {
-  font-size: 0.74rem;
-  color: #8c8c9e;
-  margin-top: 3px;
+.bio-sched-meta-item svg {
+  color: var(--color-gold-main);
+  flex-shrink: 0;
 }
 
-/* Clean, Sleek Action Button inside Schedule Cards */
 .bio-sched-reg-btn {
   background: rgba(197, 160, 89, 0.12);
   border: 1px solid var(--border-gold-subtle);
@@ -1035,7 +882,7 @@
   transform: scale(1.04);
 }
 
-/* Form Groups */
+/* FORM GROUPS */
 .bio-form-group {
   display: flex;
   flex-direction: column;
@@ -1092,7 +939,7 @@
   cursor: not-allowed;
 }
 
-/* Success View */
+/* SUCCESS VIEW */
 .bio-modal-success {
   text-align: center;
   padding: 1.5rem 0;
@@ -1111,35 +958,4 @@
   font-size: 26px;
   font-weight: bold;
   margin: 0 auto 1.2rem;
-}
-
-/* Social Footer */
-.bio-social-footer {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 1.2rem;
-  margin-bottom: 1.5rem;
-  width: 100%;
-}
-
-.bio-social-btn {
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid var(--border-glass);
-  color: #88889a;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-decoration: none;
-  transition: all 0.3s ease;
-}
-
-.bio-social-btn:hover {
-  background: rgba(197, 160, 89, 0.12);
-  border-color: var(--border-gold-subtle);
-  color: var(--color-gold-light);
-  transform: translateY(-2px);
 }
