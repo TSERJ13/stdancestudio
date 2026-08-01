@@ -10,7 +10,91 @@ const GEMINI_KEY = atob('QVEuQWI4Uk42SnhSZVRtaWZfOEFCSHBnUWhLRS11dmhlUG5YMTdYSkh
 function getSmartKnowledgeAnswer(query, lang) {
   const q = query.toLowerCase()
 
-  // Price & Tuition
+  // Trainer & Leadership (სერგო წივწივაძე)
+  if (
+    q.includes('მწვრთნელ') ||
+    q.includes('ტრენერ') ||
+    q.includes('სერგ') ||
+    q.includes('წივწივაძ') ||
+    q.includes('ხელმძღვანელ') ||
+    q.includes('მსაჯ') ||
+    q.includes('trainer') ||
+    q.includes('coach') ||
+    q.includes('founder') ||
+    q.includes('тренер') ||
+    q.includes('руковод')
+  ) {
+    if (lang === 'ka') {
+      return '🏆 ST Dance Studio-ს დამფუძნებელი, მფლობელი და მთავარი მწვრთნელია სერგო (სერგი) წივწივაძე — პროფესიონალი პედაგოგი და WDSF-ის (მსოფლიო საცეკვაო სპორტის ფედერაციის) მოქმედი საერთაშორისო მსაჯი.'
+    } else if (lang === 'en') {
+      return '🏆 ST Dance Studio founder and head coach is Sergo (Sergi) Tsivtsivadze — professional educator and active international WDSF Judge.'
+    } else {
+      return '🏆 Основатель и главный тренер ST Dance Studio — Серго (Серги) Цивцивадзе, профессиональный педагог и действующий международный судья WDSF.'
+    }
+  }
+
+  // Dance Styles & Directions (ქართული, ჰიპჰოპი, ბალეტი...)
+  if (
+    q.includes('ქართულ') ||
+    q.includes('ჰიპ') ||
+    q.includes('ბალეტ') ||
+    q.includes('მიმართულებ') ||
+    q.includes('რა ცეკვ') ||
+    q.includes('სტილ') ||
+    q.includes('style') ||
+    q.includes('dance') ||
+    q.includes('танец') ||
+    q.includes('стиль')
+  ) {
+    if (lang === 'ka') {
+      return '💃 ჩვენთან ისწავლება მხოლოდ სამეჯლისო-სპორტული ცეკვები (ლათინოამერიკული და სტანდარტული). არ ვასწავლით ქართულ ცეკვებს ან ჰიპ-ჰოპს.'
+    } else if (lang === 'en') {
+      return '💃 We teach exclusively Sports & Ballroom Dancing (Latin & Standard). We do not offer Georgian national dances or hip-hop.'
+    } else {
+      return '💃 Мы обучаем исключительно бальным и спортивным танцам (латина и стандарт). Грузинские танцы и хип-хоп у нас не преподаются.'
+    }
+  }
+
+  // Siblings Discount (დედმამიშვილები)
+  if (
+    q.includes('დედმამიშვილ') ||
+    q.includes('და-ძმ') ||
+    q.includes('ორი შვილ') ||
+    q.includes('ორი ბავშვ') ||
+    q.includes('sibling') ||
+    q.includes('brother') ||
+    q.includes('sister') ||
+    q.includes('двое детей') ||
+    q.includes('сестр')
+  ) {
+    if (lang === 'ka') {
+      return '👨‍👩‍👧‍👦 დიახ, დედმამიშვილებზე მოქმედებს ფასდაკლება — 100 ლარი 1 მოსწავლეზე (ანუ 200 ლარი 2 დედმამიშვილზე თვეში).'
+    } else if (lang === 'en') {
+      return '👨‍👩‍👧‍👦 Yes! Sibling discount applies — 100 GEL per student (200 GEL for two siblings monthly).'
+    } else {
+      return '👨‍👩‍👧‍👦 Да! Действует скидка для братьев и сестер — 100 GEL за ученика (200 GEL за двоих в месяц).'
+    }
+  }
+
+  // Private Lessons (ინდივიდუალური)
+  if (
+    q.includes('ინდივიდუალური') ||
+    q.includes('პირადი') ||
+    q.includes('პერსონალური') ||
+    q.includes('private') ||
+    q.includes('personal') ||
+    q.includes('индивидуальн')
+  ) {
+    if (lang === 'ka') {
+      return '⭐ ინდივიდუალური გაკვეთილები:\n• 1 გაკვეთილი = 70 ლარი\n• 4 გაკვეთილის პაკეტი = 240 ლარი\n• 8 გაკვეთილის პაკეტი = 400 ლარი\n(ინდივიდუალურზე დედმამიშვილების ფასდაკლება არ ვრცელდება).'
+    } else if (lang === 'en') {
+      return '⭐ Private Lessons:\n• 1 lesson = 70 GEL\n• 4 lessons package = 240 GEL\n• 8 lessons package = 400 GEL\n(Sibling discount does not apply to private lessons).'
+    } else {
+      return '⭐ Индивидуальные уроки:\n• 1 урок = 70 GEL\n• Пакет 4 урока = 240 GEL\n• Пакет 8 уроков = 400 GEL\n(Скидка для сестер/братьев не распространяется на личные уроки).'
+    }
+  }
+
+  // General Price & Tuition
   if (
     q.includes('ფას') ||
     q.includes('ღირს') ||
@@ -23,7 +107,7 @@ function getSmartKnowledgeAnswer(query, lang) {
     q.includes('стоит')
   ) {
     if (lang === 'ka') {
-      return '💰 სტუდიის ფასები:\n• თვიური აბონემენტი: 130 ლარი (30 დღე)\n• დედმამიშვილებზე: 100 ლარი 1 მოსწავლეზე (200 ლარი 2 დედმამიშვილზე)\n• ინდივიდუალური გაკვეთილი: 1 გაკვეთილი = 70₾ | 4 გაკვეთილი = 240₾ | 8 გაკვეთილი = 400₾\n• საცდელი გაკვეთილი 100%-ით უფასოა!'
+      return '💰 სტუდიის ფასები:\n• თვიური აბონემენტი: 130 ლარი (30 დღე)\n• დედმამიშვილებზე: 100 ლარი 1 მოსწავლეზე (200 ლარი 2 დედმამიშვილზე)\n• ინდივიდუალური: 1 გაკვეთილი = 70₾ | 4 = 240₾ | 8 = 400₾\n• საცდელი გაკვეთილი 100%-ით უფასოა!'
     } else if (lang === 'en') {
       return '💰 Pricing Details:\n• Monthly Subscription: 130 GEL (30 days)\n• Siblings Discount: 100 GEL per student (200 GEL for two)\n• Private Lessons: 1 class = 70₾ | 4 classes = 240₾ | 8 classes = 400₾\n• First Trial Lesson is 100% Free!'
     } else {
@@ -45,7 +129,7 @@ function getSmartKnowledgeAnswer(query, lang) {
     if (lang === 'ka') {
       return '📍 მისამართი: ქ. ბათუმი, ექვთიმე თაყაიშვილის ქუჩა №55 (3-სართულიანი თეთრი შენობის მე-3 სართული, შესასვლელი ბალოტისფერი სახლის ჭიშკრიდან). ტელ: +995 514 19 99 66.'
     } else if (lang === 'en') {
-      return '📍 Location: 55 Eka Takaishvili St, Batumi (3rd floor of the 3-story white building, entrance through the olive gate). Tel: +995 514 19 99 66.'
+      return '📍 Location: 55 Eka Takaishvili St, Batumi (3rd floor of 3-story white building, entrance through olive gate). Tel: +995 514 19 99 66.'
     } else {
       return '📍 Адрес: Батуми, ул. Екатирене Такаишвили №55 (3-й этаж 3-этажного белого здания, вход через оливковые ворота). Тел: +995 514 19 99 66.'
     }
@@ -340,7 +424,7 @@ export default function Bio() {
         '💡 რა ღირს სწავლა?',
         '📅 როდის არის მეცადინეობები?',
         '📍 სად მდებარეობთ?',
-        '👶 რა ასაკიდან იღებთ?'
+        '🏆 ვინ არის მწვრთნელი?'
       ],
       tabs: [
         { id: 'all', label: '✨ ყველა' },
@@ -426,7 +510,7 @@ export default function Bio() {
         '💡 How much is tuition?',
         '📅 When are classes?',
         '📍 Where are you located?',
-        '👶 What age do you accept?'
+        '🏆 Who is the trainer?'
       ],
       tabs: [
         { id: 'all', label: '✨ All' },
@@ -512,7 +596,7 @@ export default function Bio() {
         '💡 Сколько стоит обучение?',
         '📅 Когда проходят занятия?',
         '📍 Где вы находитесь?',
-        '👶 С какого возраста берете?'
+        '🏆 Кто тренер?'
       ],
       tabs: [
         { id: 'all', label: '✨ Все' },
