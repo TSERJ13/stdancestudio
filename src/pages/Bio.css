@@ -294,6 +294,87 @@
   color: #000000;
 }
 
+/* 3D STUDIO TOUR HERO BANNER */
+.bio-3d-banner {
+  width: 100%;
+  background: linear-gradient(135deg, rgba(22, 22, 32, 0.9) 0%, rgba(12, 12, 18, 0.95) 100%);
+  border: 1px solid var(--border-gold-subtle);
+  border-radius: 18px;
+  padding: 1rem 1.1rem;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 1.4rem;
+  cursor: pointer;
+  backdrop-filter: blur(14px);
+  transition: all 0.35s ease;
+  box-shadow: var(--shadow-card-depth);
+}
+
+.bio-3d-banner:hover {
+  border-color: var(--color-gold-main);
+  background: rgba(197, 160, 89, 0.12);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-card-depth), 0 0 20px rgba(197, 160, 89, 0.15);
+}
+
+.bio-3d-icon-box {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: rgba(197, 160, 89, 0.15);
+  border: 1px solid var(--color-gold-main);
+  color: var(--color-gold-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.bio-3d-text-wrap {
+  flex-grow: 1;
+}
+
+.bio-3d-title {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.bio-3d-sub {
+  font-size: 0.74rem;
+  color: #8c8c9e;
+  margin-top: 2px;
+}
+
+.bio-3d-arrow {
+  color: var(--color-gold-main);
+  font-size: 0.9rem;
+  font-weight: 700;
+  transition: transform 0.3s ease;
+}
+
+.bio-3d-banner:hover .bio-3d-arrow {
+  transform: translateX(4px);
+}
+
+/* 3D TOUR VIEWER MODAL CONTENT */
+.bio-3d-tour-viewer {
+  width: 100%;
+}
+
+.bio-3d-placeholder-box {
+  background: rgba(8, 8, 14, 0.85);
+  border: 1.5px dashed var(--border-gold-subtle);
+  border-radius: 16px;
+  padding: 2.2rem 1.2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
 /* AI CHATBOT BENTO CARD */
 .bio-ai-card {
   width: 100%;

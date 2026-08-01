@@ -308,15 +308,15 @@ Click the Online Registration button to sign up.`
 - Дни: Вторник и Четверг 18:15 – 19:15
 - Цена: 130 GEL/мес (100 GEL для сестер/братьев)
 
-3. Группа Pre-Silver (1 год опыта)
+3. Pre-Silver (1 год опыта)
 - Дни: Понедельник, Среда, Пятница 17:30
 - Цена: 130 GEL/мес
 
-4. Группа Silver (2+ года опыта)
+4. Silver (2+ года опыта)
 - Дни: Понедельник, Среда, Пятница 19:30
 - Цена: 130 GEL/мес
 
-5. Группа Golden (5+ лет опыта)
+5. Golden (5+ лет опыта)
 - Дни: Понедельник, Среда, Пятница 16:30
 - Цена: 130 GEL/мес
 
@@ -513,11 +513,20 @@ export default function Bio() {
   const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false)
   const [isLocationModalOpen, setIsLocationModalOpen] = useState(false)
   const [isContactModalOpen, setIsContactModalOpen] = useState(false)
+  const [is3DTourModalOpen, setIs3DTourModalOpen] = useState(false)
+  const [selectedInstaPost, setSelectedInstaPost] = useState(null)
   const [activeInstaTab, setActiveInstaTab] = useState('grid')
 
   // Lock body scroll when any modal is open to prevent background scrolling/drifting
   useEffect(() => {
-    if (isRegModalOpen || isScheduleModalOpen || isLocationModalOpen || isContactModalOpen) {
+    if (
+      isRegModalOpen ||
+      isScheduleModalOpen ||
+      isLocationModalOpen ||
+      isContactModalOpen ||
+      is3DTourModalOpen ||
+      selectedInstaPost
+    ) {
       document.body.style.overflow = 'hidden'
       document.body.style.touchAction = 'none'
     } else {
@@ -528,7 +537,14 @@ export default function Bio() {
       document.body.style.overflow = ''
       document.body.style.touchAction = ''
     }
-  }, [isRegModalOpen, isScheduleModalOpen, isLocationModalOpen, isContactModalOpen])
+  }, [
+    isRegModalOpen,
+    isScheduleModalOpen,
+    isLocationModalOpen,
+    isContactModalOpen,
+    is3DTourModalOpen,
+    selectedInstaPost
+  ])
 
   // Registration Form State
   const [regForm, setRegForm] = useState({
@@ -602,13 +618,15 @@ export default function Bio() {
     }
   ]
 
-  // Native Instagram Profile 3-Column Grid Data
+  // Native Instagram Profile 3-Column Grid Data with Interactive Embed Links
   const instaGridItems = [
     {
       id: 1,
       img: '/images/about-kids.jpg',
       type: 'reel',
+      embedUrl: 'https://www.instagram.com/reel/DbdH5LcOCh3/embed',
       url: 'https://www.instagram.com/reel/DbdH5LcOCh3/',
+      title: 'ST Dance Studio Reel Showcase',
       likes: '184',
       comments: '22'
     },
@@ -616,7 +634,9 @@ export default function Bio() {
       id: 2,
       img: '/images/studio.jpg',
       type: 'photo',
+      embedUrl: 'https://www.instagram.com/p/DYy9WNRDjyT/embed',
       url: 'https://www.instagram.com/p/DYy9WNRDjyT/',
+      title: 'ST Dance Studio Training Hall',
       likes: '240',
       comments: '35'
     },
@@ -624,7 +644,9 @@ export default function Bio() {
       id: 3,
       img: '/images/competition.png',
       type: 'carousel',
+      embedUrl: 'https://www.instagram.com/p/DYy9WNRDjyT/embed',
       url: 'https://www.instagram.com/stdancestudio/',
+      title: 'ST Dance Competition Awards',
       likes: '356',
       comments: '48'
     },
@@ -632,7 +654,9 @@ export default function Bio() {
       id: 4,
       img: '/images/dancer-1.png',
       type: 'reel',
+      embedUrl: 'https://www.instagram.com/reel/DbdH5LcOCh3/embed',
       url: 'https://www.instagram.com/stdancestudio/',
+      title: 'Solo Category Practice',
       likes: '210',
       comments: '19'
     },
@@ -640,7 +664,9 @@ export default function Bio() {
       id: 5,
       img: '/images/dancer-2.png',
       type: 'carousel',
+      embedUrl: 'https://www.instagram.com/p/DYy9WNRDjyT/embed',
       url: 'https://www.instagram.com/stdancestudio/',
+      title: 'Couples Group Performance',
       likes: '298',
       comments: '41'
     },
@@ -648,7 +674,9 @@ export default function Bio() {
       id: 6,
       img: '/images/hero-1.png',
       type: 'reel',
+      embedUrl: 'https://www.instagram.com/reel/DbdH5LcOCh3/embed',
       url: 'https://www.instagram.com/stdancestudio/',
+      title: 'Masterclass Intensive',
       likes: '480',
       comments: '63'
     },
@@ -656,7 +684,9 @@ export default function Bio() {
       id: 7,
       img: '/images/hero-2.png',
       type: 'photo',
+      embedUrl: 'https://www.instagram.com/p/DYy9WNRDjyT/embed',
       url: 'https://www.instagram.com/stdancestudio/',
+      title: 'Studio Atmosphere',
       likes: '195',
       comments: '27'
     },
@@ -664,7 +694,9 @@ export default function Bio() {
       id: 8,
       img: '/images/sergi.jpg',
       type: 'reel',
+      embedUrl: 'https://www.instagram.com/reel/DbdH5LcOCh3/embed',
       url: 'https://www.instagram.com/stdancestudio/',
+      title: 'Head Coach Sergo Tsivtsivadze',
       likes: '620',
       comments: '94'
     },
@@ -672,7 +704,9 @@ export default function Bio() {
       id: 9,
       img: '/images/nini.jpg',
       type: 'photo',
+      embedUrl: 'https://www.instagram.com/p/DYy9WNRDjyT/embed',
       url: 'https://www.instagram.com/stdancestudio/',
+      title: 'Young Dancers Class',
       likes: '310',
       comments: '52'
     }
@@ -1033,6 +1067,22 @@ export default function Bio() {
           </div>
         </header>
 
+        {/* 3D STUDIO TOUR HERO BUTTON CARD */}
+        <section className="bio-3d-banner" onClick={() => setIs3DTourModalOpen(true)}>
+          <div className="bio-3d-icon-box">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+              <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+              <line x1="12" y1="22.08" x2="12" y2="12"></line>
+            </svg>
+          </div>
+          <div className="bio-3d-text-wrap">
+            <div className="bio-3d-title">3D დარბაზის ტური (360° View)</div>
+            <div className="bio-3d-sub">დაათვალიერეთ ST Dance Studio-ს დარბაზი 3D ფორმატში</div>
+          </div>
+          <div className="bio-3d-arrow">➔</div>
+        </section>
+
         {/* EMBEDDED AI CHAT BOT BENTO CARD */}
         <section className="bio-ai-card">
           <div className="bio-ai-header">
@@ -1175,15 +1225,13 @@ export default function Bio() {
             </button>
           </div>
 
-          {/* 3-COLUMN INSTAGRAM POSTS GRID */}
+          {/* 3-COLUMN INSTAGRAM POSTS GRID WITH INTERACTIVE EMBED VIEWER */}
           <div className="insta-3col-grid">
             {instaGridItems.map((item) => (
-              <a
+              <div
                 key={item.id}
-                href={item.url}
-                target="_blank"
-                rel="noopener noreferrer"
                 className="insta-grid-item"
+                onClick={() => setSelectedInstaPost(item)}
               >
                 <img src={item.img} alt={`ST Dance Studio Post ${item.id}`} className="insta-grid-img" />
                 
@@ -1210,7 +1258,7 @@ export default function Bio() {
                     <span>💬</span> {item.comments}
                   </div>
                 </div>
-              </a>
+              </div>
             ))}
           </div>
 
@@ -1276,6 +1324,78 @@ export default function Bio() {
           </a>
         </footer>
       </div>
+
+      {/* INTERACTIVE INSTAGRAM EMBEDDED POST VIEWER MODAL */}
+      {selectedInstaPost && (
+        <div className="bio-modal-overlay" onClick={() => setSelectedInstaPost(null)}>
+          <div className="bio-modal-card" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '440px', padding: '1rem' }}>
+            <button className="bio-modal-close" onClick={() => setSelectedInstaPost(null)}>
+              ✕
+            </button>
+
+            <div className="bio-modal-header" style={{ marginBottom: '0.8rem' }}>
+              <h2 className="bio-modal-title" style={{ fontSize: '1.1rem' }}>{selectedInstaPost.title}</h2>
+              <p className="bio-modal-sub">@stdancestudio on Instagram</p>
+            </div>
+
+            <div className="bio-insta-embed-box">
+              <iframe
+                src={selectedInstaPost.embedUrl}
+                width="100%"
+                height="460"
+                frameBorder="0"
+                scrolling="no"
+                allowTransparency={true}
+                allow="encrypted-media"
+                title="Instagram Post Embed"
+                style={{ borderRadius: '12px', border: '1px solid var(--border-glass)' }}
+              ></iframe>
+            </div>
+
+            <a
+              href={selectedInstaPost.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bio-form-submit-btn"
+              style={{ display: 'block', textAlign: 'center', textDecoration: 'none', marginTop: '0.8rem' }}
+            >
+              Instagram-ში გახსნა ➔
+            </a>
+          </div>
+        </div>
+      )}
+
+      {/* 3D STUDIO TOUR MODAL PLACEHOLDER */}
+      {is3DTourModalOpen && (
+        <div className="bio-modal-overlay" onClick={() => setIs3DTourModalOpen(false)}>
+          <div className="bio-modal-card" onClick={(e) => e.stopPropagation()}>
+            <button className="bio-modal-close" onClick={() => setIs3DTourModalOpen(false)}>
+              ✕
+            </button>
+
+            <div className="bio-modal-header">
+              <h2 className="bio-modal-title">3D დარბაზის ტური (360°)</h2>
+              <p className="bio-modal-sub">ST Dance Studio Batumi</p>
+            </div>
+
+            <div className="bio-3d-tour-viewer">
+              <div className="bio-3d-placeholder-box">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--color-gold-main)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                  <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                  <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                </svg>
+                <div style={{ marginTop: '12px', fontWeight: 'bold', color: '#ffffff' }}>
+                  3D დარბაზის პანორამა მზადყოფნაშია!
+                </div>
+                <div style={{ fontSize: '0.78rem', color: '#8c8c9e', marginTop: '6px', textAlign: 'center', lineHeight: '1.4' }}>
+                  3D ფოტოს ატვირთვისთანავე აქ გამოჩნდება დარბაზის ინტერაქტიული 360-გრადუსიანი ვირტუალური ტური.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* 1. INLINE CONTACTS MODAL */}
       {isContactModalOpen && (
