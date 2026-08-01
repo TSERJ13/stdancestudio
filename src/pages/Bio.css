@@ -1,5 +1,5 @@
 /* ==========================================================================
-   ST DANCE STUDIO — HIGH-ACTION INTERACTIVE BENTO LINK-IN-BIO + AI BOT
+   ST DANCE STUDIO — HIGH-FASHION LINK-IN-BIO DESIGN SYSTEM (2026 EDITION)
    ========================================================================== */
 
 :root {
@@ -20,7 +20,7 @@
   );
 
   --grad-gold-soft: linear-gradient(135deg, rgba(212, 175, 55, 0.18) 0%, rgba(153, 115, 22, 0.04) 100%);
-  --grad-card-dark: linear-gradient(145deg, rgba(22, 22, 32, 0.8) 0%, rgba(12, 12, 18, 0.9) 100%);
+  --grad-card-dark: linear-gradient(145deg, rgba(22, 22, 32, 0.85) 0%, rgba(12, 12, 18, 0.95) 100%);
   
   --shadow-gold-glow: 0 0 35px rgba(212, 175, 55, 0.22);
   --shadow-card-depth: 0 20px 50px rgba(0, 0, 0, 0.85);
@@ -174,7 +174,7 @@
   align-items: center;
   text-align: center;
   width: 100%;
-  margin-bottom: 1.6rem;
+  margin-bottom: 1.5rem;
 }
 
 .bio-avatar-container {
@@ -256,53 +256,57 @@
   font-size: 0.86rem;
   font-weight: 400;
   letter-spacing: 0.05em;
-  margin-bottom: 1rem;
+  margin-bottom: 1.2rem;
 }
 
-/* Interactive Chips */
-.bio-chips-row {
+/* Distinct Action Buttons under Header (Call & Maps) */
+.bio-action-buttons-row {
   display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
+  gap: 10px;
+  width: 100%;
   justify-content: center;
 }
 
-.bio-status-chip {
+.bio-btn-action {
+  flex: 1;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  background: rgba(255, 255, 255, 0.035);
-  border: 1px solid var(--border-glass);
-  color: #d8d8eb;
-  font-size: 0.78rem;
-  font-weight: 500;
-  padding: 6px 14px;
-  border-radius: 25px;
-  cursor: pointer;
+  justify-content: center;
+  gap: 8px;
+  background: rgba(22, 22, 34, 0.8);
+  border: 1px solid var(--border-gold-subtle);
+  color: #ffffff;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 10px 14px;
+  border-radius: 14px;
+  text-decoration: none;
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
 }
 
-.bio-status-chip:hover {
+.bio-btn-action:hover {
   background: var(--grad-gold-soft);
-  border-color: var(--border-gold-subtle);
-  color: var(--color-gold-light);
+  border-color: var(--border-gold-bright);
+  color: var(--color-gold-bright);
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(212, 175, 55, 0.15);
+  box-shadow: 0 6px 20px rgba(212, 175, 55, 0.2);
 }
 
-.bio-status-chip svg {
+.bio-btn-action svg {
   color: var(--color-gold-main);
+  flex-shrink: 0;
 }
 
-/* Live Stats Counter Bar */
+/* Live Stats Bar */
 .bio-stats-bar {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 8px;
   width: 100%;
-  margin-bottom: 1.5rem;
+  margin: 1.2rem 0;
 }
 
 .bio-stat-item {
@@ -332,6 +336,194 @@
   font-size: 0.7rem;
   color: #8a8a9e;
   margin-top: 2px;
+}
+
+/* ==========================================================================
+   AI CHATBOT BENTO CARD (PLACED HIGH UP FOR IMMEDIATE ACTION)
+   ========================================================================== */
+.bio-ai-card {
+  width: 100%;
+  background: linear-gradient(145deg, rgba(26, 26, 38, 0.95) 0%, rgba(14, 14, 22, 0.98) 100%);
+  border: 1px solid var(--border-gold-subtle);
+  border-radius: 22px;
+  padding: 1.25rem;
+  backdrop-filter: blur(20px);
+  margin-bottom: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  box-shadow: var(--shadow-card-depth), 0 0 25px rgba(212, 175, 55, 0.1);
+}
+
+.bio-ai-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.bio-ai-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.bio-ai-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--grad-gold-metallic);
+  color: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 800;
+  box-shadow: 0 2px 10px rgba(212, 175, 55, 0.3);
+}
+
+.bio-ai-title {
+  font-size: 0.98rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.bio-ai-tag {
+  background: rgba(212, 175, 55, 0.12);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  color: var(--color-gold-bright);
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 12px;
+}
+
+.ai-chat-viewport {
+  background: rgba(10, 10, 15, 0.75);
+  border: 1px solid var(--border-glass);
+  border-radius: 16px;
+  padding: 12px;
+  max-height: 220px;
+  min-height: 120px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  scrollbar-width: thin;
+}
+
+.ai-msg-item {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  max-width: 85%;
+}
+
+.ai-msg-item.user {
+  align-self: flex-end;
+}
+
+.ai-msg-item.bot {
+  align-self: flex-start;
+}
+
+.ai-msg-bubble {
+  padding: 8px 14px;
+  border-radius: 16px;
+  font-size: 0.84rem;
+  line-height: 1.45;
+  white-space: pre-line;
+}
+
+.ai-msg-item.user .ai-msg-bubble {
+  background: var(--grad-gold-metallic);
+  color: #000000;
+  font-weight: 600;
+  border-bottom-right-radius: 4px;
+}
+
+.ai-msg-item.bot .ai-msg-bubble {
+  background: rgba(30, 30, 44, 0.9);
+  border: 1px solid var(--border-glass);
+  color: #e0e0f0;
+  border-bottom-left-radius: 4px;
+}
+
+.ai-suggestions-row {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+  scrollbar-width: none;
+}
+
+.ai-suggestions-row::-webkit-scrollbar {
+  display: none;
+}
+
+.ai-sug-pill {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-glass);
+  color: #c0c0d4;
+  font-size: 0.74rem;
+  font-weight: 500;
+  padding: 5px 11px;
+  border-radius: 16px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.25s ease;
+}
+
+.ai-sug-pill:hover {
+  background: rgba(212, 175, 55, 0.15);
+  border-color: var(--border-gold-subtle);
+  color: var(--color-gold-bright);
+}
+
+.ai-chat-input-form {
+  display: flex;
+  gap: 8px;
+}
+
+.ai-chat-input {
+  flex-grow: 1;
+  background: rgba(10, 10, 15, 0.8);
+  border: 1px solid var(--border-glass);
+  border-radius: 20px;
+  padding: 9px 16px;
+  color: #ffffff;
+  font-size: 0.84rem;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.25s ease;
+}
+
+.ai-chat-input:focus {
+  border-color: var(--border-gold-subtle);
+}
+
+.ai-chat-send-btn {
+  background: var(--grad-gold-metallic);
+  background-size: 200% auto;
+  border: none;
+  color: #000;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: transform 0.25s ease;
+}
+
+.ai-chat-send-btn:hover {
+  transform: scale(1.08);
+}
+
+.ai-chat-send-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 /* Category Filter Tabs */
@@ -378,6 +570,7 @@
   margin-bottom: 1.8rem;
 }
 
+/* HERO BENTO CTA CARD — Triggers Inline Registration Modal */
 .bento-hero-card {
   position: relative;
   background: linear-gradient(135deg, rgba(28, 28, 42, 0.95) 0%, rgba(14, 14, 22, 0.98) 100%);
@@ -385,7 +578,7 @@
   border-radius: 22px;
   padding: 1.35rem 1.5rem;
   color: #ffffff;
-  text-decoration: none;
+  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -596,7 +789,7 @@
   color: #8c8c9e;
 }
 
-/* FULL-WIDTH MAP BENTO CARD */
+/* MAP BENTO CARD */
 .bento-map-card {
   position: relative;
   background: linear-gradient(145deg, rgba(24, 24, 36, 0.85) 0%, rgba(12, 12, 18, 0.95) 100%);
@@ -612,17 +805,6 @@
   transition: all 0.35s ease;
   overflow: hidden;
   box-shadow: var(--shadow-card-depth);
-}
-
-.bento-map-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 140px;
-  height: 140px;
-  background: radial-gradient(circle, rgba(212, 175, 55, 0.1) 0%, transparent 70%);
-  pointer-events: none;
 }
 
 .bento-map-card:hover {
@@ -681,202 +863,10 @@
   transition: all 0.3s ease;
 }
 
-.bento-map-card:hover .bento-map-button {
-  transform: scale(1.04);
-}
-
 /* ==========================================================================
-   INTERACTIVE GEMINI AI BOT BENTO CARD
+   INSTAGRAM FEED CAROUSEL SHOWCASE (REPLACES OLD SINGLE IFRAME)
    ========================================================================== */
-.bio-ai-card {
-  width: 100%;
-  background: linear-gradient(145deg, rgba(26, 26, 38, 0.9) 0%, rgba(14, 14, 22, 0.95) 100%);
-  border: 1px solid var(--border-gold-subtle);
-  border-radius: 22px;
-  padding: 1.25rem;
-  backdrop-filter: blur(20px);
-  margin-bottom: 1.8rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.9rem;
-  box-shadow: var(--shadow-card-depth), 0 0 25px rgba(212, 175, 55, 0.08);
-}
-
-.bio-ai-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.bio-ai-title-wrap {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-}
-
-.bio-ai-avatar {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: var(--grad-gold-metallic);
-  color: #000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 14px;
-  font-weight: 800;
-  box-shadow: 0 2px 10px rgba(212, 175, 55, 0.3);
-}
-
-.bio-ai-title {
-  font-size: 0.98rem;
-  font-weight: 700;
-  color: #ffffff;
-}
-
-.bio-ai-tag {
-  background: rgba(212, 175, 55, 0.12);
-  border: 1px solid rgba(212, 175, 55, 0.3);
-  color: var(--color-gold-bright);
-  font-size: 0.72rem;
-  font-weight: 700;
-  padding: 3px 9px;
-  border-radius: 12px;
-}
-
-/* Chat Messages Viewport */
-.ai-chat-viewport {
-  background: rgba(10, 10, 15, 0.7);
-  border: 1px solid var(--border-glass);
-  border-radius: 16px;
-  padding: 12px;
-  max-height: 240px;
-  min-height: 120px;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  scrollbar-width: thin;
-}
-
-.ai-msg-item {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-  max-width: 85%;
-}
-
-.ai-msg-item.user {
-  align-self: flex-end;
-}
-
-.ai-msg-item.bot {
-  align-self: flex-start;
-}
-
-.ai-msg-bubble {
-  padding: 8px 14px;
-  border-radius: 16px;
-  font-size: 0.84rem;
-  line-height: 1.45;
-}
-
-.ai-msg-item.user .ai-msg-bubble {
-  background: var(--grad-gold-metallic);
-  color: #000000;
-  font-weight: 600;
-  border-bottom-right-radius: 4px;
-}
-
-.ai-msg-item.bot .ai-msg-bubble {
-  background: rgba(30, 30, 44, 0.9);
-  border: 1px solid var(--border-glass);
-  color: #e0e0f0;
-  border-bottom-left-radius: 4px;
-}
-
-/* Suggestion Pills */
-.ai-suggestions-row {
-  display: flex;
-  gap: 6px;
-  overflow-x: auto;
-  padding-bottom: 2px;
-  scrollbar-width: none;
-}
-
-.ai-suggestions-row::-webkit-scrollbar {
-  display: none;
-}
-
-.ai-sug-pill {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid var(--border-glass);
-  color: #c0c0d4;
-  font-size: 0.74rem;
-  font-weight: 500;
-  padding: 5px 11px;
-  border-radius: 16px;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: all 0.25s ease;
-}
-
-.ai-sug-pill:hover {
-  background: rgba(212, 175, 55, 0.15);
-  border-color: var(--border-gold-subtle);
-  color: var(--color-gold-bright);
-}
-
-/* Chat Input Bar */
-.ai-chat-input-form {
-  display: flex;
-  gap: 8px;
-}
-
-.ai-chat-input {
-  flex-grow: 1;
-  background: rgba(10, 10, 15, 0.8);
-  border: 1px solid var(--border-glass);
-  border-radius: 20px;
-  padding: 9px 16px;
-  color: #ffffff;
-  font-size: 0.84rem;
-  font-family: inherit;
-  outline: none;
-  transition: border-color 0.25s ease;
-}
-
-.ai-chat-input:focus {
-  border-color: var(--border-gold-subtle);
-}
-
-.ai-chat-send-btn {
-  background: var(--grad-gold-metallic);
-  background-size: 200% auto;
-  border: none;
-  color: #000;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  flex-shrink: 0;
-  transition: transform 0.25s ease;
-}
-
-.ai-chat-send-btn:hover {
-  transform: scale(1.08);
-}
-
-.ai-chat-send-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-/* INSTAGRAM EMBED SHOWCASE WITH VIDEO SWITCHER (LOWER DOWN) */
-.bio-video-section {
+.bio-carousel-section {
   width: 100%;
   background: var(--grad-card-dark);
   border: 1px solid var(--border-glass);
@@ -890,13 +880,13 @@
   box-shadow: var(--shadow-card-depth);
 }
 
-.bio-video-header {
+.bio-carousel-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
-.bio-video-title-wrap {
+.bio-carousel-title-wrap {
   display: flex;
   align-items: center;
   gap: 9px;
@@ -905,57 +895,215 @@
   color: #ffffff;
 }
 
-.bio-ig-pill {
-  background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
-  color: #ffffff;
-  font-size: 0.72rem;
-  font-weight: 700;
-  padding: 3px 10px;
-  border-radius: 12px;
-}
-
-.bio-video-tabs {
+.bio-carousel-nav {
   display: flex;
-  gap: 8px;
+  gap: 6px;
 }
 
-.bio-vtab-btn {
-  background: rgba(255, 255, 255, 0.04);
+.bio-cnav-btn {
+  background: rgba(255, 255, 255, 0.05);
   border: 1px solid var(--border-glass);
-  color: #8c8c9e;
-  font-size: 0.75rem;
-  font-weight: 600;
-  padding: 5px 12px;
-  border-radius: 14px;
+  color: var(--color-gold-light);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
   transition: all 0.25s ease;
 }
 
-.bio-vtab-btn.active {
-  background: rgba(212, 175, 55, 0.15);
-  border-color: var(--color-gold-main);
-  color: var(--color-gold-bright);
+.bio-cnav-btn:hover {
+  background: var(--grad-gold-metallic);
+  color: #000;
 }
 
-.bio-embed-frame-wrap {
+.bio-carousel-viewport {
   width: 100%;
   border-radius: 16px;
   overflow: hidden;
-  background: #000000;
-  min-height: 520px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  position: relative;
+  min-height: 440px;
+  background: #000;
   border: 1px solid var(--border-glass);
 }
 
-.bio-embed-frame {
+.bio-carousel-slide {
   width: 100%;
-  height: 530px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.bio-carousel-iframe {
+  width: 100%;
+  height: 480px;
   border: none;
 }
 
-/* SOCIAL FOOTER ICONS */
+/* ==========================================================================
+   INLINE REGISTRATION MODAL / DRAWER
+   ========================================================================== */
+.bio-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.bio-modal-card {
+  width: 100%;
+  max-width: 450px;
+  background: linear-gradient(145deg, rgba(24, 24, 36, 0.98) 0%, rgba(12, 12, 18, 0.99) 100%);
+  border: 1px solid var(--border-gold-bright);
+  border-radius: 24px;
+  padding: 1.8rem 1.6rem;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.9), 0 0 35px rgba(212, 175, 55, 0.25);
+  position: relative;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: slideUpModal 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes slideUpModal {
+  from { transform: translateY(40px) scale(0.95); opacity: 0; }
+  to { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+.bio-modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--border-glass);
+  color: #a0a0b5;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.bio-modal-close:hover {
+  background: rgba(212, 175, 55, 0.2);
+  color: var(--color-gold-bright);
+}
+
+.bio-modal-header {
+  text-align: center;
+  margin-bottom: 1.4rem;
+}
+
+.bio-modal-title {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--color-gold-bright);
+  margin-bottom: 4px;
+}
+
+.bio-modal-sub {
+  font-size: 0.82rem;
+  color: #a0a0b5;
+}
+
+/* Form Groups */
+.bio-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 1rem;
+}
+
+.bio-form-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--color-gold-light);
+  letter-spacing: 0.02em;
+}
+
+.bio-form-input, .bio-form-select {
+  width: 100%;
+  background: rgba(10, 10, 16, 0.85);
+  border: 1px solid var(--border-glass);
+  border-radius: 12px;
+  padding: 11px 14px;
+  color: #ffffff;
+  font-size: 0.88rem;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.25s ease;
+}
+
+.bio-form-input:focus, .bio-form-select:focus {
+  border-color: var(--border-gold-bright);
+}
+
+.bio-form-submit-btn {
+  width: 100%;
+  background: var(--grad-gold-metallic);
+  background-size: 200% auto;
+  border: none;
+  color: #000000;
+  font-size: 0.92rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  padding: 13px;
+  border-radius: 14px;
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(212, 175, 55, 0.3);
+  margin-top: 0.5rem;
+  transition: transform 0.25s ease;
+}
+
+.bio-form-submit-btn:hover {
+  transform: translateY(-2px);
+}
+
+.bio-form-submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Success View */
+.bio-modal-success {
+  text-align: center;
+  padding: 1.5rem 0;
+}
+
+.bio-success-icon {
+  width: 65px;
+  height: 65px;
+  border-radius: 50%;
+  background: rgba(212, 175, 55, 0.15);
+  border: 2px solid var(--color-gold-main);
+  color: var(--color-gold-bright);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  font-weight: bold;
+  margin: 0 auto 1.2rem;
+  box-shadow: 0 0 25px rgba(212, 175, 55, 0.3);
+}
+
+/* Social Footer */
 .bio-social-footer {
   display: flex;
   align-items: center;

@@ -2,13 +2,32 @@ import { useState, useEffect, useRef } from 'react'
 import { useLanguage } from '../context/LanguageContext'
 import { Link } from 'react-router-dom'
 import { studioKnowledgeBase } from '../data/aiKnowledge'
+import { submitRegistration } from '../data/classcore'
 import './Bio.css'
 
 const GEMINI_KEY = atob('QVEuQWI4Uk42SnhSZVRtaWZfOEFCSHBnUWhLRS11dmhlUG5YMTdYSkhBaTZNQjZQQm9ZUg==')
 
-// Smart Instant Knowledge Engine fallback for 100% uptime
+// Smart Instant Knowledge Engine fallback
 function getSmartKnowledgeAnswer(query, lang) {
   const q = query.toLowerCase()
+
+  // Register trigger
+  if (
+    q.includes('რეგისტრაცი') ||
+    q.includes('დამარეგისტრირ') ||
+    q.includes('ჩაწერ') ||
+    q.includes('register') ||
+    q.includes('записаться') ||
+    q.includes('зарегистрир')
+  ) {
+    if (lang === 'ka') {
+      return '📝 სიამოვნებით! გახსნილია ონლაინ რეგისტრაციის ფორმა. გთხოვთ შეავსოთ მონაცემები ეკრანზე.'
+    } else if (lang === 'en') {
+      return '📝 With pleasure! The online registration form is now open. Please fill in your details.'
+    } else {
+      return '📝 С удовольствием! Форма онлайн-регистрации открыта. Пожалуйста, заполните данные.'
+    }
+  }
 
   // Trainer & Leadership (სერგო წივწივაძე)
   if (
@@ -33,7 +52,7 @@ function getSmartKnowledgeAnswer(query, lang) {
     }
   }
 
-  // Dance Styles & Directions (ქართული, ჰიპჰოპი, ბალეტი...)
+  // Dance Styles & Directions
   if (
     q.includes('ქართულ') ||
     q.includes('ჰიპ') ||
@@ -55,7 +74,7 @@ function getSmartKnowledgeAnswer(query, lang) {
     }
   }
 
-  // Siblings Discount (დედმამიშვილები)
+  // Siblings Discount
   if (
     q.includes('დედმამიშვილ') ||
     q.includes('და-ძმ') ||
@@ -76,7 +95,7 @@ function getSmartKnowledgeAnswer(query, lang) {
     }
   }
 
-  // Private Lessons (ინდივიდუალური)
+  // Private Lessons
   if (
     q.includes('ინდივიდუალური') ||
     q.includes('პირადი') ||
@@ -94,7 +113,7 @@ function getSmartKnowledgeAnswer(query, lang) {
     }
   }
 
-  // General Price & Tuition
+  // Price & Tuition
   if (
     q.includes('ფას') ||
     q.includes('ღირს') ||
@@ -156,83 +175,6 @@ function getSmartKnowledgeAnswer(query, lang) {
     }
   }
 
-  // Age limits
-  if (
-    q.includes('ასაკ') ||
-    q.includes('ბავშვ') ||
-    q.includes('პატარ') ||
-    q.includes('age') ||
-    q.includes('kids') ||
-    q.includes('возраст') ||
-    q.includes('дети')
-  ) {
-    if (lang === 'ka') {
-      return '👶 მივიღებთ ბავშვებსა და მოზარდებს 4-დან 16 წლამდე! ყველაზე პატარებისთვის (4.5 - 6 წელი) მოქმედებს Baby ჯგუფი.'
-    } else if (lang === 'en') {
-      return '👶 We enroll children and teenagers aged 4 to 16! For the youngest (4.5 - 6 yrs), we have a dedicated Baby Class.'
-    } else {
-      return '👶 Принимаем детей и подростков от 4 до 16 лет! Для самых маленьких (4.5 - 6 лет) работает группа Baby.'
-    }
-  }
-
-  // Dress code & shoes
-  if (
-    q.includes('ტანსაცმელ') ||
-    q.includes('ჩავიცვ') ||
-    q.includes('ფეხსაცმელ') ||
-    q.includes('ფორმ') ||
-    q.includes('dress') ||
-    q.includes('clothes') ||
-    q.includes('shoes') ||
-    q.includes('одежда') ||
-    q.includes('обувь')
-  ) {
-    if (lang === 'ka') {
-      return '👕 დრესკოდი: სავალდებულოა სამეჯლისო ცეკვების სავარჯიშო ტანსაცმელი (ფერი თავისუფალია). საცეკვაო ფეხსაცმლის შეძენა შესაძლებელია უშუალოდ სტუდიის მაღაზიაში.'
-    } else if (lang === 'en') {
-      return '👕 Dress Code: Ballroom dance practice clothes are required (any color). Dance shoes are available directly in our studio store.'
-    } else {
-      return '👕 Дресс-код: Обязательна тренировочная одежда для бальных танцев (цвет любой). Танцевальную обувь можно приобрести прямо в магазине нашей студии.'
-    }
-  }
-
-  // Competitions & Tournaments
-  if (
-    q.includes('ტურნირი') ||
-    q.includes('შეჯიბრ') ||
-    q.includes('ჩემპიონ') ||
-    q.includes('tournament') ||
-    q.includes('competition') ||
-    q.includes('турнир')
-  ) {
-    if (lang === 'ka') {
-      return '🏆 ტურნირები: აჭარის მასშტაბით ტურნირებში მონაწილეობა სავალდებულოა! გაცდენების 30%-ზე მეტის შემთხვევაში ბავშვი ტურნირზე არ დაიშვება.'
-    } else if (lang === 'en') {
-      return '🏆 Tournaments: Participation in Adjara regional tournaments is mandatory! Absenteeism over 30% disqualifies participation.'
-    } else {
-      return '🏆 Турниры: Участие в турнирах Аджарии обязательно! При пропуске более 30% занятий ребенок к турниру не допускается.'
-    }
-  }
-
-  // Trial class & Registration
-  if (
-    q.includes('საცდელ') ||
-    q.includes('რეგისტრაცი') ||
-    q.includes('უფასო') ||
-    q.includes('trial') ||
-    q.includes('register') ||
-    q.includes('пробн') ||
-    q.includes('регистраци')
-  ) {
-    if (lang === 'ka') {
-      return '✨ პირველი საცდელი გაკვეთილი 100%-ით უფასოა! ჩასაწერად შეავსეთ ფორმა: stdance.ge/register ან მოგვწერეთ WhatsApp-ში: +995 514 19 99 66.'
-    } else if (lang === 'en') {
-      return '✨ First trial lesson is 100% Free! Register online at stdance.ge/register or WhatsApp us at +995 514 19 99 66.'
-    } else {
-      return '✨ Первый пробный урок 100% Бесплатный! Запишитесь на stdance.ge/register или напишите в WhatsApp: +995 514 19 99 66.'
-    }
-  }
-
   // Default fallback answer
   if (lang === 'ka') {
     return '✨ ST Dance Studio — ბათუმის სპორტული და სამეჯლისო ცეკვების სტუდია (ე. თაყაიშვილის 55). საცდელი გაკვეთილი უფასოა! დეტალებისთვის დაგვიკავშირდით: +995 514 19 99 66 ან მოგვწერეთ WhatsApp-ში.'
@@ -248,9 +190,28 @@ export default function Bio() {
   const basePath = lang === 'ka' ? '' : `/${lang}`
 
   const [activeTab, setActiveTab] = useState('all')
-  const [activeVideo, setActiveVideo] = useState('reel')
   const [toastMessage, setToastMessage] = useState('')
   const canvasRef = useRef(null)
+
+  // Registration Modal State
+  const [isRegModalOpen, setIsRegModalOpen] = useState(false)
+  const [regForm, setRegForm] = useState({
+    student_name: '',
+    birth_date: '',
+    shift: 'I ცვლა',
+    parent_name: '',
+    parent_phone: ''
+  })
+  const [regLoading, setRegLoading] = useState(false)
+  const [regSuccess, setRegSuccess] = useState(false)
+  const [regError, setRegError] = useState('')
+
+  // Instagram Carousel state
+  const [carouselIndex, setCarouselIndex] = useState(0)
+  const instagramFeed = [
+    { type: 'reel', url: 'https://www.instagram.com/reel/DbdH5LcOCh3/embed', title: 'რილსი 1' },
+    { type: 'post', url: 'https://www.instagram.com/p/DYy9WNRDjyT/embed', title: 'პოსტი 1' }
+  ]
 
   // AI Chat state
   const [aiInput, setAiInput] = useState('')
@@ -276,6 +237,35 @@ export default function Bio() {
     }
   }, [messages, isAiLoading])
 
+  // Registration Form Handler
+  const handleRegSubmit = async (e) => {
+    e.preventDefault()
+    if (!regForm.student_name || !regForm.birth_date || !regForm.parent_name || !regForm.parent_phone) {
+      setRegError('გთხოვთ შეავსოთ ყველა აუცილებელი ველი')
+      return
+    }
+
+    setRegLoading(true)
+    setRegError('')
+
+    const res = await submitRegistration({
+      student_name: regForm.student_name,
+      birth_date: regForm.birth_date,
+      shift: regForm.shift,
+      parent_name: regForm.parent_name,
+      parent_phone: regForm.parent_phone,
+      status: 'pending'
+    })
+
+    setRegLoading(false)
+    if (res) {
+      setRegSuccess(true)
+      setRegForm({ student_name: '', birth_date: '', shift: 'I ცვლა', parent_name: '', parent_phone: '' })
+    } else {
+      setRegError('შეცდომა რეგისტრაციისას. გთხოვთ სცადოთ ხელახლა.')
+    }
+  }
+
   // Call Gemini REST API with Instant Smart Knowledge Fallback
   const handleSendAiMessage = async (userMsg) => {
     const query = userMsg || aiInput
@@ -284,6 +274,18 @@ export default function Bio() {
     const newMsgs = [...messages, { role: 'user', text: query }]
     setMessages(newMsgs)
     setAiInput('')
+
+    // Check if user is asking to register
+    const qLower = query.toLowerCase()
+    if (
+      qLower.includes('რეგისტრაცი') ||
+      qLower.includes('დამარეგისტრირ') ||
+      qLower.includes('ჩაწერ') ||
+      qLower.includes('register')
+    ) {
+      setIsRegModalOpen(true)
+    }
+
     setIsAiLoading(true)
 
     try {
@@ -313,12 +315,10 @@ export default function Bio() {
       if (reply) {
         setMessages([...newMsgs, { role: 'bot', text: reply }])
       } else {
-        // Fallback to Instant Smart Knowledge Engine
         const fallbackReply = getSmartKnowledgeAnswer(query, lang)
         setMessages([...newMsgs, { role: 'bot', text: fallbackReply }])
       }
     } catch (err) {
-      // Fallback to Instant Smart Knowledge Engine
       const fallbackReply = getSmartKnowledgeAnswer(query, lang)
       setMessages([...newMsgs, { role: 'bot', text: fallbackReply }])
     } finally {
@@ -414,17 +414,17 @@ export default function Bio() {
       ctaBadge: 'მიღება ღიაა 4-16 წლის ბავშვებისთვის',
       ctaTitle: 'ონლაინ რეგისტრაცია',
       ctaSubtitle: 'ჩაეწერეთ უფასო საცდელ მეცადინეობაზე',
-      videoTitle: 'სტუდიის ვიდეო / სიახლეები',
+      videoTitle: 'ინსტაგრამის ფიდი / სიახლეები',
       mapTitle: 'ST Dance Studio Batumi',
       mapAddress: 'ბათუმი, ე. თაყაიშვილის 55',
       mapBtn: 'Google Maps',
       aiTitle: 'ST Dance AI ასისტენტი',
       aiSubtitle: 'დასვით ნებისმიერი კითხვა',
       aiSuggestions: [
+        '📝 დამარეგისტრირე',
         '💡 რა ღირს სწავლა?',
         '📅 როდის არის მეცადინეობები?',
-        '📍 სად მდებარეობთ?',
-        '🏆 ვინ არის მწვრთნელი?'
+        '📍 სად მდებარეობთ?'
       ],
       tabs: [
         { id: 'all', label: '✨ ყველა' },
@@ -500,17 +500,17 @@ export default function Bio() {
       ctaBadge: 'Enrollment Open for Kids 4-16',
       ctaTitle: 'Online Registration',
       ctaSubtitle: 'Book a Free Trial Class',
-      videoTitle: 'Studio Video & Highlights',
+      videoTitle: 'Instagram Feed & Carousel',
       mapTitle: 'ST Dance Studio Batumi',
       mapAddress: '55 E. Takaishvili St, Batumi',
       mapBtn: 'Open Maps',
       aiTitle: 'ST Dance AI Assistant',
       aiSubtitle: 'Ask any question about studio',
       aiSuggestions: [
+        '📝 Register me',
         '💡 How much is tuition?',
         '📅 When are classes?',
-        '📍 Where are you located?',
-        '🏆 Who is the trainer?'
+        '📍 Where are you located?'
       ],
       tabs: [
         { id: 'all', label: '✨ All' },
@@ -586,17 +586,17 @@ export default function Bio() {
       ctaBadge: 'Набор открыт для детей 4-16 лет',
       ctaTitle: 'Онлайн Регистрация',
       ctaSubtitle: 'Запишитесь на бесплатный урок',
-      videoTitle: 'Видео / Новости студии',
+      videoTitle: 'Лента Instagram и карусель',
       mapTitle: 'ST Dance Studio Batumi',
       mapAddress: 'Батуми, ул. Е. Такаишвили 55',
       mapBtn: 'Google Maps',
       aiTitle: 'ST Dance AI Помощник',
       aiSubtitle: 'Задайте любой вопрос',
       aiSuggestions: [
+        '📝 Записать меня',
         '💡 Сколько стоит обучение?',
         '📅 Когда проходят занятия?',
-        '📍 Где вы находитесь?',
-        '🏆 Кто тренер?'
+        '📍 Где вы находитесь?'
       ],
       tabs: [
         { id: 'all', label: '✨ Все' },
@@ -726,27 +726,27 @@ export default function Bio() {
           <h1 className="bio-brand-title">{t.title}</h1>
           <p className="bio-brand-subtitle">{t.subtitle}</p>
 
-          {/* Interactive Chips */}
-          <div className="bio-chips-row">
-            <button
-              onClick={() => copyText(t.location, 'მისამართი დაკოპირდა!')}
-              className="bio-status-chip"
+          {/* Distinct Action Buttons (Call & Google Maps) */}
+          <div className="bio-action-buttons-row">
+            <a href="tel:+995514199966" className="bio-btn-action">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"></path>
+              </svg>
+              <span>{t.phone}</span>
+            </a>
+
+            <a
+              href="https://maps.google.com/?q=55+Eka+Takaishvili+St,+Batumi"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bio-btn-action"
             >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
                 <circle cx="12" cy="10" r="3"></circle>
               </svg>
               <span>{t.location}</span>
-            </button>
-            <button
-              onClick={() => copyText(t.phone, 'ნომერი დაკოპირდა!')}
-              className="bio-status-chip"
-            >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"></path>
-              </svg>
-              <span>{t.phone}</span>
-            </button>
+            </a>
           </div>
         </header>
 
@@ -760,120 +760,7 @@ export default function Bio() {
           ))}
         </div>
 
-        {/* Category Filter Tabs */}
-        <div className="bio-filter-tabs">
-          {t.tabs.map((tab) => (
-            <button
-              key={tab.id}
-              className={`bio-tab-btn ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        {/* BENTO GRID ACTION CARDS (HIGH UP BEFORE MEDIA) */}
-        <section className="bio-bento-section">
-          {/* HERO BENTO CTA CARD — Online Registration */}
-          {(activeTab === 'all' || activeTab === 'reg') && (
-            <Link to={`${basePath}/register`} className="bento-hero-card">
-              <div className="bento-hero-info">
-                <div className="bento-hero-badge">
-                  <span className="radar-pulse"></span>
-                  <span>{t.ctaBadge}</span>
-                </div>
-                <div className="bento-hero-title">{t.ctaTitle}</div>
-                <div className="bento-hero-desc">{t.ctaSubtitle}</div>
-              </div>
-              <div className="bento-hero-btn">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <line x1="5" y1="12" x2="19" y2="12"></line>
-                  <polyline points="12 5 19 12 12 19"></polyline>
-                </svg>
-              </div>
-            </Link>
-          )}
-
-          {/* 2-COLUMN BENTO GRID FOR CORE ACTIONS */}
-          <div className="bento-grid-2col">
-            {filteredCards.map((card) => {
-              if (card.to) {
-                return (
-                  <Link key={card.id} to={card.to} className="bento-mini-card">
-                    <div className="bento-mini-top">
-                      <div className="bento-icon-box">{card.icon}</div>
-                      <div className="bento-mini-arrow">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <polyline points="9 18 15 12 9 6"></polyline>
-                        </svg>
-                      </div>
-                    </div>
-                    <div className="bento-mini-bottom">
-                      <div className="bento-mini-title">{card.title}</div>
-                      <div className="bento-mini-desc">{card.desc}</div>
-                    </div>
-                  </Link>
-                )
-              }
-              return (
-                <a
-                  key={card.id}
-                  href={card.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="bento-mini-card"
-                >
-                  <div className="bento-mini-top">
-                    <div className="bento-icon-box">{card.icon}</div>
-                    <div className="bento-mini-arrow">
-                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <polyline points="9 18 15 12 9 6"></polyline>
-                      </svg>
-                    </div>
-                  </div>
-                  <div className="bento-mini-bottom">
-                    <div className="bento-mini-title">{card.title}</div>
-                    <div className="bento-mini-desc">{card.desc}</div>
-                  </div>
-                </a>
-              )
-            })}
-          </div>
-
-          {/* FULL-WIDTH INTERACTIVE MAP BENTO CARD */}
-          {(activeTab === 'all' || activeTab === 'contact') && (
-            <a
-              href="https://maps.google.com/?q=55+Eka+Takaishvili+St,+Batumi"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bento-map-card"
-            >
-              <div className="bento-map-header">
-                <div className="bento-map-left">
-                  <div className="bento-map-pin-icon">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                      <circle cx="12" cy="10" r="3"></circle>
-                    </svg>
-                  </div>
-                  <div>
-                    <div className="bento-map-name">{t.mapTitle}</div>
-                    <div className="bento-map-sub">{t.mapAddress}</div>
-                  </div>
-                </div>
-                <div className="bento-map-button">
-                  <span>{t.mapBtn}</span>
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <polyline points="9 18 15 12 9 6"></polyline>
-                  </svg>
-                </div>
-              </div>
-            </a>
-          )}
-        </section>
-
-        {/* EMBEDDED GEMINI AI CHAT BOT BENTO CARD */}
+        {/* EMBEDDED GEMINI AI CHAT BOT BENTO CARD (PLACED HIGH UP FOR IMMEDIATE ACTION) */}
         <section className="bio-ai-card">
           <div className="bio-ai-header">
             <div className="bio-ai-title-wrap">
@@ -946,47 +833,168 @@ export default function Bio() {
           </form>
         </section>
 
-        {/* INSTAGRAM EMBED SHOWCASE WITH VIDEO SWITCHER (LOWER DOWN) */}
-        <section className="bio-video-section">
-          <div className="bio-video-header">
-            <div className="bio-video-title-wrap">
+        {/* Category Filter Tabs */}
+        <div className="bio-filter-tabs">
+          {t.tabs.map((tab) => (
+            <button
+              key={tab.id}
+              className={`bio-tab-btn ${activeTab === tab.id ? 'active' : ''}`}
+              onClick={() => setActiveTab(tab.id)}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+
+        {/* BENTO GRID ACTION CARDS */}
+        <section className="bio-bento-section">
+          {/* HERO BENTO CTA CARD — Opens Inline Registration Form */}
+          {(activeTab === 'all' || activeTab === 'reg') && (
+            <div
+              className="bento-hero-card"
+              onClick={() => setIsRegModalOpen(true)}
+            >
+              <div className="bento-hero-info">
+                <div className="bento-hero-badge">
+                  <span className="radar-pulse"></span>
+                  <span>{t.ctaBadge}</span>
+                </div>
+                <div className="bento-hero-title">{t.ctaTitle}</div>
+                <div className="bento-hero-desc">{t.ctaSubtitle}</div>
+              </div>
+              <div className="bento-hero-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                  <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+              </div>
+            </div>
+          )}
+
+          {/* 2-COLUMN BENTO GRID FOR CORE ACTIONS */}
+          <div className="bento-grid-2col">
+            {filteredCards.map((card) => {
+              if (card.to) {
+                return (
+                  <Link key={card.id} to={card.to} className="bento-mini-card">
+                    <div className="bento-mini-top">
+                      <div className="bento-icon-box">{card.icon}</div>
+                      <div className="bento-mini-arrow">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <polyline points="9 18 15 12 9 6"></polyline>
+                        </svg>
+                      </div>
+                    </div>
+                    <div className="bento-mini-bottom">
+                      <div className="bento-mini-title">{card.title}</div>
+                      <div className="bento-mini-desc">{card.desc}</div>
+                    </div>
+                  </Link>
+                )
+              }
+              return (
+                <a
+                  key={card.id}
+                  href={card.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bento-mini-card"
+                >
+                  <div className="bento-mini-top">
+                    <div className="bento-icon-box">{card.icon}</div>
+                    <div className="bento-mini-arrow">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                      </svg>
+                    </div>
+                  </div>
+                  <div className="bento-mini-bottom">
+                    <div className="bento-mini-title">{card.title}</div>
+                    <div className="bento-mini-desc">{card.desc}</div>
+                  </div>
+                </a>
+              )
+            })}
+          </div>
+
+          {/* FULL-WIDTH MAP BENTO CARD */}
+          {(activeTab === 'all' || activeTab === 'contact') && (
+            <a
+              href="https://maps.google.com/?q=55+Eka+Takaishvili+St,+Batumi"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bento-map-card"
+            >
+              <div className="bento-map-header">
+                <div className="bento-map-left">
+                  <div className="bento-map-pin-icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                      <circle cx="12" cy="10" r="3"></circle>
+                    </svg>
+                  </div>
+                  <div>
+                    <div className="bento-map-name">{t.mapTitle}</div>
+                    <div className="bento-map-sub">{t.mapAddress}</div>
+                  </div>
+                </div>
+                <div className="bento-map-button">
+                  <span>{t.mapBtn}</span>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                  </svg>
+                </div>
+              </div>
+            </a>
+          )}
+        </section>
+
+        {/* INSTAGRAM CAROUSEL SHOWCASE SECTION */}
+        <section className="bio-carousel-section">
+          <div className="bio-carousel-header">
+            <div className="bio-carousel-title-wrap">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-gold-main)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <polygon points="23 7 16 12 23 17 23 7"></polygon>
-                <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
+                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
               </svg>
               <span>{t.videoTitle}</span>
             </div>
-            
-            <div className="bio-video-tabs">
+
+            <div className="bio-carousel-nav">
               <button
-                className={`bio-vtab-btn ${activeVideo === 'reel' ? 'active' : ''}`}
-                onClick={() => setActiveVideo('reel')}
+                className="bio-cnav-btn"
+                onClick={() =>
+                  setCarouselIndex((prev) =>
+                    prev === 0 ? instagramFeed.length - 1 : prev - 1
+                  )
+                }
               >
-                რილსი
+                ◀
               </button>
               <button
-                className={`bio-vtab-btn ${activeVideo === 'post' ? 'active' : ''}`}
-                onClick={() => setActiveVideo('post')}
+                className="bio-cnav-btn"
+                onClick={() =>
+                  setCarouselIndex((prev) => (prev + 1) % instagramFeed.length)
+                }
               >
-                პოსტი
+                ▶
               </button>
             </div>
           </div>
 
-          <div className="bio-embed-frame-wrap">
-            <iframe
-              className="bio-embed-frame"
-              src={
-                activeVideo === 'reel'
-                  ? 'https://www.instagram.com/reel/DbdH5LcOCh3/embed'
-                  : 'https://www.instagram.com/p/DYy9WNRDjyT/embed'
-              }
-              title="ST Dance Studio Instagram Showcase"
-              allowTransparency={true}
-              allow="encrypted-media"
-              frameBorder="0"
-              scrolling="no"
-            ></iframe>
+          <div className="bio-carousel-viewport">
+            <div className="bio-carousel-slide">
+              <iframe
+                className="bio-carousel-iframe"
+                src={instagramFeed[carouselIndex].url}
+                title={`ST Dance Studio Instagram Feed ${carouselIndex + 1}`}
+                allowTransparency={true}
+                allow="encrypted-media"
+                frameBorder="0"
+                scrolling="no"
+              ></iframe>
+            </div>
           </div>
         </section>
 
@@ -1041,6 +1049,120 @@ export default function Bio() {
           </a>
         </footer>
       </div>
+
+      {/* INLINE REGISTRATION MODAL / DRAWER */}
+      {isRegModalOpen && (
+        <div className="bio-modal-overlay" onClick={() => setIsRegModalOpen(false)}>
+          <div className="bio-modal-card" onClick={(e) => e.stopPropagation()}>
+            <button className="bio-modal-close" onClick={() => setIsRegModalOpen(false)}>
+              ✕
+            </button>
+
+            {regSuccess ? (
+              <div className="bio-modal-success">
+                <div className="bio-success-icon">✓</div>
+                <h2 className="bio-modal-title">რეგისტრაცია წარმატებულია!</h2>
+                <p className="bio-modal-sub" style={{ margin: '12px 0 20px' }}>
+                  თქვენი განაცხადი მიღებულია. ადმინისტრაცია მალე დაგიკავშირდებათ საცდელ გაკვეთილზე დასასწრებად.
+                </p>
+                <button
+                  className="bio-form-submit-btn"
+                  onClick={() => {
+                    setRegSuccess(false)
+                    setIsRegModalOpen(false)
+                  }}
+                >
+                  დახურვა
+                </button>
+              </div>
+            ) : (
+              <div>
+                <div className="bio-modal-header">
+                  <h2 className="bio-modal-title">✨ ონლაინ რეგისტრაცია</h2>
+                  <p className="bio-modal-sub">ჩაეწერეთ უფასო საცდელ გაკვეთილზე</p>
+                </div>
+
+                {regError && (
+                  <div style={{ color: '#ff6b6b', fontSize: '0.82rem', marginBottom: '1rem', textAlign: 'center' }}>
+                    {regError}
+                  </div>
+                )}
+
+                <form onSubmit={handleRegSubmit}>
+                  <div className="bio-form-group">
+                    <label className="bio-form-label">მოსწავლის სახელი და გვარი *</label>
+                    <input
+                      type="text"
+                      className="bio-form-input"
+                      placeholder="მაგ: ნინი წივწივაძე"
+                      value={regForm.student_name}
+                      onChange={(e) => setRegForm({ ...regForm, student_name: e.target.value })}
+                      required
+                    />
+                  </div>
+
+                  <div className="bio-form-group">
+                    <label className="bio-form-label">დაბადების თარიღი *</label>
+                    <input
+                      type="date"
+                      className="bio-form-input"
+                      value={regForm.birth_date}
+                      onChange={(e) => setRegForm({ ...regForm, birth_date: e.target.value })}
+                      required
+                    />
+                  </div>
+
+                  <div className="bio-form-group">
+                    <label className="bio-form-label">სასურველი ცვლა / ჯგუფი *</label>
+                    <select
+                      className="bio-form-select"
+                      value={regForm.shift}
+                      onChange={(e) => setRegForm({ ...regForm, shift: e.target.value })}
+                    >
+                      <option value="I ცვლა">I ცვლა</option>
+                      <option value="II ცვლა">II ცვლა</option>
+                      <option value="ბაღის მოსწავლე">ბაღის მოსწავლე (Baby)</option>
+                      <option value="თავისუფალი გრაფიკი">თავისუფალი გრაფიკი / ინდივიდუალური</option>
+                    </select>
+                  </div>
+
+                  <div className="bio-form-group">
+                    <label className="bio-form-label">მშობლის სახელი და გვარი *</label>
+                    <input
+                      type="text"
+                      className="bio-form-input"
+                      placeholder="მაგ: გიორგი წივწივაძე"
+                      value={regForm.parent_name}
+                      onChange={(e) => setRegForm({ ...regForm, parent_name: e.target.value })}
+                      required
+                    />
+                  </div>
+
+                  <div className="bio-form-group">
+                    <label className="bio-form-label">მშობლის ტელეფონი (WhatsApp) *</label>
+                    <input
+                      type="tel"
+                      className="bio-form-input"
+                      placeholder="+995 5XX XX XX XX"
+                      value={regForm.parent_phone}
+                      onChange={(e) => setRegForm({ ...regForm, parent_phone: e.target.value })}
+                      required
+                    />
+                  </div>
+
+                  <button
+                    type="submit"
+                    className="bio-form-submit-btn"
+                    disabled={regLoading}
+                  >
+                    {regLoading ? 'რეგისტრაცია...' : 'რეგისტრაციის გაგზავნა ➔'}
+                  </button>
+                </form>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   )
 }
