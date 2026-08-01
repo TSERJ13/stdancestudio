@@ -515,6 +515,21 @@ export default function Bio() {
   const [isContactModalOpen, setIsContactModalOpen] = useState(false)
   const [activeInstaTab, setActiveInstaTab] = useState('grid')
 
+  // Lock body scroll when any modal is open to prevent background scrolling/drifting
+  useEffect(() => {
+    if (isRegModalOpen || isScheduleModalOpen || isLocationModalOpen || isContactModalOpen) {
+      document.body.style.overflow = 'hidden'
+      document.body.style.touchAction = 'none'
+    } else {
+      document.body.style.overflow = ''
+      document.body.style.touchAction = ''
+    }
+    return () => {
+      document.body.style.overflow = ''
+      document.body.style.touchAction = ''
+    }
+  }, [isRegModalOpen, isScheduleModalOpen, isLocationModalOpen, isContactModalOpen])
+
   // Registration Form State
   const [regForm, setRegForm] = useState({
     student_name: '',
