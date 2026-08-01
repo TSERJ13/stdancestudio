@@ -699,14 +699,16 @@
 .bio-modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.88);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  background: rgba(0, 0, 0, 0.92);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   z-index: 1000;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 1.25rem;
+  padding: 1rem 0.75rem;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   animation: fadeIn 0.3s ease;
 }
 
@@ -717,16 +719,32 @@
 
 .bio-modal-card {
   width: 100%;
-  max-width: 460px;
-  background: rgba(14, 14, 22, 0.97);
+  max-width: 450px;
+  background: rgba(14, 14, 22, 0.98);
   border: 1px solid var(--border-gold-subtle);
-  border-radius: 22px;
-  padding: 1.7rem 1.5rem;
+  border-radius: 20px;
+  padding: 1.3rem 1.1rem;
   box-shadow: 0 25px 60px rgba(0, 0, 0, 0.95);
   position: relative;
-  max-height: 90vh;
+  max-height: 86vh;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  margin: auto;
   animation: slideUpModal 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@media (max-width: 480px) {
+  .bio-modal-overlay {
+    align-items: flex-start;
+    padding-top: 1.5rem;
+    padding-bottom: 3rem;
+  }
+
+  .bio-modal-card {
+    max-height: 82vh;
+    padding: 1.2rem 0.9rem;
+    border-radius: 18px;
+  }
 }
 
 @keyframes slideUpModal {
@@ -965,12 +983,12 @@
 .bio-form-group {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  margin-bottom: 1rem;
+  gap: 4px;
+  margin-bottom: 0.75rem;
 }
 
 .bio-form-label {
-  font-size: 0.78rem;
+  font-size: 0.76rem;
   font-weight: 600;
   color: var(--color-gold-light);
   letter-spacing: 0.02em;
@@ -981,7 +999,7 @@
   background: rgba(8, 8, 14, 0.85);
   border: 1px solid var(--border-glass);
   border-radius: 12px;
-  padding: 11px 14px;
+  padding: 9px 12px;
   color: #ffffff;
   font-size: 16px !important;
   font-family: inherit;
