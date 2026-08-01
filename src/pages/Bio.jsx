@@ -35,7 +35,7 @@ function getSmartKnowledgeAnswer(query, lang) {
 6. მონაწილეობა ტურნირებში, საცეკვაო ბანაკებსა (Camps) და შოუ-პროგრამებში
 7. 100%-ით უფასო პირველი საცდელი გაკვეთილი!
 
-ჩასაწერად მოგვწერეთ "დამარეგისტრირე" და გახსნით სარეგისტრაციო ფორმას.`
+ჩასაწერად მოგვწერეთ "დამარეგისტრირე" ან დააჭირეთ ონლაინ რეგისტრაციის ღილაკს.`
     } else if (lang === 'en') {
       return `ST DANCE STUDIO offers professional Ballroom & Latin Sports Dance instruction in Batumi:
 
@@ -47,7 +47,7 @@ function getSmartKnowledgeAnswer(query, lang) {
 6. Competitions, Dance Camps, and Show Performances
 7. 100% Free First Trial Lesson!
 
-Reply "Register me" to open the registration form.`
+Click the Online Registration button to sign up.`
     } else {
       return `ST DANCE STUDIO предлагает профессиональное обучение бальным и спортивным танцам в Батуми:
 
@@ -59,7 +59,7 @@ Reply "Register me" to open the registration form.`
 6. Участие в турнирах, танцевальных лагерях (Camps) и шоу
 7. 100% Бесплатный первый пробный урок!
 
-Напишите "Зарегистрировать" для открытия формы записи.`
+Нажмите кнопку Онлайн-Регистрация для записи.`
     }
   }
 
@@ -73,11 +73,11 @@ Reply "Register me" to open the registration form.`
     q.includes('зарегистрир')
   ) {
     if (lang === 'ka') {
-      return 'ონლაინ რეგისტრაციის ფორმა გახსნილია ეკრანზე. გთხოვთ შეავსოთ მონაცემები.'
+      return 'ონლაინ რეგისტრაციისთვის შეგიძლიათ გამოიყენოთ გვერდზე განთავსებული "ონლაინ რეგისტრაციის" ღილაკი ან განრიგის ჩანართი.'
     } else if (lang === 'en') {
-      return 'The online registration form is now open on your screen. Please fill in your details.'
+      return 'For online registration, please click the "Online Registration" button on the page.'
     } else {
-      return 'Форма онлайн-регистрации открыта на экране. Пожалуйста, заполните данные.'
+      return 'Для онлайн-регистрации нажмите кнопку "Онлайн Регистрация" на странице.'
     }
   }
 
@@ -261,9 +261,7 @@ Reply "Register me" to open the registration form.`
 
 8. ინდივიდუალური გაკვეთილები
 - დღეები: შეთანხმებით (თავისუფალი გრაფიკი)
-- ფასი: 1 გაკვეთილი = 70₾ | 4 პაკეტი = 240₾ | 8 პაკეტი = 400₾
-
-ჩასაწერად მოგვწერეთ "დამარეგისტრირე" და გახსნით სარეგისტრაციო ფორმას!`
+- ფასი: 1 გაკვეთილი = 70₾ | 4 პაკეტი = 240₾ | 8 პაკეტი = 400₾`
     } else if (lang === 'en') {
       return `ST DANCE STUDIO — Groups Schedule & Pricing:
 
@@ -297,9 +295,7 @@ Reply "Register me" to open the registration form.`
 
 8. Private Lessons
 - Days: Flexible by appointment
-- Price: 1 Class = 70₾ | 4 Package = 240₾ | 8 Package = 400₾
-
-Reply "Register me" to sign up instantly!`
+- Price: 1 Class = 70₾ | 4 Package = 240₾ | 8 Package = 400₾`
     } else {
       return `ST DANCE STUDIO — Расписание и цены групп:
 
@@ -333,9 +329,7 @@ Reply "Register me" to sign up instantly!`
 
 8. Индивидуальные уроки
 - Дни: По договоренности
-- Цена: 1 урок = 70₾ | 4 урока = 240₾ | 8 уроков = 400₾
-
-Напишите "Зарегистрировать" для онлайн записи!`
+- Цена: 1 урок = 70₾ | 4 урока = 240₾ | 8 уроков = 400₾`
     }
   }
 
@@ -453,27 +447,21 @@ Reply "Register me" to sign up instantly!`
 - თვიური აბონემენტი: 130 ლარი (30 კალენდარული დღე)
 - დედმამიშვილების ფასდაკლება: 100 ლარი 1 მოსწავლეზე (200₾ ორივეზე)
 - ინდივიდუალური: 1 გაკვეთილი = 70₾ | 4 = 240₾ | 8 = 400₾
-- პირველი საცდელი გაკვეთილი 100%-ით უფასოა!
-
-ჩასაწერად მოგვწერეთ "დამარეგისტრირე"!`
+- პირველი საცდელი გაკვეთილი 100%-ით უფასოა!`
     } else if (lang === 'en') {
       return `ST DANCE STUDIO — Pricing List:
 
 - Monthly Subscription: 130 GEL (30 calendar days)
 - Sibling Discount: 100 GEL per student (200 GEL for both)
 - Private Lessons: 1 class = 70₾ | 4 = 240₾ | 8 = 400₾
-- First trial class is 100% Free!
-
-Reply "Register me" to sign up!`
+- First trial class is 100% Free!`
     } else {
       return `ST DANCE STUDIO — Прейскурант цен:
 
 - Месячный абонемент: 130 GEL (30 календарных дней)
 - Скидка для братьев/сестер: 100 GEL за ученика (200 GEL за двоих)
 - Индивидуальные уроки: 1 урок = 70₾ | 4 = 240₾ | 8 = 400₾
-- Первый пробный урок 100% бесплатный!
-
-Напишите "Зарегистрировать" для записи!`
+- Первый пробный урок 100% бесплатный!`
     }
   }
 
@@ -501,21 +489,15 @@ Reply "Register me" to sign up!`
   if (lang === 'ka') {
     return `ST DANCE STUDIO გთავაზობთ სამეჯლისო და სპორტული ცეკვების სწავლებას 4.5-დან 16 წლამდე ბავშვებისთვის, წყვილებისთვის და მოყვარულებისთვის (Hobby Class).
 
-პირველი საცდელი გაკვეთილი 100%-ით უფასოა!
-
-ჩასაწერად მოგვწერეთ "დამარეგისტრირე" ან ჰკითხეთ AI-ს ფასების, განრიგის ან მისამართის შესახებ.`
+პირველი საცდელი გაკვეთილი 100%-ით უფასოა!`
   } else if (lang === 'en') {
     return `ST DANCE STUDIO offers Ballroom & Sports Dance training for kids 4.5 to 16 yrs, couples, and adults (Hobby Class).
 
-First trial class is 100% Free!
-
-Reply "Register me" to sign up or ask AI about schedule, pricing, or location.`
+First trial class is 100% Free!`
   } else {
     return `ST DANCE STUDIO предлагает обучение бальным и спортивным танцам для детей от 4.5 до 16 лет, пар и взрослых (Hobby Class).
 
-Первый пробный урок 100% бесплатный!
-
-Напишите "Зарегистрировать" для записи или спросите AI о расписании, ценах или адресе.`
+Первый пробный урок 100% бесплатный!`
   }
 }
 
@@ -634,10 +616,11 @@ export default function Bio() {
     }
   ])
 
-  // Scroll chat to bottom
+  // Scroll chat internal viewport ONLY (never scroll the main window page)
   useEffect(() => {
     if (chatViewportRef.current) {
-      chatViewportRef.current.scrollTop = chatViewportRef.current.scrollHeight
+      const el = chatViewportRef.current
+      el.scrollTop = el.scrollHeight
     }
   }, [messages, isAiLoading])
 
@@ -678,17 +661,6 @@ export default function Bio() {
     const newMsgs = [...messages, { role: 'user', text: query }]
     setMessages(newMsgs)
     setAiInput('')
-
-    // Check if user is asking to register
-    const qLower = query.toLowerCase()
-    if (
-      qLower.includes('რეგისტრაცი') ||
-      qLower.includes('დამარეგისტრირ') ||
-      qLower.includes('ჩაწერ') ||
-      qLower.includes('register')
-    ) {
-      setIsRegModalOpen(true)
-    }
 
     setIsAiLoading(true)
 
@@ -1131,7 +1103,7 @@ export default function Bio() {
             ))}
           </div>
 
-          {/* Input Form */}
+          {/* Input Form with Prevented Window Scroll */}
           <form
             className="ai-chat-input-form"
             onSubmit={(e) => {
@@ -1151,6 +1123,11 @@ export default function Bio() {
               }
               value={aiInput}
               onChange={(e) => setAiInput(e.target.value)}
+              onFocus={(e) => {
+                try {
+                  e.target.focus({ preventScroll: true })
+                } catch (err) {}
+              }}
             />
             <button
               type="submit"
