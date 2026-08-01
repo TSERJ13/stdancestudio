@@ -521,7 +521,6 @@ Reply "Register me" to sign up or ask AI about schedule, pricing, or location.`
 
 export default function Bio() {
   const { lang } = useLanguage()
-  const basePath = lang === 'ka' ? '' : `/${lang}`
 
   const [activeTab, setActiveTab] = useState('all')
   const [toastMessage, setToastMessage] = useState('')
@@ -797,7 +796,7 @@ export default function Bio() {
 
         ctx.beginPath()
         ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2)
-        ctx.fillStyle = `rgba(229, 193, 88, ${p.alpha})`
+        ctx.fillStyle = `rgba(197, 160, 89, ${p.alpha})`
         ctx.fill()
       })
       animationFrameId = requestAnimationFrame(render)
@@ -835,7 +834,7 @@ export default function Bio() {
       tabs: [
         { id: 'all', label: 'ყველა' },
         { id: 'reg', label: 'რეგისტრაცია' },
-        { id: 'info', label: 'განრიგი & ფასები' },
+        { id: 'sched', label: 'განრიგი & ფასები' },
         { id: 'contact', label: 'კონტაქტი' }
       ],
       stats: [
@@ -846,9 +845,9 @@ export default function Bio() {
       cards: [
         {
           id: 'schedule',
-          category: 'info',
-          title: 'განრიგი',
-          desc: 'ჯგუფები და საათები',
+          category: 'sched',
+          title: 'განრიგი & ფასები',
+          desc: 'ჯგუფები, საათები და აბონემენტი',
           action: () => setIsScheduleModalOpen(true),
           icon: (
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -856,31 +855,6 @@ export default function Bio() {
               <line x1="16" y1="2" x2="16" y2="6"></line>
               <line x1="8" y1="2" x2="8" y2="6"></line>
               <line x1="3" y1="10" x2="21" y2="10"></line>
-            </svg>
-          )
-        },
-        {
-          id: 'payment',
-          category: 'info',
-          title: 'გადახდა',
-          desc: 'ონლაინ ანგარიშსწორება',
-          to: `${basePath}/payment`,
-          icon: (
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
-              <line x1="1" y1="10" x2="23" y2="10"></line>
-            </svg>
-          )
-        },
-        {
-          id: 'about',
-          category: 'info',
-          title: 'ჩვენ შესახებ',
-          desc: 'გუნდი და მწვრთნელები',
-          to: `${basePath}/about`,
-          icon: (
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M6 9H18M6 9a3 3 0 01-3-3V4h18v2a3 3 0 01-3 3M6 9v3a6 6 0 006 6v3M18 9v3a6 6 0 01-6 6M9 21h6"></path>
             </svg>
           )
         },
@@ -922,7 +896,7 @@ export default function Bio() {
       tabs: [
         { id: 'all', label: 'All' },
         { id: 'reg', label: 'Register' },
-        { id: 'info', label: 'Schedule & Info' },
+        { id: 'sched', label: 'Schedule' },
         { id: 'contact', label: 'Contact' }
       ],
       stats: [
@@ -933,8 +907,8 @@ export default function Bio() {
       cards: [
         {
           id: 'schedule',
-          category: 'info',
-          title: 'Schedule',
+          category: 'sched',
+          title: 'Schedule & Pricing',
           desc: 'Groups & Class Hours',
           action: () => setIsScheduleModalOpen(true),
           icon: (
@@ -943,31 +917,6 @@ export default function Bio() {
               <line x1="16" y1="2" x2="16" y2="6"></line>
               <line x1="8" y1="2" x2="8" y2="6"></line>
               <line x1="3" y1="10" x2="21" y2="10"></line>
-            </svg>
-          )
-        },
-        {
-          id: 'payment',
-          category: 'info',
-          title: 'Payment',
-          desc: 'Quick & Secure Checkout',
-          to: `${basePath}/payment`,
-          icon: (
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
-              <line x1="1" y1="10" x2="23" y2="10"></line>
-            </svg>
-          )
-        },
-        {
-          id: 'about',
-          category: 'info',
-          title: 'About Us',
-          desc: 'Team & Instructors',
-          to: `${basePath}/about`,
-          icon: (
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M6 9H18M6 9a3 3 0 01-3-3V4h18v2a3 3 0 01-3 3M6 9v3a6 6 0 006 6v3M18 9v3a6 6 0 01-6 6M9 21h6"></path>
             </svg>
           )
         },
@@ -1009,7 +958,7 @@ export default function Bio() {
       tabs: [
         { id: 'all', label: 'Все' },
         { id: 'reg', label: 'Регистрация' },
-        { id: 'info', label: 'Расписание' },
+        { id: 'sched', label: 'Расписание' },
         { id: 'contact', label: 'Контакт' }
       ],
       stats: [
@@ -1020,8 +969,8 @@ export default function Bio() {
       cards: [
         {
           id: 'schedule',
-          category: 'info',
-          title: 'Расписание',
+          category: 'sched',
+          title: 'Расписание и цены',
           desc: 'Группы и часы',
           action: () => setIsScheduleModalOpen(true),
           icon: (
@@ -1030,31 +979,6 @@ export default function Bio() {
               <line x1="16" y1="2" x2="16" y2="6"></line>
               <line x1="8" y1="2" x2="8" y2="6"></line>
               <line x1="3" y1="10" x2="21" y2="10"></line>
-            </svg>
-          )
-        },
-        {
-          id: 'payment',
-          category: 'info',
-          title: 'Оплата',
-          desc: 'Онлайн расчет',
-          to: `${basePath}/payment`,
-          icon: (
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
-              <line x1="1" y1="10" x2="23" y2="10"></line>
-            </svg>
-          )
-        },
-        {
-          id: 'about',
-          category: 'info',
-          title: 'О нас',
-          desc: 'Команда и тренеры',
-          to: `${basePath}/about`,
-          icon: (
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M6 9H18M6 9a3 3 0 01-3-3V4h18v2a3 3 0 01-3 3M6 9v3a6 6 0 006 6v3M18 9v3a6 6 0 01-6 6M9 21h6"></path>
             </svg>
           )
         },
@@ -1134,7 +1058,7 @@ export default function Bio() {
           <h1 className="bio-brand-title">{t.title}</h1>
           <p className="bio-brand-subtitle">{t.subtitle}</p>
 
-          {/* Distinct Action Buttons (Call & Google Maps) */}
+          {/* Direct Phone & Google Maps Action Buttons */}
           <div className="bio-action-buttons-row">
             <a href="tel:+995514199966" className="bio-btn-action">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -1302,24 +1226,6 @@ export default function Bio() {
                       <div className="bento-mini-desc">{card.desc}</div>
                     </div>
                   </div>
-                )
-              }
-              if (card.to) {
-                return (
-                  <Link key={card.id} to={card.to} className="bento-mini-card">
-                    <div className="bento-mini-top">
-                      <div className="bento-icon-box">{card.icon}</div>
-                      <div className="bento-mini-arrow">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <polyline points="9 18 15 12 9 6"></polyline>
-                        </svg>
-                      </div>
-                    </div>
-                    <div className="bento-mini-bottom">
-                      <div className="bento-mini-title">{card.title}</div>
-                      <div className="bento-mini-desc">{card.desc}</div>
-                    </div>
-                  </Link>
                 )
               }
               return (
