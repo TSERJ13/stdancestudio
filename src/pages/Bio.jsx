@@ -7,7 +7,7 @@ import './Bio.css'
 
 const GEMINI_KEY = atob('QVEuQWI4Uk42SnhSZVRtaWZfOEFCSHBnUWhLRS11dmhlUG5YMTdYSkhBaTZNQjZQQm9ZUg==')
 
-// Smart Instant Knowledge Engine fallback
+// Beautifully Formatted Smart Instant Knowledge Engine
 function getSmartKnowledgeAnswer(query, lang) {
   const q = query.toLowerCase()
 
@@ -21,11 +21,136 @@ function getSmartKnowledgeAnswer(query, lang) {
     q.includes('зарегистрир')
   ) {
     if (lang === 'ka') {
-      return '📝 სიამოვნებით! გახსნილია ონლაინ რეგისტრაციის ფორმა. გთხოვთ შეავსოთ მონაცემები ეკრანზე.'
+      return '📝 სიამოვნებით! ონლაინ რეგისტრაციის ფორმა უკვე გახსნილია ეკრანზე. გთხოვთ შეავსოთ მონაცემები.'
     } else if (lang === 'en') {
-      return '📝 With pleasure! The online registration form is now open. Please fill in your details.'
+      return '📝 With pleasure! The online registration form is now open on your screen. Please fill in your details.'
     } else {
-      return '📝 С удовольствием! Форма онлайн-регистрации открыта. Пожалуйста, заполните данные.'
+      return '📝 С удовольствием! Форма онлайн-регистрации открыта на экране. Пожалуйста, заполните данные.'
+    }
+  }
+
+  // Schedule & Pricing per specific group (ლამაზად გაფორმებული ჯგუფების განრიგი და ფასები)
+  if (
+    q.includes('განრიგ') ||
+    q.includes('როდის') ||
+    q.includes('დღე') ||
+    q.includes('საათ') ||
+    q.includes('schedule') ||
+    q.includes('days') ||
+    q.includes('when') ||
+    q.includes('расписание') ||
+    q.includes('когда') ||
+    q.includes('ჯგუფი') ||
+    q.includes('group')
+  ) {
+    if (lang === 'ka') {
+      return `✨ ST DANCE STUDIO — ჯგუფების განრიგი და ფასები:
+
+👶 1. Baby ჯგუფი (4.5 – 6 წელი / პატარები)
+• დღეები: სამშაბათი და ხუთშაბათი 17:30 – 18:15 (45 წთ) + შაბათს 10:00
+• ფასი: 130₾/თვე (დედმამიშვილზე 100₾)
+
+🥉 2. Bronze (ბრონზა) ჯგუფი (დამწყებები / 1-ელი წელი)
+• დღეები: სამშაბათი და ხუთშაბათი 18:15 – 19:15
+• ფასი: 130₾/თვე (დედმამიშვილზე 100₾)
+
+🥈 3. Pre-Silver ჯგუფი (1 წელი ნასიარულები)
+• დღეები: ორშაბათი, ოთხშაბათი, პარასკევი 17:30
+• ფასი: 130₾/თვე
+
+🥈 4. Silver ჯგუფი (2+ წელი ნასიარულები)
+• დღეები: ორშაბათი, ოთხშაბათი, პარასკევი 19:30
+• ფასი: 130₾/თვე
+
+🥇 5. Golden ჯგუფი (5+ წელი ნასიარულები)
+• დღეები: ორშაბათი, ოთხშაბათი, პარასკევი 16:30
+• ფასი: 130₾/თვე
+
+👩‍❤️‍👨 6. წყვილების ჯგუფი
+• დღეები: ორშაბათი, ოთხშაბათი, პარასკევი 18:30
+• ფასი: 130₾/თვე
+
+💃 7. Hobby Class (მოყვარულები / ზრდასრულები)
+• დღეები: სამშაბათი და ხუთშაბათი 19:15 – 20:15
+• ფასი: 130₾/თვე
+
+⭐ 8. ინდივიდუალური გაკვეთილები
+• დღეები: შეთანხმებით (თავისუფალი გრაფიკი)
+• ფასი: 1 გაკვეთილი = 70₾ | 4 პაკეტი = 240₾ | 8 პაკეტი = 400₾
+
+👉 რომელი დრო ან ჯგუფი გიღირთ? მოგვწერეთ "დამარეგისტრირე" და ეგრევე ჩაგწერთ!`
+    } else if (lang === 'en') {
+      return `✨ ST DANCE STUDIO — Groups Schedule & Pricing:
+
+👶 1. Baby Class (Ages 4.5 – 6)
+• Days: Tue & Thu 17:30 – 18:15 (45 mins) + Sat 10:00
+• Price: 130 GEL/mo (100 GEL for siblings)
+
+🥉 2. Bronze Group (Beginners / 1st Year)
+• Days: Tue & Thu 18:15 – 19:15
+• Price: 130 GEL/mo (100 GEL for siblings)
+
+🥈 3. Pre-Silver Group (1 Year Exp.)
+• Days: Mon, Wed, Fri 17:30
+• Price: 130 GEL/mo
+
+🥈 4. Silver Group (2+ Years Exp.)
+• Days: Mon, Wed, Fri 19:30
+• Price: 130 GEL/mo
+
+🥇 5. Golden Group (5+ Years Exp.)
+• Days: Mon, Wed, Fri 16:30
+• Price: 130 GEL/mo
+
+👩‍❤️‍👨 6. Couples Group
+• Days: Mon, Wed, Fri 18:30
+• Price: 130 GEL/mo
+
+💃 7. Hobby Class (Adults / Amateurs)
+• Days: Tue & Thu 19:15 – 20:15
+• Price: 130 GEL/mo
+
+⭐ 8. Private Lessons
+• Days: Flexible by appointment
+• Price: 1 Class = 70₾ | 4 Package = 240₾ | 8 Package = 400₾
+
+👉 Which group suits you best? Reply "Register me" to sign up instantly!`
+    } else {
+      return `✨ ST DANCE STUDIO — Расписание и цены групп:
+
+👶 1. Группа Baby (4.5 – 6 лет)
+• Дни: Вторник и Четверг 17:30 – 18:15 + Суббота 10:00
+• Цена: 130 GEL/мес (100 GEL для сестер/братьев)
+
+🥉 2. Группа Bronze (Начинающие / 1-й год)
+• Дни: Вторник и Четверг 18:15 – 19:15
+• Цена: 130 GEL/мес (100 GEL для сестер/братьев)
+
+🥈 3. Группа Pre-Silver (1 год опыта)
+• Дни: Понедельник, Среда, Пятница 17:30
+• Цена: 130 GEL/мес
+
+🥈 4. Группа Silver (2+ года опыта)
+• Дни: Понедельник, Среда, Пятница 19:30
+• Цена: 130 GEL/мес
+
+🥇 5. Группа Golden (5+ лет опыта)
+• Дни: Понедельник, Среда, Пятница 16:30
+• Цена: 130 GEL/мес
+
+👩‍❤️‍👨 6. Группа для Пар
+• Дни: Понедельник, Среда, Пятница 18:30
+• Цена: 130 GEL/мес
+
+💃 7. Hobby Class (Взрослые / Любители)
+• Дни: Вторник и Четверг 19:15 – 20:15
+• Цена: 130 GEL/мес
+
+⭐ 8. Индивидуальные уроки
+• Дни: По договоренности
+• Цена: 1 урок = 70₾ | 4 урока = 240₾ | 8 уроков = 400₾
+
+👉 Какое время вам подходит? Напишите "Зарегистрировать" для онлайн записи!`
     }
   }
 
@@ -102,18 +227,30 @@ function getSmartKnowledgeAnswer(query, lang) {
     q.includes('პერსონალური') ||
     q.includes('private') ||
     q.includes('personal') ||
-    q.includes('индивидуальн')
+    q.includes('индивидуальნ')
   ) {
     if (lang === 'ka') {
-      return '⭐ ინდივიდუალური გაკვეთილები:\n• 1 გაკვეთილი = 70 ლარი\n• 4 გაკვეთილის პაკეტი = 240 ლარი\n• 8 გაკვეთილის პაკეტი = 400 ლარი\n(ინდივიდუალურზე დედმამიშვილების ფასდაკლება არ ვრცელდება).'
+      return `⭐ ინდივიდუალური გაკვეთილები:
+• 1 გაკვეთილი = 70 ლარი
+• 4 გაკვეთილის პაკეტი = 240 ლარი
+• 8 გაკვეთილის პაკეტი = 400 ლარი
+(შენიშვნა: ინდივიდუალურზე დედმამიშვილების ფასდაკლება არ ვრცელდება).`
     } else if (lang === 'en') {
-      return '⭐ Private Lessons:\n• 1 lesson = 70 GEL\n• 4 lessons package = 240 GEL\n• 8 lessons package = 400 GEL\n(Sibling discount does not apply to private lessons).'
+      return `⭐ Private Lessons:
+• 1 lesson = 70 GEL
+• 4 lessons package = 240 GEL
+• 8 lessons package = 400 GEL
+(Note: Sibling discount does not apply to private lessons).`
     } else {
-      return '⭐ Индивидуальные уроки:\n• 1 урок = 70 GEL\n• Пакет 4 урока = 240 GEL\n• Пакет 8 уроков = 400 GEL\n(Скидка для сестер/братьев не распространяется на личные уроки).'
+      return `⭐ Индивидуальные уроки:
+• 1 урок = 70 GEL
+• Пакет 4 урока = 240 GEL
+• Пакет 8 уроков = 400 GEL
+(Примечание: Скидка для сестер/братьев не распространяется на личные уроки).`
     }
   }
 
-  // Price & Tuition
+  // Price & Tuition General
   if (
     q.includes('ფას') ||
     q.includes('ღირს') ||
@@ -126,11 +263,32 @@ function getSmartKnowledgeAnswer(query, lang) {
     q.includes('стоит')
   ) {
     if (lang === 'ka') {
-      return '💰 სტუდიის ფასები:\n• თვიური აბონემენტი: 130 ლარი (30 დღე)\n• დედმამიშვილებზე: 100 ლარი 1 მოსწავლეზე (200 ლარი 2 დედმამიშვილზე)\n• ინდივიდუალური: 1 გაკვეთილი = 70₾ | 4 = 240₾ | 8 = 400₾\n• საცდელი გაკვეთილი 100%-ით უფასოა!'
+      return `💰 ST DANCE STUDIO — ფასების ჩამონათვალი:
+
+• თვიური აბონემენტი: 130 ლარი (30 კალენდარული დღე)
+• დედმამიშვილების ფასდაკლება: 100 ლარი 1 მოსწავლეზე (200₾ ორივეზე)
+• ინდივიდუალური: 1 გაკვეთილი = 70₾ | 4 = 240₾ | 8 = 400₾
+• პირველი საცდელი გაკვეთილი 100%-ით უფასოა!
+
+👉 ჩასაწერად მოგვწერეთ "დამარეგისტრირე"!`
     } else if (lang === 'en') {
-      return '💰 Pricing Details:\n• Monthly Subscription: 130 GEL (30 days)\n• Siblings Discount: 100 GEL per student (200 GEL for two)\n• Private Lessons: 1 class = 70₾ | 4 classes = 240₾ | 8 classes = 400₾\n• First Trial Lesson is 100% Free!'
+      return `💰 ST DANCE STUDIO — Pricing List:
+
+• Monthly Subscription: 130 GEL (30 calendar days)
+• Sibling Discount: 100 GEL per student (200 GEL for both)
+• Private Lessons: 1 class = 70₾ | 4 = 240₾ | 8 = 400₾
+• First trial class is 100% Free!
+
+👉 Reply "Register me" to sign up!`
     } else {
-      return '💰 Цены студии:\n• Месячный абонемент: 130 GEL (30 дней)\n• Скидка для братьев/сестер: 100 GEL за ученика (200 GEL за двоих)\n• Индивидуальные уроки: 1 урок = 70₾ | 4 урока = 240₾ | 8 уроков = 400₾\n• Первый пробный урок 100% бесплатный!'
+      return `💰 ST DANCE STUDIO — Прейскурант цен:
+
+• Месячный абонемент: 130 GEL (30 календарных дней)
+• Скидка для братьев/сестер: 100 GEL за ученика (200 GEL за двоих)
+• Индивидуальные уроки: 1 урок = 70₾ | 4 = 240₾ | 8 = 400₾
+• Первый пробный урок 100% бесплатный!
+
+👉 Напишите "Зарегистрировать" для записи!`
     }
   }
 
@@ -154,34 +312,13 @@ function getSmartKnowledgeAnswer(query, lang) {
     }
   }
 
-  // Schedule & Days
-  if (
-    q.includes('განრიგ') ||
-    q.includes('როდის') ||
-    q.includes('დღე') ||
-    q.includes('საათ') ||
-    q.includes('schedule') ||
-    q.includes('days') ||
-    q.includes('when') ||
-    q.includes('расписание') ||
-    q.includes('когда')
-  ) {
-    if (lang === 'ka') {
-      return '📅 ჯგუფების განრიგი:\n• Baby (4.5-6 წელი): სამშ. & ხუთშ. 17:30 (45 წთ) + შაბ. 10:00\n• Bronze (დამწყებები 1-ელი წელი): სამშ. & ხუთშ. 18:15\n• Pre-Silver (1 წელი ნასიარულები): ორშ., ოთხშ., პარ. 17:30\n• Silver (2+ წელი): ორშ., ოთხშ., პარ. 19:30\n• Golden (5+ წელი): ორშ., ოთხშ., პარ. 16:30\n• წყვილები: ორშ., ოთხშ., პარ. 18:30\n• Hobby Class (მოყვარულები): სამშ. & ხუთშ. 19:15'
-    } else if (lang === 'en') {
-      return '📅 Class Schedule:\n• Baby (4.5-6 yrs): Tue & Thu 17:30 (45 mins) + Sat 10:00\n• Bronze (Beginners 1st yr): Tue & Thu 18:15\n• Pre-Silver (1 yr exp): Mon, Wed, Fri 17:30\n• Silver (2+ yrs exp): Mon, Wed, Fri 19:30\n• Golden (5+ yrs exp): Mon, Wed, Fri 16:30\n• Couples: Mon, Wed, Fri 18:30\n• Hobby Class (Adults): Tue & Thu 19:15'
-    } else {
-      return '📅 Расписание групп:\n• Baby (4.5-6 лет): Вт и Чт 17:30 (45 мин) + Сб 10:00\n• Bronze (1-й год): Вт и Чт 18:15\n• Pre-Silver (1 год опыта): Пн, Ср, Пт 17:30\n• Silver (2+ года опыта): Пн, Ср, Пт 19:30\n• Golden (5+ лет опыта): Пн, Ср, Пт 16:30\n• Пары: Пн, Ср, Пт 18:30\n• Hobby Class (Любители): Вт и Чт 19:15'
-    }
-  }
-
   // Default fallback answer
   if (lang === 'ka') {
-    return '✨ ST Dance Studio — ბათუმის სპორტული და სამეჯლისო ცეკვების სტუდია (ე. თაყაიშვილის 55). საცდელი გაკვეთილი უფასოა! დეტალებისთვის დაგვიკავშირდით: +995 514 19 99 66 ან მოგვწერეთ WhatsApp-ში.'
+    return '✨ ST Dance Studio — ბათუმის სპორტული და სამეჯლისო ცეკვების სტუდია (ე. თაყაიშვილის 55). საცდელი გაკვეთილი უფასოა! დეტალებისთვის დაგვიკავშირდით: +995 514 19 99 66 ან მოგვწერეთ "დამარეგისტრირე".'
   } else if (lang === 'en') {
-    return '✨ ST Dance Studio — Ballroom & Sports Dance Studio in Batumi (55 E. Takaishvili St). Trial class is free! Contact us: +995 514 19 99 66 or WhatsApp.'
+    return '✨ ST Dance Studio — Ballroom & Sports Dance Studio in Batumi (55 E. Takaishvili St). Trial class is free! Contact us: +995 514 19 99 66 or reply "Register me".'
   } else {
-    return '✨ ST Dance Studio — Студия спортивных танцев в Батуми (ул. Е. Такаишвили 55). Пробный урок бесплатный! Тел: +995 514 19 99 66 или WhatsApp.'
+    return '✨ ST Dance Studio — Студия спортивных танцев в Батуми (ул. Е. Такаишвили 55). Пробный урок бесплатный! Тел: +995 514 19 99 66 или напишите "Зарегистрировать".'
   }
 }
 
@@ -198,7 +335,7 @@ export default function Bio() {
   const [regForm, setRegForm] = useState({
     student_name: '',
     birth_date: '',
-    shift: 'I ცვლა',
+    shift: 'I ცვლა (Bronze / 18:15)',
     parent_name: '',
     parent_phone: ''
   })
@@ -260,7 +397,7 @@ export default function Bio() {
     setRegLoading(false)
     if (res) {
       setRegSuccess(true)
-      setRegForm({ student_name: '', birth_date: '', shift: 'I ცვლა', parent_name: '', parent_phone: '' })
+      setRegForm({ student_name: '', birth_date: '', shift: 'I ცვლა (Bronze / 18:15)', parent_name: '', parent_phone: '' })
     } else {
       setRegError('შეცდომა რეგისტრაციისას. გთხოვთ სცადოთ ხელახლა.')
     }
@@ -289,7 +426,7 @@ export default function Bio() {
     setIsAiLoading(true)
 
     try {
-      const systemPrompt = `${studioKnowledgeBase}\n\nყურადღება: უპასუხე იმავე ენაზე, რომელზეც მომხმარებელი გეკითხება. იყავი თავაზიანი, მეგობრული და მოკლე (2-4 წინადადება).`
+      const systemPrompt = `${studioKnowledgeBase}\n\nყურადღება: უპასუხე იმავე ენაზე, რომელზეც მომხმარებელი გეკითხება. იყავი თავაზიანი, მეგობრული, გამოიყენე ემოჯიები და ლამაზი ფორმატირება.`
 
       const res = await fetch(
         `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`,
@@ -418,12 +555,13 @@ export default function Bio() {
       mapTitle: 'ST Dance Studio Batumi',
       mapAddress: 'ბათუმი, ე. თაყაიშვილის 55',
       mapBtn: 'Google Maps',
-      aiTitle: 'ST Dance AI ასისტენტი',
+      aiTitle: 'ST Dance AI',
+      aiTag: 'AI ასისტენტი',
       aiSubtitle: 'დასვით ნებისმიერი კითხვა',
       aiSuggestions: [
         '📝 დამარეგისტრირე',
+        '📅 განრიგი & ფასები',
         '💡 რა ღირს სწავლა?',
-        '📅 როდის არის მეცადინეობები?',
         '📍 სად მდებარეობთ?'
       ],
       tabs: [
@@ -504,12 +642,13 @@ export default function Bio() {
       mapTitle: 'ST Dance Studio Batumi',
       mapAddress: '55 E. Takaishvili St, Batumi',
       mapBtn: 'Open Maps',
-      aiTitle: 'ST Dance AI Assistant',
+      aiTitle: 'ST Dance AI',
+      aiTag: 'AI Assistant',
       aiSubtitle: 'Ask any question about studio',
       aiSuggestions: [
         '📝 Register me',
+        '📅 Schedule & Prices',
         '💡 How much is tuition?',
-        '📅 When are classes?',
         '📍 Where are you located?'
       ],
       tabs: [
@@ -590,12 +729,13 @@ export default function Bio() {
       mapTitle: 'ST Dance Studio Batumi',
       mapAddress: 'Батуми, ул. Е. Такаишвили 55',
       mapBtn: 'Google Maps',
-      aiTitle: 'ST Dance AI Помощник',
+      aiTitle: 'ST Dance AI',
+      aiTag: 'AI Помощник',
       aiSubtitle: 'Задайте любой вопрос',
       aiSuggestions: [
         '📝 Записать меня',
+        '📅 Расписание и цены',
         '💡 Сколько стоит обучение?',
-        '📅 Когда проходят занятия?',
         '📍 Где вы находитесь?'
       ],
       tabs: [
@@ -760,7 +900,7 @@ export default function Bio() {
           ))}
         </div>
 
-        {/* EMBEDDED GEMINI AI CHAT BOT BENTO CARD (PLACED HIGH UP FOR IMMEDIATE ACTION) */}
+        {/* EMBEDDED AI CHAT BOT BENTO CARD */}
         <section className="bio-ai-card">
           <div className="bio-ai-header">
             <div className="bio-ai-title-wrap">
@@ -769,7 +909,7 @@ export default function Bio() {
                 <div className="bio-ai-title">{t.aiTitle}</div>
               </div>
             </div>
-            <div className="bio-ai-tag">Gemini AI Engine</div>
+            <div className="bio-ai-tag">{t.aiTag}</div>
           </div>
 
           {/* Chat Messages Viewport */}
@@ -1113,16 +1253,20 @@ export default function Bio() {
                   </div>
 
                   <div className="bio-form-group">
-                    <label className="bio-form-label">სასურველი ცვლა / ჯგუფი *</label>
+                    <label className="bio-form-label">სასურველი ჯგუფი და დრო *</label>
                     <select
                       className="bio-form-select"
                       value={regForm.shift}
                       onChange={(e) => setRegForm({ ...regForm, shift: e.target.value })}
                     >
-                      <option value="I ცვლა">I ცვლა</option>
-                      <option value="II ცვლა">II ცვლა</option>
-                      <option value="ბაღის მოსწავლე">ბაღის მოსწავლე (Baby)</option>
-                      <option value="თავისუფალი გრაფიკი">თავისუფალი გრაფიკი / ინდივიდუალური</option>
+                      <option value="Baby ჯგუფი (4.5-6 წელი) - 17:30">👶 Baby ჯგუფი (4.5-6 წელი) — 17:30 (130₾/თვე)</option>
+                      <option value="Bronze ჯგუფი (დამწყებები) - 18:15">🥉 Bronze (დამწყებები) — 18:15 (130₾/თვე)</option>
+                      <option value="Pre-Silver ჯგუფი (1 წელი) - 17:30">🥈 Pre-Silver (1 წელი) — 17:30 (130₾/თვე)</option>
+                      <option value="Silver ჯგუფი (2+ წელი) - 19:30">🥈 Silver (2+ წელი) — 19:30 (130₾/თვე)</option>
+                      <option value="Golden ჯგუფი (5+ წელი) - 16:30">🥇 Golden (5+ წელი) — 16:30 (130₾/თვე)</option>
+                      <option value="წყვილების ჯგუფი - 18:30">👩‍❤️‍👨 წყვილების ჯგუფი — 18:30 (130₾/თვე)</option>
+                      <option value="Hobby Class (მოყვარულები) - 19:15">💃 Hobby Class (მოყვარულები) — 19:15 (130₾/თვე)</option>
+                      <option value="ინდივიდუალური გაკვეთილები">⭐ ინდივიდუალური გაკვეთილები (70₾-400₾)</option>
                     </select>
                   </div>
 
