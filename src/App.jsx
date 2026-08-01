@@ -46,7 +46,7 @@ const AppRoutes = () => (
 
 export default function App() {
   const { pathname } = useLocation()
-  const isStandalone = pathname.startsWith('/admin') || pathname.startsWith('/portal')
+  const isStandalone = pathname.startsWith('/admin') || pathname.startsWith('/portal') || pathname.includes('/bio') || pathname.includes('/link')
 
   return (
     <>
@@ -57,6 +57,12 @@ export default function App() {
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
           <Route path="/portal" element={<PortalLogin />} />
           <Route path="/portal/dashboard" element={<StudentDashboard />} />
+          <Route path="/bio" element={<Bio />} />
+          <Route path="/link" element={<Bio />} />
+          <Route path="/en/bio" element={<Bio />} />
+          <Route path="/en/link" element={<Bio />} />
+          <Route path="/ru/bio" element={<Bio />} />
+          <Route path="/ru/link" element={<Bio />} />
         </Routes>
       ) : (
         <Layout>

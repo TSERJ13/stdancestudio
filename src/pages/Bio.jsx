@@ -172,6 +172,19 @@ export default function Bio() {
 
   return (
     <div className="bio-page-container">
+      {/* Floating Language Switcher */}
+      <div className="bio-lang-switcher">
+        <Link to="/bio" className={`bio-lang-btn ${lang === 'ka' ? 'active' : ''}`}>
+          GE
+        </Link>
+        <Link to="/en/bio" className={`bio-lang-btn ${lang === 'en' ? 'active' : ''}`}>
+          EN
+        </Link>
+        <Link to="/ru/bio" className={`bio-lang-btn ${lang === 'ru' ? 'active' : ''}`}>
+          RU
+        </Link>
+      </div>
+
       <div className="bio-wrapper">
         {/* Header */}
         <header className="bio-header">
@@ -240,7 +253,7 @@ export default function Bio() {
           })}
         </main>
 
-        {/* Embedded Instagram Reel / Video Player Showcase */}
+        {/* Embedded Instagram Reel / Post DYy9WNRDjyT Showcase */}
         <section className="bio-video-card">
           <div className="bio-video-card-header">
             <div className="bio-video-card-title">
@@ -252,8 +265,8 @@ export default function Bio() {
           <div className="bio-embed-container">
             <iframe
               className="bio-embed-iframe"
-              src="https://www.instagram.com/reel/C8_1wD0IS2z/embed"
-              title="ST Dance Studio Instagram Reel"
+              src="https://www.instagram.com/p/DYy9WNRDjyT/embed"
+              title="ST Dance Studio Instagram Post DYy9WNRDjyT"
               allowTransparency={true}
               allow="encrypted-media"
               frameBorder="0"
