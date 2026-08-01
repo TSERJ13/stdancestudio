@@ -618,11 +618,13 @@ export default function Bio() {
     }
   ]
 
-  // REAL INSTAGRAM POSTS FROM USER REQUEST (EXACT EMBED URLS)
+  // REAL INSTAGRAM POSTS & MEDIA FROM USER REQUEST
   const instaGridItems = [
     {
       id: 1,
-      img: '/images/about-kids.jpg',
+      shortcode: 'DYy9WNRDjyT',
+      img: 'https://www.instagram.com/p/DYy9WNRDjyT/media/?size=l',
+      fallbackImg: '/images/about-kids.jpg',
       type: 'photo',
       embedUrl: 'https://www.instagram.com/p/DYy9WNRDjyT/embed',
       url: 'https://www.instagram.com/p/DYy9WNRDjyT/',
@@ -632,7 +634,9 @@ export default function Bio() {
     },
     {
       id: 2,
-      img: '/images/studio.jpg',
+      shortcode: 'DSm1G4SFT-i',
+      img: 'https://www.instagram.com/p/DSm1G4SFT-i/media/?size=l',
+      fallbackImg: '/images/studio.jpg',
       type: 'photo',
       embedUrl: 'https://www.instagram.com/p/DSm1G4SFT-i/embed',
       url: 'https://www.instagram.com/p/DSm1G4SFT-i/',
@@ -642,7 +646,9 @@ export default function Bio() {
     },
     {
       id: 3,
-      img: '/images/competition.png',
+      shortcode: 'CwbIKwVIK6C',
+      img: 'https://www.instagram.com/p/CwbIKwVIK6C/media/?size=l',
+      fallbackImg: '/images/competition.png',
       type: 'photo',
       embedUrl: 'https://www.instagram.com/p/CwbIKwVIK6C/embed',
       url: 'https://www.instagram.com/p/CwbIKwVIK6C/',
@@ -652,7 +658,9 @@ export default function Bio() {
     },
     {
       id: 4,
-      img: '/images/dancer-1.png',
+      shortcode: 'CuVJP7poqe2',
+      img: 'https://www.instagram.com/p/CuVJP7poqe2/media/?size=l',
+      fallbackImg: '/images/dancer-1.png',
       type: 'photo',
       embedUrl: 'https://www.instagram.com/p/CuVJP7poqe2/embed',
       url: 'https://www.instagram.com/p/CuVJP7poqe2/',
@@ -662,7 +670,9 @@ export default function Bio() {
     },
     {
       id: 5,
-      img: '/images/dancer-2.png',
+      shortcode: 'CuPJ6q8o-ds',
+      img: 'https://www.instagram.com/p/CuPJ6q8o-ds/media/?size=l',
+      fallbackImg: '/images/dancer-2.png',
       type: 'photo',
       embedUrl: 'https://www.instagram.com/p/CuPJ6q8o-ds/embed',
       url: 'https://www.instagram.com/p/CuPJ6q8o-ds/',
@@ -672,11 +682,13 @@ export default function Bio() {
     },
     {
       id: 6,
-      img: '/images/hero-1.png',
+      shortcode: 'CtHujjZIL3Z',
+      img: 'https://www.instagram.com/p/CtHujjZIL3Z/media/?size=l',
+      fallbackImg: '/images/hero-1.png',
       type: 'reel',
       embedUrl: 'https://www.instagram.com/reel/CtHujjZIL3Z/embed',
       url: 'https://www.instagram.com/reel/CtHujjZIL3Z/',
-      title: 'ST Dance Studio Reel Showcase',
+      title: 'ST Dance Studio Reel Performance',
       likes: '480',
       comments: '63'
     }
@@ -1141,7 +1153,7 @@ export default function Bio() {
             </a>
           </div>
 
-          {/* Instagram View Tabs (Grid, Reels, Tagged) */}
+          {/* Instagram View Tabs (Grid, Reels, Embeds) */}
           <div className="insta-tabs-bar">
             <button
               className={`insta-tab-icon ${activeInstaTab === 'grid' ? 'active' : ''}`}
@@ -1179,7 +1191,7 @@ export default function Bio() {
             </button>
           </div>
 
-          {/* 3-COLUMN INSTAGRAM POSTS GRID WITH REAL USER INSTAGRAM EMBEDS */}
+          {/* 3-COLUMN INSTAGRAM POSTS GRID WITH DIRECT REAL INSTAGRAM MEDIA THUMBNAILS */}
           <div className="insta-3col-grid">
             {instaGridItems.map((item) => (
               <div
@@ -1187,7 +1199,15 @@ export default function Bio() {
                 className="insta-grid-item"
                 onClick={() => setSelectedInstaPost(item)}
               >
-                <img src={item.img} alt={`ST Dance Studio Post ${item.id}`} className="insta-grid-img" />
+                <img
+                  src={item.img}
+                  alt={`ST Dance Studio Post ${item.id}`}
+                  className="insta-grid-img"
+                  onError={(e) => {
+                    e.target.onerror = null
+                    e.target.src = item.fallbackImg
+                  }}
+                />
                 
                 {/* Reel / Multi-photo Icon Badge */}
                 <div className="insta-type-icon">
