@@ -241,44 +241,57 @@
   margin-bottom: 1.2rem;
 }
 
-/* Distinct Action Buttons under Header (Call & Maps) */
-.bio-action-buttons-row {
-  display: flex;
-  gap: 10px;
+/* Header Primary Navigation Grid (Replacing standalone phone & location buttons) */
+.bio-header-nav-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
   width: 100%;
-  justify-content: center;
+  margin-top: 0.4rem;
 }
 
-.bio-btn-action {
-  flex: 1;
+.bio-header-nav-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  background: rgba(20, 20, 30, 0.75);
+  gap: 7px;
+  background: rgba(20, 20, 30, 0.85);
   border: 1px solid var(--border-gold-subtle);
-  color: #e0e0f0;
-  font-size: 0.8rem;
+  color: #ffffff;
+  font-size: 0.82rem;
   font-weight: 600;
-  padding: 10px 14px;
+  padding: 11px 12px;
   border-radius: 14px;
   text-decoration: none;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  cursor: pointer;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   transition: all 0.3s ease;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
 }
 
-.bio-btn-action:hover {
-  background: rgba(197, 160, 89, 0.12);
+.bio-header-nav-btn.highlight {
+  background: rgba(197, 160, 89, 0.18);
   border-color: var(--color-gold-main);
   color: var(--color-gold-light);
-  transform: translateY(-2px);
 }
 
-.bio-btn-action svg {
+.bio-header-nav-btn:hover {
+  background: var(--color-gold-main);
+  border-color: var(--color-gold-main);
+  color: #000000;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(197, 160, 89, 0.25);
+}
+
+.bio-header-nav-btn svg {
   color: var(--color-gold-main);
   flex-shrink: 0;
+  transition: color 0.3s ease;
+}
+
+.bio-header-nav-btn:hover svg {
+  color: #000000;
 }
 
 /* Live Stats Bar */

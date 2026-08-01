@@ -504,7 +504,6 @@ First trial class is 100% Free!`
 export default function Bio() {
   const { lang } = useLanguage()
 
-  const [activeTab, setActiveTab] = useState('all')
   const [toastMessage, setToastMessage] = useState('')
   const canvasRef = useRef(null)
 
@@ -616,7 +615,7 @@ export default function Bio() {
     }
   ])
 
-  // Scroll chat internal viewport ONLY (never scroll the main window page)
+  // Scroll chat internal viewport ONLY
   useEffect(() => {
     if (chatViewportRef.current) {
       const el = chatViewportRef.current
@@ -668,7 +667,7 @@ export default function Bio() {
       const systemPrompt = `${studioKnowledgeBase}\n\nყურადღება: უპასუხე იმავე ენაზე, რომელზეც მომხმარებელი გეკითხება. არ გამოიყენო ემოჯიები! იყავი თავაზიანი, მეგობრული, ამომწურავი და მკაფიო.`
 
       const res = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`,
+        `https://generativelanguage.googleapis.com/v1beta/models/generateContent?key=${GEMINI_KEY}`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -785,196 +784,69 @@ export default function Bio() {
     ka: {
       title: 'ST DANCE STUDIO',
       subtitle: 'სპორტული და სამეჯლისო ცეკვების სტუდია',
-      location: 'ბათუმი, ე. თაყაიშვილის 55',
-      phone: '+995 514 19 99 66',
-      ctaBadge: 'მიღება ღიაა 4-16 წლის ბავშვებისთვის',
-      ctaTitle: 'ონლაინ რეგისტრაცია',
-      ctaSubtitle: 'ჩაეწერეთ უფასო საცდელ მეცადინეობაზე',
       videoTitle: 'ინსტაგრამის ფიდი / სიახლეები',
       mapTitle: 'ST Dance Studio Batumi',
       mapAddress: 'ბათუმი, ე. თაყაიშვილის 55',
       mapBtn: 'Google Maps',
       aiTitle: 'ST Dance AI',
       aiTag: 'AI ასისტენტი',
-      aiSubtitle: 'დასვით ნებისმიერი კითხვა',
       aiSuggestions: [
         'რას გვთავაზობთ?',
         'დამარეგისტრირე',
         'განრიგი & ფასები',
         'რა ღირს სწავლა?'
       ],
-      tabs: [
-        { id: 'all', label: 'ყველა' },
-        { id: 'reg', label: 'რეგისტრაცია' },
-        { id: 'sched', label: 'განრიგი & ფასები' },
-        { id: 'contact', label: 'კონტაქტი' }
-      ],
       stats: [
         { num: '12+', label: 'წლის გამოცდილება' },
         { num: '300+', label: 'აქტიური მოსწავლე' },
         { num: '50+', label: 'ჯილდო & თასი' }
-      ],
-      cards: [
-        {
-          id: 'schedule',
-          category: 'sched',
-          title: 'განრიგი & ფასები',
-          desc: 'ჯგუფები, საათები და აბონემენტი',
-          action: () => setIsScheduleModalOpen(true),
-          icon: (
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-              <line x1="16" y1="2" x2="16" y2="6"></line>
-              <line x1="8" y1="2" x2="8" y2="6"></line>
-              <line x1="3" y1="10" x2="21" y2="10"></line>
-            </svg>
-          )
-        },
-        {
-          id: 'whatsapp',
-          category: 'contact',
-          title: 'WhatsApp ჩატი',
-          desc: 'პირდაპირი მიმოწერა',
-          href: 'https://wa.me/995514199966',
-          icon: (
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
-            </svg>
-          )
-        }
       ]
     },
     en: {
       title: 'ST DANCE STUDIO',
       subtitle: 'Sports & Ballroom Dance Studio in Batumi',
-      location: '55 E. Takaishvili St, Batumi',
-      phone: '+995 514 19 99 66',
-      ctaBadge: 'Enrollment Open for Kids 4-16',
-      ctaTitle: 'Online Registration',
-      ctaSubtitle: 'Book a Free Trial Class',
       videoTitle: 'Instagram Feed & Carousel',
       mapTitle: 'ST Dance Studio Batumi',
       mapAddress: '55 E. Takaishvili St, Batumi',
       mapBtn: 'Open Maps',
       aiTitle: 'ST Dance AI',
       aiTag: 'AI Assistant',
-      aiSubtitle: 'Ask any question about studio',
       aiSuggestions: [
         'What do you offer?',
         'Register me',
         'Schedule & Prices',
         'How much is tuition?'
       ],
-      tabs: [
-        { id: 'all', label: 'All' },
-        { id: 'reg', label: 'Register' },
-        { id: 'sched', label: 'Schedule' },
-        { id: 'contact', label: 'Contact' }
-      ],
       stats: [
         { num: '12+', label: 'Years Experience' },
         { num: '300+', label: 'Active Students' },
         { num: '50+', label: 'Trophies Won' }
-      ],
-      cards: [
-        {
-          id: 'schedule',
-          category: 'sched',
-          title: 'Schedule & Pricing',
-          desc: 'Groups & Class Hours',
-          action: () => setIsScheduleModalOpen(true),
-          icon: (
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-              <line x1="16" y1="2" x2="16" y2="6"></line>
-              <line x1="8" y1="2" x2="8" y2="6"></line>
-              <line x1="3" y1="10" x2="21" y2="10"></line>
-            </svg>
-          )
-        },
-        {
-          id: 'whatsapp',
-          category: 'contact',
-          title: 'WhatsApp Chat',
-          desc: 'Direct Message',
-          href: 'https://wa.me/995514199966',
-          icon: (
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
-            </svg>
-          )
-        }
       ]
     },
     ru: {
       title: 'ST DANCE STUDIO',
       subtitle: 'Студия спортивных и бальных танцев в Батуми',
-      location: 'Батуми, ул. Е. Такаишвили 55',
-      phone: '+995 514 19 99 66',
-      ctaBadge: 'Набор открыт для детей 4-16 лет',
-      ctaTitle: 'Онлайн Регистрация',
-      ctaSubtitle: 'Запишитесь на бесплатный урок',
       videoTitle: 'Лента Instagram и карусель',
       mapTitle: 'ST Dance Studio Batumi',
       mapAddress: 'Батуми, ул. Е. Такаишвили 55',
       mapBtn: 'Google Maps',
       aiTitle: 'ST Dance AI',
       aiTag: 'AI Помощник',
-      aiSubtitle: 'Задайте любой вопрос',
       aiSuggestions: [
         'Что предлагаете?',
         'Записать меня',
         'Расписание и цены',
         'Сколько стоит обучение?'
       ],
-      tabs: [
-        { id: 'all', label: 'Все' },
-        { id: 'reg', label: 'Регистрация' },
-        { id: 'sched', label: 'Расписание' },
-        { id: 'contact', label: 'Контакт' }
-      ],
       stats: [
         { num: '12+', label: 'Лет Опыта' },
         { num: '300+', label: 'Учеников' },
         { num: '50+', label: 'Наград' }
-      ],
-      cards: [
-        {
-          id: 'schedule',
-          category: 'sched',
-          title: 'Расписание и цены',
-          desc: 'Группы и часы',
-          action: () => setIsScheduleModalOpen(true),
-          icon: (
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-              <line x1="16" y1="2" x2="16" y2="6"></line>
-              <line x1="8" y1="2" x2="8" y2="6"></line>
-              <line x1="3" y1="10" x2="21" y2="10"></line>
-            </svg>
-          )
-        },
-        {
-          id: 'whatsapp',
-          category: 'contact',
-          title: 'WhatsApp Чат',
-          desc: 'Прямая связь',
-          href: 'https://wa.me/995514199966',
-          icon: (
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
-            </svg>
-          )
-        }
       ]
     }
   }
 
   const t = content[lang] || content.ka
-
-  const filteredCards = t.cards.filter(
-    (card) => activeTab === 'all' || card.category === activeTab
-  )
 
   return (
     <div className="bio-page-container">
@@ -1030,26 +902,55 @@ export default function Bio() {
           <h1 className="bio-brand-title">{t.title}</h1>
           <p className="bio-brand-subtitle">{t.subtitle}</p>
 
-          {/* Direct Phone & Google Maps Action Buttons */}
-          <div className="bio-action-buttons-row">
-            <a href="tel:+995514199966" className="bio-btn-action">
+          {/* TOP PRIMARY NAVIGATION MENU (REPLACING OLD PHONE & ADDRESS BUTTONS) */}
+          <div className="bio-header-nav-grid">
+            <button
+              className="bio-header-nav-btn highlight"
+              onClick={() => setIsRegModalOpen(true)}
+            >
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"></path>
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
               </svg>
-              <span>{t.phone}</span>
-            </a>
+              <span>{lang === 'ka' ? 'რეგისტრაცია' : lang === 'en' ? 'Register' : 'Регистрация'}</span>
+            </button>
+
+            <button
+              className="bio-header-nav-btn"
+              onClick={() => setIsScheduleModalOpen(true)}
+            >
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+              </svg>
+              <span>{lang === 'ka' ? 'განრიგი & ფასები' : lang === 'en' ? 'Schedule & Prices' : 'Расписание и цены'}</span>
+            </button>
 
             <a
               href="https://maps.app.goo.gl/iyBGVtNeiNUGZmq86"
               target="_blank"
               rel="noopener noreferrer"
-              className="bio-btn-action"
+              className="bio-header-nav-btn"
             >
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
                 <circle cx="12" cy="10" r="3"></circle>
               </svg>
-              <span>{t.location}</span>
+              <span>{lang === 'ka' ? 'მისამართი' : lang === 'en' ? 'Address' : 'Адрес'}</span>
+            </a>
+
+            <a
+              href="https://wa.me/995514199966"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bio-header-nav-btn"
+            >
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+              </svg>
+              <span>{lang === 'ka' ? 'კონტაქტები' : lang === 'en' ? 'Contacts' : 'Контакты'}</span>
             </a>
           </div>
         </header>
@@ -1142,124 +1043,35 @@ export default function Bio() {
           </form>
         </section>
 
-        {/* Category Filter Tabs */}
-        <div className="bio-filter-tabs">
-          {t.tabs.map((tab) => (
-            <button
-              key={tab.id}
-              className={`bio-tab-btn ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        {/* BENTO GRID ACTION CARDS */}
+        {/* FULL-WIDTH MAP BENTO CARD */}
         <section className="bio-bento-section">
-          {/* HERO BENTO CTA CARD — Opens Inline Registration Form */}
-          {(activeTab === 'all' || activeTab === 'reg') && (
-            <div
-              className="bento-hero-card"
-              onClick={() => setIsRegModalOpen(true)}
-            >
-              <div className="bento-hero-info">
-                <div className="bento-hero-badge">
-                  <span className="radar-pulse"></span>
-                  <span>{t.ctaBadge}</span>
+          <a
+            href="https://maps.app.goo.gl/iyBGVtNeiNUGZmq86"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="bento-map-card"
+          >
+            <div className="bento-map-header">
+              <div className="bento-map-left">
+                <div className="bento-map-pin-icon">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                    <circle cx="12" cy="10" r="3"></circle>
+                  </svg>
                 </div>
-                <div className="bento-hero-title">{t.ctaTitle}</div>
-                <div className="bento-hero-desc">{t.ctaSubtitle}</div>
+                <div>
+                  <div className="bento-map-name">{t.mapTitle}</div>
+                  <div className="bento-map-sub">{t.mapAddress}</div>
+                </div>
               </div>
-              <div className="bento-hero-btn">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <line x1="5" y1="12" x2="19" y2="12"></line>
-                  <polyline points="12 5 19 12 12 19"></polyline>
+              <div className="bento-map-button">
+                <span>{t.mapBtn}</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="9 18 15 12 9 6"></polyline>
                 </svg>
               </div>
             </div>
-          )}
-
-          {/* 2-COLUMN BENTO GRID FOR CORE ACTIONS */}
-          <div className="bento-grid-2col">
-            {filteredCards.map((card) => {
-              if (card.action) {
-                return (
-                  <div
-                    key={card.id}
-                    className="bento-mini-card"
-                    onClick={card.action}
-                  >
-                    <div className="bento-mini-top">
-                      <div className="bento-icon-box">{card.icon}</div>
-                      <div className="bento-mini-arrow">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <polyline points="9 18 15 12 9 6"></polyline>
-                        </svg>
-                      </div>
-                    </div>
-                    <div className="bento-mini-bottom">
-                      <div className="bento-mini-title">{card.title}</div>
-                      <div className="bento-mini-desc">{card.desc}</div>
-                    </div>
-                  </div>
-                )
-              }
-              return (
-                <a
-                  key={card.id}
-                  href={card.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="bento-mini-card"
-                >
-                  <div className="bento-mini-top">
-                    <div className="bento-icon-box">{card.icon}</div>
-                    <div className="bento-mini-arrow">
-                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <polyline points="9 18 15 12 9 6"></polyline>
-                      </svg>
-                    </div>
-                  </div>
-                  <div className="bento-mini-bottom">
-                    <div className="bento-mini-title">{card.title}</div>
-                    <div className="bento-mini-desc">{card.desc}</div>
-                  </div>
-                </a>
-              )
-            })}
-          </div>
-
-          {/* FULL-WIDTH MAP BENTO CARD */}
-          {(activeTab === 'all' || activeTab === 'contact') && (
-            <a
-              href="https://maps.app.goo.gl/iyBGVtNeiNUGZmq86"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bento-map-card"
-            >
-              <div className="bento-map-header">
-                <div className="bento-map-left">
-                  <div className="bento-map-pin-icon">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                      <circle cx="12" cy="10" r="3"></circle>
-                    </svg>
-                  </div>
-                  <div>
-                    <div className="bento-map-name">{t.mapTitle}</div>
-                    <div className="bento-map-sub">{t.mapAddress}</div>
-                  </div>
-                </div>
-                <div className="bento-map-button">
-                  <span>{t.mapBtn}</span>
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <polyline points="9 18 15 12 9 6"></polyline>
-                  </svg>
-                </div>
-              </div>
-            </a>
-          )}
+          </a>
         </section>
 
         {/* INSTAGRAM AUTOPLAY CAROUSEL SHOWCASE SECTION */}
