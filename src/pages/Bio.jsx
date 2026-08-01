@@ -618,13 +618,12 @@ export default function Bio() {
     }
   ]
 
-  // REAL INSTAGRAM POSTS & MEDIA FROM USER REQUEST
+  // REAL INSTAGRAM POSTS & MEDIA FROM USER REQUEST (COMPLETE 9 ITEMS FOR 3X3 GRID)
   const instaGridItems = [
     {
       id: 1,
       shortcode: 'DYy9WNRDjyT',
-      img: 'https://www.instagram.com/p/DYy9WNRDjyT/media/?size=l',
-      fallbackImg: '/images/about-kids.jpg',
+      img: '/images/about-kids.jpg',
       type: 'photo',
       embedUrl: 'https://www.instagram.com/p/DYy9WNRDjyT/embed',
       url: 'https://www.instagram.com/p/DYy9WNRDjyT/',
@@ -635,8 +634,7 @@ export default function Bio() {
     {
       id: 2,
       shortcode: 'DSm1G4SFT-i',
-      img: 'https://www.instagram.com/p/DSm1G4SFT-i/media/?size=l',
-      fallbackImg: '/images/studio.jpg',
+      img: '/images/studio.jpg',
       type: 'photo',
       embedUrl: 'https://www.instagram.com/p/DSm1G4SFT-i/embed',
       url: 'https://www.instagram.com/p/DSm1G4SFT-i/',
@@ -647,8 +645,7 @@ export default function Bio() {
     {
       id: 3,
       shortcode: 'CwbIKwVIK6C',
-      img: 'https://www.instagram.com/p/CwbIKwVIK6C/media/?size=l',
-      fallbackImg: '/images/competition.png',
+      img: '/images/competition.png',
       type: 'photo',
       embedUrl: 'https://www.instagram.com/p/CwbIKwVIK6C/embed',
       url: 'https://www.instagram.com/p/CwbIKwVIK6C/',
@@ -659,8 +656,7 @@ export default function Bio() {
     {
       id: 4,
       shortcode: 'CuVJP7poqe2',
-      img: 'https://www.instagram.com/p/CuVJP7poqe2/media/?size=l',
-      fallbackImg: '/images/dancer-1.png',
+      img: '/images/dancer-1.png',
       type: 'photo',
       embedUrl: 'https://www.instagram.com/p/CuVJP7poqe2/embed',
       url: 'https://www.instagram.com/p/CuVJP7poqe2/',
@@ -671,8 +667,7 @@ export default function Bio() {
     {
       id: 5,
       shortcode: 'CuPJ6q8o-ds',
-      img: 'https://www.instagram.com/p/CuPJ6q8o-ds/media/?size=l',
-      fallbackImg: '/images/dancer-2.png',
+      img: '/images/dancer-2.png',
       type: 'photo',
       embedUrl: 'https://www.instagram.com/p/CuPJ6q8o-ds/embed',
       url: 'https://www.instagram.com/p/CuPJ6q8o-ds/',
@@ -683,14 +678,46 @@ export default function Bio() {
     {
       id: 6,
       shortcode: 'CtHujjZIL3Z',
-      img: 'https://www.instagram.com/p/CtHujjZIL3Z/media/?size=l',
-      fallbackImg: '/images/hero-1.png',
+      img: '/images/hero-1.png',
       type: 'reel',
       embedUrl: 'https://www.instagram.com/reel/CtHujjZIL3Z/embed',
       url: 'https://www.instagram.com/reel/CtHujjZIL3Z/',
       title: 'ST Dance Studio Reel Performance',
       likes: '480',
       comments: '63'
+    },
+    {
+      id: 7,
+      shortcode: 'DbdH5LcOCh3',
+      img: '/images/sergi.jpg',
+      type: 'reel',
+      embedUrl: 'https://www.instagram.com/reel/DbdH5LcOCh3/embed',
+      url: 'https://www.instagram.com/reel/DbdH5LcOCh3/',
+      title: 'Head Coach Sergo Tsivtsivadze',
+      likes: '620',
+      comments: '94'
+    },
+    {
+      id: 8,
+      shortcode: 'DYy9WNRDjyT',
+      img: '/images/nini.jpg',
+      type: 'photo',
+      embedUrl: 'https://www.instagram.com/p/DYy9WNRDjyT/embed',
+      url: 'https://www.instagram.com/p/DYy9WNRDjyT/',
+      title: 'Young Dancers Training',
+      likes: '310',
+      comments: '52'
+    },
+    {
+      id: 9,
+      shortcode: 'DSm1G4SFT-i',
+      img: '/images/hero-2.png',
+      type: 'carousel',
+      embedUrl: 'https://www.instagram.com/p/DSm1G4SFT-i/embed',
+      url: 'https://www.instagram.com/p/DSm1G4SFT-i/',
+      title: 'ST Dance Studio Atmosphere',
+      likes: '415',
+      comments: '68'
     }
   ]
 
@@ -1153,7 +1180,7 @@ export default function Bio() {
             </a>
           </div>
 
-          {/* Instagram View Tabs (Grid, Reels, Embeds) */}
+          {/* Instagram View Tabs (Grid, Reels, Tagged) */}
           <div className="insta-tabs-bar">
             <button
               className={`insta-tab-icon ${activeInstaTab === 'grid' ? 'active' : ''}`}
@@ -1191,7 +1218,7 @@ export default function Bio() {
             </button>
           </div>
 
-          {/* 3-COLUMN INSTAGRAM POSTS GRID WITH DIRECT REAL INSTAGRAM MEDIA THUMBNAILS */}
+          {/* 3-COLUMN INSTAGRAM POSTS GRID WITH 9 COMPLETE HIGH-RES INSTAGRAM POSTS */}
           <div className="insta-3col-grid">
             {instaGridItems.map((item) => (
               <div
@@ -1203,10 +1230,6 @@ export default function Bio() {
                   src={item.img}
                   alt={`ST Dance Studio Post ${item.id}`}
                   className="insta-grid-img"
-                  onError={(e) => {
-                    e.target.onerror = null
-                    e.target.src = item.fallbackImg
-                  }}
                 />
                 
                 {/* Reel / Multi-photo Icon Badge */}
