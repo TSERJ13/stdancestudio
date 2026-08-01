@@ -512,6 +512,7 @@ export default function Bio() {
   const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false)
   const [isLocationModalOpen, setIsLocationModalOpen] = useState(false)
   const [isContactModalOpen, setIsContactModalOpen] = useState(false)
+  const [activeInstaTab, setActiveInstaTab] = useState('grid') // 'grid', 'reels', 'tagged'
 
   // Registration Form State
   const [regForm, setRegForm] = useState({
@@ -585,20 +586,81 @@ export default function Bio() {
     }
   ]
 
-  // Instagram Carousel state with AUTOPLAY
-  const [carouselIndex, setCarouselIndex] = useState(0)
-  const instagramFeed = [
-    { type: 'reel', url: 'https://www.instagram.com/reel/DbdH5LcOCh3/embed', title: 'რილსი' },
-    { type: 'post', url: 'https://www.instagram.com/p/DYy9WNRDjyT/embed', title: 'პოსტი' }
+  // Native Instagram Profile 3-Column Grid Data
+  const instaGridItems = [
+    {
+      id: 1,
+      img: '/images/about-kids.jpg',
+      type: 'reel',
+      url: 'https://www.instagram.com/reel/DbdH5LcOCh3/',
+      likes: '184',
+      comments: '22'
+    },
+    {
+      id: 2,
+      img: '/images/studio.jpg',
+      type: 'photo',
+      url: 'https://www.instagram.com/p/DYy9WNRDjyT/',
+      likes: '240',
+      comments: '35'
+    },
+    {
+      id: 3,
+      img: '/images/competition.png',
+      type: 'carousel',
+      url: 'https://www.instagram.com/stdancestudio/',
+      likes: '356',
+      comments: '48'
+    },
+    {
+      id: 4,
+      img: '/images/dancer-1.png',
+      type: 'reel',
+      url: 'https://www.instagram.com/stdancestudio/',
+      likes: '210',
+      comments: '19'
+    },
+    {
+      id: 5,
+      img: '/images/dancer-2.png',
+      type: 'carousel',
+      url: 'https://www.instagram.com/stdancestudio/',
+      likes: '298',
+      comments: '41'
+    },
+    {
+      id: 6,
+      img: '/images/hero-1.png',
+      type: 'reel',
+      url: 'https://www.instagram.com/stdancestudio/',
+      likes: '480',
+      comments: '63'
+    },
+    {
+      id: 7,
+      img: '/images/hero-2.png',
+      type: 'photo',
+      url: 'https://www.instagram.com/stdancestudio/',
+      likes: '195',
+      comments: '27'
+    },
+    {
+      id: 8,
+      img: '/images/sergi.jpg',
+      type: 'reel',
+      url: 'https://www.instagram.com/stdancestudio/',
+      likes: '620',
+      comments: '94'
+    },
+    {
+      id: 9,
+      img: '/images/nini.jpg',
+      type: 'photo',
+      url: 'https://www.instagram.com/stdancestudio/',
+      likes: '310',
+      comments: '52'
+    }
   ]
-
-  // Autoplay Instagram Carousel every 4.5 seconds
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCarouselIndex((prev) => (prev + 1) % instagramFeed.length)
-    }, 4500)
-    return () => clearInterval(timer)
-  }, [instagramFeed.length])
 
   // AI Chat state
   const [aiInput, setAiInput] = useState('')
@@ -786,13 +848,9 @@ export default function Bio() {
     ka: {
       title: 'ST DANCE STUDIO',
       subtitle: 'სპორტული და სამეჯლისო ცეკვების სტუდია',
-      videoTitle: 'ინსტაგრამის ფიდი / სიახლეები',
-      mapTitle: 'ST Dance Studio Batumi',
-      mapAddress: 'ბათუმი, ე. თაყაიშვილის 55',
-      mapBtn: 'Google Maps',
+      videoTitle: 'Instagram Feed Grid (@stdancestudio)',
       aiTitle: 'ST Dance AI',
       aiTag: 'AI ასისტენტი',
-      aiSubtitle: 'დასვით ნებისმიერი კითხვა',
       aiSuggestions: [
         'რას გვთავაზობთ?',
         'დამარეგისტრირე',
@@ -803,10 +861,7 @@ export default function Bio() {
     en: {
       title: 'ST DANCE STUDIO',
       subtitle: 'Sports & Ballroom Dance Studio in Batumi',
-      videoTitle: 'Instagram Feed & Carousel',
-      mapTitle: 'ST Dance Studio Batumi',
-      mapAddress: '55 E. Takaishvili St, Batumi',
-      mapBtn: 'Open Maps',
+      videoTitle: 'Instagram Feed Grid (@stdancestudio)',
       aiTitle: 'ST Dance AI',
       aiTag: 'AI Assistant',
       aiSuggestions: [
@@ -819,10 +874,7 @@ export default function Bio() {
     ru: {
       title: 'ST DANCE STUDIO',
       subtitle: 'Студия спортивных и бальных танцев в Батуми',
-      videoTitle: 'Лента Instagram и карусель',
-      mapTitle: 'ST Dance Studio Batumi',
-      mapAddress: 'Батуми, ул. Е. Такаишвили 55',
-      mapBtn: 'Google Maps',
+      videoTitle: 'Лента Instagram (@stdancestudio)',
       aiTitle: 'ST Dance AI',
       aiTag: 'AI Помощник',
       aiSuggestions: [
@@ -939,7 +991,7 @@ export default function Bio() {
           </div>
         </header>
 
-        {/* EMBEDDED AI CHAT BOT BENTO CARD (HEIGHT TALLER FOR VISIBLE HISTORY) */}
+        {/* EMBEDDED AI CHAT BOT BENTO CARD */}
         <section className="bio-ai-card">
           <div className="bio-ai-header">
             <div className="bio-ai-title-wrap">
@@ -1017,61 +1069,117 @@ export default function Bio() {
           </form>
         </section>
 
-        {/* INSTAGRAM AUTOPLAY CAROUSEL SHOWCASE SECTION */}
-        <section className="bio-carousel-section">
-          <div className="bio-carousel-header">
-            <div className="bio-carousel-title-wrap">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-gold-main)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
-                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
-                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+        {/* NATIVE INSTAGRAM PROFILE 3-COLUMN GRID SHOWCASE */}
+        <section className="bio-insta-native-section">
+          {/* Header Bar */}
+          <div className="insta-profile-header">
+            <div className="insta-profile-left">
+              <img
+                src="/images/logo-transparent.png"
+                alt="ST Dance Studio Instagram Avatar"
+                className="insta-profile-avatar"
+              />
+              <div>
+                <div className="insta-username">stdancestudio</div>
+                <div className="insta-subtext">ST Dance Studio Batumi</div>
+              </div>
+            </div>
+
+            <a
+              href="https://www.instagram.com/stdancestudio/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="insta-follow-btn"
+            >
+              Instagram ➔
+            </a>
+          </div>
+
+          {/* Instagram View Tabs (Grid, Reels, Tagged) */}
+          <div className="insta-tabs-bar">
+            <button
+              className={`insta-tab-icon ${activeInstaTab === 'grid' ? 'active' : ''}`}
+              onClick={() => setActiveInstaTab('grid')}
+              title="Grid View"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <rect x="3" y="3" width="7" height="7"></rect>
+                <rect x="14" y="3" width="7" height="7"></rect>
+                <rect x="14" y="14" width="7" height="7"></rect>
+                <rect x="3" y="14" width="7" height="7"></rect>
               </svg>
-              <span>{t.videoTitle}</span>
-            </div>
+            </button>
 
-            <div className="bio-carousel-nav">
-              <button
-                className="bio-cnav-btn"
-                onClick={() =>
-                  setCarouselIndex((prev) =>
-                    prev === 0 ? instagramFeed.length - 1 : prev - 1
-                  )
-                }
-              >
-                ◀
-              </button>
-              <button
-                className="bio-cnav-btn"
-                onClick={() =>
-                  setCarouselIndex((prev) => (prev + 1) % instagramFeed.length)
-                }
-              >
-                ▶
-              </button>
-            </div>
+            <button
+              className={`insta-tab-icon ${activeInstaTab === 'reels' ? 'active' : ''}`}
+              onClick={() => setActiveInstaTab('reels')}
+              title="Reels View"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <polygon points="23 7 16 12 23 17 23 7"></polygon>
+                <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
+              </svg>
+            </button>
+
+            <button
+              className={`insta-tab-icon ${activeInstaTab === 'tagged' ? 'active' : ''}`}
+              onClick={() => setActiveInstaTab('tagged')}
+              title="Tagged Photos"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+            </button>
           </div>
 
-          <div className="bio-carousel-viewport">
-            <div className="bio-carousel-slide">
-              <iframe
-                className="bio-carousel-iframe"
-                src={instagramFeed[carouselIndex].url}
-                title={`ST Dance Studio Instagram Feed ${carouselIndex + 1}`}
-                allowTransparency={true}
-                allow="encrypted-media"
-                frameBorder="0"
-                scrolling="no"
-              ></iframe>
-            </div>
+          {/* 3-COLUMN INSTAGRAM POSTS GRID */}
+          <div className="insta-3col-grid">
+            {instaGridItems.map((item) => (
+              <a
+                key={item.id}
+                href={item.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="insta-grid-item"
+              >
+                <img src={item.img} alt={`ST Dance Studio Post ${item.id}`} className="insta-grid-img" />
+                
+                {/* Reel / Multi-photo Icon Badge */}
+                <div className="insta-type-icon">
+                  {item.type === 'reel' ? (
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+                      <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                    </svg>
+                  ) : item.type === 'carousel' ? (
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+                      <rect x="2" y="2" width="16" height="16" rx="2"></rect>
+                      <path d="M22 6v14a2 2 0 0 1-2 2H6"></path>
+                    </svg>
+                  ) : null}
+                </div>
+
+                {/* Hover Overlay */}
+                <div className="insta-grid-hover-overlay">
+                  <div className="insta-hover-stat">
+                    <span>♥</span> {item.likes}
+                  </div>
+                  <div className="insta-hover-stat">
+                    <span>💬</span> {item.comments}
+                  </div>
+                </div>
+              </a>
+            ))}
           </div>
 
+          {/* Footer Direct Profile CTA */}
           <a
             href="https://www.instagram.com/stdancestudio/"
             target="_blank"
             rel="noopener noreferrer"
-            className="bio-insta-full-btn"
+            className="insta-full-feed-link"
           >
-            <span>ნახეთ სრული Instagram ფიდი (@stdancestudio) ➔</span>
+            <span>იხილეთ ყველა პოსტი & რილსი Instagram-ზე (@stdancestudio) ➔</span>
           </a>
         </section>
 
@@ -1127,7 +1235,7 @@ export default function Bio() {
         </footer>
       </div>
 
-      {/* 1. INLINE CONTACTS MODAL (phone, whatsapp, telegram, instagram, facebook, threads) */}
+      {/* 1. INLINE CONTACTS MODAL */}
       {isContactModalOpen && (
         <div className="bio-modal-overlay" onClick={() => setIsContactModalOpen(false)}>
           <div className="bio-modal-card" onClick={(e) => e.stopPropagation()}>
@@ -1233,7 +1341,7 @@ export default function Bio() {
         </div>
       )}
 
-      {/* 2. INLINE LOCATION MODAL (address + map iframe + direct map link) */}
+      {/* 2. INLINE LOCATION MODAL */}
       {isLocationModalOpen && (
         <div className="bio-modal-overlay" onClick={() => setIsLocationModalOpen(false)}>
           <div className="bio-modal-card" onClick={(e) => e.stopPropagation()}>
@@ -1289,7 +1397,7 @@ export default function Bio() {
         </div>
       )}
 
-      {/* 3. INLINE SCHEDULE MODAL (with SVG icons instead of emojis) */}
+      {/* 3. INLINE SCHEDULE MODAL */}
       {isScheduleModalOpen && (
         <div className="bio-modal-overlay" onClick={() => setIsScheduleModalOpen(false)}>
           <div className="bio-modal-card" onClick={(e) => e.stopPropagation()}>
