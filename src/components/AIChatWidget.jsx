@@ -7,7 +7,7 @@ import './AIChatWidget.css'
 
 const GEMINI_KEY = atob('QVEuQWI4Uk42SnhSZVRtaWZfOEFCSHBnUWhLRS11dmhlUG5YMTdYSkhBaTZNQjZQQm9ZUg==')
 
-// Multi-language UI translations dictionary for the Chatbot
+// Full Multi-language UI & Registration Form translations dictionary
 const botTranslations = {
   ka: {
     tooltip: 'AI ასისტენტი • გაქვს კითხვები?',
@@ -20,6 +20,28 @@ const botTranslations = {
     pillSchedule: '📅 განრიგი',
     pillRegister: '✨ რეგისტრაცია',
     pillAddress: '📍 მისამართი',
+    // Registration Form
+    regTitle: 'ონლაინ რეგისტრაცია',
+    regSub: 'ჩაეწერეთ 100%-ით უფასო საცდელ გაკვეთილზე',
+    studentNameLabel: 'მოსწავლის სახელი და გვარი *',
+    studentNamePlaceholder: 'მაგ: ნინი წივწივაძე',
+    birthDateLabel: 'დაბადების თარიღი *',
+    groupLabel: 'სასურველი ჯგუფი *',
+    parentNameLabel: 'მშობლის სახელი და გვარი *',
+    parentNamePlaceholder: 'მაგ: გიორგი წივწივაძე',
+    parentPhoneLabel: 'მშობლის ტელეფონი (WhatsApp) *',
+    parentPhonePlaceholder: '+995 5XX XX XX XX',
+    submitBtn: 'რეგისტრაციის გაგზავნა ➔',
+    groups: [
+      'Baby ჯგუფი (4.5-6 წელი) | 17:30 (130₾/თვე)',
+      'Bronze ჯგუფი (დამწყებები) | 18:15 (130₾/თვე)',
+      'Pre-Silver ჯგუფი (1 წლიანი გამოცდილება) | 17:30 (130₾/თვე)',
+      'Silver ჯგუფი (2+ წლიანი გამოცდილება) | 19:30 (130₾/თვე)',
+      'Golden ჯგუფი (5+ წლიანი გამოცდილება) | 16:30 (130₾/თვე)',
+      'წყვილების ჯგუფი | 18:30 (130₾/თვე)',
+      'Hobby Class (მოყვარულები/ზრდასრულები) | 19:15 (130₾/თვე)',
+      'ინდივიდუალური გაკვეთილები (70₾ - 400₾)'
+    ]
   },
   en: {
     tooltip: 'AI Assistant • Have questions?',
@@ -32,6 +54,28 @@ const botTranslations = {
     pillSchedule: '📅 Schedule',
     pillRegister: '✨ Register',
     pillAddress: '📍 Location',
+    // Registration Form
+    regTitle: 'Online Registration',
+    regSub: 'Sign up for 100% Free Trial Lesson',
+    studentNameLabel: "Student's Full Name *",
+    studentNamePlaceholder: 'e.g. Nini Tsivtsivadze',
+    birthDateLabel: 'Date of Birth *',
+    groupLabel: 'Select Group *',
+    parentNameLabel: "Parent's Full Name *",
+    parentNamePlaceholder: 'e.g. Giorgi Tsivtsivadze',
+    parentPhoneLabel: 'Parent Phone (WhatsApp) *',
+    parentPhonePlaceholder: '+995 5XX XX XX XX',
+    submitBtn: 'Submit Registration ➔',
+    groups: [
+      'Baby Group (Ages 4.5-6) | 17:30 (130 GEL/mo)',
+      'Bronze Group (Beginners) | 18:15 (130 GEL/mo)',
+      'Pre-Silver Group (1 Yr Exp) | 17:30 (130 GEL/mo)',
+      'Silver Group (2+ Yrs Exp) | 19:30 (130 GEL/mo)',
+      'Golden Group (5+ Yrs Exp) | 16:30 (130 GEL/mo)',
+      'Couples Group | 18:30 (130 GEL/mo)',
+      'Hobby Class (Adults / Amateurs) | 19:15 (130 GEL/mo)',
+      'Private Coaching (70 GEL - 400 GEL)'
+    ]
   },
   ru: {
     tooltip: 'AI Помощник • Есть вопросы?',
@@ -44,10 +88,32 @@ const botTranslations = {
     pillSchedule: '📅 Расписание',
     pillRegister: '✨ Регистрация',
     pillAddress: '📍 Локация',
+    // Registration Form
+    regTitle: 'Онлайн регистрация',
+    regSub: 'Запишитесь на 100% бесплатный пробный урок',
+    studentNameLabel: 'Имя и фамилия ученика *',
+    studentNamePlaceholder: 'Например: Нини Цивцивадзе',
+    birthDateLabel: 'Дата рождения *',
+    groupLabel: 'Желаемая группа *',
+    parentNameLabel: 'Имя и фамилия родителя *',
+    parentNamePlaceholder: 'Например: Георгий Цивцивадзе',
+    parentPhoneLabel: 'Телефон родителя (WhatsApp) *',
+    parentPhonePlaceholder: '+995 5XX XX XX XX',
+    submitBtn: 'Отправить регистрацию ➔',
+    groups: [
+      'Baby группа (4.5-6 лет) | 17:30 (130 GEL/мес)',
+      'Bronze группа (Новички) | 18:15 (130 GEL/мес)',
+      'Pre-Silver группа (1 год опыта) | 17:30 (130 GEL/мес)',
+      'Silver группа (2+ года опыта) | 19:30 (130 GEL/мес)',
+      'Golden группа (5+ лет опыта) | 16:30 (130 GEL/мес)',
+      'Группа для пар | 18:30 (130 GEL/мес)',
+      'Hobby Class (Взрослые / Любители) | 19:15 (130 GEL/мес)',
+      'Индивидуальные уроки (70 GEL - 400 GEL)'
+    ]
   }
 }
 
-// Expanded Smart Fallback Knowledge Engine with 15+ Detailed Topics
+// Comprehensive Creative Smart Fallback Engine (15+ Topics)
 function getSmartFallbackAnswer(query, lang) {
   const q = query.toLowerCase()
 
@@ -182,13 +248,76 @@ function getSmartFallbackAnswer(query, lang) {
     }
   }
 
-  // 4. General Response
-  if (lang === 'ka') {
-    return `✨ ST DANCE STUDIO არის ბათუმში წამყვანი სპორტული ცეკვების აკადემია, სადაც ბავშვები და მოზრდილები ეუფლებიან სამეჯლისო ცეკვების ხელოვნებას.
+  // 4. Trainers & Founders
+  if (
+    q.includes('მწვრთნელ') ||
+    q.includes('ტრენერ') ||
+    q.includes('სერგ') ||
+    q.includes('წივწივაძ') ||
+    q.includes('ხელმძღვანელ') ||
+    q.includes('trainer') ||
+    q.includes('coach')
+  ) {
+    if (lang === 'ka') {
+      return `🏆 ST Dance Studio-ს დამფუძნებელი, მფლობელი და მთავარი მწვრთნელია სერგო (სერგი) წივწივაძე — პროფესიონალი პედაგოგი და WDSF-ის (მსოფლიო საცეკვაო სპორტის ფედერაციის) მოქმედი საერთაშორისო მსაჯი.
 
-🎁 პირველი საცდელი გაკვეთილი 100%-ით უფასოა! ჩასაწერად დააჭირეთ ღილაკს "რეგისტრაცია".`
+დამხმარე პედაგოგია ნინი გოგრაჭაძე — ლათინოამერიკული ცეკვების სპეციალისტი.`
+    } else {
+      return `🏆 ST Dance Studio founder & head coach is Sergo (Sergi) Tsivtsivadze — professional educator and active WDSF International Judge.`
+    }
+  }
+
+  // 5. Dress code & Shoes
+  if (
+    q.includes('ჩაცმ') ||
+    q.includes('ფორმ') ||
+    q.includes('ფეხსაცმელ') ||
+    q.includes('კოსტიუმ') ||
+    q.includes('dress') ||
+    q.includes('shoes') ||
+    q.includes('одежда')
+  ) {
+    if (lang === 'ka') {
+      return `👕 დრესკოდი და საცეკვაო ფეხსაცმელი:
+
+• ბავშვი ვარჯიშზე აუცილებლად უნდა გამოცხადდეს საცეკვაო სავარჯიშო ფორმით.
+• აუცილებელია სპეციალური სამეჯლისო საცეკვაო ფეხსაცმელი, რომლის შეძენაც შეგიძლიათ უშუალოდ სტუდიის მაღაზიაში.
+• ტურნირებისთვის სასცენო კოსტიუმების შეკერვა ხდება ინდივიდუალურად მწვრთნელის რეკომენდაციით.`
+    } else {
+      return `👕 Dress Code & Dance Shoes: Special dance shoes are required and available directly at our studio shop. Practice clothes must be worn for all classes.`
+    }
+  }
+
+  // 6. Solo category & Partners
+  if (
+    q.includes('წყვილ') ||
+    q.includes('სოლო') ||
+    q.includes('solo') ||
+    q.includes('პარტნიორ') ||
+    q.includes('партнер')
+  ) {
+    if (lang === 'ka') {
+      return `💃 წყვილში მოსვლა აუცილებელი არ არის! 
+
+გოგონებსა და ბიჭებს შეუძლიათ იარონ და ივარჯიშონ Solo კატეგორიაში. პროგრამა მოიცავს როგორც წყვილურ, ისე ინდივიდუალურ საცეკვაო ტექნიკასა და ქორეოგრაფიას.`
+    } else {
+      return `💃 Coming with a partner is NOT required! Boys and girls can train and compete in the Solo category.`
+    }
+  }
+
+  // 7. General Creative Response about Studio
+  if (lang === 'ka') {
+    return `✨ ST DANCE STUDIO არის ბათუმში წამყვანი სპორტული ცეკვების აკადემია, სადაც ბავშვები და მოზრდილები ეუფლებიან სამეჯლისო ცეკვების ხელოვნებას, დისციპლინასა და პარკეტზე თავდაჯერებულობას!
+
+🌟 რატომ ST Dance Studio?
+• 🏆 WDSF საერთაშორისო კატეგორიის მსაჯი და პროფესიონალი მწვრთნელები
+• 🥇 ეროვნულ და საერთაშორისო ტურნირებში მონაწილეობა
+• 🎪 საზაფხულო & ზამთრის საცეკვაო ბანაკები (Camps) და შოუ-პროგრამები
+• 🎁 100%-ით უფასო პირველი საცდელი გაკვეთილი!
+
+ჩასაწერად დააჭირეთ ღილაკს "რეგისტრაცია".`
   } else if (lang === 'ru') {
-    return `✨ ST DANCE STUDIO — ведущая студия бальных и спортивных танцев в Батуми.
+    return `✨ ST DANCE STUDIO — ведущая студия бальных и спортивных танцев в Батуми под руководством международного судьи WDSF Серго Цивцивадзе!
 
 🎁 Первый пробный урок 100% бесплатно! Нажмите "Регистрация" для записи.`
   } else {
@@ -212,7 +341,7 @@ export default function AIChatWidget() {
   const [regForm, setRegForm] = useState({
     student_name: '',
     birth_date: '',
-    shift: 'Baby ჯგუფი (4.5-6 წელი) | 17:30 (130₾/თვე)',
+    shift: activeTrans.groups[0],
     parent_name: '',
     parent_phone: ''
   })
@@ -226,11 +355,12 @@ export default function AIChatWidget() {
     }
   ])
 
-  // Update initial welcome message if language changes and no chat user messages exist yet
+  // Update initial welcome message & registration select group default when language changes
   useEffect(() => {
     if (messages.length === 1 && messages[0].role === 'bot') {
       setMessages([{ role: 'bot', text: activeTrans.welcome }])
     }
+    setRegForm((prev) => ({ ...prev, shift: activeTrans.groups[0] }))
   }, [lang])
 
   // Listen for custom global trigger event "open-ai-chat"
@@ -311,9 +441,9 @@ export default function AIChatWidget() {
       return
     }
 
-    // Attempt Gemini AI Call with full studio knowledge prompt, fallback to Smart Knowledge Engine
+    // Attempt Gemini AI Call with clean studio prompt
     try {
-      const promptText = `${studioKnowledgeBase}\n\nყურადღება: უპასუხე იმავე ენაზე, რომელზეც მომხმარებელი გეკითხება (${lang}). გამოიყენე სუფთა, ელეგანტური ემოჯიები (📅, 💰, 📍, 🏆, 👶, ✨) სექციების გამოსაყოფად. იყავი კრეატიული, თავაზიანი, ამომწურავი და მეგობრული.\n\nUser Question: ${query}`
+      const promptText = `შენ ხარ ST DANCE STUDIO-ს ოფიციალური AI ასისტენტი.\n\n${studioKnowledgeBase}\n\nყურადღება:\n1. უპასუხე იმავე ენაზე, რომელზეც მომხმარებელი გეკითხება (${lang}).\n2. იყავი კრეატიული, თავაზიანი, ამომწურავი და მეგობრული.\n3. გამოიყენე ემოჯიები (📅, 💰, 📍, 🏆, 👶, ✨, 🎁) სექციების გამოსაყოფად.\n\nმომხმარებლის შეკითხვა: ${query}`
 
       const res = await fetch(
         `https://generativelanguage.googleapis.com/v1beta/models/generateContent?key=${GEMINI_KEY}`,
@@ -370,7 +500,7 @@ export default function AIChatWidget() {
       setRegForm({
         student_name: '',
         birth_date: '',
-        shift: 'Baby ჯგუფი (4.5-6 წელი) | 17:30 (130₾/თვე)',
+        shift: activeTrans.groups[0],
         parent_name: '',
         parent_phone: ''
       })
@@ -457,7 +587,7 @@ export default function AIChatWidget() {
                   <div className="std-bot-reg-success">
                     <div className="std-bot-success-icon">✓</div>
                     <h4>{lang === 'ka' ? 'რეგისტრაცია მიღებულია!' : lang === 'ru' ? 'Регистрация принята!' : 'Registration Successful!'}</h4>
-                    <p>{lang === 'ka' ? 'ჩვენი ადმინისტრატორი მალე დაგიკავშირდებათ WhatsApp-ზე ან ტელეფონზე.' : 'Our administrator will contact you shortly on WhatsApp or phone.'}</p>
+                    <p>{lang === 'ka' ? 'ჩვენი ადმინისტრატორი მალე დაგიკავშირდებათ WhatsApp-ზე ან ტელეფონზე.' : lang === 'ru' ? 'Наш администратор скоро свяжется с вами по WhatsApp или телефону.' : 'Our administrator will contact you shortly on WhatsApp or phone.'}</p>
                     <button
                       className="std-bot-submit-btn"
                       onClick={() => {
@@ -470,22 +600,22 @@ export default function AIChatWidget() {
                   </div>
                 ) : (
                   <form onSubmit={handleRegSubmit} className="std-bot-reg-form">
-                    <h4 className="std-bot-reg-title">{activeTrans.regBtn}</h4>
-                    <p className="std-bot-reg-sub">{lang === 'ka' ? 'ჩაეწერეთ 100%-ით უფასო საცდელ გაკვეთილზე' : 'Sign up for 100% Free Trial Lesson'}</p>
+                    <h4 className="std-bot-reg-title">{activeTrans.regTitle}</h4>
+                    <p className="std-bot-reg-sub">{activeTrans.regSub}</p>
 
                     <div className="std-bot-form-group">
-                      <label>{lang === 'ka' ? 'მოსწავლის სახელი და გვარი *' : 'Student Full Name *'}</label>
+                      <label>{activeTrans.studentNameLabel}</label>
                       <input
                         type="text"
                         required
-                        placeholder="მაგ: ნინი წივწივაძე"
+                        placeholder={activeTrans.studentNamePlaceholder}
                         value={regForm.student_name}
                         onChange={(e) => setRegForm({ ...regForm, student_name: e.target.value })}
                       />
                     </div>
 
                     <div className="std-bot-form-group">
-                      <label>{lang === 'ka' ? 'დაბადების თარიღი *' : 'Birth Date *'}</label>
+                      <label>{activeTrans.birthDateLabel}</label>
                       <input
                         type="date"
                         required
@@ -495,46 +625,41 @@ export default function AIChatWidget() {
                     </div>
 
                     <div className="std-bot-form-group">
-                      <label>{lang === 'ka' ? 'სასურველი ჯგუფი *' : 'Group *'}</label>
+                      <label>{activeTrans.groupLabel}</label>
                       <select
                         value={regForm.shift}
                         onChange={(e) => setRegForm({ ...regForm, shift: e.target.value })}
                       >
-                        <option>Baby ჯგუფი (4.5-6 წელი) | 17:30 (130₾/თვე)</option>
-                        <option>Bronze ჯგუფი (დამწყებები) | 18:15 (130₾/თვე)</option>
-                        <option>Pre-Silver ჯგუფი (1 წელი) | 17:30 (130₾/თვე)</option>
-                        <option>Silver ჯგუფი (2+ წელი) | 19:30 (130₾/თვე)</option>
-                        <option>Golden ჯგუფი (5+ წელი) | 16:30 (130₾/თვე)</option>
-                        <option>წყვილების ჯგუფი | 18:30 (130₾/თვე)</option>
-                        <option>Hobby Class (მოყვარულები/ზრდასრულები) | 19:15 (130₾/თვე)</option>
-                        <option>ინდივიდუალური გაკვეთილები (70₾ - 400₾)</option>
+                        {activeTrans.groups.map((gOpt, idx) => (
+                          <option key={idx} value={gOpt}>{gOpt}</option>
+                        ))}
                       </select>
                     </div>
 
                     <div className="std-bot-form-group">
-                      <label>{lang === 'ka' ? 'მშობლის სახელი და გვარი *' : 'Parent Full Name *'}</label>
+                      <label>{activeTrans.parentNameLabel}</label>
                       <input
                         type="text"
                         required
-                        placeholder="მაგ: გიორგი წივწივაძე"
+                        placeholder={activeTrans.parentNamePlaceholder}
                         value={regForm.parent_name}
                         onChange={(e) => setRegForm({ ...regForm, parent_name: e.target.value })}
                       />
                     </div>
 
                     <div className="std-bot-form-group">
-                      <label>{lang === 'ka' ? 'მშობლის ტელეფონი (WhatsApp) *' : 'Parent Phone (WhatsApp) *'}</label>
+                      <label>{activeTrans.parentPhoneLabel}</label>
                       <input
                         type="tel"
                         required
-                        placeholder="+995 5XX XX XX XX"
+                        placeholder={activeTrans.parentPhonePlaceholder}
                         value={regForm.parent_phone}
                         onChange={(e) => setRegForm({ ...regForm, parent_phone: e.target.value })}
                       />
                     </div>
 
                     <button type="submit" disabled={regLoading} className="std-bot-submit-btn">
-                      {regLoading ? '...' : lang === 'ka' ? 'რეგისტრაციის გაგზავნა ➔' : 'Submit Registration ➔'}
+                      {regLoading ? '...' : activeTrans.submitBtn}
                     </button>
                   </form>
                 )}
