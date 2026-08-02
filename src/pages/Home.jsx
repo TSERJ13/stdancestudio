@@ -7,9 +7,13 @@ import './Home.css'
 
 const carouselImages = [
   { src: '/images/about-kids-clean.jpg?v=5', alt: 'ST Dance Young Dancers' },
-  { src: '/images/studio-hall.jpg', alt: 'ST Dance Studio Hall' },
-  { src: '/images/hero-1.png', alt: 'ST Dance Competition Performance' },
-  { src: '/images/competition.png', alt: 'ST Dance Tournament' }
+  { src: '/feed-pics/CaucasusCup1.jpeg', alt: 'Caucasus Cup 1' },
+  { src: '/feed-pics/CaucasusCup2.jpeg', alt: 'Caucasus Cup 2' },
+  { src: '/feed-pics/CaucasusCup3.jpeg', alt: 'Caucasus Cup 3' },
+  { src: '/feed-pics/CaucasusCup5.jpeg', alt: 'Caucasus Cup 5' },
+  { src: '/feed-pics/CaucasusCup6.jpeg', alt: 'Caucasus Cup 6' },
+  { src: '/feed-pics/CaucasusCup8.jpeg', alt: 'Caucasus Cup 8' },
+  { src: '/feed-pics/CaucasusCup9.jpeg', alt: 'Caucasus Cup 9' }
 ]
 
 export default function Home() {
@@ -107,7 +111,7 @@ export default function Home() {
       {/* ===================== ABOUT BLURB WITH INTERACTIVE PHOTO CAROUSEL ===================== */}
       <section className="section about-blurb">
         <div className="container about-blurb__grid">
-          <div className="about-blurb__media" style={{ background: '#0a0908', overflow: 'hidden', position: 'relative', minHeight: '380px' }}>
+          <div className="about-blurb__media">
             
             {/* Carousel Images */}
             {carouselImages.map((img, idx) => (
@@ -116,14 +120,11 @@ export default function Home() {
                 src={img.src} 
                 alt={img.alt} 
                 style={{ 
-                  objectFit: idx === 0 ? 'contain' : 'cover', 
-                  width: '100%', 
-                  height: '100%',
-                  position: 'absolute',
+                  position: idx === 0 ? 'relative' : 'absolute',
                   inset: 0,
                   opacity: aboutSlide === idx ? 1 : 0,
                   transition: 'opacity 0.8s ease, transform 0.8s ease',
-                  transform: aboutSlide === idx ? 'scale(1)' : 'scale(1.04)'
+                  pointerEvents: aboutSlide === idx ? 'auto' : 'none'
                 }}
               />
             ))}
