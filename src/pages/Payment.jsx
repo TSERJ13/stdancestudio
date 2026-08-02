@@ -36,7 +36,6 @@ export default function Payment() {
         },
         "options": {
           "amount_readonly": false,
-          "amount_editable": true,
           "theme": {
             "type": "light",
             "preset": "reset"
