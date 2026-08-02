@@ -65,96 +65,212 @@ body.mobile-menu-open .std-bot-widget-container {
   50% { transform: translateY(-5px); }
 }
 
-/* Robot Hands Animation */
-.robot-hand {
+/* ==========================================================================
+   SWALLOW MICRO-INTERACTION — hands reach, grab, crumple the tooltip,
+   pull it down, and the mouth swallows + chews. Single 2.5s timeline,
+   shared checkpoints across all animated parts so the motion reads as one
+   choreographed gesture rather than independent parts.
+   ========================================================================== */
+
+/* --- Arms (path) + palm (circle), grouped so they move together --- */
+.robot-hand-group {
   opacity: 0;
-  stroke-dasharray: 60;
-  stroke-dashoffset: 60;
-  transition: opacity 0.2s;
-  transform-origin: 12px 12px;
+  will-change: transform, opacity;
+}
+
+.robot-hand-group.left-hand {
+  transform-origin: 4px 14px;
+}
+
+.robot-hand-group.right-hand {
+  transform-origin: 20px 14px;
+}
+
+.robot-hand {
+  stroke-dasharray: 34;
+  stroke-dashoffset: 34;
+  fill: none;
+}
+
+.robot-palm {
+  transform-box: fill-box;
+  transform-origin: center;
+  transform: scale(0);
+  opacity: 0;
+}
+
+.std-bot-3d-robot-icon.swallow-active .robot-hand-group {
+  animation: handsPullSequence 2.5s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+}
+
+.std-bot-3d-robot-icon.swallow-active .robot-hand-group.left-hand {
+  animation-name: handsPullSequenceLeft;
+}
+
+.std-bot-3d-robot-icon.swallow-active .robot-hand-group.right-hand {
+  animation-name: handsPullSequenceRight;
 }
 
 .std-bot-3d-robot-icon.swallow-active .robot-hand {
-  animation: reachOutAndGrab 2.5s forwards;
+  animation: handDraw 2.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
-@keyframes reachOutAndGrab {
-  0% {
-    opacity: 1;
-    stroke-dashoffset: 60;
-    transform: translateY(0);
-  }
-  15% {
-    opacity: 1;
-    stroke-dashoffset: 0;
-    transform: translateY(-5px);
-  }
-  30% {
-    stroke-dashoffset: 0;
-    transform: translateY(-10px) scaleY(1.2);
-  }
-  50% {
-    stroke-dashoffset: 0;
-    transform: translateY(20px) scale(0.5);
-    opacity: 1;
-  }
-  60%, 100% {
-    transform: translateY(30px) scale(0.2);
-    opacity: 0;
-  }
+.std-bot-3d-robot-icon.swallow-active .robot-palm {
+  animation: palmClench 2.5s ease-out forwards;
 }
 
-/* Tooltip Crumple Animation */
+/* Reveal the arm stroke like it's extending outward, then hold */
+@keyframes handDraw {
+  0% { stroke-dashoffset: 34; }
+  20% { stroke-dashoffset: 0; }
+  100% { stroke-dashoffset: 0; }
+}
+
+/* Palm appears right as the arm finishes reaching, clenches to "grab" */
+@keyframes palmClench {
+  0%, 18% { transform: scale(0); opacity: 0; }
+  24% { transform: scale(1.35); opacity: 1; animation-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1); }
+  30% { transform: scale(1); opacity: 1; }
+  76% { transform: scale(1); opacity: 1; }
+  86% { transform: scale(0.5); opacity: 0; }
+  100% { transform: scale(0.5); opacity: 0; }
+}
+
+/* Whole arm: reach up with a slight elastic overshoot, grab, then pull the
+   crumpled tooltip down toward the mouth before retracting */
+@keyframes handsPullSequenceLeft {
+  0% { opacity: 0; transform: translate(1px, 3px) scale(0.8) rotate(6deg); }
+  8% { opacity: 1; }
+  22% {
+    opacity: 1;
+    transform: translate(0, -2px) scale(1.06) rotate(-3deg);
+    animation-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  30% { transform: translate(0, -1px) scale(1) rotate(0deg); }
+  44% { transform: translate(-1px, 5px) scale(0.97) rotate(-6deg); }
+  58% { transform: translate(-2px, 16px) scale(0.9) rotate(-10deg); }
+  72% { transform: translate(-2px, 27px) scale(0.78) rotate(-8deg); }
+  80% { opacity: 0.7; transform: translate(-1px, 31px) scale(0.6) rotate(-4deg); }
+  90%, 100% { opacity: 0; transform: translate(0, 24px) scale(0.4) rotate(0deg); }
+}
+
+@keyframes handsPullSequenceRight {
+  0% { opacity: 0; transform: translate(-1px, 3px) scale(0.8) rotate(-6deg); }
+  8% { opacity: 1; }
+  22% {
+    opacity: 1;
+    transform: translate(0, -2px) scale(1.06) rotate(3deg);
+    animation-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  30% { transform: translate(0, -1px) scale(1) rotate(0deg); }
+  44% { transform: translate(1px, 5px) scale(0.97) rotate(6deg); }
+  58% { transform: translate(2px, 16px) scale(0.9) rotate(10deg); }
+  72% { transform: translate(2px, 27px) scale(0.78) rotate(8deg); }
+  80% { opacity: 0.7; transform: translate(1px, 31px) scale(0.6) rotate(4deg); }
+  90%, 100% { opacity: 0; transform: translate(0, 24px) scale(0.4) rotate(0deg); }
+}
+
+/* --- Tooltip: paper-crumple + pull toward the mouth --- */
 .swallow-anim {
-  animation: crumpleTooltip 2.5s forwards !important;
+  animation: crumpleTooltip 2.5s cubic-bezier(0.65, 0, 0.35, 1) forwards !important;
+  will-change: transform, opacity, border-radius;
+  transform-origin: bottom right;
+}
+
+/* Text/dot inside crumple away fast — crumpled paper doesn't read text */
+.swallow-anim > * {
+  animation: bubbleContentFade 0.45s ease-out forwards;
+}
+
+@keyframes bubbleContentFade {
+  0% { opacity: 1; }
+  100% { opacity: 0; }
 }
 
 @keyframes crumpleTooltip {
   0% {
-    transform: scale(1) translate(0, 0);
+    transform: scale(1) translate(0, 0) rotate(0deg);
     border-radius: 30px;
     opacity: 1;
   }
-  15% {
-    transform: scale(0.9) translate(0, 5px) rotate(-2deg);
-    border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
-    opacity: 1;
+  22% {
+    /* hands still reaching — bubble idle */
+    transform: scale(1) translate(0, 0) rotate(0deg);
+    border-radius: 30px;
   }
-  30% {
-    transform: scale(0.6) translate(10px, 30px) rotate(12deg);
-    border-radius: 50% 20% 30% 60% / 60% 30% 70% 40%;
-    color: transparent;
-    border-color: #a47c2e;
-    background: rgba(212, 175, 55, 0.2);
+  28% {
+    /* grabbed — reactive squeeze */
+    transform: scale(0.93, 0.88) translate(-1px, 2px) rotate(-2deg);
+    border-radius: 38% 62% 55% 45% / 48% 40% 60% 52%;
+    animation-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);
   }
-  50% {
-    transform: scale(0.15) translate(80px, 180px) rotate(45deg);
-    opacity: 0.8;
+  42% {
+    transform: scale(0.6) translate(-3px, 12px) rotate(-9deg);
+    border-radius: 55% 45% 60% 40% / 40% 55% 35% 65%;
+    background: #17130a;
+    border-color: #8a6a1e;
   }
-  60%, 100% {
-    transform: scale(0) translate(100px, 200px);
+  56% {
+    transform: scale(0.4) translate(-4px, 30px) rotate(11deg);
+    border-radius: 60% 35% 45% 55% / 55% 40% 65% 30%;
+  }
+  70% {
+    transform: scale(0.22) translate(-2px, 48px) rotate(-16deg);
+    border-radius: 50%;
+  }
+  80% {
+    transform: scale(0.05) translate(0, 58px) rotate(20deg);
+    opacity: 0.4;
+    border-radius: 50%;
+  }
+  86%, 100% {
+    transform: scale(0) translate(0, 58px) rotate(0deg);
     opacity: 0;
   }
 }
 
-/* Robot Mouth Animation */
+/* --- Mouth: anticipate, open wide for the swallow, snap shut, chew --- */
 .robot-mouth {
-  transform-origin: 12px 19px;
-  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transform-origin: 12px 18.5px;
 }
 
 .std-bot-3d-robot-icon.swallow-active .robot-mouth {
-  animation: mouthChew 2.5s forwards;
+  animation: mouthSwallow 2.5s forwards;
 }
 
-@keyframes mouthChew {
-  0%, 30% { transform: scaleY(1); }
-  45% { transform: scaleY(7); }
-  55% { transform: scaleY(7); }
-  65% { transform: scaleY(1); }
-  75% { transform: scaleY(3); }
-  85% { transform: scaleY(1); }
-  100% { transform: scaleY(1); }
+@keyframes mouthSwallow {
+  0%, 22% { transform: scale(1, 1); }
+  28% {
+    /* anticipation twitch as the tooltip is grabbed */
+    transform: scale(1.1, 1.4);
+    animation-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  36% { transform: scale(1, 1); }
+  58% { transform: scale(1.05, 2.4); }
+  70% { transform: scale(1.35, 6.2); }
+  80% { transform: scale(1.35, 6.2); }
+  86% {
+    /* snap shut */
+    transform: scale(1, 1);
+    animation-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  91% { transform: scale(1.15, 2.4); }
+  95% { transform: scale(1, 1); }
+  98% { transform: scale(1.08, 1.7); }
+  100% { transform: scale(1, 1); }
+}
+
+/* --- Whole face: subtle squash/stretch "gulp" reaction --- */
+.std-bot-3d-robot-icon.swallow-active {
+  animation: iconSwallowReact 2.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes iconSwallowReact {
+  0%, 66% { transform: scale(1, 1); }
+  72% { transform: scale(1.06, 0.93); }
+  80% { transform: scale(0.95, 1.07); }
+  88% { transform: scale(1.02, 0.98); }
+  100% { transform: scale(1, 1); }
 }
 
 /* 3D Gold & Obsidian Mascot Trigger Button */

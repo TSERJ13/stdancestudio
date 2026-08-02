@@ -549,8 +549,14 @@ ${studioKnowledgeBase}
               style={{ overflow: 'visible' }}
             >
               {/* Hands (Initially hidden, animated during swallow) */}
-              <path className="robot-hand left-hand" d="M3 15 Q-8 8 -12 -15" stroke="#d4af37" strokeWidth="2.5" strokeLinecap="round" />
-              <path className="robot-hand right-hand" d="M21 15 Q32 8 36 -15" stroke="#d4af37" strokeWidth="2.5" strokeLinecap="round" />
+              <g className="robot-hand-group left-hand">
+                <path className="robot-hand" d="M4 14 C -2 10, -4 2, -2 -5 C -1 -8, 3 -9, 7 -8" stroke="#d4af37" strokeWidth="2.2" strokeLinecap="round" fill="none" />
+                <circle className="robot-palm" cx="7" cy="-8" r="1.6" fill="#d4af37" />
+              </g>
+              <g className="robot-hand-group right-hand">
+                <path className="robot-hand" d="M20 14 C 26 10, 28 2, 26 -5 C 25 -8, 21 -9, 17 -8" stroke="#d4af37" strokeWidth="2.2" strokeLinecap="round" fill="none" />
+                <circle className="robot-palm" cx="17" cy="-8" r="1.6" fill="#d4af37" />
+              </g>
               
               <rect x="3" y="11" width="18" height="10" rx="4" fill="rgba(212,175,55,0.1)" />
               <circle cx="8.5" cy="15.5" r="1.5" fill="#d4af37" className="robot-eye" />
