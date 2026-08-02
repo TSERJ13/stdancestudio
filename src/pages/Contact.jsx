@@ -237,16 +237,19 @@ export default function Contact() {
         </div>
       </section>
 
-      {/* FULLSCREEN LIGHTBOX PHOTO MODAL */}
+      {/* PERFECTLY CENTERED FULLSCREEN LIGHTBOX PHOTO MODAL */}
       {isPhotoModalOpen && (
         <div 
           onClick={() => setIsPhotoModalOpen(false)}
           style={{
             position: 'fixed',
-            inset: 0,
-            zIndex: 9999,
-            background: 'rgba(0,0,0,0.92)',
-            backdropFilter: 'blur(12px)',
+            top: 0,
+            left: 0,
+            width: '100vw',
+            height: '100vh',
+            zIndex: 999999,
+            background: 'rgba(0, 0, 0, 0.92)',
+            backdropFilter: 'blur(14px)',
             display: 'flex',
             alignItems: 'center',
             justify: 'center',
@@ -257,12 +260,14 @@ export default function Contact() {
             onClick={(e) => e.stopPropagation()}
             style={{
               position: 'relative',
-              maxWidth: '900px',
-              width: '100%',
-              borderRadius: '12px',
+              maxWidth: '850px',
+              width: '90%',
+              margin: '0 auto',
+              borderRadius: '14px',
               overflow: 'hidden',
               border: '1.5px solid var(--color-gold, #d4a64a)',
-              boxShadow: '0 25px 60px rgba(0,0,0,0.9)'
+              boxShadow: '0 30px 70px rgba(0,0,0,0.95)',
+              background: '#0d0c0b'
             }}
           >
             <button 
@@ -271,18 +276,18 @@ export default function Contact() {
                 position: 'absolute',
                 top: '15px',
                 right: '15px',
-                background: 'rgba(0,0,0,0.75)',
+                background: 'rgba(0,0,0,0.85)',
                 border: '1px solid var(--color-gold, #d4a64a)',
                 color: 'var(--color-gold, #d4a64a)',
-                width: '36px',
-                height: '36px',
+                width: '38px',
+                height: '38px',
                 borderRadius: '50%',
                 cursor: 'pointer',
                 fontSize: '18px',
                 display: 'flex',
                 alignItems: 'center',
                 justify: 'center',
-                zIndex: 10
+                zIndex: 20
               }}
             >
               ✕
@@ -290,10 +295,10 @@ export default function Contact() {
             <img 
               src="/images/studio-hall.jpg" 
               alt="ST Dance Studio Hall Fullscreen" 
-              style={{ width: '100%', height: 'auto', display: 'block', maxHeight: '80vh', objectFit: 'contain' }}
+              style={{ width: '100%', height: 'auto', display: 'block', maxHeight: '78vh', objectFit: 'contain' }}
             />
-            <div style={{ padding: '16px', background: '#0d0c0b', textAlign: 'center', color: '#fff' }}>
-              <h4 style={{ color: 'var(--color-gold, #d4a64a)', margin: '0 0 4px 0' }}>ST DANCE STUDIO HALL</h4>
+            <div style={{ padding: '16px', background: '#090807', textAlign: 'center', color: '#fff', borderTop: '1px solid rgba(212,166,74,0.2)' }}>
+              <h4 style={{ color: 'var(--color-gold, #d4a64a)', margin: '0 0 4px 0', fontSize: '16px', letterSpacing: '1px' }}>ST DANCE STUDIO HALL</h4>
               <p style={{ margin: 0, color: '#a8a39a', fontSize: '13px' }}>ქ. ბათუმი, ექვთიმე თაყაიშვილის ქუჩა №55 • აკადემიური საცეკვაო პარკეტი</p>
             </div>
           </div>
