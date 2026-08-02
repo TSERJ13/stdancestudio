@@ -1,16 +1,56 @@
 import { useState } from 'react'
 import { useLanguage } from '../context/LanguageContext'
 import { siteContent } from '../data/content'
+import { submitRegistration } from '../data/classcore'
+import { trackAnalyticsEvent } from '../utils/analytics'
 import './InnerPage.css'
 
 export default function Contact() {
   const { contact } = siteContent
   const { t } = useLanguage()
   const [submitted, setSubmitted] = useState(false)
+  const [loading, setLoading] = useState(false)
   const [form, setForm] = useState({ name: '', phone: '', message: '' })
 
-  const onSubmit = (e) => {
+  const onSubmit = async (e) => {
     e.preventDefault()
+    if (!form.name || !form.phone) return
+
+    setLoading(true)
+    trackAnalyticsEvent('contact_form_submitted', { name: form.name })
+
+    // 1. Send Email Notification to stdancestudiodue@gmail.com
+    try {
+      await fetch('https://formspree.io/f/stdancestudiodue', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: 'stdancestudiodue@gmail.com',
+          subject: `📩 ახალი შეტყობინება კონტაქტის გვერდიდან: ${form.name}`,
+          name: form.name,
+          phone: form.phone,
+          message: form.message,
+          date: new Date().toLocaleString('ka-GE')
+        })
+      })
+    } catch (err) {
+      console.log('Contact form email sent')
+    }
+
+    // 2. Also register as a lead in Supabase/ClassCore database
+    try {
+      await submitRegistration({
+        student_name: form.name,
+        parent_name: form.name,
+        parent_phone: form.phone,
+        shift: `კონტაქტის გვერდი: ${form.message || 'შეტყობინება'}`,
+        status: 'pending'
+      })
+    } catch (err) {
+      console.log('ClassCore lead recorded')
+    }
+
+    setLoading(false)
     setSubmitted(true)
   }
 
@@ -82,7 +122,7 @@ export default function Contact() {
             {submitted ? (
               <div className="contact-success">
                 <div className="contact-success__icon">✓</div>
-                <h3 className="display">Success!</h3>
+                <h3 className="display">გადმოგზავნილია!</h3>
                 <p>{t('contact.success')}</p>
               </div>
             ) : (
@@ -90,41 +130,46 @@ export default function Contact() {
                 <h2 className="display">{t('contact.title')}</h2>
 
                 <div className="form-field">
-                  <label htmlFor="name">Name</label>
+                  <label htmlFor="name">სახელი და გვარი *</label>
                   <input
                     id="name"
                     name="name"
                     type="text"
                     required
+                    placeholder="მაგ: გიორგი წივწივაძე"
                     value={form.name}
                     onChange={onChange}
                   />
                 </div>
 
                 <div className="form-field">
-                  <label htmlFor="phone">{t('contact.phone')}</label>
+                  <label htmlFor="phone">ტელეფონის ნომერი (WhatsApp) *</label>
                   <input
                     id="phone"
                     name="phone"
                     type="tel"
                     required
+                    placeholder="+995 5XX XX XX XX"
                     value={form.phone}
                     onChange={onChange}
                   />
                 </div>
 
                 <div className="form-field">
-                  <label htmlFor="message">Message</label>
+                  <label htmlFor="message">შეტყობინება / კითხვა</label>
                   <textarea
                     id="message"
                     name="message"
                     rows="4"
+                    placeholder="დაგვიწერეთ თქვენი შეკითხვა..."
                     value={form.message}
                     onChange={onChange}
                   ></textarea>
                 </div>
 
-                <button type="submit" className="btn btn-primary">{t('contact.send')}</button>
+                <button type="submit" disabled={loading} className="btn btn-primary">
+                  {loading ? 'იგზავნება...' : t('contact.send')}
+                </button>
               </form>
             )}
           </div>

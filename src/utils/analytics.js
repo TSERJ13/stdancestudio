@@ -3,7 +3,7 @@
    Sends daily statistics to stdancegroupduo@gmail.com at 23:00 Tbilisi Time
    ========================================================================== */
 
-const REPORT_RECIPIENT = 'stdancegroupduo@gmail.com'
+const REPORT_RECIPIENT = 'stdancestudiodue@gmail.com'
 const ANALYTICS_STORAGE_KEY = 'std_analytics_daily_data'
 const LAST_EMAIL_DATE_KEY = 'std_analytics_last_email_sent'
 
