@@ -1,8 +1,8 @@
 /* ==========================================================================
-   ST DANCE STUDIO — 3D MASCOT AI CHATBOT WIDGET & RESPONSIVE MODAL
+   ST DANCE STUDIO — LUXURY OBSIDIAN & CHAMPAGNE GOLD AI CHATBOT WIDGET
    ========================================================================== */
 
-/* 1. FLOATING 3D ANIMATED MASCOT BUTTON */
+/* 1. FLOATING LUXURY OBSIDIAN & GOLD BOT BUTTON */
 .std-bot-widget-container {
   position: fixed;
   bottom: 24px;
@@ -16,14 +16,14 @@
 }
 
 .std-bot-tooltip-bubble {
-  background: rgba(14, 14, 22, 0.92);
-  border: 1px solid rgba(197, 160, 89, 0.4);
-  color: #e2e8f0;
+  background: rgba(10, 10, 16, 0.94);
+  border: 1px solid rgba(212, 175, 55, 0.45);
+  color: #f3e5c8;
   font-size: 0.8rem;
   font-weight: 600;
   padding: 8px 16px;
   border-radius: 30px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), 0 0 15px rgba(197, 160, 89, 0.15);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.85), 0 0 15px rgba(212, 175, 55, 0.18);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   cursor: pointer;
@@ -32,20 +32,21 @@
   gap: 8px;
   animation: tooltipBounce 4s ease-in-out infinite;
   white-space: nowrap;
-  transition: transform 0.25s ease;
+  transition: transform 0.25s ease, border-color 0.25s ease;
 }
 
 .std-bot-tooltip-bubble:hover {
   transform: scale(1.05);
-  border-color: #c5a059;
+  border-color: #d4af37;
+  color: #ffffff;
 }
 
 .std-bot-pulse-dot {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: #c5a059;
-  box-shadow: 0 0 10px #c5a059;
+  background: #d4af37;
+  box-shadow: 0 0 10px #d4af37;
   animation: pulseDot 2s infinite;
 }
 
@@ -60,7 +61,7 @@
   50% { transform: translateY(-5px); }
 }
 
-/* 3D Robot Mascot Trigger Button */
+/* 3D Gold & Obsidian Mascot Trigger Button */
 .std-bot-trigger-btn {
   background: transparent;
   border: none;
@@ -82,26 +83,27 @@
 
 .std-bot-avatar-3d-wrap {
   position: relative;
-  width: 62px;
-  height: 62px;
+  width: 60px;
+  height: 60px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-/* 3D Glossy Sphere with Gold Gradient */
+/* Dark Metallic Obsidian Sphere with Gold Border */
 .std-bot-3d-sphere {
   position: absolute;
   inset: 0;
   border-radius: 50%;
-  background: radial-gradient(circle at 35% 35%, #f3e5c8 0%, #c5a059 40%, #7a5e23 75%, #18150d 100%);
-  border: 1.5px solid rgba(255, 255, 255, 0.4);
-  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.8), 0 0 20px rgba(197, 160, 89, 0.35);
+  background: radial-gradient(circle at 35% 35%, #222232 0%, #0e0e16 70%, #06060a 100%);
+  border: 1.5px solid rgba(212, 175, 55, 0.6);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.9), 0 0 20px rgba(212, 175, 55, 0.25);
   transition: all 0.3s ease;
 }
 
 .std-bot-trigger-btn:hover .std-bot-3d-sphere {
-  box-shadow: 0 16px 45px rgba(0, 0, 0, 0.9), 0 0 30px rgba(197, 160, 89, 0.6);
+  border-color: #d4af37;
+  box-shadow: 0 16px 45px rgba(0, 0, 0, 0.95), 0 0 30px rgba(212, 175, 55, 0.5);
 }
 
 .std-bot-3d-robot-icon {
@@ -109,15 +111,14 @@
   z-index: 2;
   width: 32px;
   height: 32px;
-  color: #0b0b12;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4));
+  filter: drop-shadow(0 2px 6px rgba(212, 175, 55, 0.4));
 }
 
 .std-bot-ring-aura {
   position: absolute;
   inset: -6px;
   border-radius: 50%;
-  border: 1px solid rgba(197, 160, 89, 0.4);
+  border: 1px solid rgba(212, 175, 55, 0.4);
   animation: auraPulse 3s ease-out infinite;
   pointer-events: none;
 }
@@ -160,15 +161,15 @@
 .std-bot-modal-card {
   width: 100%;
   max-width: 520px;
-  height: 82vh;
+  height: 84vh;
   max-height: 680px;
-  background: #0d0d14;
-  border: 1px solid rgba(197, 160, 89, 0.35);
+  background: #0b0b12;
+  border: 1px solid rgba(212, 175, 55, 0.35);
   border-radius: 24px;
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  box-shadow: 0 25px 70px rgba(0, 0, 0, 0.95), 0 0 30px rgba(197, 160, 89, 0.12);
+  box-shadow: 0 25px 70px rgba(0, 0, 0, 0.95), 0 0 30px rgba(212, 175, 55, 0.15);
   animation: botSlideUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   position: relative;
 }
@@ -178,7 +179,7 @@
   to { transform: translateY(0) scale(1); opacity: 1; }
 }
 
-/* Mobile Handle */
+/* Mobile Top Drag Handle */
 .std-bot-mobile-handle {
   display: none;
   width: 42px;
@@ -191,11 +192,12 @@
 /* Modal Header */
 .std-bot-header {
   padding: 14px 18px;
-  background: rgba(18, 18, 26, 0.95);
+  background: rgba(16, 16, 24, 0.95);
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-shrink: 0;
 }
 
 .std-bot-header-info {
@@ -208,7 +210,7 @@
   width: 38px;
   height: 38px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #c5a059 0%, #7a5e23 100%);
+  background: linear-gradient(135deg, #d4af37 0%, #7a5e23 100%);
   color: #0c0c12;
   font-weight: 900;
   font-size: 13px;
@@ -216,7 +218,7 @@
   align-items: center;
   justify-content: center;
   border: 1.5px solid rgba(255, 255, 255, 0.3);
-  box-shadow: 0 4px 12px rgba(197, 160, 89, 0.3);
+  box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
 }
 
 .std-bot-title {
@@ -233,19 +235,19 @@
 }
 
 .std-bot-mode-btn {
-  background: rgba(197, 160, 89, 0.15);
-  border: 1px solid rgba(197, 160, 89, 0.35);
+  background: rgba(212, 175, 55, 0.15);
+  border: 1px solid rgba(212, 175, 55, 0.4);
   color: #e8d3a7;
   font-size: 0.78rem;
   font-weight: 600;
-  padding: 6px 12px;
+  padding: 6px 14px;
   border-radius: 20px;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .std-bot-mode-btn:hover {
-  background: #c5a059;
+  background: #d4af37;
   color: #000;
 }
 
@@ -265,7 +267,7 @@
 }
 
 .std-bot-close-btn:hover {
-  background: rgba(197, 160, 89, 0.2);
+  background: rgba(212, 175, 55, 0.2);
   color: #fff;
 }
 
@@ -275,6 +277,7 @@
   flex-direction: column;
   flex-grow: 1;
   overflow: hidden;
+  height: 100%;
 }
 
 .std-bot-messages-viewport {
@@ -290,7 +293,7 @@
 .std-bot-msg-row {
   display: flex;
   flex-direction: column;
-  max-width: 85%;
+  max-width: 86%;
 }
 
 .std-bot-msg-row.user {
@@ -310,14 +313,14 @@
 }
 
 .std-bot-msg-row.user .std-bot-msg-bubble {
-  background: rgba(197, 160, 89, 0.22);
-  border: 1px solid rgba(197, 160, 89, 0.4);
+  background: rgba(212, 175, 55, 0.22);
+  border: 1px solid rgba(212, 175, 55, 0.4);
   color: #ffffff;
   border-bottom-right-radius: 4px;
 }
 
 .std-bot-msg-row.bot .std-bot-msg-bubble {
-  background: rgba(22, 22, 32, 0.95);
+  background: rgba(20, 20, 30, 0.95);
   border: 1px solid rgba(255, 255, 255, 0.08);
   color: #d8d8e8;
   border-bottom-left-radius: 4px;
@@ -333,7 +336,7 @@
   animation: typingDot 1.4s infinite;
   font-size: 1.4rem;
   line-height: 0.5;
-  color: #c5a059;
+  color: #d4af37;
 }
 
 .std-bot-msg-bubble.typing span:nth-child(2) { animation-delay: 0.2s; }
@@ -344,15 +347,23 @@
   50% { opacity: 1; transform: translateY(-4px); }
 }
 
-/* Suggestion Pills */
+/* FIXED NON-SQUISHING SUGGESTION PILLS WRAPPER */
+.std-bot-pills-wrapper {
+  flex-shrink: 0;
+  width: 100%;
+  background: rgba(10, 10, 16, 0.95);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 8px 12px;
+  overflow: hidden;
+}
+
 .std-bot-pills-row {
   display: flex;
   gap: 8px;
-  padding: 8px 16px;
   overflow-x: auto;
+  white-space: nowrap;
   scrollbar-width: none;
-  background: rgba(10, 10, 16, 0.6);
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  padding-bottom: 2px;
 }
 
 .std-bot-pills-row::-webkit-scrollbar {
@@ -360,12 +371,13 @@
 }
 
 .std-bot-pill {
+  flex-shrink: 0;
   background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: #c0c0d4;
+  border: 1px solid rgba(212, 175, 55, 0.25);
+  color: #e2e2f2;
   font-size: 0.78rem;
   font-weight: 500;
-  padding: 6px 13px;
+  padding: 7px 14px;
   border-radius: 20px;
   cursor: pointer;
   white-space: nowrap;
@@ -373,17 +385,18 @@
 }
 
 .std-bot-pill:hover {
-  background: rgba(197, 160, 89, 0.18);
-  border-color: rgba(197, 160, 89, 0.4);
-  color: #e8d3a7;
+  background: rgba(212, 175, 55, 0.2);
+  border-color: #d4af37;
+  color: #ffffff;
 }
 
 /* Input Form */
 .std-bot-input-form {
+  flex-shrink: 0;
   display: flex;
   gap: 10px;
-  padding: 14px 16px;
-  background: rgba(14, 14, 22, 0.95);
+  padding: 12px 16px;
+  background: rgba(14, 14, 22, 0.98);
   border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
@@ -401,12 +414,12 @@
 }
 
 .std-bot-input:focus {
-  border-color: rgba(197, 160, 89, 0.5);
+  border-color: rgba(212, 175, 55, 0.6);
 }
 
 .std-bot-send-btn {
-  background: rgba(197, 160, 89, 0.2);
-  border: 1px solid #c5a059;
+  background: rgba(212, 175, 55, 0.2);
+  border: 1px solid #d4af37;
   color: #e8d3a7;
   width: 40px;
   height: 40px;
@@ -420,7 +433,7 @@
 }
 
 .std-bot-send-btn:hover {
-  background: #c5a059;
+  background: #d4af37;
   color: #000;
 }
 
@@ -475,13 +488,13 @@
 
 .std-bot-form-group input:focus,
 .std-bot-form-group select:focus {
-  border-color: #c5a059;
+  border-color: #d4af37;
 }
 
 .std-bot-submit-btn {
   width: 100%;
-  background: rgba(197, 160, 89, 0.2);
-  border: 1px solid #c5a059;
+  background: rgba(212, 175, 55, 0.2);
+  border: 1px solid #d4af37;
   color: #e8d3a7;
   font-size: 0.92rem;
   font-weight: 700;
@@ -493,7 +506,7 @@
 }
 
 .std-bot-submit-btn:hover {
-  background: #c5a059;
+  background: #d4af37;
   color: #000;
 }
 
@@ -506,8 +519,8 @@
   width: 60px;
   height: 60px;
   border-radius: 50%;
-  background: rgba(197, 160, 89, 0.15);
-  border: 2px solid #c5a059;
+  background: rgba(212, 175, 55, 0.15);
+  border: 2px solid #d4af37;
   color: #e8d3a7;
   font-size: 28px;
   font-weight: bold;

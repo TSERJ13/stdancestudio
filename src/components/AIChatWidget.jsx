@@ -5,144 +5,195 @@ import './AIChatWidget.css'
 
 // Intelligent Smart Knowledge Engine for Website Bot
 function getWebsiteBotAnswer(query, lang) {
-  const q = query.toLowerCase()
+  // Strip emojis & normalize query
+  const cleanQ = query
+    .replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, '')
+    .trim()
+    .toLowerCase()
 
-  // 1. General Offerings
+  // 1. Pricing / Fasi / Cost
   if (
-    q.includes('გვთავაზობ') ||
-    q.includes('შეთავაზებ') ||
-    q.includes('სერვის') ||
-    q.includes('რას ასწავლ') ||
-    q.includes('რა გაქვთ') ||
-    q.includes('offer') ||
-    q.includes('services') ||
-    q.includes('услуги')
+    cleanQ.includes('რა ღირს') ||
+    cleanQ.includes('ფას') ||
+    cleanQ.includes('აბონემენტ') ||
+    cleanQ.includes('ღირს') ||
+    cleanQ.includes('გადახდ') ||
+    cleanQ.includes('price') ||
+    cleanQ.includes('cost') ||
+    cleanQ.includes('цена') ||
+    cleanQ.includes('сколько')
   ) {
     if (lang === 'ka') {
-      return `ST DANCE STUDIO გთავაზობთ სამეჯლისო და სპორტული ცეკვების სწავლებას ბათუმში:
+      return `💰 ST DANCE STUDIO — ფასები და აბონემენტები:
 
-1. საბავშვო ჯგუფები (4.5 – 16 წელი: Baby, Bronze, Pre-Silver, Silver, Golden)
-2. წყვილების ჯგუფი (ლათინოამერიკული და სტანდარტული ცეკვები)
-3. Solo კატეგორია (გოგონებისა და ბიჭებისთვის წყვილის გარეშე)
-4. Hobby Class (მოყვარულთა და ზრდასრულთა ჯგუფი)
-5. ინდივიდუალური გაკვეთილები (პერსონალური მწვრთნელი)
-6. 100%-ით უფასო პირველი საცდელი გაკვეთილი!`
+🎁 პირველი საცდელი გაკვეთილი: 100% უფასოა!
+
+🔹 თვიური აბონემენტი (ჯგუფური): 130₾ / თვე (12 მეცადინეობა)
+🔹 დედმამიშვილების ფასდაკლება: 100₾ 1 მოსწავლეზე
+
+👤 ინდივიდუალური გაკვეთილები:
+• 1 გაკვეთილი = 70₾
+• 4 გაკვეთილის პაკეტი = 240₾
+• 8 გაკვეთილის პაკეტი = 400₾`
     } else if (lang === 'en') {
-      return `ST DANCE STUDIO offers professional Ballroom & Latin Sports Dance instruction in Batumi:
+      return `💰 ST DANCE STUDIO — Prices & Packages:
 
-1. Kids Groups (Ages 4.5 to 16: Baby, Bronze, Pre-Silver, Silver, Golden)
-2. Couples Group (Latin & Standard)
-3. Solo Category (Without partner)
-4. Hobby Class (Adults & Amateurs)
-5. Private Coaching
-6. 100% Free First Trial Lesson!`
+🎁 First Trial Lesson: 100% FREE!
+
+🔹 Monthly Subscription: 130 GEL / month (12 sessions)
+🔹 Sibling Discount: 100 GEL per student
+
+👤 Private Coaching:
+• 1 Lesson = 70 GEL
+• 4 Lessons Package = 240 GEL
+• 8 Lessons Package = 400 GEL`
     } else {
-      return `ST DANCE STUDIO предлагает профессиональное обучение бальным и спортивным танцам в Батуми:
+      return `💰 ST DANCE STUDIO — Цены и Абонементы:
 
-1. Детские группы (от 4.5 до 16 лет: Baby, Bronze, Pre-Silver, Silver, Golden)
-2. Группы для пар (Латина и Стандарт)
-3. Категория Solo (без партнера)
-4. Hobby Class (для взрослых и любителей)
-5. Персональные уроки
-6. 100% Бесплатный первый пробный урок!`
+🎁 Первый пробный урок: 100% Бесплатно!
+
+🔹 Месячный абонемент: 130 GEL / месяц (12 занятий)
+🔹 Скидка для сестер/братьев: 100 GEL за ученика
+
+👤 Индивидуальные уроки:
+• 1 урок = 70 GEL
+• Пакет 4 урока = 240 GEL
+• Пакет 8 уроков = 400 GEL`
     }
   }
 
-  // 2. Registration Trigger
+  // 2. Schedule / Ganrigi
   if (
-    q.includes('რეგისტრაცი') ||
-    q.includes('დამარეგისტრირ') ||
-    q.includes('ჩაწერ') ||
-    q.includes('register') ||
-    q.includes('записаться') ||
-    q.includes('зарегистриრ')
+    cleanQ.includes('განრიგ') ||
+    cleanQ.includes('გრაფიკ') ||
+    cleanQ.includes('როდის') ||
+    cleanQ.includes('საათ') ||
+    cleanQ.includes('დღე') ||
+    cleanQ.includes('schedule') ||
+    cleanQ.includes('days') ||
+    cleanQ.includes('расписание')
   ) {
     if (lang === 'ka') {
-      return 'სიამოვნებით! ონლაინ რეგისტრაციის ფორმა გაგიხსენით. გთხოვთ შეავსოთ მოსწავლის მონაცემები.'
-    } else if (lang === 'en') {
-      return 'With pleasure! The registration form is open. Please fill in your details.'
+      return `📅 ST DANCE STUDIO — მეცადინეობების განრიგი:
+
+👶 Baby ჯგუფი (4.5 – 6 წელი)
+• სამშაბათი & ხუთშაბათი: 17:30 + შაბათი: 10:00
+
+🥉 Bronze (ბრონზა) ჯგუფი (დამწყებები)
+• სამშაბათი & ხუთშაბათი: 18:15 – 19:15
+
+🥈 Pre-Silver ჯგუფი (1 წლიანი გამოცდილება)
+• ორშაბათი, ოთხშაბათი, პარასკევი: 17:30
+
+🥇 Silver ჯგუფი (2+ წლიანი გამოცდილება)
+• ორშაბათი, ოთხშაბათი, პარასკევი: 19:30
+
+🏆 Golden ჯგუფი (5+ წლიანი გამოცდილება)
+• ორშაბათი, ოთხშაბათი, პარასკევი: 16:30
+
+💃 წყვილების ჯგუფი
+• ორშაბათი, ოთხშაბათი, პარასკევი: 18:30
+
+✨ Hobby Class (ზრდასრულები/მოყვარულები)
+• სამშაბათი & ხუთშაბათი: 19:15 – 20:15`
     } else {
-      return 'С удовольствием! Форма онлайн-регистрации открыта. Пожалуйста, заполните данные.'
+      return `📅 ST DANCE STUDIO — Class Schedule:
+
+👶 Baby Group (Ages 4.5 – 6): Tue & Thu 17:30 + Sat 10:00
+🥉 Bronze Group (Beginners): Tue & Thu 18:15
+🥈 Pre-Silver Group (1 Yr Exp): Mon, Wed, Fri 17:30
+🥇 Silver Group (2+ Yrs Exp): Mon, Wed, Fri 19:30
+🏆 Golden Group (5+ Yrs Exp): Mon, Wed, Fri 16:30
+💃 Couples Group: Mon, Wed, Fri 18:30
+✨ Hobby Class (Adults): Tue & Thu 19:15`
     }
   }
 
-  // 3. Schedule & Pricing
+  // 3. Location / Misamarti
   if (
-    q.includes('განრიგ') ||
-    q.includes('ფას') ||
-    q.includes('ღირს') ||
-    q.includes('აბონემენტ') ||
-    q.includes('schedule') ||
-    q.includes('price') ||
-    q.includes('сколько') ||
-    q.includes('цена')
+    cleanQ.includes('მისამართ') ||
+    cleanQ.includes('სად') ||
+    cleanQ.includes('მდებარეობ') ||
+    cleanQ.includes('location') ||
+    cleanQ.includes('address') ||
+    cleanQ.includes('где') ||
+    cleanQ.includes('ადრეს')
   ) {
     if (lang === 'ka') {
-      return `ST DANCE STUDIO — ჯგუფების განრიგი და ფასები:
+      return `📍 ST DANCE STUDIO — ლოკაცია:
 
-1. Baby ჯგუფი (4.5 – 6 წელი)
-- დღეები: სამშაბათი & ხუთშაბათი 17:30 + შაბათი 10:00
-- ფასი: 130₾/თვე
+🏛️ ქ. ბათუმი, ექვთიმე თაყაიშვილის ქუჩა №55
+(3-სართულიანი თეთრი შენობის მე-3 სართული, შესასვლელი ბალოტისფერი სახლის ჭიშკრიდან).
 
-2. Bronze (ბრონზა) ჯგუფი (დამწყებები)
-- დღეები: სამშაბათი & ხუთშაბათი 18:15 – 19:15
-- ფასი: 130₾/თვე
-
-3. Pre-Silver ჯგუფი (1 წლიანი გამოცდილება)
-- დღეები: ორშაბათი, ოთხშაბათი, პარასკევი 17:30
-- ფასი: 130₾/თვე
-
-4. Silver ჯგუფი (2+ წლიანი გამოცდილება)
-- დღეები: ორშაბათი, ოთხშაბათი, პარასკევი 19:30
-- ფასი: 130₾/თვე
-
-5. Golden ჯგუფი (5+ წლიანი გამოცდილება)
-- დღეები: ორშაბათი, ოთხშაბათი, პარასკევი 16:30
-- ფასი: 130₾/თვე
-
-6. წყვილების ჯგუფი: ორშაბათი, ოთხშაბათი, პარასკევი 18:30 (130₾/თვე)
-7. Hobby Class: სამშაბათი & ხუთშაბათი 19:15 (130₾/თვე)
-8. ინდივიდუალური: 1 გაკვეთილი = 70₾ | 4 = 240₾ | 8 = 400₾`
+📞 ტელეფონი / WhatsApp: +995 514 19 99 66`
     } else {
-      return `ST DANCE STUDIO — Schedule & Prices:
+      return `📍 ST DANCE STUDIO — Location:
 
-1. Baby Group (Ages 4.5 – 6): Tue & Thu 17:30 + Sat 10:00 (130 GEL/mo)
-2. Bronze Group (Beginners): Tue & Thu 18:15 (130 GEL/mo)
-3. Pre-Silver Group (1 Year Exp.): Mon, Wed, Fri 17:30 (130 GEL/mo)
-4. Silver Group (2+ Years Exp.): Mon, Wed, Fri 19:30 (130 GEL/mo)
-5. Golden Group (5+ Years Exp.): Mon, Wed, Fri 16:30 (130 GEL/mo)
-6. Couples Group: Mon, Wed, Fri 18:30 (130 GEL/mo)
-7. Hobby Class: Tue & Thu 19:15 (130 GEL/mo)
-8. Private Coaching: 1 Class = 70₾ | 4 = 240₾ | 8 = 400₾`
+🏛️ 55 Eka Takaishvili St, Batumi (3rd Floor of white building).
+📞 Phone / WhatsApp: +995 514 19 99 66`
     }
   }
 
-  // 4. Location
+  // 4. Registration Intent
   if (
-    q.includes('სად') ||
-    q.includes('მისამართ') ||
-    q.includes('მდებარეობ') ||
-    q.includes('where') ||
-    q.includes('address') ||
-    q.includes('где')
+    cleanQ.includes('რეგისტრაცი') ||
+    cleanQ.includes('დამარეგისტრირ') ||
+    cleanQ.includes('ჩაწერ') ||
+    cleanQ.includes('register') ||
+    cleanQ.includes('записаться')
   ) {
     if (lang === 'ka') {
-      return 'მისამართი: ქ. ბათუმი, ექვთიმე თაყაიშვილის ქუჩა №55 (3-სართულიანი თეთრი შენობის მე-3 სართული, შესასვლელი ბალოტისფერი სახლის ჭიშკრიდან). ტელ: +995 514 19 99 66.'
+      return '✨ ონლაინ რეგისტრაციის ფორმა გაგიხსენით! გთხოვთ შეავსოთ მოსწავლის მონაცემები.'
     } else {
-      return 'Location: 55 Eka Takaishvili St, Batumi (3rd floor of 3-story white building). Tel: +995 514 19 99 66.'
+      return '✨ Online registration form opened! Please fill in the details.'
     }
   }
 
-  // General response
+  // 5. Offerings / Services
+  if (
+    cleanQ.includes('გვთავაზობ') ||
+    cleanQ.includes('შეთავაზებ') ||
+    cleanQ.includes('სერვის') ||
+    cleanQ.includes('რას ასწავლ') ||
+    cleanQ.includes('რა გაქვთ') ||
+    cleanQ.includes('offer') ||
+    cleanQ.includes('services')
+  ) {
+    if (lang === 'ka') {
+      return `🏆 ST DANCE STUDIO გთავაზობთ:
+
+1️⃣ საბავშვო ჯგუფები (4.5-დან 16 წლამდე)
+2️⃣ წყვილების ჯგუფი (ლათინო და სტანდარტი)
+3️⃣ Solo კატეგორია (წყვილის გარეშე)
+4️⃣ Hobby Class (ზრდასრულები და მოყვარულები)
+5️⃣ ინდივიდუალური გაკვეთილები
+
+🎁 100%-ით უფასო პირველი საცდელი გაკვეთილი!`
+    } else {
+      return `🏆 ST DANCE STUDIO offers:
+
+1️⃣ Kids Groups (Ages 4.5 – 16)
+2️⃣ Couples Group (Latin & Standard)
+3️⃣ Solo Category (Without partner)
+4️⃣ Hobby Class (Adults)
+5️⃣ Private Coaching
+
+🎁 100% Free First Trial Lesson!`
+    }
+  }
+
+  // Default response
   if (lang === 'ka') {
-    return 'ST DANCE STUDIO გთავაზობთ სამეჯლისო და სპორტული ცეკვების სწავლებას 4.5-დან 16 წლამდე ბავშვებისთვის, წყვილებისთვის და მოყვარულებისთვის (Hobby Class). პირველი საცდელი გაკვეთილი 100%-ით უფასოა!'
+    return `✨ ST DANCE STUDIO გთავაზობთ სამეჯლისო და სპორტული ცეკვების სწავლებას 4.5-დან 16 წლამდე ბავშვებისთვის, წყვილებისთვის და ზრდასრულებისთვის.
+
+🎁 პირველი საცდელი გაკვეთილი 100%-ით უფასოა! ჩასაწერად დააჭირეთ "რეგისტრაცია"-ს.`
   } else {
-    return 'ST DANCE STUDIO offers Ballroom & Sports Dance training for kids 4.5 to 16 yrs, couples, and adults. First trial class is 100% Free!'
+    return `✨ ST DANCE STUDIO offers Ballroom & Sports Dance training for kids, couples, and adults. First trial lesson is 100% Free!`
   }
 }
 
 export default function AIChatWidget() {
-  const { lang, t } = useLanguage()
+  const { lang } = useLanguage()
   const [isOpen, setIsOpen] = useState(false)
   const [inputMsg, setInputMsg] = useState('')
   const [isTyping, setIsTyping] = useState(false)
@@ -225,7 +276,7 @@ export default function AIChatWidget() {
             role: 'bot',
             text:
               lang === 'ka'
-                ? 'სიამოვნებით! ონლაინ რეგისტრაციის ფორმა გაგიხსენით. გთხოვთ შეავსოთ მოსწავლის მონაცემები.'
+                ? '✨ ონლაინ რეგისტრაციის ფორმა გაგიხსენით. გთხოვთ შეავსოთ მოსწავლის მონაცემები.'
                 : 'With pleasure! Please fill out the registration form below.'
           }
         ])
@@ -238,7 +289,7 @@ export default function AIChatWidget() {
       const answer = getWebsiteBotAnswer(query, lang)
       setIsTyping(false)
       setMessages((prev) => [...prev, { role: 'bot', text: answer }])
-    }, 450)
+    }, 400)
   }
 
   const handleRegSubmit = async (e) => {
@@ -270,39 +321,39 @@ export default function AIChatWidget() {
 
   return (
     <>
-      {/* 1. FLOATING 3D ANIMATED ROBOT MASCOT BUTTON */}
+      {/* 1. FLOATING LUXURY OBSIDIAN & CHAMPAGNE GOLD BOT BUTTON */}
       <div className="std-bot-widget-container">
         {/* Floating Tooltip Bubble */}
         {!isOpen && (
           <div className="std-bot-tooltip-bubble" onClick={() => setIsOpen(true)}>
             <span className="std-bot-pulse-dot"></span>
-            <span>🤖 AI ასისტენტი • გაქვს კითხვები?</span>
+            <span>AI ასისტენტი • გაქვს კითხვები?</span>
           </div>
         )}
 
-        {/* 3D Animated Robot Mascot Trigger */}
+        {/* 3D Gold & Obsidian Mascot Trigger */}
         <button
           className={`std-bot-trigger-btn ${isOpen ? 'is-active' : ''}`}
           onClick={() => setIsOpen((prev) => !prev)}
           aria-label="ST Dance AI Chatbot"
         >
           <div className="std-bot-avatar-3d-wrap">
-            {/* 3D Glossy Sphere Background */}
+            {/* Dark Obsidian Circle with Gold Border */}
             <div className="std-bot-3d-sphere"></div>
-            {/* Robot Face / Icon */}
+            {/* Pure Champagne Gold Robot Icon */}
             <svg
               className="std-bot-3d-robot-icon"
               viewBox="0 0 24 24"
               fill="none"
-              stroke="currentColor"
-              strokeWidth="1.8"
+              stroke="#d4af37"
+              strokeWidth="2"
             >
-              <rect x="3" y="11" width="18" height="10" rx="4" />
-              <circle cx="8.5" cy="15.5" r="1.5" fill="currentColor" />
-              <circle cx="15.5" cy="15.5" r="1.5" fill="currentColor" />
-              <path d="M12 2v4" />
-              <circle cx="12" cy="2" r="1" fill="currentColor" />
-              <path d="M10 19h4" strokeLinecap="round" />
+              <rect x="3" y="11" width="18" height="10" rx="4" fill="rgba(212,175,55,0.1)" />
+              <circle cx="8.5" cy="15.5" r="1.5" fill="#d4af37" />
+              <circle cx="15.5" cy="15.5" r="1.5" fill="#d4af37" />
+              <path d="M12 2v4" stroke="#d4af37" strokeLinecap="round" />
+              <circle cx="12" cy="2" r="1.2" fill="#d4af37" />
+              <path d="M9.5 19h5" stroke="#d4af37" strokeLinecap="round" />
             </svg>
             <span className="std-bot-ring-aura"></span>
           </div>
@@ -313,7 +364,7 @@ export default function AIChatWidget() {
       {isOpen && (
         <div className="std-bot-overlay" onClick={() => setIsOpen(false)}>
           <div className="std-bot-modal-card" onClick={(e) => e.stopPropagation()}>
-            {/* Mobile Top Drag Indicator */}
+            {/* Mobile Top Drag Handle */}
             <div className="std-bot-mobile-handle"></div>
 
             {/* Modal Header */}
@@ -333,7 +384,7 @@ export default function AIChatWidget() {
                   className={`std-bot-mode-btn ${isRegMode ? 'active' : ''}`}
                   onClick={() => setIsRegMode(!isRegMode)}
                 >
-                  {isRegMode ? '💬 ჩატზე დაბრუნება' : '✨ რეგისტრაცია'}
+                  {isRegMode ? 'ჩატზე დაბრუნება' : 'რეგისტრაცია'}
                 </button>
                 <button className="std-bot-close-btn" onClick={() => setIsOpen(false)}>
                   ✕
@@ -361,7 +412,7 @@ export default function AIChatWidget() {
                   </div>
                 ) : (
                   <form onSubmit={handleRegSubmit} className="std-bot-reg-form">
-                    <h4 className="std-bot-reg-title">✨ ონლაინ რეგისტრაცია</h4>
+                    <h4 className="std-bot-reg-title">ონლაინ რეგისტრაცია</h4>
                     <p className="std-bot-reg-sub">ჩაეწერეთ 100%-ით უფასო საცდელ გაკვეთილზე</p>
 
                     <div className="std-bot-form-group">
@@ -449,20 +500,22 @@ export default function AIChatWidget() {
                   <div ref={chatEndRef} />
                 </div>
 
-                {/* Quick Suggestion Pills */}
-                <div className="std-bot-pills-row">
-                  <button className="std-bot-pill" onClick={() => handleSend('რა ღირს აბონემენტი?')}>
-                    💰 რა ღირს აბონემენტი?
-                  </button>
-                  <button className="std-bot-pill" onClick={() => handleSend('როდის არის გაკვეთილები?')}>
-                    📅 განრიგი
-                  </button>
-                  <button className="std-bot-pill" onClick={() => handleSend('მინდა რეგისტრაცია')}>
-                    ✨ რეგისტრაცია
-                  </button>
-                  <button className="std-bot-pill" onClick={() => handleSend('სად მდებარეობს სტუდია?')}>
-                    📍 მისამართი
-                  </button>
+                {/* Fixed Non-Squishing Quick Suggestion Pills Row */}
+                <div className="std-bot-pills-wrapper">
+                  <div className="std-bot-pills-row">
+                    <button className="std-bot-pill" onClick={() => handleSend('რა ღირს აბონემენტი?')}>
+                      💰 რა ღირს აბონემენტი?
+                    </button>
+                    <button className="std-bot-pill" onClick={() => handleSend('მეცადინეობების განრიგი')}>
+                      📅 განრიგი
+                    </button>
+                    <button className="std-bot-pill" onClick={() => handleSend('მინდა რეგისტრაცია')}>
+                      ✨ რეგისტრაცია
+                    </button>
+                    <button className="std-bot-pill" onClick={() => handleSend('სად მდებარეობს სტუდია?')}>
+                      📍 მისამართი
+                    </button>
+                  </div>
                 </div>
 
                 {/* Chat Input Form */}
