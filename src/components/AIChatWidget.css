@@ -65,6 +65,32 @@ body.mobile-menu-open .std-bot-widget-container {
   50% { transform: translateY(-5px); }
 }
 
+/* Tooltip Swallow Animation */
+.swallow-anim {
+  animation: swallowTooltip 0.6s cubic-bezier(0.55, 0.085, 0.68, 0.53) forwards !important;
+}
+
+@keyframes swallowTooltip {
+  0% {
+    transform: scale(1) translate(0, 0);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0) translate(40px, 80px) rotate(45deg);
+    opacity: 0;
+  }
+}
+
+/* Robot Mouth Animation */
+.robot-mouth {
+  transform-origin: 12px 19px;
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.std-bot-3d-robot-icon.swallow-active .robot-mouth {
+  transform: scaleY(5);
+}
+
 /* 3D Gold & Obsidian Mascot Trigger Button */
 .std-bot-trigger-btn {
   background: transparent;

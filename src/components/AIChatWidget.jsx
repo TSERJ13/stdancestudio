@@ -329,14 +329,23 @@ setMessages([{ role: 'bot', text: activeTrans.welcome }])
     setRegForm((prev) => ({ ...prev, shift: activeTrans.groups[0] }))
   }, [lang])
 
-  // 5. Hide Tooltip after 5 seconds
+  // 5. Hide Tooltip after 6 seconds with Swallow Animation
   const [showTooltip, setShowTooltip] = useState(true)
+  const [isSwallowing, setIsSwallowing] = useState(false)
 
   useEffect(() => {
-    const timer = setTimeout(() => {
+    const timer1 = setTimeout(() => {
+      setIsSwallowing(true)
+    }, 6000)
+
+    const timer2 = setTimeout(() => {
       setShowTooltip(false)
-    }, 5000)
-    return () => clearTimeout(timer)
+    }, 6600) // 0.6s after swallow begins
+
+    return () => {
+      clearTimeout(timer1)
+      clearTimeout(timer2)
+    }
   }, [])
 
   // Listen for custom global trigger event "open-ai-chat"
@@ -514,8 +523,8 @@ ${studioKnowledgeBase}
       {/* 1. FLOATING LUXURY OBSIDIAN & CHAMPAGNE GOLD BOT BUTTON */}
       <div className="std-bot-widget-container">
         {/* Floating Tooltip Bubble with Dynamic Language */}
-        {!isOpen && (
-          <div className="std-bot-tooltip-bubble" onClick={toggleOpen}>
+        {!isOpen && showTooltip && (
+          <div className={`std-bot-tooltip-bubble ${isSwallowing ? 'swallow-anim' : ''}`} onClick={toggleOpen}>
             <span className="std-bot-pulse-dot"></span>
             <span>{activeTrans.tooltip}</span>
           </div>
@@ -532,7 +541,7 @@ ${studioKnowledgeBase}
             <div className="std-bot-3d-sphere"></div>
             {/* Pure Champagne Gold Robot Icon with Blinking Eyes */}
             <svg
-              className="std-bot-3d-robot-icon"
+              className={`std-bot-3d-robot-icon ${isSwallowing ? 'swallow-active' : ''}`}
               viewBox="0 0 24 24"
               fill="none"
               stroke="#d4af37"
@@ -543,7 +552,7 @@ ${studioKnowledgeBase}
               <circle cx="15.5" cy="15.5" r="1.5" fill="#d4af37" className="robot-eye" />
               <path d="M12 2v4" stroke="#d4af37" strokeLinecap="round" />
               <circle cx="12" cy="2" r="1.2" fill="#d4af37" />
-              <path d="M9.5 19h5" stroke="#d4af37" strokeLinecap="round" />
+              <rect x="9.5" y="18.5" width="5" height="1" rx="0.5" fill="#d4af37" stroke="none" className="robot-mouth" />
             </svg>
             <span className="std-bot-ring-aura"></span>
           </div>
