@@ -5,8 +5,8 @@
 /* 1. FLOATING LUXURY OBSIDIAN & GOLD BOT BUTTON */
 .std-bot-widget-container {
   position: fixed;
-  bottom: 100px;
-  right: 24px;
+  bottom: 7.2rem;
+  right: 2.5rem;
   z-index: 99990;
   display: flex;
   flex-direction: column;
@@ -16,14 +16,14 @@
 }
 
 .std-bot-tooltip-bubble {
-  background: rgba(10, 10, 16, 0.94);
-  border: 1px solid rgba(212, 175, 55, 0.45);
+  background: #000000;
+  border: 1px solid var(--color-gold, #c5a059);
   color: #f3e5c8;
   font-size: 0.8rem;
   font-weight: 600;
   padding: 8px 16px;
   border-radius: 30px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.85), 0 0 15px rgba(212, 175, 55, 0.18);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   cursor: pointer;
@@ -83,21 +83,21 @@
 
 .std-bot-avatar-3d-wrap {
   position: relative;
-  width: 60px;
-  height: 60px;
+  width: 58px;
+  height: 58px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-/* Dark Metallic Obsidian Sphere with Gold Border */
+/* Circular Black & Gold Sphere Matching Floating Lang Switcher */
 .std-bot-3d-sphere {
   position: absolute;
   inset: 0;
   border-radius: 50%;
-  background: radial-gradient(circle at 35% 35%, #222232 0%, #0e0e16 70%, #06060a 100%);
-  border: 1.5px solid rgba(212, 175, 55, 0.6);
-  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.9), 0 0 20px rgba(212, 175, 55, 0.25);
+  background: #000000;
+  border: 1px solid var(--color-gold, #c5a059);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6), 0 0 15px rgba(197, 160, 89, 0.2);
   transition: all 0.3s ease;
 }
 
@@ -549,8 +549,8 @@
 /* 4. MOBILE FULL-SCREEN RESPONSIVE STYLING (< 768px) */
 @media (max-width: 767px) {
   .std-bot-widget-container {
-    bottom: 85px;
-    right: 16px;
+    bottom: 5.5rem;
+    right: 1.5rem;
   }
 
   .std-bot-overlay {
