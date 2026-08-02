@@ -152,6 +152,16 @@ export default function Header() {
           >
             {t('nav.contact')}
           </Link>
+          <button
+            onClick={() => {
+              setMobileOpen(false)
+              window.dispatchEvent(new Event('open-ai-chat'))
+            }}
+            className="btn btn-ghost mobile-menu__cta"
+            style={{ marginTop: '10px', borderColor: 'var(--color-gold)', color: 'var(--color-gold)' }}
+          >
+            🤖 AI ასისტენტი (ჩატი)
+          </button>
         </div>
       </header>
       <FloatingLangSwitcher />
