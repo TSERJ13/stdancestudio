@@ -3,7 +3,7 @@
    Sends daily statistics to stdancegroupduo@gmail.com at 23:00 Tbilisi Time
    ========================================================================== */
 
-const REPORT_RECIPIENT = 'stdancestudiodue@gmail.com'
+const REPORT_RECIPIENT = 'stdancegroupdue@gmail.com'
 const ANALYTICS_STORAGE_KEY = 'std_analytics_daily_data'
 const LAST_EMAIL_DATE_KEY = 'std_analytics_last_email_sent'
 
@@ -198,9 +198,9 @@ ${pageSummary || '• /: ' + totalViews}
 This is an automated report sent daily at 23:00 to ${REPORT_RECIPIENT}.
 ST Dance Studio Analytics Engine`
 
-  // Send email via FormSubmit API to stdancestudiodue@gmail.com
+  // Send email via FormSubmit API to stdancegroupdue@gmail.com
   try {
-    await fetch('https://formsubmit.co/ajax/stdancestudiodue@gmail.com', {
+    await fetch('https://formsubmit.co/ajax/stdancegroupdue@gmail.com', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

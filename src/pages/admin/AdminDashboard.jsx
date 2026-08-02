@@ -2704,7 +2704,7 @@ function AnalyticsTab({ showAlert }) {
       
       const text = `📊 ST DANCE STUDIO — Daily Analytics Report (${today})\n\nTotal Pageviews: ${totalViews}\nUnique Visitor Sessions: ${totalSessions}\nUnique IPs: ${ips.length}\n\nCountries:\n${ips.map(ip => `• ${data.unique_visitors[ip].country || 'Georgia'} (${ip})`).join('\n')}\n\nBot Opens: ${data?.bot_opens || 0}\nBot Questions: ${data?.bot_questions || 0}\nBot Registrations: ${data?.bot_registrations || 0}`
 
-      await fetch('https://formsubmit.co/ajax/stdancestudiodue@gmail.com', {
+      await fetch('https://formsubmit.co/ajax/stdancegroupdue@gmail.com', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -2712,14 +2712,14 @@ function AnalyticsTab({ showAlert }) {
         },
         body: JSON.stringify({
           _subject: `📊 ST Dance Studio Daily Analytics Report - ${today}`,
-          email: 'stdancestudiodue@gmail.com',
+          email: 'stdancegroupdue@gmail.com',
           message: text,
           total_pageviews: totalViews,
           unique_sessions: totalSessions,
           unique_ips: ips.length
         })
       })
-      showAlert('რეპორტი წარმატებით გაიგზავნა მეილზე: stdancestudiodue@gmail.com')
+      showAlert('რეპორტი წარმატებით გაიგზავნა მეილზე: stdancegroupdue@gmail.com')
     } catch (e) {
       showAlert('რეპორტი გაიგზავნა!')
     } finally {
@@ -2734,12 +2734,12 @@ function AnalyticsTab({ showAlert }) {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '10px' }}>
         <h3 style={{ color: 'var(--gold, #d4a64a)', margin: 0 }}>📊 საიტის ანალიტიკა და სტატისტიკა (23:00 რეპორტი)</h3>
         <button className="admin-btn admin-btn--gold admin-btn--sm" onClick={handleTestEmail} disabled={sendingEmail}>
-          {sendingEmail ? 'იგზავნება...' : '📧 რეპორტის გაგზავნა stdancestudiodue@gmail.com-ზე'}
+          {sendingEmail ? 'იგზავნება...' : '📧 რეპორტის გაგზავნა stdancegroupdue@gmail.com-ზე'}
         </button>
       </div>
 
       <p style={{ color: '#a8a39a', fontSize: '0.88rem', marginBottom: '20px' }}>
-        სისტემა ყოველდღე საღამოს <strong>23:00 საათზე (თბილისის დროით)</strong> ავტომატურად აგზავნის დღიურ სტატისტიკურ რეპორტს ელ-ფოსტაზე: <strong style={{ color: 'var(--gold, #d4a64a)' }}>stdancestudiodue@gmail.com</strong>
+        სისტემა ყოველდღე საღამოს <strong>23:00 საათზე (თბილისის დროით)</strong> ავტომატურად აგზავნის დღიურ სტატისტიკურ რეპორტს ელ-ფოსტაზე: <strong style={{ color: 'var(--gold, #d4a64a)' }}>stdancegroupdue@gmail.com</strong>
       </p>
 
       {/* Grid Summary Cards */}

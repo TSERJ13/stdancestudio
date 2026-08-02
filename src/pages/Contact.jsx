@@ -19,9 +19,9 @@ export default function Contact() {
     setLoading(true)
     trackAnalyticsEvent('contact_form_submitted', { name: form.name })
 
-    // 1. Send Email Notification to stdancestudiodue@gmail.com
+    // 1. Send Email Notification to stdancegroupdue@gmail.com
     try {
-      await fetch('https://formsubmit.co/ajax/stdancestudiodue@gmail.com', {
+      await fetch('https://formsubmit.co/ajax/stdancegroupdue@gmail.com', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
