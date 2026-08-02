@@ -15,8 +15,6 @@ export default function Footer() {
     { label: t('nav.schedule'), to: `${basePath}/schedule` },
     { label: t('nav.payment'), to: `${basePath}/payment` },
     { label: t('nav.contact'), to: `${basePath}/contact` },
-    { label: t('nav.privacy'), to: `${basePath}/privacy` },
-    { label: t('nav.terms'), to: `${basePath}/terms` },
   ]
 
   return (
@@ -86,11 +84,6 @@ export default function Footer() {
 
       <div className="footer__bottom container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem' }}>
         <p>© {new Date().getFullYear()} ST Dance Studio. {t('footer.rights')}.</p>
-        <div className="footer__legal-links" style={{ display: 'flex', gap: '1.5rem', fontSize: '0.85rem' }}>
-          <Link to={`${basePath}/privacy`} style={{ color: 'var(--color-gold)', textDecoration: 'none' }}>{t('nav.privacy')}</Link>
-          <span style={{ color: '#555' }}>|</span>
-          <Link to={`${basePath}/terms`} style={{ color: 'var(--color-gold)', textDecoration: 'none' }}>{t('nav.terms')}</Link>
-        </div>
       </div>
     </footer>
   )
