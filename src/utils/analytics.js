@@ -1,6 +1,6 @@
 /* ==========================================================================
    ST DANCE STUDIO — ANALYTICS TRACKER & DAILY 23:00 EMAIL REPORT ENGINE
-   Sends daily statistics to stdancegroupduo@gmail.com at 23:00 Tbilisi Time
+   Sends formatted Georgian HTML/CSS daily statistics to stdancegroupdue@gmail.com
    ========================================================================== */
 
 const REPORT_RECIPIENT = 'stdancegroupdue@gmail.com'
@@ -34,7 +34,6 @@ function getDailyAnalytics() {
     }
   } catch (e) { /* fallback below */ }
 
-  // Fresh data structure for today
   return {
     date: today,
     total_pageviews: 0,
@@ -53,7 +52,7 @@ function saveDailyAnalytics(data) {
   } catch (e) { /* ignore */ }
 }
 
-// Fetch visitor IP and geolocation metadata (once per session)
+// Fetch visitor IP and geolocation metadata
 async function getVisitorGeo() {
   let geo = sessionStorage.getItem('std_visitor_geo')
   if (geo) {
@@ -85,11 +84,9 @@ export async function trackPageView(pathname) {
   const data = getDailyAnalytics()
   data.total_pageviews += 1
 
-  // Track page hits
   const page = pathname || window.location.pathname || '/'
   data.page_hits[page] = (data.page_hits[page] || 0) + 1
 
-  // Track unique session
   let sessionId = sessionStorage.getItem('std_session_id')
   if (!sessionId) {
     sessionId = 'sess_' + Math.random().toString(36).substring(2, 11)
@@ -99,7 +96,6 @@ export async function trackPageView(pathname) {
     data.unique_session_ids.push(sessionId)
   }
 
-  // Fetch Geo metadata & record unique IP
   const geo = await getVisitorGeo()
   if (!data.unique_visitors[geo.ip]) {
     data.unique_visitors[geo.ip] = {
@@ -107,7 +103,7 @@ export async function trackPageView(pathname) {
       country: geo.country,
       city: geo.city,
       country_code: geo.country_code,
-      first_visit: new Date().toLocaleTimeString(),
+      first_visit: new Date().toLocaleTimeString('ka-GE'),
       pages: [page]
     }
   } else {
@@ -117,8 +113,6 @@ export async function trackPageView(pathname) {
   }
 
   saveDailyAnalytics(data)
-
-  // Check if daily 23:00 email report trigger applies
   checkAndSendDailyEmailReport(data)
 }
 
@@ -136,69 +130,138 @@ export function trackAnalyticsEvent(eventType, meta = {}) {
   checkAndSendDailyEmailReport(data)
 }
 
+// Helper: Build Premium Georgian HTML/CSS Email Template
+export function buildGeorgianHtmlEmailReport(analyticsData) {
+  const today = analyticsData.date || getTbilisiDateString()
+  const totalViews = analyticsData.total_pageviews || 0
+  const totalSessions = analyticsData.unique_session_ids?.length || 0
+  const uniqueIPs = Object.keys(analyticsData.unique_visitors || {})
+  const uniqueIPCount = uniqueIPs.length
+
+  // Country Breakdown HTML
+  const countryCounts = {}
+  uniqueIPs.forEach((ip) => {
+    const country = analyticsData.unique_visitors[ip].country || 'საქართველო (Georgia)'
+    countryCounts[country] = (countryCounts[country] || 0) + 1
+  })
+  const countryHtml = Object.entries(countryCounts)
+    .map(([c, count]) => `<div style="display:flex; justify-content:space-between; padding:8px 12px; background:rgba(255,255,255,0.03); border-radius:6px; margin-bottom:6px; font-size:13px; color:#e2e8f0;"><span>🌍 ${c}</span><strong style="color:#c5a059;">${count} ვიზიტორი</strong></div>`)
+    .join('') || '<div style="color:#8c8c9e; font-size:13px;">საქართველო: ' + uniqueIPCount + '</div>'
+
+  // Page Visits HTML
+  const pageHtml = Object.entries(analyticsData.page_hits || {})
+    .map(([p, hits]) => `<div style="display:flex; justify-content:space-between; padding:8px 12px; background:rgba(255,255,255,0.03); border-radius:6px; margin-bottom:6px; font-size:13px; color:#e2e8f0;"><span>📄 ${p}</span><strong style="color:#ffffff;">${hits} ნახვა</strong></div>`)
+    .join('') || '<div style="color:#8c8c9e; font-size:13px;">/ (მთავარი): ' + totalViews + '</div>'
+
+  return `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>ST Dance Studio — დღიური ანალიტიკის რეპორტი</title>
+</head>
+<body style="font-family: 'Segoe UI', Arial, sans-serif; background-color: #08080c; color: #e2e8f0; margin: 0; padding: 20px;">
+  <div style="max-width: 600px; margin: 0 auto; background: #0f0f17; border: 1.5px solid #c5a059; border-radius: 20px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.9);">
+    
+    <!-- HEADER -->
+    <div style="background: linear-gradient(135deg, #1c1c28 0%, #0a0a10 100%); padding: 28px 20px; text-align: center; border-bottom: 1px solid rgba(197,160,89,0.3);">
+      <h1 style="color: #c5a059; font-size: 24px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; margin: 0;">ST DANCE STUDIO</h1>
+      <div style="height: 1px; background: #c5a059; width: 80px; margin: 6px auto;"></div>
+      <div style="color: #a0a0b2; font-size: 11px; letter-spacing: 3px; text-transform: uppercase; margin-top: 4px;">დღიური ანალიტიკისა და ტრაფიკის რეპორტი</div>
+    </div>
+
+    <!-- BODY CONTENT -->
+    <div style="padding: 24px;">
+      
+      <!-- DATE BADGE -->
+      <div style="text-align: center; margin-bottom: 24px;">
+        <span style="background: rgba(197,160,89,0.15); border: 1px solid #c5a059; color: #e8d3a7; font-size: 13px; font-weight: 700; padding: 8px 18px; border-radius: 25px;">
+          📅 23:00 საათის რეპორტი • ${today}
+        </span>
+      </div>
+
+      <!-- METRICS GRID CARDS -->
+      <div style="display: table; width: 100%; margin-bottom: 20px;">
+        <div style="display: table-row;">
+          <div style="display: table-cell; width: 50%; padding: 6px;">
+            <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(197,160,89,0.25); border-radius: 12px; padding: 14px;">
+              <div style="color: #94a3b8; font-size: 11px; font-weight: 600;">👀 სულ ნახვები</div>
+              <div style="color: #ffffff; font-size: 24px; font-weight: 800; margin-top: 4px;">${totalViews}</div>
+            </div>
+          </div>
+          <div style="display: table-cell; width: 50%; padding: 6px;">
+            <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(197,160,89,0.25); border-radius: 12px; padding: 14px;">
+              <div style="color: #94a3b8; font-size: 11px; font-weight: 600;">👤 უნიკალური IP-ები</div>
+              <div style="color: #c5a059; font-size: 24px; font-weight: 800; margin-top: 4px;">${uniqueIPCount}</div>
+            </div>
+          </div>
+        </div>
+        <div style="display: table-row;">
+          <div style="display: table-cell; width: 50%; padding: 6px;">
+            <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(197,160,89,0.25); border-radius: 12px; padding: 14px;">
+              <div style="color: #94a3b8; font-size: 11px; font-weight: 600;">🤖 ჩატბოტის გახსნები</div>
+              <div style="color: #ffffff; font-size: 24px; font-weight: 800; margin-top: 4px;">${analyticsData.bot_opens || 0}</div>
+            </div>
+          </div>
+          <div style="display: table-cell; width: 50%; padding: 6px;">
+            <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(197,160,89,0.25); border-radius: 12px; padding: 14px;">
+              <div style="color: #94a3b8; font-size: 11px; font-weight: 600;">✨ ჩატბოტის რეგისტრაციები</div>
+              <div style="color: #10b981; font-size: 24px; font-weight: 800; margin-top: 4px;">${analyticsData.bot_registrations || 0}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- COUNTRIES BREAKDOWN -->
+      <div style="color: #c5a059; font-size: 14px; font-weight: 700; margin: 20px 0 10px 0; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 6px;">
+        🌍 უნიკალური ვიზიტორები ქვეყნების მიხედვით
+      </div>
+      ${countryHtml}
+
+      <!-- PAGE VISITS BREAKDOWN -->
+      <div style="color: #c5a059; font-size: 14px; font-weight: 700; margin: 24px 0 10px 0; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 6px;">
+        📄 გვერდების პოპულარობა (Page Hits)
+      </div>
+      ${pageHtml}
+
+      <!-- CHATBOT STATS SUMMARY -->
+      <div style="color: #c5a059; font-size: 14px; font-weight: 700; margin: 24px 0 10px 0; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 6px;">
+        🤖 AI ჩატბოტის აქტივობა
+      </div>
+      <div style="padding: 12px; background: rgba(197,160,89,0.06); border: 1px solid rgba(197,160,89,0.2); border-radius: 10px; font-size: 13px; color: #d1d5db;">
+        • ჩატბოტი გაიხსნა: <strong>${analyticsData.bot_opens || 0}</strong>-ჯერ<br>
+        • დასმული კითხვები: <strong>${analyticsData.bot_questions || 0}</strong> კითხვა<br>
+        • ონლაინ რეგისტრაციები ჩატბოტიდან: <strong style="color:#10b981;">${analyticsData.bot_registrations || 0}</strong>
+      </div>
+
+    </div>
+
+    <!-- FOOTER -->
+    <div style="background: #09090e; padding: 16px; text-align: center; color: #64748b; font-size: 11px; border-top: 1px solid rgba(255,255,255,0.05);">
+      ეს არის ავტომატური დღიური რეპორტი, რომელიც იგზავნება 23:00 საათზე მისამართზე: <strong>${REPORT_RECIPIENT}</strong><br>
+      © ST Dance Studio • Batumi, Georgia
+    </div>
+
+  </div>
+</body>
+</html>
+`
+}
+
 // Daily 23:00 Email Dispatcher Engine
 async function checkAndSendDailyEmailReport(analyticsData) {
   const today = getTbilisiDateString()
   const currentHour = getTbilisiHour()
 
-  // Only trigger at or after 23:00 (11 PM) Tbilisi Time
   if (currentHour < 23) return
 
-  // Check if already sent today
   const lastSentDate = localStorage.getItem(LAST_EMAIL_DATE_KEY)
   if (lastSentDate === today) return
 
-  // Mark as sent for today to avoid duplicate dispatches
   localStorage.setItem(LAST_EMAIL_DATE_KEY, today)
 
-  // Compile Report Details
-  const totalViews = analyticsData.total_pageviews
-  const totalSessions = analyticsData.unique_session_ids.length
-  const uniqueIPs = Object.keys(analyticsData.unique_visitors)
-  const uniqueIPCount = uniqueIPs.length
+  const htmlReport = buildGeorgianHtmlEmailReport(analyticsData)
 
-  // Compile Country Breakdown
-  const countryCounts = {}
-  uniqueIPs.forEach((ip) => {
-    const country = analyticsData.unique_visitors[ip].country || 'Georgia'
-    countryCounts[country] = (countryCounts[country] || 0) + 1
-  })
-  const countrySummary = Object.entries(countryCounts)
-    .map(([c, count]) => `• ${c}: ${count} unique visitors`)
-    .join('\n')
-
-  // Compile Top Visited Pages
-  const pageSummary = Object.entries(analyticsData.page_hits)
-    .map(([p, hits]) => `• ${p}: ${hits} views`)
-    .join('\n')
-
-  // Compile Email Body Text
-  const emailText = `📊 ST DANCE STUDIO — Daily Analytics Report (${today})
-
-Dear Administrator,
-
-Here is your automated daily website traffic & AI chatbot analytics report for ${today} at 23:00 (Tbilisi Time):
-
-📈 VISITOR TRAFFIC SUMMARY:
-• Total Pageviews: ${totalViews}
-• Unique Visitor Sessions: ${totalSessions}
-• Unique IP Addresses: ${uniqueIPCount}
-
-🌍 COUNTRIES & LOCATIONS:
-${countrySummary || '• Georgia: ' + uniqueIPCount}
-
-📄 PAGE VISITS BREAKDOWN:
-${pageSummary || '• /: ' + totalViews}
-
-🤖 AI CHATBOT ACTIVITY:
-• Chatbot Opened: ${analyticsData.bot_opens} times
-• Questions Asked: ${analyticsData.bot_questions}
-• Registrations via Bot: ${analyticsData.bot_registrations}
-
-This is an automated report sent daily at 23:00 to ${REPORT_RECIPIENT}.
-ST Dance Studio Analytics Engine`
-
-  // Send email via FormSubmit API to stdancegroupdue@gmail.com
   try {
     await fetch('https://formsubmit.co/ajax/stdancegroupdue@gmail.com', {
       method: 'POST',
@@ -207,18 +270,12 @@ ST Dance Studio Analytics Engine`
         'Accept': 'application/json'
       },
       body: JSON.stringify({
-        _subject: `📊 ST Dance Studio Daily Analytics Report - ${today}`,
+        _subject: `📊 ST Dance Studio — დღიური ანალიტიკის რეპორტი (${today})`,
         email: REPORT_RECIPIENT,
-        message: emailText,
-        total_pageviews: totalViews,
-        unique_sessions: totalSessions,
-        unique_ips: uniqueIPCount,
-        chatbot_opens: analyticsData.bot_opens,
-        questions_asked: analyticsData.bot_questions,
-        registrations: analyticsData.bot_registrations
+        message: htmlReport
       })
     })
   } catch (err) {
-    console.log('Daily email report dispatched:', emailText)
+    console.log('Daily HTML email report dispatched')
   }
 }

@@ -2697,12 +2697,19 @@ function AnalyticsTab({ showAlert }) {
   const handleTestEmail = async () => {
     setSendingEmail(true)
     try {
+      const { buildGeorgianHtmlEmailReport } = await import('../../utils/analytics')
       const today = new Date().toISOString().split('T')[0]
-      const totalViews = data?.total_pageviews || 0
-      const totalSessions = data?.unique_session_ids?.length || 0
-      const ips = Object.keys(data?.unique_visitors || {})
-      
-      const text = `📊 ST DANCE STUDIO — Daily Analytics Report (${today})\n\nTotal Pageviews: ${totalViews}\nUnique Visitor Sessions: ${totalSessions}\nUnique IPs: ${ips.length}\n\nCountries:\n${ips.map(ip => `• ${data.unique_visitors[ip].country || 'Georgia'} (${ip})`).join('\n')}\n\nBot Opens: ${data?.bot_opens || 0}\nBot Questions: ${data?.bot_questions || 0}\nBot Registrations: ${data?.bot_registrations || 0}`
+      const currentAnalytics = data || {
+        date: today,
+        total_pageviews: 48,
+        unique_visitors: { '127.0.0.1': { country: 'საქართველო (Georgia)', city: 'Batumi' } },
+        page_hits: { '/': 24, '/schedule': 12, '/contact': 6, '/register': 4 },
+        bot_opens: 16,
+        bot_questions: 32,
+        bot_registrations: 4,
+        unique_session_ids: ['s1', 's2', 's3']
+      }
+      const htmlMsg = buildGeorgianHtmlEmailReport(currentAnalytics)
 
       await fetch('https://formsubmit.co/ajax/stdancegroupdue@gmail.com', {
         method: 'POST',
@@ -2711,15 +2718,12 @@ function AnalyticsTab({ showAlert }) {
           'Accept': 'application/json'
         },
         body: JSON.stringify({
-          _subject: `📊 ST Dance Studio Daily Analytics Report - ${today}`,
+          _subject: `📊 ST Dance Studio — დღიური ანალიტიკის რეპორტი (${today})`,
           email: 'stdancegroupdue@gmail.com',
-          message: text,
-          total_pageviews: totalViews,
-          unique_sessions: totalSessions,
-          unique_ips: ips.length
+          message: htmlMsg
         })
       })
-      showAlert('რეპორტი წარმატებით გაიგზავნა მეილზე: stdancegroupdue@gmail.com')
+      showAlert('ქართულენოვანი HTML რეპორტი წარმატებით გაიგზავნა მეილზე: stdancegroupdue@gmail.com')
     } catch (e) {
       showAlert('რეპორტი გაიგზავნა!')
     } finally {
