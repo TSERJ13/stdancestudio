@@ -1,0 +1,259 @@
+/* ==========================================================================
+   ST DANCE STUDIO — LUXURY OBSIDIAN & CHAMPAGNE GOLD SCHEDULE STYLES
+   ========================================================================== */
+
+.schedule-controls-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  padding: 1rem 1.5rem;
+  background: rgba(15, 14, 13, 0.85);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(212, 166, 74, 0.25);
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.schedule-view-toggles {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.std-sched-btn {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(212, 166, 74, 0.2);
+  color: var(--color-text-muted, #a8a39a);
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.std-sched-btn:hover {
+  border-color: var(--color-gold, #d4a64a);
+  color: var(--color-gold, #d4a64a);
+}
+
+.std-sched-btn.active {
+  background: linear-gradient(135deg, rgba(212, 166, 74, 0.25) 0%, rgba(197, 160, 89, 0.1) 100%);
+  border-color: var(--color-gold, #d4a64a);
+  color: var(--color-gold, #d4a64a);
+  box-shadow: 0 0 15px rgba(212, 166, 74, 0.2);
+}
+
+.std-sched-glink {
+  color: var(--color-gold, #d4a64a);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: opacity 0.3s ease;
+}
+
+.std-sched-glink:hover {
+  opacity: 0.8;
+  text-decoration: underline;
+}
+
+/* LUXURY GRID CARD CONTAINER */
+.std-sched-luxury-card {
+  background: rgba(12, 11, 10, 0.95);
+  border: 1.5px solid rgba(212, 166, 74, 0.3);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.85);
+  padding: 1.5rem;
+}
+
+/* DAYS PILLS BAR */
+.std-sched-days-bar {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+}
+
+.std-sched-day-pill {
+  flex: 1;
+  min-width: 90px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #a8a39a;
+  padding: 0.75rem 0.5rem;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.std-sched-day-pill.active {
+  background: rgba(212, 166, 74, 0.15);
+  border-color: var(--color-gold, #d4a64a);
+  color: var(--color-gold, #d4a64a);
+}
+
+/* DESKTOP 7-COLUMN GRID */
+.std-sched-grid-desktop {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.75rem;
+}
+
+.std-sched-col {
+  background: rgba(255, 255, 255, 0.015);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  overflow: hidden;
+  min-height: 520px;
+  display: flex;
+  flex-direction: column;
+}
+
+.std-sched-col.is-today {
+  border-color: rgba(212, 166, 74, 0.5);
+  background: rgba(212, 166, 74, 0.03);
+}
+
+.std-sched-col-header {
+  background: rgba(212, 166, 74, 0.08);
+  padding: 0.75rem 0.5rem;
+  text-align: center;
+  border-bottom: 1px solid rgba(212, 166, 74, 0.2);
+}
+
+.std-sched-col-name {
+  color: var(--color-gold, #d4a64a);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.std-sched-col-body {
+  padding: 0.6rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  flex: 1;
+}
+
+/* EVENT CARDS IN GRID */
+.std-sched-evt-card {
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-left-width: 3.5px;
+  border-radius: 6px;
+  padding: 0.6rem 0.75rem;
+  transition: all 0.3s ease;
+}
+
+.std-sched-evt-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(212, 166, 74, 0.5);
+  background: rgba(212, 166, 74, 0.1);
+}
+
+.std-sched-evt-time {
+  display: block;
+  font-size: 0.68rem;
+  color: #8c867a;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.std-sched-evt-title {
+  color: #ffffff;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin: 0;
+  line-height: 1.25;
+}
+
+/* MOBILE SINGLE DAY VIEW */
+.std-sched-mobile-view {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .std-sched-grid-desktop {
+    display: none;
+  }
+  .std-sched-mobile-view {
+    display: block;
+  }
+}
+
+.std-sched-mobile-header {
+  border-bottom: 1px solid rgba(212, 166, 74, 0.3);
+  padding-bottom: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.std-sched-mobile-header h4 {
+  color: var(--color-gold, #d4a64a);
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.std-sched-mobile-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.std-sched-mobile-evt-row {
+  display: flex;
+  align-items: center;
+  justify: space-between;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(212, 166, 74, 0.2);
+  border-radius: 8px;
+  padding: 0.9rem 1rem;
+  gap: 1rem;
+}
+
+.std-sched-mobile-time {
+  font-size: 0.8rem;
+  color: var(--color-gold, #d4a64a);
+  font-weight: 700;
+  min-width: 100px;
+}
+
+.std-sched-mobile-info h5 {
+  color: #fff;
+  margin: 0 0 0.2rem 0;
+  font-size: 0.95rem;
+}
+
+.std-sched-badge {
+  font-size: 0.68rem;
+  color: #8c867a;
+  text-transform: uppercase;
+}
+
+.std-sched-mini-reg {
+  color: var(--color-gold, #d4a64a);
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+/* DARK GOOGLE CALENDAR IFRAME WRAPPER */
+.dark-gcal-frame {
+  border: 1.5px solid rgba(212, 166, 74, 0.35) !important;
+  border-radius: 14px !important;
+  overflow: hidden !important;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.85) !important;
+  background: #0d0c0b !important;
+}
+
+.dark-gcal-frame iframe {
+  filter: invert(0.9) hue-rotate(180deg) contrast(1.15) !important;
+}
