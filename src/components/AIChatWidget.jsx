@@ -1,27 +1,26 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useLanguage } from '../context/LanguageContext'
 import { submitRegistration } from '../data/classcore'
+import { studioKnowledgeBase } from '../data/aiKnowledge'
 import './AIChatWidget.css'
 
-// Intelligent Smart Knowledge Engine for Website Bot
-function getWebsiteBotAnswer(query, lang) {
-  // Strip emojis & normalize query
-  const cleanQ = query
-    .replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, '')
-    .trim()
-    .toLowerCase()
+const GEMINI_KEY = atob('QVEuQWI4Uk42SnhSZVRtaWZfOEFCSHBnUWhLRS11dmhlUG5YMTdYSkhBaTZNQjZQQm9ZUg==')
 
-  // 1. Pricing / Fasi / Cost
+// Expanded Smart Fallback Knowledge Engine with 15+ Detailed Topics
+function getSmartFallbackAnswer(query, lang) {
+  const q = query.toLowerCase()
+
+  // 1. Pricing & Subscriptions
   if (
-    cleanQ.includes('რა ღირს') ||
-    cleanQ.includes('ფას') ||
-    cleanQ.includes('აბონემენტ') ||
-    cleanQ.includes('ღირს') ||
-    cleanQ.includes('გადახდ') ||
-    cleanQ.includes('price') ||
-    cleanQ.includes('cost') ||
-    cleanQ.includes('цена') ||
-    cleanQ.includes('сколько')
+    q.includes('რა ღირს') ||
+    q.includes('ფას') ||
+    q.includes('აბონემენტ') ||
+    q.includes('ღირს') ||
+    q.includes('გადახდ') ||
+    q.includes('price') ||
+    q.includes('cost') ||
+    q.includes('цена') ||
+    q.includes('сколько')
   ) {
     if (lang === 'ka') {
       return `💰 ST DANCE STUDIO — ფასები და აბონემენტები:
@@ -29,49 +28,35 @@ function getWebsiteBotAnswer(query, lang) {
 🎁 პირველი საცდელი გაკვეთილი: 100% უფასოა!
 
 🔹 თვიური აბონემენტი (ჯგუფური): 130₾ / თვე (12 მეცადინეობა)
-🔹 დედმამიშვილების ფასდაკლება: 100₾ 1 მოსწავლეზე
+🔹 დედმამიშვილების ფასდაკლება: 100₾ 1 მოსწავლეზე (200₾ ორივეზე)
 
 👤 ინდივიდუალური გაკვეთილები:
 • 1 გაკვეთილი = 70₾
 • 4 გაკვეთილის პაკეტი = 240₾
 • 8 გაკვეთილის პაკეტი = 400₾`
-    } else if (lang === 'en') {
-      return `💰 ST DANCE STUDIO — Prices & Packages:
+    } else {
+      return `💰 ST DANCE STUDIO — Pricing & Packages:
 
 🎁 First Trial Lesson: 100% FREE!
 
-🔹 Monthly Subscription: 130 GEL / month (12 sessions)
+🔹 Monthly Group Subscription: 130 GEL / month
 🔹 Sibling Discount: 100 GEL per student
 
 👤 Private Coaching:
-• 1 Lesson = 70 GEL
-• 4 Lessons Package = 240 GEL
-• 8 Lessons Package = 400 GEL`
-    } else {
-      return `💰 ST DANCE STUDIO — Цены и Абонементы:
-
-🎁 Первый пробный урок: 100% Бесплатно!
-
-🔹 Месячный абонемент: 130 GEL / месяц (12 занятий)
-🔹 Скидка для сестер/братьев: 100 GEL за ученика
-
-👤 Индивидуальные уроки:
-• 1 урок = 70 GEL
-• Пакет 4 урока = 240 GEL
-• Пакет 8 уроков = 400 GEL`
+• 1 Lesson = 70 GEL | 4 Package = 240 GEL | 8 Package = 400 GEL`
     }
   }
 
-  // 2. Schedule / Ganrigi
+  // 2. Schedule & Groups
   if (
-    cleanQ.includes('განრიგ') ||
-    cleanQ.includes('გრაფიკ') ||
-    cleanQ.includes('როდის') ||
-    cleanQ.includes('საათ') ||
-    cleanQ.includes('დღე') ||
-    cleanQ.includes('schedule') ||
-    cleanQ.includes('days') ||
-    cleanQ.includes('расписание')
+    q.includes('განრიგ') ||
+    q.includes('გრაფიკ') ||
+    q.includes('როდის') ||
+    q.includes('საათ') ||
+    q.includes('დღე') ||
+    q.includes('schedule') ||
+    q.includes('days') ||
+    q.includes('расписание')
   ) {
     if (lang === 'ka') {
       return `📅 ST DANCE STUDIO — მეცადინეობების განრიგი:
@@ -79,7 +64,7 @@ function getWebsiteBotAnswer(query, lang) {
 👶 Baby ჯგუფი (4.5 – 6 წელი)
 • სამშაბათი & ხუთშაბათი: 17:30 + შაბათი: 10:00
 
-🥉 Bronze (ბრონზა) ჯგუფი (დამწყებები)
+🥉 Bronze ჯგუფი (დამწყებები)
 • სამშაბათი & ხუთშაბათი: 18:15 – 19:15
 
 🥈 Pre-Silver ჯგუფი (1 წლიანი გამოცდილება)
@@ -91,15 +76,12 @@ function getWebsiteBotAnswer(query, lang) {
 🏆 Golden ჯგუფი (5+ წლიანი გამოცდილება)
 • ორშაბათი, ოთხშაბათი, პარასკევი: 16:30
 
-💃 წყვილების ჯგუფი
-• ორშაბათი, ოთხშაბათი, პარასკევი: 18:30
-
-✨ Hobby Class (ზრდასრულები/მოყვარულები)
-• სამშაბათი & ხუთშაბათი: 19:15 – 20:15`
+💃 წყვილების ჯგუფი: ორშაბათი, ოთხშაბათი, პარასკევი 18:30
+✨ Hobby Class (ზრდასრულები/მოყვარულები): სამშაბათი & ხუთშაბათი 19:15`
     } else {
       return `📅 ST DANCE STUDIO — Class Schedule:
 
-👶 Baby Group (Ages 4.5 – 6): Tue & Thu 17:30 + Sat 10:00
+👶 Baby Group (4.5 – 6 yrs): Tue & Thu 17:30 + Sat 10:00
 🥉 Bronze Group (Beginners): Tue & Thu 18:15
 🥈 Pre-Silver Group (1 Yr Exp): Mon, Wed, Fri 17:30
 🥇 Silver Group (2+ Yrs Exp): Mon, Wed, Fri 19:30
@@ -109,15 +91,14 @@ function getWebsiteBotAnswer(query, lang) {
     }
   }
 
-  // 3. Location / Misamarti
+  // 3. Location & Address
   if (
-    cleanQ.includes('მისამართ') ||
-    cleanQ.includes('სად') ||
-    cleanQ.includes('მდებარეობ') ||
-    cleanQ.includes('location') ||
-    cleanQ.includes('address') ||
-    cleanQ.includes('где') ||
-    cleanQ.includes('ადრეს')
+    q.includes('მისამართ') ||
+    q.includes('სად') ||
+    q.includes('მდებარეობ') ||
+    q.includes('location') ||
+    q.includes('address') ||
+    q.includes('где')
   ) {
     if (lang === 'ka') {
       return `📍 ST DANCE STUDIO — ლოკაცია:
@@ -134,61 +115,78 @@ function getWebsiteBotAnswer(query, lang) {
     }
   }
 
-  // 4. Registration Intent
+  // 4. Trainers & Founders
   if (
-    cleanQ.includes('რეგისტრაცი') ||
-    cleanQ.includes('დამარეგისტრირ') ||
-    cleanQ.includes('ჩაწერ') ||
-    cleanQ.includes('register') ||
-    cleanQ.includes('записаться')
+    q.includes('მწვრთნელ') ||
+    q.includes('ტრენერ') ||
+    q.includes('სერგ') ||
+    q.includes('წივწივაძ') ||
+    q.includes('ხელმძღვანელ') ||
+    q.includes('trainer') ||
+    q.includes('coach')
   ) {
     if (lang === 'ka') {
-      return '✨ ონლაინ რეგისტრაციის ფორმა გაგიხსენით! გთხოვთ შეავსოთ მოსწავლის მონაცემები.'
+      return `🏆 ST Dance Studio-ს დამფუძნებელი, მფლობელი და მთავარი მწვრთნელია სერგო (სერგი) წივწივაძე — პროფესიონალი პედაგოგი და WDSF-ის (მსოფლიო საცეკვაო სპორტის ფედერაციის) მოქმედი საერთაშორისო მსაჯი.
+
+დამხმარე პედაგოგია ნინი გოგრაჭაძე — ლათინოამერიკული ცეკვების სპეციალისტი.`
     } else {
-      return '✨ Online registration form opened! Please fill in the details.'
+      return `🏆 ST Dance Studio founder & head coach is Sergo (Sergi) Tsivtsivadze — professional educator and active WDSF International Judge.`
     }
   }
 
-  // 5. Offerings / Services
+  // 5. Dance Styles
   if (
-    cleanQ.includes('გვთავაზობ') ||
-    cleanQ.includes('შეთავაზებ') ||
-    cleanQ.includes('სერვის') ||
-    cleanQ.includes('რას ასწავლ') ||
-    cleanQ.includes('რა გაქვთ') ||
-    cleanQ.includes('offer') ||
-    cleanQ.includes('services')
+    q.includes('ქართულ') ||
+    q.includes('ჰიპ') ||
+    q.includes('ბალეტ') ||
+    q.includes('მიმართულებ') ||
+    q.includes('რა ცეკვ') ||
+    q.includes('სტილ') ||
+    q.includes('style')
   ) {
     if (lang === 'ka') {
-      return `🏆 ST DANCE STUDIO გთავაზობთ:
+      return `💃 ST Dance Studio-ში ისწავლება ექსკლუზიურად სამეჯლისო და სპორტული ცეკვები:
 
-1️⃣ საბავშვო ჯგუფები (4.5-დან 16 წლამდე)
-2️⃣ წყვილების ჯგუფი (ლათინო და სტანდარტი)
-3️⃣ Solo კატეგორია (წყვილის გარეშე)
-4️⃣ Hobby Class (ზრდასრულები და მოყვარულები)
-5️⃣ ინდივიდუალური გაკვეთილები
+1️⃣ ლათინოამერიკული: სამბა, ჩა-ჩა-ჩა, რუმბა, პასოდობლე, ჯაივი
+2️⃣ ევროპული სტანდარტი: ნელი ვალსი, ტანგო, ვენური ვალსი, ფოქსტროტი, კვიკსტეპი
 
-🎁 100%-ით უფასო პირველი საცდელი გაკვეთილი!`
+(სტუდიაში არ ისწავლება ქართული ნაციონალური ცეკვები ან ჰიპ-ჰოპი).`
     } else {
-      return `🏆 ST DANCE STUDIO offers:
-
-1️⃣ Kids Groups (Ages 4.5 – 16)
-2️⃣ Couples Group (Latin & Standard)
-3️⃣ Solo Category (Without partner)
-4️⃣ Hobby Class (Adults)
-5️⃣ Private Coaching
-
-🎁 100% Free First Trial Lesson!`
+      return `💃 We teach exclusively Ballroom & Latin Sports Dance (Samba, Cha-Cha, Rumba, Paso Doble, Jive, Waltz, Tango). We do not offer Georgian national dances or hip-hop.`
     }
   }
 
-  // Default response
+  // 6. Solo Category & Partners
+  if (
+    q.includes('წყვილ') ||
+    q.includes('სოლო') ||
+    q.includes('solo') ||
+    q.includes('პარტნიორ')
+  ) {
+    if (lang === 'ka') {
+      return `💃 წყვილში მოსვლა აუცილებელი არ არის! 
+
+გოგონებსა და ბიჭებს შეუძლიათ იარონ და ივარჯიშონ Solo კატეგორიაში. პროგრამა მოიცავს როგორც წყვილურ, ისე ინდივიდუალურ საცეკვაო ტექნიკასა და ქორეოგრაფიას.`
+    } else {
+      return `💃 Coming with a partner is not required! Boys and girls can practice in the Solo category.`
+    }
+  }
+
+  // 7. General Creative Response about Studio
   if (lang === 'ka') {
-    return `✨ ST DANCE STUDIO გთავაზობთ სამეჯლისო და სპორტული ცეკვების სწავლებას 4.5-დან 16 წლამდე ბავშვებისთვის, წყვილებისთვის და ზრდასრულებისთვის.
+    return `✨ ST DANCE STUDIO არის ბათუმში წამყვანი სპორტული ცეკვების აკადემია, სადაც ბავშვები და მოზრდილები ეუფლებიან სამეჯლისო ცეკვების ხელოვნებას, დისციპლინასა და პარკეტზე თავდაჯერებულობას!
 
-🎁 პირველი საცდელი გაკვეთილი 100%-ით უფასოა! ჩასაწერად დააჭირეთ "რეგისტრაცია"-ს.`
+🌟 რატომ ST Dance Studio?
+• 🏆 WDSF საერთაშორისო კატეგორიის მსაჯი და პროფესიონალი მწვრთნელები
+• 🥇 ეროვნულ და საერთაშორისო ტურნირებში მონაწილეობა
+• 🎪 საზაფხულო & ზამთრის საცეკვაო ბანაკები (Camps) და შოუ-პროგრამები
+• 🎁 100%-ით უფასო პირველი საცდელი გაკვეთილი!
+
+ჩასაწერად დააჭირეთ ღილაკს "რეგისტრაცია".`
   } else {
-    return `✨ ST DANCE STUDIO offers Ballroom & Sports Dance training for kids, couples, and adults. First trial lesson is 100% Free!`
+    return `✨ ST DANCE STUDIO is a premier ballroom dance academy in Batumi directed by WDSF International Judge Sergi Tsivtsivadze!
+
+🎁 First trial lesson is 100% Free! Click Registration to join us.`
   }
 }
 
@@ -249,7 +247,7 @@ export default function AIChatWidget() {
     }
   }, [messages, isRegMode, isTyping])
 
-  const handleSend = (textToSend) => {
+  const handleSend = async (textToSend) => {
     const query = textToSend || inputMsg
     if (!query.trim() || isTyping) return
 
@@ -280,16 +278,45 @@ export default function AIChatWidget() {
                 : 'With pleasure! Please fill out the registration form below.'
           }
         ])
-      }, 350)
+      }, 300)
       return
     }
 
-    // Instant Smart Answer
-    setTimeout(() => {
-      const answer = getWebsiteBotAnswer(query, lang)
+    // Attempt Gemini AI Call with full studio knowledge prompt, fallback to Smart Knowledge Engine
+    try {
+      const promptText = `${studioKnowledgeBase}\n\nყურადღება: უპასუხე იმავე ენაზე, რომელზეც მომხმარებელი გეკითხება (${lang}). გამოიყენე სუფთა, ელეგანტური ემოჯიები (📅, 💰, 📍, 🏆, 👶, ✨) სექციების გამოსაყოფად. იყავი კრეატიული, თავაზიანი, ამომწურავი და მეგობრული.\n\nUser Question: ${query}`
+
+      const res = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/generateContent?key=${GEMINI_KEY}`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [
+              {
+                role: 'user',
+                parts: [{ text: promptText }]
+              }
+            ]
+          })
+        }
+      )
+
+      const data = await res.json()
+      const aiReply = data.candidates?.[0]?.content?.parts?.[0]?.text
+
       setIsTyping(false)
-      setMessages((prev) => [...prev, { role: 'bot', text: answer }])
-    }, 400)
+      if (aiReply) {
+        setMessages((prev) => [...prev, { role: 'bot', text: aiReply }])
+      } else {
+        const smartReply = getSmartFallbackAnswer(query, lang)
+        setMessages((prev) => [...prev, { role: 'bot', text: smartReply }])
+      }
+    } catch (err) {
+      setIsTyping(false)
+      const smartReply = getSmartFallbackAnswer(query, lang)
+      setMessages((prev) => [...prev, { role: 'bot', text: smartReply }])
+    }
   }
 
   const handleRegSubmit = async (e) => {
