@@ -2770,6 +2770,45 @@ function AnalyticsTab({ showAlert }) {
         </div>
       </div>
 
+      {/* Today's Registered Students Section */}
+      <h4 style={{ color: 'var(--gold, #d4a64a)', marginBottom: '10px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+        📝 დღეს დარეგისტრირებული მოსწავლეები ({data?.today_registrations_list?.length || 0})
+      </h4>
+      {!data?.today_registrations_list || data.today_registrations_list.length === 0 ? (
+        <div style={{ background: '#121110', border: '1px solid rgba(255,255,255,0.05)', padding: '14px', borderRadius: '8px', marginBottom: '25px', color: '#888', fontSize: '0.85rem' }}>
+          დღეს ჯერ ახალი მოსწავლე არ დარეგისტრირებულა.
+        </div>
+      ) : (
+        <table className="admin-table" style={{ marginBottom: '25px' }}>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>მოსწავლის სახელი</th>
+              <th>მშობლის სახელი</th>
+              <th>ტელეფონი (WhatsApp)</th>
+              <th>სასურველი ჯგუფი</th>
+              <th>დრო</th>
+            </tr>
+          </thead>
+          <tbody>
+            {data.today_registrations_list.map((reg, idx) => (
+              <tr key={idx}>
+                <td style={{ color: 'var(--gold, #d4a64a)', fontWeight: 'bold' }}>{idx + 1}</td>
+                <td style={{ color: '#fff', fontWeight: '600' }}>{reg.student_name}</td>
+                <td>{reg.parent_name}</td>
+                <td>
+                  <a href={`https://wa.me/${reg.phone.replace(/[^0-9]/g, '')}`} target="_blank" rel="noreferrer" style={{ color: '#50c878', textDecoration: 'none' }}>
+                    📱 {reg.phone}
+                  </a>
+                </td>
+                <td style={{ color: '#e2e8f0' }}>{reg.shift}</td>
+                <td style={{ color: '#888', fontSize: '0.8rem' }}>{reg.time}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+
       {/* Visitor IP & Country Breakdown */}
       <h4 style={{ color: '#fff', marginBottom: '10px' }}>🌍 უნიკალური ვიზიტორები IP და ქვეყნების მიხედვით</h4>
       {uniqueIPs.length === 0 ? (

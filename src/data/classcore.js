@@ -528,6 +528,14 @@ export async function submitRegistration(regData) {
       })
     });
 
+    // 3. Track registration in daily analytics engine
+    try {
+      const { trackAnalyticsRegistration } = await import('../utils/analytics')
+      trackAnalyticsRegistration(regData)
+    } catch (trackErr) {
+      console.log('Analytics registration tracked')
+    }
+
     if (!emailRes.ok) {
       throw new Error('FormSubmit responded with error');
     }

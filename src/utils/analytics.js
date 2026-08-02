@@ -22,7 +22,7 @@ function getTbilisiHour() {
 }
 
 // Get or initialize daily analytics container from localStorage
-function getDailyAnalytics() {
+export function getDailyAnalytics() {
   const today = getTbilisiDateString()
   try {
     const raw = localStorage.getItem(ANALYTICS_STORAGE_KEY)
@@ -42,7 +42,8 @@ function getDailyAnalytics() {
     bot_opens: 0,
     bot_questions: 0,
     bot_registrations: 0,
-    unique_session_ids: []
+    unique_session_ids: [],
+    today_registrations_list: [] // [{ student_name, parent_name, phone, shift, time }]
   }
 }
 
@@ -130,7 +131,28 @@ export function trackAnalyticsEvent(eventType, meta = {}) {
   checkAndSendDailyEmailReport(data)
 }
 
-// Helper: Build Clean Formatted Georgian Text Report
+// Track full registration submission into analytics list
+export function trackAnalyticsRegistration(regData) {
+  const data = getDailyAnalytics()
+  data.bot_registrations = (data.bot_registrations || 0) + 1
+  
+  if (!data.today_registrations_list) {
+    data.today_registrations_list = []
+  }
+
+  data.today_registrations_list.push({
+    student_name: regData.student_name || 'მოსწავლე',
+    parent_name: regData.parent_name || 'მშობელი',
+    phone: regData.parent_phone || 'ნომერი არ არის',
+    shift: regData.shift || 'ჯგუფი არ არის მითითებული',
+    time: new Date().toLocaleTimeString('ka-GE', { hour: '2-digit', minute: '2-digit' })
+  })
+
+  saveDailyAnalytics(data)
+  checkAndSendDailyEmailReport(data)
+}
+
+// Helper: Build Clean Formatted Georgian Text Report with Today's Registrations List
 export function buildGeorgianFormattedEmailReport(analyticsData) {
   const today = analyticsData.date || getTbilisiDateString()
   const totalViews = analyticsData.total_pageviews || 0
@@ -150,6 +172,11 @@ export function buildGeorgianFormattedEmailReport(analyticsData) {
     .map(([p, hits]) => `• ${p} : ${hits} ნახვა`)
     .join('\n') || '• / (მთავარი): ' + totalViews
 
+  const regList = analyticsData.today_registrations_list || []
+  const regStr = regList.length > 0
+    ? regList.map((r, idx) => `${idx + 1}. 👤 ${r.student_name} (მშობელი: ${r.parent_name} | 📞 ${r.phone}) — 💃 ${r.shift} [🕒 ${r.time}]`).join('\n')
+    : '• დღეს ახალი რეგისტრაცია არ დაფიქსირებულა'
+
   return `📊 ST DANCE STUDIO — დღიური ანალიტიკის რეპორტი (${today})
 
 =========================================
@@ -158,6 +185,11 @@ export function buildGeorgianFormattedEmailReport(analyticsData) {
 👀 სულ ნახვები (Pageviews): ${totalViews}
 👤 უნიკალური IP მისამართები: ${uniqueIPCount}
 📱 სესიების რაოდენობა: ${analyticsData.unique_session_ids?.length || 0}
+
+=========================================
+📝 დღეს დარეგისტრირებული მოსწავლეები (${regList.length})
+=========================================
+${regStr}
 
 =========================================
 🌍 უნიკალური ვიზიტორები ქვეყნების მიხედვით
@@ -194,6 +226,10 @@ async function checkAndSendDailyEmailReport(analyticsData) {
   localStorage.setItem(LAST_EMAIL_DATE_KEY, today)
 
   const reportText = buildGeorgianFormattedEmailReport(analyticsData)
+  const regList = analyticsData.today_registrations_list || []
+  const regSummary = regList.length > 0 
+    ? regList.map(r => `${r.student_name} (${r.phone}) - ${r.shift}`).join('; ')
+    : 'დღეს რეგისტრაციები არ არის'
 
   try {
     await fetch('https://formsubmit.co/ajax/stdancegroupdue@gmail.com', {
@@ -203,12 +239,12 @@ async function checkAndSendDailyEmailReport(analyticsData) {
         'Accept': 'application/json'
       },
       body: JSON.stringify({
-        _subject: `📊 ST Dance Studio — დღიური ანალიტიკის რეპორტი (${today})`,
+        _subject: `📊 ST Dance Studio — დღიური რეპორტი (${today}) | 📝 ${regList.length} ახალი მოსწავლე`,
         "📅 თარიღი": `${today} (23:00 საათი)`,
+        "📝 დღეს დარეგისტრირებულები": `${regList.length} მოსწავლე (${regSummary})`,
         "👀 სულ ნახვები": analyticsData.total_pageviews || 0,
         "👤 უნიკალური IP-ები": Object.keys(analyticsData.unique_visitors || {}).length,
         "🤖 ჩატბოტის გახსნები": `${analyticsData.bot_opens || 0}-ჯერ`,
-        "✨ ჩატბოტის რეგისტრაციები": `${analyticsData.bot_registrations || 0}`,
         "📋 სრული რეპორტი": reportText
       })
     })
