@@ -69,8 +69,14 @@ export default function Header() {
   }, [])
 
   useEffect(() => {
-    document.body.style.overflow = mobileOpen ? 'hidden' : ''
-    return () => { document.body.style.overflow = '' }
+    if (mobileOpen) {
+      document.body.classList.add('mobile-menu-open')
+    } else {
+      document.body.classList.remove('mobile-menu-open')
+    }
+    return () => {
+      document.body.classList.remove('mobile-menu-open')
+    }
   }, [mobileOpen])
 
   const basePath = lang === 'ka' ? '' : `/${lang}`

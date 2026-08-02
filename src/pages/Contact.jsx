@@ -287,7 +287,7 @@ export default function Contact() {
                 margin: 0,
                 display: 'flex',
                 alignItems: 'center',
-                justify: 'center',
+                justifyContent: 'center',
                 zIndex: 30,
                 boxShadow: '0 4px 12px rgba(0,0,0,0.6)'
               }}

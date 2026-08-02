@@ -324,10 +324,20 @@ export default function AIChatWidget() {
   // Update initial welcome message & registration select group default when language changes
   useEffect(() => {
     if (messages.length === 1 && messages[0].role === 'bot') {
-      setMessages([{ role: 'bot', text: activeTrans.welcome }])
+setMessages([{ role: 'bot', text: activeTrans.welcome }])
     }
     setRegForm((prev) => ({ ...prev, shift: activeTrans.groups[0] }))
   }, [lang])
+
+  // 5. Hide Tooltip after 5 seconds
+  const [showTooltip, setShowTooltip] = useState(true)
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowTooltip(false)
+    }, 5000)
+    return () => clearTimeout(timer)
+  }, [])
 
   // Listen for custom global trigger event "open-ai-chat"
   useEffect(() => {
@@ -338,6 +348,15 @@ export default function AIChatWidget() {
     window.addEventListener('open-ai-chat', handleGlobalOpen)
     return () => window.removeEventListener('open-ai-chat', handleGlobalOpen)
   }, [])
+
+  // Keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape' && isOpen) setIsOpen(false)
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [isOpen])
 
   // Track opening
   const toggleOpen = () => {

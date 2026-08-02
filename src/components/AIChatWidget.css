@@ -15,6 +15,10 @@
   pointer-events: auto;
 }
 
+body.mobile-menu-open .std-bot-widget-container {
+  display: none !important;
+}
+
 .std-bot-tooltip-bubble {
   background: #000000;
   border: 1px solid var(--color-gold, #c5a059);
