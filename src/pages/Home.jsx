@@ -5,9 +5,17 @@ import { translations } from '../data/translations'
 import { useLanguage } from '../context/LanguageContext'
 import './Home.css'
 
+const carouselImages = [
+  { src: '/images/about-kids-clean.jpg?v=5', alt: 'ST Dance Young Dancers' },
+  { src: '/images/studio-hall.jpg', alt: 'ST Dance Studio Hall' },
+  { src: '/images/hero-1.png', alt: 'ST Dance Competition Performance' },
+  { src: '/images/competition.png', alt: 'ST Dance Tournament' }
+]
+
 export default function Home() {
   const { testimonials } = siteContent
   const [testimonialIdx, setTestimonialIdx] = useState(0)
+  const [aboutSlide, setAboutSlide] = useState(0)
   const { lang, t } = useLanguage()
   const basePath = lang === 'ka' ? '' : `/${lang}`
 
@@ -15,12 +23,21 @@ export default function Home() {
   const programs = activeTrans.programs || siteContent.programs
   const teachers = activeTrans.teachers || siteContent.teachers
 
+  // Auto slide testimonials
   useEffect(() => {
     const id = setInterval(() => {
       setTestimonialIdx((i) => (i + 1) % testimonials.length)
     }, 6000)
     return () => clearInterval(id)
   }, [testimonials.length])
+
+  // Auto slide About Carousel (4.5 seconds)
+  useEffect(() => {
+    const slideId = setInterval(() => {
+      setAboutSlide((prev) => (prev + 1) % carouselImages.length)
+    }, 4500)
+    return () => clearInterval(slideId)
+  }, [])
 
   return (
     <>
@@ -87,15 +104,58 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ===================== ABOUT BLURB ===================== */}
+      {/* ===================== ABOUT BLURB WITH INTERACTIVE PHOTO CAROUSEL ===================== */}
       <section className="section about-blurb">
         <div className="container about-blurb__grid">
-          <div className="about-blurb__media" style={{ background: '#000', overflow: 'hidden' }}>
-            <img 
-              src="/images/about-kids-clean.jpg?v=5" 
-              alt="ST Dance Studio" 
-              style={{ objectFit: 'contain', width: '100%', height: '100%' }}
-            />
+          <div className="about-blurb__media" style={{ background: '#0a0908', overflow: 'hidden', position: 'relative', minHeight: '380px' }}>
+            
+            {/* Carousel Images */}
+            {carouselImages.map((img, idx) => (
+              <img 
+                key={idx}
+                src={img.src} 
+                alt={img.alt} 
+                style={{ 
+                  objectFit: idx === 0 ? 'contain' : 'cover', 
+                  width: '100%', 
+                  height: '100%',
+                  position: 'absolute',
+                  inset: 0,
+                  opacity: aboutSlide === idx ? 1 : 0,
+                  transition: 'opacity 0.8s ease, transform 0.8s ease',
+                  transform: aboutSlide === idx ? 'scale(1)' : 'scale(1.04)'
+                }}
+              />
+            ))}
+
+            {/* Prev / Next Arrows */}
+            <button 
+              onClick={() => setAboutSlide((prev) => (prev - 1 + carouselImages.length) % carouselImages.length)}
+              className="carousel-arrow carousel-arrow--left"
+              aria-label="Previous Photo"
+            >
+              ‹
+            </button>
+            <button 
+              onClick={() => setAboutSlide((prev) => (prev + 1) % carouselImages.length)}
+              className="carousel-arrow carousel-arrow--right"
+              aria-label="Next Photo"
+            >
+              ›
+            </button>
+
+            {/* Progress Dots */}
+            <div className="carousel-dots">
+              {carouselImages.map((_, idx) => (
+                <span 
+                  key={idx} 
+                  className={`carousel-dot ${aboutSlide === idx ? 'active' : ''}`}
+                  onClick={() => setAboutSlide(idx)}
+                />
+              ))}
+            </div>
+
+            {/* Est 2014 Gold Badge */}
             <div className="about-blurb__badge">
               <span className="display-italic">est.</span>
               <strong>2014</strong>

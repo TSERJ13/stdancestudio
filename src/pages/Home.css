@@ -245,6 +245,74 @@
   .about-blurb__grid { grid-template-columns: 1fr; }
 }
 
+/* ABOUT BLURB PHOTO CAROUSEL */
+.carousel-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(10, 9, 8, 0.7);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(212, 166, 74, 0.4);
+  color: var(--color-gold, #d4a64a);
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+  z-index: 10;
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+
+.about-blurb__media:hover .carousel-arrow {
+  opacity: 1;
+}
+
+.carousel-arrow:hover {
+  background: rgba(212, 166, 74, 0.25);
+  border-color: var(--color-gold, #d4a64a);
+  transform: translateY(-50%) scale(1.1);
+}
+
+.carousel-arrow--left {
+  left: 12px;
+}
+
+.carousel-arrow--right {
+  right: 12px;
+}
+
+.carousel-dots {
+  position: absolute;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 6px;
+  z-index: 10;
+}
+
+.carousel-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.35);
+  border: 1px solid rgba(212, 166, 74, 0.4);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.carousel-dot.active {
+  width: 24px;
+  border-radius: 4px;
+  background: var(--color-gold, #d4a64a);
+  box-shadow: 0 0 10px rgba(212, 166, 74, 0.6);
+}
+
 /* ===========================================
    SECTION HEAD (shared)
    =========================================== */
