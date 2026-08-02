@@ -618,79 +618,87 @@ export default function Bio() {
     }
   ]
 
-  // REAL INSTAGRAM POSTS & MEDIA FROM USER REQUEST (COMPLETE 9 ITEMS FOR 3X3 GRID)
-  // The 6 EXACT real Instagram posts the user provided as embeds
+  // REAL INSTAGRAM POSTS & MEDIA FROM /public/feed-pics
   const realInstaEmbeds = [
     {
       id: 1,
       type: 'post',
-      shortcode: 'DYy9WNRDjyT',
-      thumbnail: '/images/hero-1.png',
-      permalink: 'https://www.instagram.com/p/DYy9WNRDjyT/',
+      title: 'Caucasus Cup 2026',
+      shortcode: 'CaucasusCup1',
+      thumbnail: '/feed-pics/CaucasusCup1.jpeg',
+      permalink: 'https://www.instagram.com/stdancestudio/',
       embedUrl: 'https://www.instagram.com/p/DYy9WNRDjyT/embed',
     },
     {
       id: 2,
       type: 'post',
-      shortcode: 'DSm1G4SFT-i',
-      thumbnail: '/images/about-kids.jpg',
-      permalink: 'https://www.instagram.com/p/DSm1G4SFT-i/',
+      title: 'Caucasus Cup Highlights',
+      shortcode: 'CaucasusCup2',
+      thumbnail: '/feed-pics/CaucasusCup2.jpeg',
+      permalink: 'https://www.instagram.com/stdancestudio/',
       embedUrl: 'https://www.instagram.com/p/DSm1G4SFT-i/embed',
     },
     {
       id: 3,
       type: 'post',
-      shortcode: 'CwbIKwVIK6C',
-      thumbnail: '/images/competition.png',
-      permalink: 'https://www.instagram.com/p/CwbIKwVIK6C/',
+      title: 'Caucasus Cup Winners',
+      shortcode: 'CaucasusCup3',
+      thumbnail: '/feed-pics/CaucasusCup3.jpeg',
+      permalink: 'https://www.instagram.com/stdancestudio/',
       embedUrl: 'https://www.instagram.com/p/CwbIKwVIK6C/embed',
     },
     {
       id: 4,
       type: 'post',
-      shortcode: 'CuVJP7poqe2',
-      thumbnail: '/images/dancer-1.png',
-      permalink: 'https://www.instagram.com/p/CuVJP7poqe2/',
+      title: 'ST Dance Studio Performers',
+      shortcode: 'CaucasusCup4',
+      thumbnail: '/feed-pics/CaucasusCup4.jpeg',
+      permalink: 'https://www.instagram.com/stdancestudio/',
       embedUrl: 'https://www.instagram.com/p/CuVJP7poqe2/embed',
     },
     {
       id: 5,
       type: 'post',
-      shortcode: 'CuPJ6q8o-ds',
-      thumbnail: '/images/dancer-2.png',
-      permalink: 'https://www.instagram.com/p/CuPJ6q8o-ds/',
+      title: 'Caucasus Cup Stage',
+      shortcode: 'CaucasusCup5',
+      thumbnail: '/feed-pics/CaucasusCup5.jpeg',
+      permalink: 'https://www.instagram.com/stdancestudio/',
       embedUrl: 'https://www.instagram.com/p/CuPJ6q8o-ds/embed',
     },
     {
       id: 6,
       type: 'reel',
-      shortcode: 'CtHujjZIL3Z',
-      thumbnail: '/images/hero-2.png',
-      permalink: 'https://www.instagram.com/reel/CtHujjZIL3Z/',
+      title: 'Caucasus Cup Reel',
+      shortcode: 'CaucasusCup6',
+      thumbnail: '/feed-pics/CaucasusCup6.jpeg',
+      permalink: 'https://www.instagram.com/stdancestudio/',
       embedUrl: 'https://www.instagram.com/reel/CtHujjZIL3Z/embed',
     },
     {
       id: 7,
       type: 'post',
-      shortcode: 'Cs1ds_Vo48t',
-      thumbnail: '/images/nini.jpg',
-      permalink: 'https://www.instagram.com/p/Cs1ds_Vo48t/',
+      title: 'ST Dance Studio Team',
+      shortcode: 'CaucasusCup7',
+      thumbnail: '/feed-pics/CaucasusCup7.jpeg',
+      permalink: 'https://www.instagram.com/stdancestudio/',
       embedUrl: 'https://www.instagram.com/p/Cs1ds_Vo48t/embed',
     },
     {
       id: 8,
       type: 'post',
-      shortcode: 'CqBh8nAofgP',
-      thumbnail: '/images/sergi.jpg',
-      permalink: 'https://www.instagram.com/p/CqBh8nAofgP/',
+      title: 'Caucasus Cup Moments',
+      shortcode: 'CaucasusCup8',
+      thumbnail: '/feed-pics/CaucasusCup8.jpeg',
+      permalink: 'https://www.instagram.com/stdancestudio/',
       embedUrl: 'https://www.instagram.com/p/CqBh8nAofgP/embed',
     },
     {
       id: 9,
       type: 'post',
-      shortcode: 'CuVJP7poqe2',
-      thumbnail: '/images/about-kids-clean.jpg',
-      permalink: 'https://www.instagram.com/p/CuVJP7poqe2/',
+      title: 'Caucasus Cup Trophy Ceremony',
+      shortcode: 'CaucasusCup9',
+      thumbnail: '/feed-pics/CaucasusCup9.jpeg',
+      permalink: 'https://www.instagram.com/stdancestudio/',
       embedUrl: 'https://www.instagram.com/p/CuVJP7poqe2/embed',
     },
   ]
@@ -1313,28 +1321,22 @@ export default function Bio() {
               <p className="bio-modal-sub">@stdancestudio on Instagram</p>
             </div>
 
-            <div className="bio-insta-embed-box">
-              <iframe
-                src={selectedInstaPost.embedUrl}
-                width="100%"
-                height="460"
-                frameBorder="0"
-                scrolling="no"
-                allowTransparency={true}
-                allow="encrypted-media"
-                title="Instagram Post Embed"
-                style={{ borderRadius: '12px', border: '1px solid var(--border-glass)' }}
-              ></iframe>
+            <div className="bio-insta-embed-box" style={{ overflow: 'hidden', borderRadius: '12px', background: '#000' }}>
+              <img
+                src={selectedInstaPost.thumbnail}
+                alt={selectedInstaPost.title}
+                style={{ width: '100%', maxHeight: '420px', objectFit: 'contain', display: 'block', borderRadius: '12px' }}
+              />
             </div>
 
             <a
-              href={selectedInstaPost.url}
+              href={selectedInstaPost.permalink || 'https://www.instagram.com/stdancestudio/'}
               target="_blank"
               rel="noopener noreferrer"
               className="bio-form-submit-btn"
               style={{ display: 'block', textAlign: 'center', textDecoration: 'none', marginTop: '0.8rem' }}
             >
-              Instagram-ში გახსნა ➔
+              Instagram-ში ნახვა ➔
             </a>
           </div>
         </div>
