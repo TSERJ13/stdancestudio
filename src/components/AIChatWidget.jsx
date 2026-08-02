@@ -340,7 +340,7 @@ setMessages([{ role: 'bot', text: activeTrans.welcome }])
 
     const timer2 = setTimeout(() => {
       setShowTooltip(false)
-    }, 6600) // 0.6s after swallow begins
+    }, 8500) // 2.5s for the full crumple & swallow animation
 
     return () => {
       clearTimeout(timer1)
@@ -546,7 +546,12 @@ ${studioKnowledgeBase}
               fill="none"
               stroke="#d4af37"
               strokeWidth="2"
+              style={{ overflow: 'visible' }}
             >
+              {/* Hands (Initially hidden, animated during swallow) */}
+              <path className="robot-hand left-hand" d="M3 15 Q-8 8 -12 -15" stroke="#d4af37" strokeWidth="2.5" strokeLinecap="round" />
+              <path className="robot-hand right-hand" d="M21 15 Q32 8 36 -15" stroke="#d4af37" strokeWidth="2.5" strokeLinecap="round" />
+              
               <rect x="3" y="11" width="18" height="10" rx="4" fill="rgba(212,175,55,0.1)" />
               <circle cx="8.5" cy="15.5" r="1.5" fill="#d4af37" className="robot-eye" />
               <circle cx="15.5" cy="15.5" r="1.5" fill="#d4af37" className="robot-eye" />

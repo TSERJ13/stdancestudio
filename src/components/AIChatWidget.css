@@ -65,18 +65,74 @@ body.mobile-menu-open .std-bot-widget-container {
   50% { transform: translateY(-5px); }
 }
 
-/* Tooltip Swallow Animation */
-.swallow-anim {
-  animation: swallowTooltip 0.6s cubic-bezier(0.55, 0.085, 0.68, 0.53) forwards !important;
+/* Robot Hands Animation */
+.robot-hand {
+  opacity: 0;
+  stroke-dasharray: 60;
+  stroke-dashoffset: 60;
+  transition: opacity 0.2s;
+  transform-origin: 12px 12px;
 }
 
-@keyframes swallowTooltip {
+.std-bot-3d-robot-icon.swallow-active .robot-hand {
+  animation: reachOutAndGrab 2.5s forwards;
+}
+
+@keyframes reachOutAndGrab {
   0% {
-    transform: scale(1) translate(0, 0);
+    opacity: 1;
+    stroke-dashoffset: 60;
+    transform: translateY(0);
+  }
+  15% {
+    opacity: 1;
+    stroke-dashoffset: 0;
+    transform: translateY(-5px);
+  }
+  30% {
+    stroke-dashoffset: 0;
+    transform: translateY(-10px) scaleY(1.2);
+  }
+  50% {
+    stroke-dashoffset: 0;
+    transform: translateY(20px) scale(0.5);
     opacity: 1;
   }
-  100% {
-    transform: scale(0) translate(40px, 80px) rotate(45deg);
+  60%, 100% {
+    transform: translateY(30px) scale(0.2);
+    opacity: 0;
+  }
+}
+
+/* Tooltip Crumple Animation */
+.swallow-anim {
+  animation: crumpleTooltip 2.5s forwards !important;
+}
+
+@keyframes crumpleTooltip {
+  0% {
+    transform: scale(1) translate(0, 0);
+    border-radius: 30px;
+    opacity: 1;
+  }
+  15% {
+    transform: scale(0.9) translate(0, 5px) rotate(-2deg);
+    border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+    opacity: 1;
+  }
+  30% {
+    transform: scale(0.6) translate(10px, 30px) rotate(12deg);
+    border-radius: 50% 20% 30% 60% / 60% 30% 70% 40%;
+    color: transparent;
+    border-color: #a47c2e;
+    background: rgba(212, 175, 55, 0.2);
+  }
+  50% {
+    transform: scale(0.15) translate(80px, 180px) rotate(45deg);
+    opacity: 0.8;
+  }
+  60%, 100% {
+    transform: scale(0) translate(100px, 200px);
     opacity: 0;
   }
 }
@@ -84,11 +140,21 @@ body.mobile-menu-open .std-bot-widget-container {
 /* Robot Mouth Animation */
 .robot-mouth {
   transform-origin: 12px 19px;
-  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .std-bot-3d-robot-icon.swallow-active .robot-mouth {
-  transform: scaleY(5);
+  animation: mouthChew 2.5s forwards;
+}
+
+@keyframes mouthChew {
+  0%, 30% { transform: scaleY(1); }
+  45% { transform: scaleY(7); }
+  55% { transform: scaleY(7); }
+  65% { transform: scaleY(1); }
+  75% { transform: scaleY(3); }
+  85% { transform: scaleY(1); }
+  100% { transform: scaleY(1); }
 }
 
 /* 3D Gold & Obsidian Mascot Trigger Button */
