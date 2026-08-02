@@ -3,72 +3,76 @@ import { useLanguage } from '../context/LanguageContext'
 import './InnerPage.css'
 import './Schedule.css'
 
-// Weekly Schedule Events Database matching Sergi's calendar
+// Weekly Schedule Events Database — Starting from MONDAY (day 0) to SUNDAY (day 6)
 const weeklyEvents = [
-  // SUNDAY
-  { day: 0, title: 'Ansamble 👨‍👩‍👧‍👦', time: '11:00 – 12:30', category: 'group', color: '#d4a64a' },
-  { day: 0, title: 'Ballet Group 🩰', time: '13:00 – 16:00', category: 'ballet', color: '#c5a059' },
-  { day: 0, title: 'Alisa ind.', time: '18:00 – 19:00', category: 'private', color: '#a89060' },
+  // MONDAY (0)
+  { day: 0, title: 'FlyLife', time: '10:00 – 12:00', category: 'fitness', color: '#a89060' },
+  { day: 0, title: 'Makar & Elene ind.', time: '15:30 – 16:30', category: 'private', color: '#a89060' },
+  { day: 0, title: 'Golden Group 🥇', time: '16:30 – 17:30', category: 'group', color: '#ffd700' },
+  { day: 0, title: 'Pre Silver Group 🥈', time: '17:30 – 18:30', category: 'group', color: '#c0c0c0' },
+  { day: 0, title: 'Couples Group 💃', time: '18:30 – 19:30', category: 'group', color: '#e6c687' },
+  { day: 0, title: 'Silver Group 🥈', time: '19:30 – 20:30', category: 'group', color: '#d4a64a' },
+  { day: 0, title: 'Fitness 🧘', time: '21:00 – 22:00', category: 'fitness', color: '#8c7853' },
 
-  // MONDAY
-  { day: 1, title: 'FlyLife', time: '10:00 – 12:00', category: 'fitness', color: '#a89060' },
-  { day: 1, title: 'Makar & Elene ind.', time: '15:30 – 16:30', category: 'private', color: '#a89060' },
-  { day: 1, title: 'Golden Group 🥇', time: '16:30 – 17:30', category: 'group', color: '#ffd700' },
-  { day: 1, title: 'Pre Silver Group 🥈', time: '17:30 – 18:30', category: 'group', color: '#c0c0c0' },
-  { day: 1, title: 'Couples Group 💃', time: '18:30 – 19:30', category: 'group', color: '#e6c687' },
-  { day: 1, title: 'Silver Group 🥈', time: '19:30 – 20:30', category: 'group', color: '#d4a64a' },
-  { day: 1, title: 'Fitness 🧘', time: '21:00 – 22:00', category: 'fitness', color: '#8c7853' },
+  // TUESDAY (1)
+  { day: 1, title: 'BABY 🚀', time: '17:30 – 18:15', category: 'kids', color: '#f39c12' },
+  { day: 1, title: 'Bronza Group 🥉', time: '18:15 – 19:15', category: 'group', color: '#cd7f32' },
+  { day: 1, title: 'Starter Group 🥉', time: '19:15 – 20:15', category: 'group', color: '#d4a64a' },
+  { day: 1, title: 'Tango Argentine 💃', time: '20:15 – 21:15', category: 'adults', color: '#e74c3c' },
 
-  // TUESDAY
-  { day: 2, title: 'BABY 🚀', time: '17:30 – 18:15', category: 'kids', color: '#f39c12' },
-  { day: 2, title: 'Bronza Group 🥉', time: '18:15 – 19:15', category: 'group', color: '#cd7f32' },
-  { day: 2, title: 'Starter Group 🥉', time: '19:15 – 20:15', category: 'group', color: '#d4a64a' },
-  { day: 2, title: 'Tango Argentine 💃', time: '20:15 – 21:15', category: 'adults', color: '#e74c3c' },
+  // WEDNESDAY (2)
+  { day: 2, title: 'FlyLife', time: '10:00 – 12:00', category: 'fitness', color: '#a89060' },
+  { day: 2, title: 'Makar & Elene ind.', time: '15:30 – 16:30', category: 'private', color: '#a89060' },
+  { day: 2, title: 'Golden Group 🥇', time: '16:30 – 17:30', category: 'group', color: '#ffd700' },
+  { day: 2, title: 'Pre Silver Group 🥈', time: '17:30 – 18:30', category: 'group', color: '#c0c0c0' },
+  { day: 2, title: 'Couples Group 💃', time: '18:30 – 19:30', category: 'group', color: '#e6c687' },
+  { day: 2, title: 'Silver Group 🥈', time: '19:30 – 20:30', category: 'group', color: '#d4a64a' },
+  { day: 2, title: 'Fitness 🧘', time: '21:00 – 22:00', category: 'fitness', color: '#8c7853' },
 
-  // WEDNESDAY
-  { day: 3, title: 'FlyLife', time: '10:00 – 12:00', category: 'fitness', color: '#a89060' },
-  { day: 3, title: 'Makar & Elene ind.', time: '15:30 – 16:30', category: 'private', color: '#a89060' },
-  { day: 3, title: 'Golden Group 🥇', time: '16:30 – 17:30', category: 'group', color: '#ffd700' },
-  { day: 3, title: 'Pre Silver Group 🥈', time: '17:30 – 18:30', category: 'group', color: '#c0c0c0' },
-  { day: 3, title: 'Couples Group 💃', time: '18:30 – 19:30', category: 'group', color: '#e6c687' },
-  { day: 3, title: 'Silver Group 🥈', time: '19:30 – 20:30', category: 'group', color: '#d4a64a' },
-  { day: 3, title: 'Fitness 🧘', time: '21:00 – 22:00', category: 'fitness', color: '#8c7853' },
+  // THURSDAY (3)
+  { day: 3, title: 'Timur & Alisa', time: '11:00 – 12:00', category: 'private', color: '#a89060' },
+  { day: 3, title: 'Dima & Adriana', time: '12:00 – 13:00', category: 'private', color: '#a89060' },
+  { day: 3, title: 'Darya ind.', time: '15:30 – 16:30', category: 'private', color: '#a89060' },
+  { day: 3, title: 'Elene ind.', time: '16:30 – 17:30', category: 'private', color: '#a89060' },
+  { day: 3, title: 'BABY 🚀', time: '17:30 – 18:15', category: 'kids', color: '#f39c12' },
+  { day: 3, title: 'Bronza Group 🥉', time: '18:15 – 19:15', category: 'group', color: '#cd7f32' },
+  { day: 3, title: 'Starter Group 🥉', time: '19:15 – 20:15', category: 'group', color: '#d4a64a' },
 
-  // THURSDAY
-  { day: 4, title: 'Timur & Alisa', time: '11:00 – 12:00', category: 'private', color: '#a89060' },
-  { day: 4, title: 'Dima & Adriana', time: '12:00 – 13:00', category: 'private', color: '#a89060' },
-  { day: 4, title: 'Darya ind.', time: '15:30 – 16:30', category: 'private', color: '#a89060' },
-  { day: 4, title: 'Elene ind.', time: '16:30 – 17:30', category: 'private', color: '#a89060' },
-  { day: 4, title: 'BABY 🚀', time: '17:30 – 18:15', category: 'kids', color: '#f39c12' },
-  { day: 4, title: 'Bronza Group 🥉', time: '18:15 – 19:15', category: 'group', color: '#cd7f32' },
-  { day: 4, title: 'Starter Group 🥉', time: '19:15 – 20:15', category: 'group', color: '#d4a64a' },
-  { day: 4, title: 'Tango Argentine 💃', time: '20:15 – 21:15', category: 'adults', color: '#e74c3c' },
+  // FRIDAY (4)
+  { day: 4, title: 'FlyLife', time: '10:00 – 12:00', category: 'fitness', color: '#a89060' },
+  { day: 4, title: 'Makar & Elene ind.', time: '15:30 – 16:30', category: 'private', color: '#a89060' },
+  { day: 4, title: 'Golden Group 🥇', time: '16:30 – 17:30', category: 'group', color: '#ffd700' },
+  { day: 4, title: 'Pre Silver Group 🥈', time: '17:30 – 18:30', category: 'group', color: '#c0c0c0' },
+  { day: 4, title: 'Couples Group 💃', time: '18:30 – 19:30', category: 'group', color: '#e6c687' },
+  { day: 4, title: 'Silver Group 🥈', time: '19:30 – 20:30', category: 'group', color: '#d4a64a' },
+  { day: 4, title: 'Fitness 🧘', time: '21:00 – 22:00', category: 'fitness', color: '#8c7853' },
 
-  // FRIDAY
-  { day: 5, title: 'FlyLife', time: '10:00 – 12:00', category: 'fitness', color: '#a89060' },
-  { day: 5, title: 'Makar & Elene ind.', time: '15:30 – 16:30', category: 'private', color: '#a89060' },
-  { day: 5, title: 'Golden Group 🥇', time: '16:30 – 17:30', category: 'group', color: '#ffd700' },
-  { day: 5, title: 'Pre Silver Group 🥈', time: '17:30 – 18:30', category: 'group', color: '#c0c0c0' },
-  { day: 5, title: 'Couples Group 💃', time: '18:30 – 19:30', category: 'group', color: '#e6c687' },
-  { day: 5, title: 'Silver Group 🥈', time: '19:30 – 20:30', category: 'group', color: '#d4a64a' },
-  { day: 5, title: 'Fitness 🧘', time: '21:00 – 22:00', category: 'fitness', color: '#8c7853' },
+  // SATURDAY (5)
+  { day: 5, title: 'BABY 🚀', time: '10:00 – 11:00', category: 'kids', color: '#f39c12' },
+  { day: 5, title: 'Bronza Group 🥉', time: '11:00 – 12:00', category: 'group', color: '#cd7f32' },
+  { day: 5, title: 'Timur & Alisa ind.', time: '13:00 – 14:00', category: 'private', color: '#a89060' },
+  { day: 5, title: 'Ballet/Dancesport', time: '14:00 – 15:00', category: 'ballet', color: '#c5a059' },
+  { day: 5, title: 'Ballet Group 🩰', time: '15:00 – 18:00', category: 'ballet', color: '#c5a059' },
+  { day: 5, title: 'Tango Argentine 💃', time: '20:00 – 21:00', category: 'adults', color: '#e74c3c' },
 
-  // SATURDAY
-  { day: 6, title: 'BABY 🚀', time: '10:00 – 11:00', category: 'kids', color: '#f39c12' },
-  { day: 6, title: 'Bronza Group 🥉', time: '11:00 – 12:00', category: 'group', color: '#cd7f32' },
-  { day: 6, title: 'Timur & Alisa ind.', time: '13:00 – 14:00', category: 'private', color: '#a89060' },
-  { day: 6, title: 'Ballet/Dancesport', time: '14:00 – 15:00', category: 'ballet', color: '#c5a059' },
-  { day: 6, title: 'Ballet Group 🩰', time: '15:00 – 18:00', category: 'ballet', color: '#c5a059' },
-  { day: 6, title: 'Tango Argentine 💃', time: '20:00 – 21:00', category: 'adults', color: '#e74c3c' }
+  // SUNDAY (6)
+  { day: 6, title: 'Ansamble 👨‍👩‍👧‍👦', time: '11:00 – 12:30', category: 'group', color: '#d4a64a' },
+  { day: 6, title: 'Ballet Group 🩰', time: '13:00 – 16:00', category: 'ballet', color: '#c5a059' },
+  { day: 6, title: 'Alisa ind.', time: '18:00 – 19:00', category: 'private', color: '#a89060' }
 ]
 
-const daysOfWeekKA = ['კვირა', 'ორშაბათი', 'სამშაბათი', 'ოთხშაბათი', 'ხუთშაბათი', 'პარასკევი', 'შაბათი']
-const daysOfWeekEN = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT']
-const daysOfWeekRU = ['ВС', 'ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ', 'СБ']
+// Week starting from MONDAY
+const daysOfWeekKA = ['ორშაბათი', 'სამშაბათი', 'ოთხშაბათი', 'ხუთშაბათი', 'პარასკევი', 'შაბათი', 'კვირა']
+const daysOfWeekEN = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN']
+const daysOfWeekRU = ['ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ', 'СБ', 'ВС']
 
 export default function Schedule() {
   const { t, lang } = useLanguage()
-  const [selectedDay, setSelectedDay] = useState(new Date().getDay())
+  
+  // Calculate current day index starting Monday (0 = Mon, ..., 6 = Sun)
+  const currentJsDay = new Date().getDay() // 0 = Sun, 1 = Mon...
+  const initialMondayBasedDay = currentJsDay === 0 ? 6 : currentJsDay - 1
+  const [selectedDay, setSelectedDay] = useState(initialMondayBasedDay)
 
   const dayNames = lang === 'ka' ? daysOfWeekKA : lang === 'ru' ? daysOfWeekRU : daysOfWeekEN
 
@@ -90,10 +94,11 @@ export default function Schedule() {
       <section className="section">
         <div className="container">
           
-          {/* ST DANCE LUXURY OBSIDIAN & GOLD GRID ONLY */}
+          {/* ST DANCE LUXURY OBSIDIAN & GOLD GRID */}
           <div className="std-sched-luxury-card">
-            {/* Day Filter Pills for Mobile & Quick Switch */}
-            <div className="std-sched-days-bar">
+            
+            {/* Day Filter Pills for MOBILE ONLY (hidden on desktop) */}
+            <div className="std-sched-days-bar mobile-only-days">
               {dayNames.map((dName, dIdx) => (
                 <button
                   key={dIdx}
@@ -105,7 +110,7 @@ export default function Schedule() {
               ))}
             </div>
 
-            {/* Desktop Week Grid View */}
+            {/* Desktop 7-Day Grid View (Mon -> Sun) */}
             <div className="std-sched-grid-desktop">
               {dayNames.map((dName, dIdx) => {
                 const dayEvts = weeklyEvents.filter((e) => e.day === dIdx)
