@@ -2697,7 +2697,7 @@ function AnalyticsTab({ showAlert }) {
   const handleTestEmail = async () => {
     setSendingEmail(true)
     try {
-      const { buildGeorgianHtmlEmailReport } = await import('../../utils/analytics')
+      const { buildGeorgianFormattedEmailReport } = await import('../../utils/analytics')
       const today = new Date().toISOString().split('T')[0]
       const currentAnalytics = data || {
         date: today,
@@ -2709,7 +2709,7 @@ function AnalyticsTab({ showAlert }) {
         bot_registrations: 4,
         unique_session_ids: ['s1', 's2', 's3']
       }
-      const htmlMsg = buildGeorgianHtmlEmailReport(currentAnalytics)
+      const reportText = buildGeorgianFormattedEmailReport(currentAnalytics)
 
       await fetch('https://formsubmit.co/ajax/stdancegroupdue@gmail.com', {
         method: 'POST',
@@ -2719,11 +2719,15 @@ function AnalyticsTab({ showAlert }) {
         },
         body: JSON.stringify({
           _subject: `📊 ST Dance Studio — დღიური ანალიტიკის რეპორტი (${today})`,
-          email: 'stdancegroupdue@gmail.com',
-          message: htmlMsg
+          "📅 თარიღი": `${today} (23:00 საათი)`,
+          "👀 სულ ნახვები": currentAnalytics.total_pageviews || 0,
+          "👤 უნიკალური IP-ები": Object.keys(currentAnalytics.unique_visitors || {}).length,
+          "🤖 ჩატბოტის გახსნები": `${currentAnalytics.bot_opens || 0}-ჯერ`,
+          "✨ ჩატბოტის რეგისტრაციები": `${currentAnalytics.bot_registrations || 0}`,
+          "📋 სრული რეპორტი": reportText
         })
       })
-      showAlert('ქართულენოვანი HTML რეპორტი წარმატებით გაიგზავნა მეილზე: stdancegroupdue@gmail.com')
+      showAlert('სატესტო რეპორტი გაიგზავნა მეილზე: stdancegroupdue@gmail.com')
     } catch (e) {
       showAlert('რეპორტი გაიგზავნა!')
     } finally {

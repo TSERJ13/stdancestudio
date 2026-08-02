@@ -138,7 +138,7 @@ export default function Contact() {
                     name="name"
                     type="text"
                     required
-                    placeholder="მაგ: გიორგი წივწივაძე"
+                    placeholder="მაგ: გიორგი ბერიძე"
                     value={form.name}
                     onChange={onChange}
                   />
