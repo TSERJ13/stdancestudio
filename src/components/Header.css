@@ -199,6 +199,7 @@
 .mobile-menu__cta {
   margin-top: 2rem;
   justify-content: center;
+  letter-spacing: 0.05em;
 }
 
 .lang-switcher {
