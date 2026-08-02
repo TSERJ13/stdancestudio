@@ -9,7 +9,7 @@ export default function Payment() {
     link.href = 'https://pay.flitt.com/latest/checkout-vue/checkout.css'
     document.head.appendChild(link)
 
-    // 2. Load Fonts (Optional but recommended for consistency)
+    // 2. Load Fonts
     const fonts = [
       'https://pay.flitt.com/icons/dist/fonts/inter-regular.woff2',
       'https://pay.flitt.com/icons/dist/fonts/inter-medium.woff2',
@@ -25,7 +25,7 @@ export default function Payment() {
       document.head.appendChild(preload)
     })
 
-    // 3. Load Script
+    // 3. Load Script with amount_readonly: false & amount_editable: true
     const script = document.createElement('script')
     script.src = 'https://pay.flitt.com/latest/checkout-vue/checkout.js'
     script.async = true
@@ -35,6 +35,8 @@ export default function Payment() {
           "button": "06de4d988f7d9d20431343ec102f63bb3ee73587"
         },
         "options": {
+          "amount_readonly": false,
+          "amount_editable": true,
           "theme": {
             "type": "light",
             "preset": "reset"
@@ -54,7 +56,7 @@ export default function Payment() {
           "show_email": false,
           "methods_disabled": [],
           "fullScreen": false,
-          "hide_button_title": true
+          "hide_button_title": false
         },
         "css_variable": {
           "main": "#7d8ff8",
@@ -70,10 +72,10 @@ export default function Payment() {
     document.body.appendChild(script)
 
     return () => {
-      // Cleanup
-      document.head.removeChild(link)
-      document.body.removeChild(script)
-      // Note: fonts are preloaded and don't strictly need removal, but usually fine
+      try {
+        document.head.removeChild(link)
+        document.body.removeChild(script)
+      } catch (e) {}
     }
   }, [])
 
@@ -93,16 +95,18 @@ export default function Payment() {
       </section>
 
       <section className="section">
-        <div className="container" style={{ maxWidth: '600px' }}>
+        <div className="container" style={{ maxWidth: '650px', paddingInline: '12px' }}>
           <div 
             id="flitt-payment-container" 
             style={{ 
-              minHeight: '400px',
+              minHeight: '520px',
               borderRadius: '16px',
-              overflow: 'hidden',
-              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.15)',
+              overflow: 'visible',
+              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.3)',
               background: '#fff',
-              padding: '20px'
+              padding: '16px 12px',
+              width: '100%',
+              boxSizing: 'border-box'
             }}
           >
             {/* Flitt checkout will mount here */}
