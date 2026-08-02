@@ -82,7 +82,7 @@ export const translations = {
       ctaTitle: 'მზად ხართ',
       ctaTitleItalic: 'პირველი ნაბიჯისთვის?',
       ctaDesc: 'დაგვიკავშირდით — საცდელი გაკვეთილი უფასოა.',
-      ctaBtn: 'ჩაწერა საცდელ გაკვეთილზე',
+      ctaBtn: 'ჩაეწერე საცდელ გაკვეთილზე',
     },
     programs: [
       {
