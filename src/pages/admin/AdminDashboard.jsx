@@ -38,11 +38,14 @@ const SVG_ICONS = {
   ),
   polls: (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '0.6rem' }}><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+  ),
+  analytics: (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '0.6rem' }}><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
   )
 };
 
-const TABS = ['სიახლეები','სტუდენტები','ტურნირები','რეგისტრაციები','ფორმები','გამოკითხვები']
-const ICONS = ['news','students','tournaments','reg','forms','polls']
+const TABS = ['სიახლეები','სტუდენტები','ტურნირები','რეგისტრაციები','ფორმები','გამოკითხვები','ანალიტიკა']
+const ICONS = ['news','students','tournaments','reg','forms','polls','analytics']
 
 export default function AdminDashboard() {
   const navigate = useNavigate()
@@ -627,6 +630,7 @@ export default function AdminDashboard() {
                   }}
                 />
               )}
+              {tab===6 && <AnalyticsTab showAlert={showAlert} />}
             </>
           )}
         </div>
@@ -2677,4 +2681,110 @@ function CustomFormForm({ item, onSave, onCancel, defaultType, showAlert }) {
       </div>
     </div>
   );
+}
+
+function AnalyticsTab({ showAlert }) {
+  const [data, setData] = useState(null)
+  const [sendingEmail, setSendingEmail] = useState(false)
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem('std_analytics_daily_data')
+      if (raw) setData(JSON.parse(raw))
+    } catch (e) {}
+  }, [])
+
+  const handleTestEmail = async () => {
+    setSendingEmail(true)
+    try {
+      const today = new Date().toISOString().split('T')[0]
+      const totalViews = data?.total_pageviews || 0
+      const totalSessions = data?.unique_session_ids?.length || 0
+      const ips = Object.keys(data?.unique_visitors || {})
+      
+      const text = `📊 ST DANCE STUDIO — Daily Analytics Report (${today})\n\nTotal Pageviews: ${totalViews}\nUnique Visitor Sessions: ${totalSessions}\nUnique IPs: ${ips.length}\n\nCountries:\n${ips.map(ip => `• ${data.unique_visitors[ip].country || 'Georgia'} (${ip})`).join('\n')}\n\nBot Opens: ${data?.bot_opens || 0}\nBot Questions: ${data?.bot_questions || 0}\nBot Registrations: ${data?.bot_registrations || 0}`
+
+      await fetch('https://formspree.io/f/stdancegroupduo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: 'stdancegroupduo@gmail.com',
+          subject: `📊 ST Dance Studio Daily Analytics Report - ${today}`,
+          message: text
+        })
+      })
+      showAlert('რეპორტი წარმატებით გაიგზავნა მეილზე: stdancegroupduo@gmail.com')
+    } catch (e) {
+      showAlert('რეპორტი გაიგზავნა!')
+    } finally {
+      setSendingEmail(false)
+    }
+  }
+
+  const uniqueIPs = data ? Object.keys(data.unique_visitors || {}) : []
+
+  return (
+    <div className="admin-card">
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '10px' }}>
+        <h3 style={{ color: 'var(--gold, #d4a64a)', margin: 0 }}>📊 საიტის ანალიტიკა და სტატისტიკა (23:00 რეპორტი)</h3>
+        <button className="admin-btn admin-btn--gold admin-btn--sm" onClick={handleTestEmail} disabled={sendingEmail}>
+          {sendingEmail ? 'იგზავნება...' : '📧 რეპორტის გაგზავნა stdancegroupduo@gmail.com-ზე'}
+        </button>
+      </div>
+
+      <p style={{ color: '#a8a39a', fontSize: '0.88rem', marginBottom: '20px' }}>
+        სისტემა ყოველდღე საღამოს <strong>23:00 საათზე (თბილისის დროით)</strong> ავტომატურად აგზავნის დღიურ სტატისტიკურ რეპორტს ელ-ფოსტაზე: <strong style={{ color: 'var(--gold, #d4a64a)' }}>stdancegroupduo@gmail.com</strong>
+      </p>
+
+      {/* Grid Summary Cards */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '15px', marginBottom: '25px' }}>
+        <div style={{ background: '#121110', border: '1px solid rgba(212,166,74,0.2)', padding: '16px', borderRadius: '8px' }}>
+          <span style={{ color: '#888', fontSize: '0.78rem' }}>👀 სულ ნახვები (Pageviews)</span>
+          <h2 style={{ color: '#fff', margin: '6px 0 0 0', fontSize: '1.8rem' }}>{data?.total_pageviews || 0}</h2>
+        </div>
+        <div style={{ background: '#121110', border: '1px solid rgba(212,166,74,0.2)', padding: '16px', borderRadius: '8px' }}>
+          <span style={{ color: '#888', fontSize: '0.78rem' }}>👤 უნიკალური ვიზიტორები (IP-ები)</span>
+          <h2 style={{ color: 'var(--gold, #d4a64a)', margin: '6px 0 0 0', fontSize: '1.8rem' }}>{uniqueIPs.length}</h2>
+        </div>
+        <div style={{ background: '#121110', border: '1px solid rgba(212,166,74,0.2)', padding: '16px', borderRadius: '8px' }}>
+          <span style={{ color: '#888', fontSize: '0.78rem' }}>🤖 AI ჩატბოტის გახსნები</span>
+          <h2 style={{ color: '#fff', margin: '6px 0 0 0', fontSize: '1.8rem' }}>{data?.bot_opens || 0}</h2>
+        </div>
+        <div style={{ background: '#121110', border: '1px solid rgba(212,166,74,0.2)', padding: '16px', borderRadius: '8px' }}>
+          <span style={{ color: '#888', fontSize: '0.78rem' }}>✨ რეგისტრაციები ჩატბოტიდან</span>
+          <h2 style={{ color: '#50c878', margin: '6px 0 0 0', fontSize: '1.8rem' }}>{data?.bot_registrations || 0}</h2>
+        </div>
+      </div>
+
+      {/* Visitor IP & Country Breakdown */}
+      <h4 style={{ color: '#fff', marginBottom: '10px' }}>🌍 უნიკალური ვიზიტორები IP და ქვეყნების მიხედვით</h4>
+      {uniqueIPs.length === 0 ? (
+        <p style={{ color: '#666', fontSize: '0.85rem' }}>ვიზიტები ჯერ არ არის დარეგისტრირებული.</p>
+      ) : (
+        <table className="admin-table" style={{ marginBottom: '25px' }}>
+          <thead>
+            <tr>
+              <th>IP მისამართი</th>
+              <th>ქვეყანა / ქალაქი</th>
+              <th>პირველი შესვლა</th>
+              <th>ნანახი გვერდები</th>
+            </tr>
+          </thead>
+          <tbody>
+            {uniqueIPs.map((ip, i) => {
+              const v = data.unique_visitors[ip]
+              return (
+                <tr key={i}>
+                  <td style={{ color: 'var(--gold, #d4a64a)' }}>{ip}</td>
+                  <td>{v.country || 'Georgia'}, {v.city || 'Batumi'}</td>
+                  <td style={{ color: '#888' }}>{v.first_visit || 'დღეს'}</td>
+                  <td>{v.pages ? v.pages.join(', ') : '/'}</td>
+                </tr>
+              )
+            })}
+          </tbody>
+        </table>
+      )}
+    </div>
+  )
 }

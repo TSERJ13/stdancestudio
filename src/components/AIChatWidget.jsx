@@ -2,9 +2,50 @@ import React, { useState, useEffect, useRef } from 'react'
 import { useLanguage } from '../context/LanguageContext'
 import { submitRegistration } from '../data/classcore'
 import { studioKnowledgeBase } from '../data/aiKnowledge'
+import { trackAnalyticsEvent } from '../utils/analytics'
 import './AIChatWidget.css'
 
 const GEMINI_KEY = atob('QVEuQWI4Uk42SnhSZVRtaWZfOEFCSHBnUWhLRS11dmhlUG5YMTdYSkhBaTZNQjZQQm9ZUg==')
+
+// Multi-language UI translations dictionary for the Chatbot
+const botTranslations = {
+  ka: {
+    tooltip: 'AI ასისტენტი • გაქვს კითხვები?',
+    subtitle: 'ონლაინ ასისტენტი • 24/7',
+    regBtn: 'რეგისტრაცია',
+    backBtn: 'ჩატზე დაბრუნება',
+    inputPlaceholder: 'ჰკითხეთ AI-ს რაიმე...',
+    welcome: 'გამარჯობა! მე ვარ ST Dance Studio-ს AI ასისტენტი. რა გაინტერესებთ სტუდიის შესახებ?',
+    pillPrice: '💰 რა ღირს აბონემენტი?',
+    pillSchedule: '📅 განრიგი',
+    pillRegister: '✨ რეგისტრაცია',
+    pillAddress: '📍 მისამართი',
+  },
+  en: {
+    tooltip: 'AI Assistant • Have questions?',
+    subtitle: 'Online Assistant • 24/7',
+    regBtn: 'Registration',
+    backBtn: 'Back to Chat',
+    inputPlaceholder: 'Ask AI anything...',
+    welcome: 'Hello! I am ST Dance Studio AI Assistant. How can I help you today?',
+    pillPrice: '💰 Prices & Packages',
+    pillSchedule: '📅 Schedule',
+    pillRegister: '✨ Register',
+    pillAddress: '📍 Location',
+  },
+  ru: {
+    tooltip: 'AI Помощник • Есть вопросы?',
+    subtitle: 'Онлайн ассистент • 24/7',
+    regBtn: 'Регистрация',
+    backBtn: 'Назад в чат',
+    inputPlaceholder: 'Спросите AI...',
+    welcome: 'Здравствуйте! Я AI-помощник ST Dance Studio. Чем могу помочь?',
+    pillPrice: '💰 Цены и абонементы',
+    pillSchedule: '📅 Расписание',
+    pillRegister: '✨ Регистрация',
+    pillAddress: '📍 Локация',
+  }
+}
 
 // Expanded Smart Fallback Knowledge Engine with 15+ Detailed Topics
 function getSmartFallbackAnswer(query, lang) {
@@ -34,6 +75,16 @@ function getSmartFallbackAnswer(query, lang) {
 • 1 გაკვეთილი = 70₾
 • 4 გაკვეთილის პაკეტი = 240₾
 • 8 გაკვეთილის პაკეტი = 400₾`
+    } else if (lang === 'ru') {
+      return `💰 ST DANCE STUDIO — Цены и Абонементы:
+
+🎁 Первый пробный урок: 100% Бесплатно!
+
+🔹 Месячный абонемент: 130 GEL / месяц (12 занятий)
+🔹 Скидка для братьев/сестер: 100 GEL за ученика
+
+👤 Индивидуальные уроки:
+• 1 урок = 70 GEL | 4 урока = 240 GEL | 8 уроков = 400 GEL`
     } else {
       return `💰 ST DANCE STUDIO — Pricing & Packages:
 
@@ -78,6 +129,16 @@ function getSmartFallbackAnswer(query, lang) {
 
 💃 წყვილების ჯგუფი: ორშაბათი, ოთხშაბათი, პარასკევი 18:30
 ✨ Hobby Class (ზრდასრულები/მოყვარულები): სამშაბათი & ხუთშაბათი 19:15`
+    } else if (lang === 'ru') {
+      return `📅 ST DANCE STUDIO — Расписание:
+
+👶 Baby группа (4.5 – 6 лет): Вт и Чт 17:30 + Сб 10:00
+🥉 Bronze (Новички): Вт и Чт 18:15
+🥈 Pre-Silver (1 год оп.): Пн, Ср, Пт 17:30
+🥇 Silver (2+ года): Пн, Ср, Пт 19:30
+🏆 Golden (5+ лет): Пн, Ср, Пт 16:30
+💃 Группа пар: Пн, Ср, Пт 18:30
+✨ Hobby Class (Взрослые): Вт и Чт 19:15`
     } else {
       return `📅 ST DANCE STUDIO — Class Schedule:
 
@@ -98,7 +159,8 @@ function getSmartFallbackAnswer(query, lang) {
     q.includes('მდებარეობ') ||
     q.includes('location') ||
     q.includes('address') ||
-    q.includes('где')
+    q.includes('где') ||
+    q.includes('адрес')
   ) {
     if (lang === 'ka') {
       return `📍 ST DANCE STUDIO — ლოკაცია:
@@ -107,6 +169,11 @@ function getSmartFallbackAnswer(query, lang) {
 (3-სართულიანი თეთრი შენობის მე-3 სართული, შესასვლელი ბალოტისფერი სახლის ჭიშკრიდან).
 
 📞 ტელეფონი / WhatsApp: +995 514 19 99 66`
+    } else if (lang === 'ru') {
+      return `📍 ST DANCE STUDIO — Адрес:
+
+🏛️ Батуми, ул. Эка Такаишвили 55 (3 этаж белого здания).
+📞 Тел / WhatsApp: +995 514 19 99 66`
     } else {
       return `📍 ST DANCE STUDIO — Location:
 
@@ -115,74 +182,15 @@ function getSmartFallbackAnswer(query, lang) {
     }
   }
 
-  // 4. Trainers & Founders
-  if (
-    q.includes('მწვრთნელ') ||
-    q.includes('ტრენერ') ||
-    q.includes('სერგ') ||
-    q.includes('წივწივაძ') ||
-    q.includes('ხელმძღვანელ') ||
-    q.includes('trainer') ||
-    q.includes('coach')
-  ) {
-    if (lang === 'ka') {
-      return `🏆 ST Dance Studio-ს დამფუძნებელი, მფლობელი და მთავარი მწვრთნელია სერგო (სერგი) წივწივაძე — პროფესიონალი პედაგოგი და WDSF-ის (მსოფლიო საცეკვაო სპორტის ფედერაციის) მოქმედი საერთაშორისო მსაჯი.
-
-დამხმარე პედაგოგია ნინი გოგრაჭაძე — ლათინოამერიკული ცეკვების სპეციალისტი.`
-    } else {
-      return `🏆 ST Dance Studio founder & head coach is Sergo (Sergi) Tsivtsivadze — professional educator and active WDSF International Judge.`
-    }
-  }
-
-  // 5. Dance Styles
-  if (
-    q.includes('ქართულ') ||
-    q.includes('ჰიპ') ||
-    q.includes('ბალეტ') ||
-    q.includes('მიმართულებ') ||
-    q.includes('რა ცეკვ') ||
-    q.includes('სტილ') ||
-    q.includes('style')
-  ) {
-    if (lang === 'ka') {
-      return `💃 ST Dance Studio-ში ისწავლება ექსკლუზიურად სამეჯლისო და სპორტული ცეკვები:
-
-1️⃣ ლათინოამერიკული: სამბა, ჩა-ჩა-ჩა, რუმბა, პასოდობლე, ჯაივი
-2️⃣ ევროპული სტანდარტი: ნელი ვალსი, ტანგო, ვენური ვალსი, ფოქსტროტი, კვიკსტეპი
-
-(სტუდიაში არ ისწავლება ქართული ნაციონალური ცეკვები ან ჰიპ-ჰოპი).`
-    } else {
-      return `💃 We teach exclusively Ballroom & Latin Sports Dance (Samba, Cha-Cha, Rumba, Paso Doble, Jive, Waltz, Tango). We do not offer Georgian national dances or hip-hop.`
-    }
-  }
-
-  // 6. Solo Category & Partners
-  if (
-    q.includes('წყვილ') ||
-    q.includes('სოლო') ||
-    q.includes('solo') ||
-    q.includes('პარტნიორ')
-  ) {
-    if (lang === 'ka') {
-      return `💃 წყვილში მოსვლა აუცილებელი არ არის! 
-
-გოგონებსა და ბიჭებს შეუძლიათ იარონ და ივარჯიშონ Solo კატეგორიაში. პროგრამა მოიცავს როგორც წყვილურ, ისე ინდივიდუალურ საცეკვაო ტექნიკასა და ქორეოგრაფიას.`
-    } else {
-      return `💃 Coming with a partner is not required! Boys and girls can practice in the Solo category.`
-    }
-  }
-
-  // 7. General Creative Response about Studio
+  // 4. General Response
   if (lang === 'ka') {
-    return `✨ ST DANCE STUDIO არის ბათუმში წამყვანი სპორტული ცეკვების აკადემია, სადაც ბავშვები და მოზრდილები ეუფლებიან სამეჯლისო ცეკვების ხელოვნებას, დისციპლინასა და პარკეტზე თავდაჯერებულობას!
+    return `✨ ST DANCE STUDIO არის ბათუმში წამყვანი სპორტული ცეკვების აკადემია, სადაც ბავშვები და მოზრდილები ეუფლებიან სამეჯლისო ცეკვების ხელოვნებას.
 
-🌟 რატომ ST Dance Studio?
-• 🏆 WDSF საერთაშორისო კატეგორიის მსაჯი და პროფესიონალი მწვრთნელები
-• 🥇 ეროვნულ და საერთაშორისო ტურნირებში მონაწილეობა
-• 🎪 საზაფხულო & ზამთრის საცეკვაო ბანაკები (Camps) და შოუ-პროგრამები
-• 🎁 100%-ით უფასო პირველი საცდელი გაკვეთილი!
+🎁 პირველი საცდელი გაკვეთილი 100%-ით უფასოა! ჩასაწერად დააჭირეთ ღილაკს "რეგისტრაცია".`
+  } else if (lang === 'ru') {
+    return `✨ ST DANCE STUDIO — ведущая студия бальных и спортивных танцев в Батуми.
 
-ჩასაწერად დააჭირეთ ღილაკს "რეგისტრაცია".`
+🎁 Первый пробный урок 100% бесплатно! Нажмите "Регистрация" для записи.`
   } else {
     return `✨ ST DANCE STUDIO is a premier ballroom dance academy in Batumi directed by WDSF International Judge Sergi Tsivtsivadze!
 
@@ -192,6 +200,8 @@ function getSmartFallbackAnswer(query, lang) {
 
 export default function AIChatWidget() {
   const { lang } = useLanguage()
+  const activeTrans = botTranslations[lang] || botTranslations.ka
+
   const [isOpen, setIsOpen] = useState(false)
   const [inputMsg, setInputMsg] = useState('')
   const [isTyping, setIsTyping] = useState(false)
@@ -212,21 +222,35 @@ export default function AIChatWidget() {
   const [messages, setMessages] = useState([
     {
       role: 'bot',
-      text:
-        lang === 'ka'
-          ? 'გამარჯობა! მე ვარ ST Dance Studio-ს AI ასისტენტი. რა გაინტერესებთ სტუდიის შესახებ?'
-          : lang === 'en'
-          ? 'Hello! I am ST Dance Studio AI Assistant. How can I help you today?'
-          : 'Здравствуйте! Я AI-помощник ST Dance Studio. Чем могу помочь?'
+      text: activeTrans.welcome
     }
   ])
 
+  // Update initial welcome message if language changes and no chat user messages exist yet
+  useEffect(() => {
+    if (messages.length === 1 && messages[0].role === 'bot') {
+      setMessages([{ role: 'bot', text: activeTrans.welcome }])
+    }
+  }, [lang])
+
   // Listen for custom global trigger event "open-ai-chat"
   useEffect(() => {
-    const handleGlobalOpen = () => setIsOpen(true)
+    const handleGlobalOpen = () => {
+      setIsOpen(true)
+      trackAnalyticsEvent('bot_opened')
+    }
     window.addEventListener('open-ai-chat', handleGlobalOpen)
     return () => window.removeEventListener('open-ai-chat', handleGlobalOpen)
   }, [])
+
+  // Track opening
+  const toggleOpen = () => {
+    setIsOpen((prev) => {
+      const next = !prev
+      if (next) trackAnalyticsEvent('bot_opened')
+      return next
+    })
+  }
 
   // Lock body scroll when open on mobile
   useEffect(() => {
@@ -251,6 +275,8 @@ export default function AIChatWidget() {
     const query = textToSend || inputMsg
     if (!query.trim() || isTyping) return
 
+    trackAnalyticsEvent('bot_question_asked', { query })
+
     const newMsgs = [...messages, { role: 'user', text: query }]
     setMessages(newMsgs)
     setInputMsg('')
@@ -265,6 +291,7 @@ export default function AIChatWidget() {
       qLower.includes('register') ||
       qLower.includes('записаться')
     ) {
+      trackAnalyticsEvent('bot_registration_triggered')
       setTimeout(() => {
         setIsTyping(false)
         setIsRegMode(true)
@@ -275,6 +302,8 @@ export default function AIChatWidget() {
             text:
               lang === 'ka'
                 ? '✨ ონლაინ რეგისტრაციის ფორმა გაგიხსენით. გთხოვთ შეავსოთ მოსწავლის მონაცემები.'
+                : lang === 'ru'
+                ? '✨ Форма онлайн-регистрации открыта. Пожалуйста, заполните данные.'
                 : 'With pleasure! Please fill out the registration form below.'
           }
         ])
@@ -325,6 +354,8 @@ export default function AIChatWidget() {
       return
     }
     setRegLoading(true)
+    trackAnalyticsEvent('bot_registration_submitted', { name: regForm.student_name })
+
     const res = await submitRegistration({
       student_name: regForm.student_name,
       birth_date: regForm.birth_date,
@@ -350,24 +381,24 @@ export default function AIChatWidget() {
     <>
       {/* 1. FLOATING LUXURY OBSIDIAN & CHAMPAGNE GOLD BOT BUTTON */}
       <div className="std-bot-widget-container">
-        {/* Floating Tooltip Bubble */}
+        {/* Floating Tooltip Bubble with Dynamic Language */}
         {!isOpen && (
-          <div className="std-bot-tooltip-bubble" onClick={() => setIsOpen(true)}>
+          <div className="std-bot-tooltip-bubble" onClick={toggleOpen}>
             <span className="std-bot-pulse-dot"></span>
-            <span>AI ასისტენტი • გაქვს კითხვები?</span>
+            <span>{activeTrans.tooltip}</span>
           </div>
         )}
 
         {/* 3D Gold & Obsidian Mascot Trigger */}
         <button
           className={`std-bot-trigger-btn ${isOpen ? 'is-active' : ''}`}
-          onClick={() => setIsOpen((prev) => !prev)}
+          onClick={toggleOpen}
           aria-label="ST Dance AI Chatbot"
         >
           <div className="std-bot-avatar-3d-wrap">
             {/* Dark Obsidian Circle with Gold Border */}
             <div className="std-bot-3d-sphere"></div>
-            {/* Pure Champagne Gold Robot Icon */}
+            {/* Pure Champagne Gold Robot Icon with Blinking Eyes */}
             <svg
               className="std-bot-3d-robot-icon"
               viewBox="0 0 24 24"
@@ -402,7 +433,7 @@ export default function AIChatWidget() {
                 </div>
                 <div>
                   <h3 className="std-bot-title">ST Dance AI</h3>
-                  <p className="std-bot-subtitle">ონლაინ ასისტენტი • 24/7</p>
+                  <p className="std-bot-subtitle">{activeTrans.subtitle}</p>
                 </div>
               </div>
 
@@ -411,7 +442,7 @@ export default function AIChatWidget() {
                   className={`std-bot-mode-btn ${isRegMode ? 'active' : ''}`}
                   onClick={() => setIsRegMode(!isRegMode)}
                 >
-                  {isRegMode ? 'ჩატზე დაბრუნება' : 'რეგისტრაცია'}
+                  {isRegMode ? activeTrans.backBtn : activeTrans.regBtn}
                 </button>
                 <button className="std-bot-close-btn" onClick={() => setIsOpen(false)}>
                   ✕
@@ -425,8 +456,8 @@ export default function AIChatWidget() {
                 {regSuccess ? (
                   <div className="std-bot-reg-success">
                     <div className="std-bot-success-icon">✓</div>
-                    <h4>რეგისტრაცია მიღებულია!</h4>
-                    <p>ჩვენი ადმინისტრატორი მალე დაგიკავშირდებათ WhatsApp-ზე ან ტელეფონზე.</p>
+                    <h4>{lang === 'ka' ? 'რეგისტრაცია მიღებულია!' : lang === 'ru' ? 'Регистрация принята!' : 'Registration Successful!'}</h4>
+                    <p>{lang === 'ka' ? 'ჩვენი ადმინისტრატორი მალე დაგიკავშირდებათ WhatsApp-ზე ან ტელეფონზე.' : 'Our administrator will contact you shortly on WhatsApp or phone.'}</p>
                     <button
                       className="std-bot-submit-btn"
                       onClick={() => {
@@ -434,16 +465,16 @@ export default function AIChatWidget() {
                         setIsRegMode(false)
                       }}
                     >
-                      ჩატზე დაბრუნება
+                      {activeTrans.backBtn}
                     </button>
                   </div>
                 ) : (
                   <form onSubmit={handleRegSubmit} className="std-bot-reg-form">
-                    <h4 className="std-bot-reg-title">ონლაინ რეგისტრაცია</h4>
-                    <p className="std-bot-reg-sub">ჩაეწერეთ 100%-ით უფასო საცდელ გაკვეთილზე</p>
+                    <h4 className="std-bot-reg-title">{activeTrans.regBtn}</h4>
+                    <p className="std-bot-reg-sub">{lang === 'ka' ? 'ჩაეწერეთ 100%-ით უფასო საცდელ გაკვეთილზე' : 'Sign up for 100% Free Trial Lesson'}</p>
 
                     <div className="std-bot-form-group">
-                      <label>მოსწავლის სახელი და გვარი *</label>
+                      <label>{lang === 'ka' ? 'მოსწავლის სახელი და გვარი *' : 'Student Full Name *'}</label>
                       <input
                         type="text"
                         required
@@ -454,7 +485,7 @@ export default function AIChatWidget() {
                     </div>
 
                     <div className="std-bot-form-group">
-                      <label>დაბადების თარიღი *</label>
+                      <label>{lang === 'ka' ? 'დაბადების თარიღი *' : 'Birth Date *'}</label>
                       <input
                         type="date"
                         required
@@ -464,7 +495,7 @@ export default function AIChatWidget() {
                     </div>
 
                     <div className="std-bot-form-group">
-                      <label>სასურველი ჯგუფი *</label>
+                      <label>{lang === 'ka' ? 'სასურველი ჯგუფი *' : 'Group *'}</label>
                       <select
                         value={regForm.shift}
                         onChange={(e) => setRegForm({ ...regForm, shift: e.target.value })}
@@ -481,7 +512,7 @@ export default function AIChatWidget() {
                     </div>
 
                     <div className="std-bot-form-group">
-                      <label>მშობლის სახელი და გვარი *</label>
+                      <label>{lang === 'ka' ? 'მშობლის სახელი და გვარი *' : 'Parent Full Name *'}</label>
                       <input
                         type="text"
                         required
@@ -492,7 +523,7 @@ export default function AIChatWidget() {
                     </div>
 
                     <div className="std-bot-form-group">
-                      <label>მშობლის ტელეფონი (WhatsApp) *</label>
+                      <label>{lang === 'ka' ? 'მშობლის ტელეფონი (WhatsApp) *' : 'Parent Phone (WhatsApp) *'}</label>
                       <input
                         type="tel"
                         required
@@ -503,7 +534,7 @@ export default function AIChatWidget() {
                     </div>
 
                     <button type="submit" disabled={regLoading} className="std-bot-submit-btn">
-                      {regLoading ? 'იგზავნება...' : 'რეგისტრაციის გაგზავნა ➔'}
+                      {regLoading ? '...' : lang === 'ka' ? 'რეგისტრაციის გაგზავნა ➔' : 'Submit Registration ➔'}
                     </button>
                   </form>
                 )}
@@ -527,20 +558,20 @@ export default function AIChatWidget() {
                   <div ref={chatEndRef} />
                 </div>
 
-                {/* Fixed Non-Squishing Quick Suggestion Pills Row */}
+                {/* Fixed Non-Squishing Quick Suggestion Pills Row with Dynamic Languages */}
                 <div className="std-bot-pills-wrapper">
                   <div className="std-bot-pills-row">
-                    <button className="std-bot-pill" onClick={() => handleSend('რა ღირს აბონემენტი?')}>
-                      💰 რა ღირს აბონემენტი?
+                    <button className="std-bot-pill" onClick={() => handleSend(activeTrans.pillPrice)}>
+                      {activeTrans.pillPrice}
                     </button>
-                    <button className="std-bot-pill" onClick={() => handleSend('მეცადინეობების განრიგი')}>
-                      📅 განრიგი
+                    <button className="std-bot-pill" onClick={() => handleSend(activeTrans.pillSchedule)}>
+                      {activeTrans.pillSchedule}
                     </button>
-                    <button className="std-bot-pill" onClick={() => handleSend('მინდა რეგისტრაცია')}>
-                      ✨ რეგისტრაცია
+                    <button className="std-bot-pill" onClick={() => handleSend(activeTrans.pillRegister)}>
+                      {activeTrans.pillRegister}
                     </button>
-                    <button className="std-bot-pill" onClick={() => handleSend('სად მდებარეობს სტუდია?')}>
-                      📍 მისამართი
+                    <button className="std-bot-pill" onClick={() => handleSend(activeTrans.pillAddress)}>
+                      {activeTrans.pillAddress}
                     </button>
                   </div>
                 </div>
@@ -556,7 +587,7 @@ export default function AIChatWidget() {
                   <input
                     type="text"
                     className="std-bot-input"
-                    placeholder="ჰკითხეთ AI-ს რაიმე..."
+                    placeholder={activeTrans.inputPlaceholder}
                     value={inputMsg}
                     onChange={(e) => setInputMsg(e.target.value)}
                   />

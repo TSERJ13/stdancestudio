@@ -18,10 +18,13 @@ import AdminDashboard from './pages/admin/AdminDashboard'
 import PortalLogin from './pages/portal/PortalLogin'
 import StudentDashboard from './pages/portal/StudentDashboard'
 
+import { trackPageView } from './utils/analytics'
+
 function ScrollToTop() {
   const { pathname } = useLocation()
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' })
+    trackPageView(pathname)
   }, [pathname])
   return null
 }
