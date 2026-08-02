@@ -349,8 +349,8 @@ export default function AIChatWidget() {
               strokeWidth="2"
             >
               <rect x="3" y="11" width="18" height="10" rx="4" fill="rgba(212,175,55,0.1)" />
-              <circle cx="8.5" cy="15.5" r="1.5" fill="#d4af37" />
-              <circle cx="15.5" cy="15.5" r="1.5" fill="#d4af37" />
+              <circle cx="8.5" cy="15.5" r="1.5" fill="#d4af37" className="robot-eye" />
+              <circle cx="15.5" cy="15.5" r="1.5" fill="#d4af37" className="robot-eye" />
               <path d="M12 2v4" stroke="#d4af37" strokeLinecap="round" />
               <circle cx="12" cy="2" r="1.2" fill="#d4af37" />
               <path d="M9.5 19h5" stroke="#d4af37" strokeLinecap="round" />

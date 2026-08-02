@@ -5,7 +5,7 @@
 /* 1. FLOATING LUXURY OBSIDIAN & GOLD BOT BUTTON */
 .std-bot-widget-container {
   position: fixed;
-  bottom: 24px;
+  bottom: 100px;
   right: 24px;
   z-index: 99990;
   display: flex;
@@ -530,11 +530,27 @@
   margin: 0 auto 16px auto;
 }
 
-/* 3. MOBILE FULL-SCREEN RESPONSIVE STYLING (< 768px) */
+/* 3. ROBOT EYE BLINKING ANIMATION */
+.robot-eye {
+  transform-origin: center;
+  transform-box: fill-box;
+  animation: robotBlink 3.8s infinite ease-in-out;
+}
+
+@keyframes robotBlink {
+  0%, 45%, 52%, 100% {
+    transform: scaleY(1);
+  }
+  48.5% {
+    transform: scaleY(0.1);
+  }
+}
+
+/* 4. MOBILE FULL-SCREEN RESPONSIVE STYLING (< 768px) */
 @media (max-width: 767px) {
   .std-bot-widget-container {
-    bottom: 18px;
-    right: 18px;
+    bottom: 85px;
+    right: 16px;
   }
 
   .std-bot-overlay {
