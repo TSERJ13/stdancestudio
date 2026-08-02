@@ -1,10 +1,9 @@
 import React, { useState } from 'react'
 import { useLanguage } from '../context/LanguageContext'
-import { Link } from 'react-router-dom'
 import './InnerPage.css'
 import './Schedule.css'
 
-// Weekly Schedule Events Database matching Sergi's Google Calendar exactly
+// Weekly Schedule Events Database matching Sergi's calendar
 const weeklyEvents = [
   // SUNDAY
   { day: 0, title: 'Ansamble 👨‍👩‍👧‍👦', time: '11:00 – 12:30', category: 'group', color: '#d4a64a' },
@@ -69,11 +68,9 @@ const daysOfWeekRU = ['ВС', 'ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ', 'СБ']
 
 export default function Schedule() {
   const { t, lang } = useLanguage()
-  const [viewMode, setViewMode] = useState('grid') // 'grid' | 'google' | 'agenda'
   const [selectedDay, setSelectedDay] = useState(new Date().getDay())
 
   const dayNames = lang === 'ka' ? daysOfWeekKA : lang === 'ru' ? daysOfWeekRU : daysOfWeekEN
-  const basePath = lang === 'ka' ? '' : `/${lang}`
 
   return (
     <>
@@ -93,137 +90,66 @@ export default function Schedule() {
       <section className="section">
         <div className="container">
           
-          {/* LUXURY CONTROL BAR */}
-          <div className="schedule-controls-bar">
-            <div className="schedule-view-toggles">
-              <button 
-                className={`std-sched-btn ${viewMode === 'grid' ? 'active' : ''}`}
-                onClick={() => setViewMode('grid')}
-              >
-                ✨ ST Dance Luxury Grid
-              </button>
-              <button 
-                className={`std-sched-btn ${viewMode === 'google' ? 'active' : ''}`}
-                onClick={() => setViewMode('google')}
-              >
-                📅 Google Calendar Live View
-              </button>
+          {/* ST DANCE LUXURY OBSIDIAN & GOLD GRID ONLY */}
+          <div className="std-sched-luxury-card">
+            {/* Day Filter Pills for Mobile & Quick Switch */}
+            <div className="std-sched-days-bar">
+              {dayNames.map((dName, dIdx) => (
+                <button
+                  key={dIdx}
+                  className={`std-sched-day-pill ${selectedDay === dIdx ? 'active' : ''}`}
+                  onClick={() => setSelectedDay(dIdx)}
+                >
+                  <span>{dName}</span>
+                </button>
+              ))}
             </div>
 
-            <a 
-              href="https://calendar.google.com/calendar/u/0/r?cid=stdancegroup@gmail.com" 
-              target="_blank" 
-              rel="noreferrer"
-              className="std-sched-glink"
-            >
-              🔗 {lang === 'ka' ? 'Google Calendar-ში გახსნა' : lang === 'ru' ? 'Открыть в Google Календаре' : 'Open in Google Calendar'} ↗
-            </a>
-          </div>
+            {/* Desktop Week Grid View */}
+            <div className="std-sched-grid-desktop">
+              {dayNames.map((dName, dIdx) => {
+                const dayEvts = weeklyEvents.filter((e) => e.day === dIdx)
+                return (
+                  <div key={dIdx} className={`std-sched-col ${selectedDay === dIdx ? 'is-today' : ''}`}>
+                    <div className="std-sched-col-header">
+                      <span className="std-sched-col-name">{dName}</span>
+                    </div>
+                    <div className="std-sched-col-body">
+                      {dayEvts.map((evt, eIdx) => (
+                        <div 
+                          key={eIdx} 
+                          className={`std-sched-evt-card cat-${evt.category}`}
+                          style={{ borderLeftColor: evt.color }}
+                        >
+                          <span className="std-sched-evt-time">{evt.time}</span>
+                          <h5 className="std-sched-evt-title">{evt.title}</h5>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
 
-          {/* VIEW 1: ST DANCE LUXURY OBSIDIAN & GOLD GRID */}
-          {viewMode === 'grid' && (
-            <div className="std-sched-luxury-card">
-              {/* Day Filter Pills for Mobile & Quick Switch */}
-              <div className="std-sched-days-bar">
-                {dayNames.map((dName, dIdx) => (
-                  <button
-                    key={dIdx}
-                    className={`std-sched-day-pill ${selectedDay === dIdx ? 'active' : ''}`}
-                    onClick={() => setSelectedDay(dIdx)}
-                  >
-                    <span>{dName}</span>
-                  </button>
+            {/* Mobile Single Day View */}
+            <div className="std-sched-mobile-view">
+              <div className="std-sched-mobile-header">
+                <h4>{dayNames[selectedDay]}</h4>
+              </div>
+              <div className="std-sched-mobile-list">
+                {weeklyEvents.filter((e) => e.day === selectedDay).map((evt, eIdx) => (
+                  <div key={eIdx} className="std-sched-mobile-evt-row">
+                    <div className="std-sched-mobile-time">{evt.time}</div>
+                    <div className="std-sched-mobile-info">
+                      <h5>{evt.title}</h5>
+                      <span className="std-sched-badge">{evt.category}</span>
+                    </div>
+                  </div>
                 ))}
               </div>
-
-              {/* Desktop Week Grid View */}
-              <div className="std-sched-grid-desktop">
-                {dayNames.map((dName, dIdx) => {
-                  const dayEvts = weeklyEvents.filter((e) => e.day === dIdx)
-                  return (
-                    <div key={dIdx} className={`std-sched-col ${selectedDay === dIdx ? 'is-today' : ''}`}>
-                      <div className="std-sched-col-header">
-                        <span className="std-sched-col-name">{dName}</span>
-                      </div>
-                      <div className="std-sched-col-body">
-                        {dayEvts.map((evt, eIdx) => (
-                          <div 
-                            key={eIdx} 
-                            className={`std-sched-evt-card cat-${evt.category}`}
-                            style={{ borderLeftColor: evt.color }}
-                          >
-                            <span className="std-sched-evt-time">{evt.time}</span>
-                            <h5 className="std-sched-evt-title">{evt.title}</h5>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )
-                })}
-              </div>
-
-              {/* Mobile Single Day View */}
-              <div className="std-sched-mobile-view">
-                <div className="std-sched-mobile-header">
-                  <h4>{dayNames[selectedDay]}</h4>
-                </div>
-                <div className="std-sched-mobile-list">
-                  {weeklyEvents.filter((e) => e.day === selectedDay).map((evt, eIdx) => (
-                    <div key={eIdx} className="std-sched-mobile-evt-row">
-                      <div className="std-sched-mobile-time">{evt.time}</div>
-                      <div className="std-sched-mobile-info">
-                        <h5>{evt.title}</h5>
-                        <span className="std-sched-badge">{evt.category}</span>
-                      </div>
-                      <Link to={`${basePath}/register`} className="std-sched-mini-reg">
-                        {lang === 'ka' ? 'ჩაწერა' : 'Join'} ➔
-                      </Link>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
             </div>
-          )}
 
-          {/* VIEW 2: GOOGLE CALENDAR EMBED WITH DARK LUXURY FILTER */}
-          {viewMode === 'google' && (
-            <div className="calendar-wrap dark-gcal-frame">
-              {/* Desktop: Week View */}
-              <iframe 
-                className="calendar-iframe desktop-only"
-                src={`https://calendar.google.com/calendar/embed?src=stdancegroup%40gmail.com&ctz=Asia%2FTbilisi&mode=WEEK&showTitle=0&showNav=1&showDate=1&showPrint=0&showTabs=0&showCalendars=0&showTz=0&hl=${lang}`} 
-                style={{ 
-                  position: 'absolute', 
-                  top: 0, 
-                  left: 0, 
-                  width: '100%', 
-                  height: '100%', 
-                  border: 0 
-                }} 
-                frameBorder="0" 
-                scrolling="no"
-                title="Schedule Desktop"
-              ></iframe>
-
-              {/* Mobile: Agenda View */}
-              <iframe 
-                className="calendar-iframe mobile-only"
-                src={`https://calendar.google.com/calendar/embed?src=stdancegroup%40gmail.com&ctz=Asia%2FTbilisi&mode=AGENDA&showTitle=0&showNav=1&showDate=1&showPrint=0&showTabs=0&showCalendars=0&showTz=0&hl=${lang}`} 
-                style={{ 
-                  position: 'absolute', 
-                  top: 0, 
-                  left: 0, 
-                  width: '100%', 
-                  height: '100%', 
-                  border: 0 
-                }} 
-                frameBorder="0" 
-                scrolling="no"
-                title="Schedule Mobile"
-              ></iframe>
-            </div>
-          )}
+          </div>
 
         </div>
       </section>
