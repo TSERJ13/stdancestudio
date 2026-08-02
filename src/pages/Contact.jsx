@@ -274,23 +274,29 @@ export default function Contact() {
               onClick={() => setIsPhotoModalOpen(false)}
               style={{
                 position: 'absolute',
-                top: '15px',
-                right: '15px',
-                background: 'rgba(0,0,0,0.85)',
-                border: '1px solid var(--color-gold, #d4a64a)',
+                top: '16px',
+                right: '16px',
+                background: 'rgba(0, 0, 0, 0.85)',
+                border: '1.5px solid var(--color-gold, #d4a64a)',
                 color: 'var(--color-gold, #d4a64a)',
                 width: '38px',
                 height: '38px',
                 borderRadius: '50%',
                 cursor: 'pointer',
-                fontSize: '18px',
+                padding: 0,
+                margin: 0,
                 display: 'flex',
                 alignItems: 'center',
                 justify: 'center',
-                zIndex: 20
+                zIndex: 30,
+                boxShadow: '0 4px 12px rgba(0,0,0,0.6)'
               }}
+              aria-label="Close"
             >
-              ✕
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#d4a64a" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
             </button>
             <img 
               src="/images/studio-hall.jpg" 
