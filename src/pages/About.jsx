@@ -1,11 +1,15 @@
 import { useLanguage } from '../context/LanguageContext'
+import { translations } from '../data/translations'
 import { siteContent } from '../data/content'
 import './InnerPage.css'
-import './Home.css' // Reuse home styles for sections
+import './Home.css'
 
 export default function About() {
-  const { programs, teachers, competitions } = siteContent
-  const { t } = useLanguage()
+  const { lang, t } = useLanguage()
+  const activeTrans = translations[lang] || translations.ka
+  const programs = activeTrans.programs || siteContent.programs
+  const teachers = activeTrans.teachers || siteContent.teachers
+  const competitions = activeTrans.competitions || siteContent.competitions
 
   return (
     <>
@@ -58,7 +62,7 @@ export default function About() {
                 <div className="prog-card__latin">{p.latin}</div>
                 <p className="prog-card__desc">{p.description}</p>
                 <div className="prog-card__meta">
-                  <span>Age:</span> {p.ages}
+                  <span>AGE:</span> {p.ages}
                 </div>
               </article>
             ))}
@@ -76,15 +80,15 @@ export default function About() {
             </h2>
           </div>
           <div className="teachers-grid">
-            {teachers.map((t, i) => (
+            {teachers.map((teach, i) => (
               <article key={i} className="teacher-card">
                 <div className="teacher-card__photo">
-                  <img src={t.photo} alt={t.name} />
+                  <img src={teach.photo} alt={teach.name} />
                 </div>
                 <div className="teacher-card__body">
-                  <div className="teacher-card__role">{t.role}</div>
-                  <h3 className="teacher-card__name display">{t.name}</h3>
-                  <p>{t.bio}</p>
+                  <div className="teacher-card__role">{teach.role}</div>
+                  <h3 className="teacher-card__name display">{teach.name}</h3>
+                  <p>{teach.bio}</p>
                 </div>
               </article>
             ))}
@@ -96,9 +100,9 @@ export default function About() {
       <section className="section section--alt">
         <div className="container">
           <div className="section-head">
-            <span className="eyebrow">ტურნირები</span>
+            <span className="eyebrow">{activeTrans.about?.tourneyEyebrow || 'ტურნირები'}</span>
             <h2 className="display section-head__title">
-              უახლოესი <span className="display-italic">შეჯიბრებები</span>
+              {activeTrans.about?.tourneyTitle || 'უახლოესი'} <span className="display-italic">{activeTrans.about?.tourneyTitleItalic || 'შეჯიბრებები'}</span>
             </h2>
           </div>
           <div className="tournaments-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem' }}>

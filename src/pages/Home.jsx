@@ -1,14 +1,19 @@
 import { Link } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { siteContent } from '../data/content'
+import { translations } from '../data/translations'
 import { useLanguage } from '../context/LanguageContext'
 import './Home.css'
 
 export default function Home() {
-  const { stats, programs, teachers, testimonials } = siteContent
+  const { testimonials } = siteContent
   const [testimonialIdx, setTestimonialIdx] = useState(0)
   const { lang, t } = useLanguage()
   const basePath = lang === 'ka' ? '' : `/${lang}`
+
+  const activeTrans = translations[lang] || translations.ka
+  const programs = activeTrans.programs || siteContent.programs
+  const teachers = activeTrans.teachers || siteContent.teachers
 
   useEffect(() => {
     const id = setInterval(() => {
@@ -134,7 +139,7 @@ export default function Home() {
                 <div className="prog-card__latin">{p.latin}</div>
                 <p className="prog-card__desc">{p.description}</p>
                 <div className="prog-card__meta">
-                  <span>Age:</span> {p.ages}
+                  <span>AGE:</span> {p.ages}
                 </div>
               </article>
             ))}
@@ -160,15 +165,15 @@ export default function Home() {
           </div>
 
           <div className="teachers-grid">
-            {teachers.map((t, i) => (
+            {teachers.map((teach, i) => (
               <article key={i} className="teacher-card">
                 <div className="teacher-card__photo">
-                  <img src={t.photo} alt={t.name} />
+                  <img src={teach.photo} alt={teach.name} />
                 </div>
                 <div className="teacher-card__body">
-                  <div className="teacher-card__role">{t.role}</div>
-                  <h3 className="teacher-card__name display">{t.name}</h3>
-                  <p>{t.bio}</p>
+                  <div className="teacher-card__role">{teach.role}</div>
+                  <h3 className="teacher-card__name display">{teach.name}</h3>
+                  <p>{teach.bio}</p>
                 </div>
               </article>
             ))}
@@ -178,30 +183,24 @@ export default function Home() {
 
       {/* ===================== TESTIMONIALS ===================== */}
       <section className="section testimonials">
-        <div className="container">
-          <div className="testimonials__quote-mark">"</div>
-          <div className="testimonials__slider">
-            {testimonials.map((t, i) => (
-              <blockquote
-                key={i}
-                className={`testimonial ${i === testimonialIdx ? 'is-active' : ''}`}
-              >
-                <p className="testimonial__quote display">{t.quote}</p>
-                <footer>
-                  <strong>{t.author}</strong>
-                  <span>{t.role}</span>
-                </footer>
-              </blockquote>
-            ))}
+        <div className="container testimonials__inner">
+          <div className="eyebrow">შეფასებები</div>
+          <div className="testimonial">
+            <blockquote className="testimonial__quote display">
+              "{testimonials[testimonialIdx].quote}"
+            </blockquote>
+            <cite className="testimonial__author">
+              <strong>{testimonials[testimonialIdx].author}</strong>
+              <span>{testimonials[testimonialIdx].role}</span>
+            </cite>
           </div>
-
           <div className="testimonials__dots">
             {testimonials.map((_, i) => (
               <button
                 key={i}
-                className={`dot ${i === testimonialIdx ? 'is-active' : ''}`}
+                className={`dot ${i === testimonialIdx ? 'dot--active' : ''}`}
                 onClick={() => setTestimonialIdx(i)}
-                aria-label={`Testimonial ${i + 1}`}
+                aria-label={`Go to slide ${i + 1}`}
               />
             ))}
           </div>
@@ -209,17 +208,16 @@ export default function Home() {
       </section>
 
       {/* ===================== CTA ===================== */}
-      <section className="cta">
-        <div className="container cta__inner">
-          <div className="cta__copy">
-            <h2 className="display cta__title">
-              {t('home.ctaTitle')} <span className="display-italic">{t('home.ctaTitleItalic')}</span>
-            </h2>
-            <p>
-              {t('home.ctaDesc')}
-            </p>
-          </div>
-          <Link to={`${basePath}/register`} className="btn btn-primary cta__btn">
+      <section className="section cta-section">
+        <div className="container cta-section__inner">
+          <h2 className="display cta-section__title">
+            {t('home.ctaTitle')} <br />
+            <span className="display-italic">{t('home.ctaTitleItalic')}</span>
+          </h2>
+          <p className="cta-section__desc">
+            {t('home.ctaDesc')}
+          </p>
+          <Link to={`${basePath}/register`} className="btn btn-primary">
             {t('home.ctaBtn')}
           </Link>
         </div>

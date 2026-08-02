@@ -7,7 +7,7 @@ import './InnerPage.css'
 
 export default function Contact() {
   const { contact } = siteContent
-  const { lang, t } = useLanguage()
+  const { t } = useLanguage()
   const [submitted, setSubmitted] = useState(false)
   const [loading, setLoading] = useState(false)
   const [form, setForm] = useState({ name: '', phone: '', message: '' })
@@ -107,7 +107,7 @@ export default function Contact() {
               {submitted ? (
                 <div className="contact-success">
                   <div className="contact-success__icon">✓</div>
-                  <h3 className="display">გადმოგზავნილია!</h3>
+                  <h3 className="display">{t('contact.successTitle')}</h3>
                   <p>{t('contact.success')}</p>
                 </div>
               ) : (
@@ -115,45 +115,45 @@ export default function Contact() {
                   <h2 className="display">{t('contact.title')}</h2>
 
                   <div className="form-field">
-                    <label htmlFor="name">სახელი და გვარი *</label>
+                    <label htmlFor="name">{t('contact.nameLabel')}</label>
                     <input
                       id="name"
                       name="name"
                       type="text"
                       required
-                      placeholder="მაგ: გიორგი ბერიძე"
+                      placeholder={t('contact.namePlaceholder')}
                       value={form.name}
                       onChange={onChange}
                     />
                   </div>
 
                   <div className="form-field">
-                    <label htmlFor="phone">ტელეფონის ნომერი (WhatsApp) *</label>
+                    <label htmlFor="phone">{t('contact.phoneLabel')}</label>
                     <input
                       id="phone"
                       name="phone"
                       type="tel"
                       required
-                      placeholder="+995 5XX XX XX XX"
+                      placeholder={t('contact.phonePlaceholder')}
                       value={form.phone}
                       onChange={onChange}
                     />
                   </div>
 
                   <div className="form-field">
-                    <label htmlFor="message">შეტყობინება / კითხვა</label>
+                    <label htmlFor="message">{t('contact.messageLabel')}</label>
                     <textarea
                       id="message"
                       name="message"
                       rows="4"
-                      placeholder="დაგვიწერეთ თქვენი შეკითხვა..."
+                      placeholder={t('contact.messagePlaceholder')}
                       value={form.message}
                       onChange={onChange}
                     ></textarea>
                   </div>
 
                   <button type="submit" disabled={loading} className="btn btn-primary">
-                    {loading ? 'იგზავნება...' : t('contact.send')}
+                    {loading ? t('contact.sending') : t('contact.send')}
                   </button>
                 </form>
               )}
@@ -167,7 +167,7 @@ export default function Contact() {
               {/* 1. Google Map (Left) */}
               <div className="contact-map-box">
                 <span className="contact-list__label" style={{ display: 'block', marginBottom: '0.6rem' }}>
-                  📍 {lang === 'ka' ? 'მდებარეობა რუკაზე' : lang === 'ru' ? 'Карта' : 'Map Location'}
+                  📍 {t('contact.mapTitle')}
                 </span>
                 <a 
                   href="https://maps.app.goo.gl/iyBGVtNeiNUGZmq86" 
@@ -200,7 +200,7 @@ export default function Contact() {
               {/* 2. Studio Hall Photo Clean (Right) */}
               <div className="contact-hall-box">
                 <span className="contact-list__label" style={{ display: 'block', marginBottom: '0.6rem' }}>
-                  🏛️ {lang === 'ka' ? 'სტუდიის დარბაზი' : lang === 'ru' ? 'Наш Зал' : 'Studio Hall'}
+                  🏛️ {t('contact.hallTitle')}
                 </span>
                 <div 
                   onClick={() => setIsPhotoModalOpen(true)}

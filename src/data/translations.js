@@ -32,6 +32,9 @@ export const translations = {
       more: 'მეტი ჩვენ შესახებ',
       storyTitle: 'სპორტი, რომელიც აყალიბებს ხასიათს',
       teachers: 'ჩვენი გუნდი',
+      tourneyEyebrow: 'ტურნირები',
+      tourneyTitle: 'უახლოესი',
+      tourneyTitleItalic: 'შეჯიბრებები'
     },
     schedule: {
       eyebrow: 'განრიგი',
@@ -52,8 +55,18 @@ export const translations = {
       addressText: 'ბათუმი, ე. თაყაიშვილის 55',
       phone: 'ტელეფონი',
       email: 'ელ-ფოსტა',
+      nameLabel: 'სახელი და გვარი *',
+      namePlaceholder: 'მაგ: გიორგი ბერიძე',
+      phoneLabel: 'ტელეფონის ნომერი (WhatsApp) *',
+      phonePlaceholder: '+995 5XX XX XX XX',
+      messageLabel: 'შეტყობინება / კითხვა',
+      messagePlaceholder: 'დაგვიწერეთ თქვენი შეკითხვა...',
       send: 'გაგზავნა',
-      success: 'შეტყობინება გაიგზავნა!',
+      sending: 'იგზავნება...',
+      successTitle: 'გადმოგზავნილია!',
+      success: 'შეტყობინება წარმატებით გაიგზავნა! მალე დაგიკავშირდებით.',
+      mapTitle: 'მდებარეობა რუკაზე',
+      hallTitle: 'სტუდიის დარბაზი'
     },
     footer: {
       desc: 'სპორტული ცეკვების სტუდია ბათუმში. იგრძენი პარკეტი ჩვენთან ერთად.',
@@ -71,6 +84,62 @@ export const translations = {
       ctaDesc: 'დაგვიკავშირდით — საცდელი გაკვეთილი უფასოა.',
       ctaBtn: 'ჩაწერა საცდელ გაკვეთილზე',
     },
+    programs: [
+      {
+        id: 'standard',
+        number: '01',
+        title: 'სტანდარტი',
+        latin: 'Standard',
+        description: 'ვალსი, ტანგო, ვენური ვალსი, სლოუ ფოქსტროტი, კვიკსტეპი — ევროპული პროგრამა, რომელიც ეფუძნება ელეგანტურობას და ტექნიკურ სიზუსტეს.',
+        ages: '5+ წელი'
+      },
+      {
+        id: 'latin',
+        number: '02',
+        title: 'ლათინური',
+        latin: 'Latin American',
+        description: 'სამბა, ჩა-ჩა-ჩა, რუმბა, პასოდობლე, ჯაივი — ენერგიული რიტმები, რომლებიც ავითარებენ სისწრაფესა და კოორდინაციას.',
+        ages: '5+ წელი'
+      },
+      {
+        id: 'kids',
+        number: '03',
+        title: 'საბავშვო ჯგუფი',
+        latin: 'Junior',
+        description: 'პატარების სპეციალური პროგრამა — ვასწავლით რიტმს, კოორდინაციას და პარკეტზე თავდაჯერებულ დგომას.',
+        ages: '4–7 წელი'
+      },
+      {
+        id: 'pro',
+        number: '04',
+        title: 'საკონკურსო ჯგუფი',
+        latin: 'Competitive',
+        description: 'მოცეკვავეებისთვის, რომლებსაც სურთ წარმოაჩინონ თავი ეროვნულ და საერთაშორისო ტურნირებზე. ინტენსიური მომზადება და ინდივიდუალური მიდგომა.',
+        ages: '8+ წელი'
+      }
+    ],
+    teachers: [
+      {
+        name: 'სერგი წივწივაძე',
+        role: 'მთავარი ტრენერი',
+        photo: '/images/sergi.jpg?v=2',
+        bio: 'სტუდიის დამფუძნებელი და მთავარი ტრენერი. სპორტული ცეკვების ოსტატი, მრავალგზის ჩემპიონი და საერთაშორისო ტურნირების (WDSF) მსაჯი.'
+      },
+      {
+        name: 'ნინი გოგრაჭაძე',
+        role: 'დამხმარე მასწავლებელი',
+        photo: '/images/nini.jpg?v=2',
+        bio: 'ლათინოამერიკული ცეკვების სპეციალისტი. ეხმარება მოცეკვავეებს ტექნიკის დახვეწასა და რიტმის ათვისებაში.'
+      }
+    ],
+    competitions: [
+      {
+        title: 'New Year Tournament 2026',
+        date: '2026 — იანვარი',
+        description: 'სტუდიის ყოველწლიური საახალწლო ტურნირი და შოუ-პროგრამა.',
+        image: '/images/competition.png'
+      }
+    ],
     register: {
       title: 'ონლაინ რეგისტრაცია',
       subtitle: 'სტუდიის მოსწავლის მიღება',
@@ -142,6 +211,9 @@ export const translations = {
       more: 'More About Us',
       storyTitle: 'Sport that Builds Character',
       teachers: 'Our Team',
+      tourneyEyebrow: 'Tournaments',
+      tourneyTitle: 'Upcoming',
+      tourneyTitleItalic: 'Competitions'
     },
     schedule: {
       eyebrow: 'Schedule',
@@ -162,8 +234,18 @@ export const translations = {
       addressText: 'E. Takaishvili 55, Batumi',
       phone: 'Phone',
       email: 'Email',
-      send: 'Send',
-      success: 'Message sent successfully!',
+      nameLabel: 'Full Name *',
+      namePlaceholder: 'e.g. Giorgi Beridze',
+      phoneLabel: 'Phone Number (WhatsApp) *',
+      phonePlaceholder: '+995 5XX XX XX XX',
+      messageLabel: 'Message / Inquiry',
+      messagePlaceholder: 'Write your message here...',
+      send: 'Send Message',
+      sending: 'Sending...',
+      successTitle: 'Submitted!',
+      success: 'Message sent successfully! We will contact you shortly.',
+      mapTitle: 'Map Location',
+      hallTitle: 'Studio Hall'
     },
     footer: {
       desc: 'Sports dance studio in Batumi. Feel the parquet with us.',
@@ -181,6 +263,62 @@ export const translations = {
       ctaDesc: 'Contact us — the trial lesson is free.',
       ctaBtn: 'Book Trial Lesson',
     },
+    programs: [
+      {
+        id: 'standard',
+        number: '01',
+        title: 'Standard Ballroom',
+        latin: 'Standard',
+        description: 'Waltz, Tango, Viennese Waltz, Slow Foxtrot, Quickstep — European ballroom program emphasizing grace, posture, and technical precision.',
+        ages: '5+ Years'
+      },
+      {
+        id: 'latin',
+        number: '02',
+        title: 'Latin American',
+        latin: 'Latin American',
+        description: 'Samba, Cha-Cha-Cha, Rumba, Paso Doble, Jive — Energetic rhythms that build agility, speed, and expressiveness.',
+        ages: '5+ Years'
+      },
+      {
+        id: 'kids',
+        number: '03',
+        title: 'Junior / Kids Group',
+        latin: 'Junior',
+        description: 'Special early-age dance program — teaching fundamental rhythm, coordination, and confidence on stage.',
+        ages: '4–7 Years'
+      },
+      {
+        id: 'pro',
+        number: '04',
+        title: 'Competition Team',
+        latin: 'Competitive',
+        description: 'For dancers aspiring to compete in national and international WDSF tournaments. Intensive training and personal coaching.',
+        ages: '8+ Years'
+      }
+    ],
+    teachers: [
+      {
+        name: 'Sergi Tsivtsivadze',
+        role: 'Head Coach & Founder',
+        photo: '/images/sergi.jpg?v=2',
+        bio: 'Studio Founder and Head Coach. Master of Sports Dance, multiple-time champion, and active WDSF International Judge.'
+      },
+      {
+        name: 'Nini Gograchadze',
+        role: 'Assistant Coach',
+        photo: '/images/nini.jpg?v=2',
+        bio: 'Latin American dance specialist, helping dancers refine choreography, technical rhythm, and artistic presentation.'
+      }
+    ],
+    competitions: [
+      {
+        title: 'New Year Tournament 2026',
+        date: '2026 — January',
+        description: 'Annual studio New Year championship and gala show performance.',
+        image: '/images/competition.png'
+      }
+    ],
     register: {
       title: 'Online Registration',
       subtitle: 'Studio Student Enrollment',
@@ -252,6 +390,9 @@ export const translations = {
       more: 'Подробнее о нас',
       storyTitle: 'Спорт, который формирует характер',
       teachers: 'Наша Команда',
+      tourneyEyebrow: 'Турниры',
+      tourneyTitle: 'Ближайшие',
+      tourneyTitleItalic: 'Соревнования'
     },
     schedule: {
       eyebrow: 'Расписание',
@@ -269,11 +410,21 @@ export const translations = {
       eyebrow: 'Контакт',
       title: 'Связаться с нами',
       address: 'Адрес',
-      addressText: 'E. Takaishvili 55, Batumi',
+      addressText: 'Батуми, ул. Е. Такаишвили 55',
       phone: 'Телефон',
       email: 'Эл. почта',
+      nameLabel: 'Имя и фамилия *',
+      namePlaceholder: 'Например: Георгий Беридзе',
+      phoneLabel: 'Номер телефона (WhatsApp) *',
+      phonePlaceholder: '+995 5XX XX XX XX',
+      messageLabel: 'Сообщение / Вопрос',
+      messagePlaceholder: 'Напишите ваше сообщение...',
       send: 'Отправить',
-      success: 'Сообщение отправлено!',
+      sending: 'Отправка...',
+      successTitle: 'Отправлено!',
+      success: 'Сообщение успешно отправлено! Мы свяжемся с вами в ближайшее время.',
+      mapTitle: 'Локация на карте',
+      hallTitle: 'Наш Зал'
     },
     footer: {
       desc: 'Студия спортивных танцев в Батуми. Почувствуй паркет с нами.',
@@ -291,6 +442,62 @@ export const translations = {
       ctaDesc: 'Свяжитесь с нами — пробный урок бесплатно.',
       ctaBtn: 'Записаться на урок',
     },
+    programs: [
+      {
+        id: 'standard',
+        number: '01',
+        title: 'Стандарт',
+        latin: 'Standard',
+        description: 'Вальс, Танго, Венский Вальс, Медленный Фокстрот, Квикстеп — европейская программа, основанная на элегантности и точности.',
+        ages: '5+ лет'
+      },
+      {
+        id: 'latin',
+        number: '02',
+        title: 'Латина',
+        latin: 'Latin American',
+        description: 'Самба, Ча-ча-ча, Румба, Пасодобль, Джайв — энергичные ритмы, развивающие скорость и координацию.',
+        ages: '5+ лет'
+      },
+      {
+        id: 'kids',
+        number: '03',
+        title: 'Детская группа',
+        latin: 'Junior',
+        description: 'Специальная программа для малышей — учим ритму, координации и уверенности на паркете.',
+        ages: '4–7 лет'
+      },
+      {
+        id: 'pro',
+        number: '04',
+        title: 'Конкурсная группа',
+        latin: 'Competitive',
+        description: 'Для танцоров, желающих выступать на национальных и международных турнирах WDSF. Интенсивная подготовка.',
+        ages: '8+ лет'
+      }
+    ],
+    teachers: [
+      {
+        name: 'Серги Цивцивадзе',
+        role: 'Главный тренер и основатель',
+        photo: '/images/sergi.jpg?v=2',
+        bio: 'Основатель студии и главный тренер. Мастер спортивного танца, многократный чемпион и действующий международный судья WDSF.'
+      },
+      {
+        name: 'Нини Гограчадзе',
+        role: 'Ассистент тренера',
+        photo: '/images/nini.jpg?v=2',
+        bio: 'Специалист по латиноамериканским танцам, помогает улучшить технику и ритм.'
+      }
+    ],
+    competitions: [
+      {
+        title: 'New Year Tournament 2026',
+        date: '2026 — Январь',
+        description: 'Ежегодный новогодний турнир и шоу-программа студии.',
+        image: '/images/competition.png'
+      }
+    ],
     register: {
       title: 'Онлайн Регистрация',
       subtitle: 'Прием учеников в студию',
