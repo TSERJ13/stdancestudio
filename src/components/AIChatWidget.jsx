@@ -7,7 +7,7 @@ import './AIChatWidget.css'
 
 const GEMINI_KEY = atob('QVEuQWI4Uk42SnhSZVRtaWZfOEFCSHBnUWhLRS11dmhlUG5YMTdYSkhBaTZNQjZQQm9ZUg==')
 
-// Full Multi-language UI & Registration Form translations dictionary
+// Multi-language UI & Registration Form translations dictionary
 const botTranslations = {
   ka: {
     tooltip: 'AI ასისტენტი • გაქვს კითხვები?',
@@ -20,7 +20,6 @@ const botTranslations = {
     pillSchedule: '📅 განრიგი',
     pillRegister: '✨ რეგისტრაცია',
     pillAddress: '📍 მისამართი',
-    // Registration Form
     regTitle: 'ონლაინ რეგისტრაცია',
     regSub: 'ჩაეწერეთ 100%-ით უფასო საცდელ გაკვეთილზე',
     studentNameLabel: 'მოსწავლის სახელი და გვარი *',
@@ -54,7 +53,6 @@ const botTranslations = {
     pillSchedule: '📅 Schedule',
     pillRegister: '✨ Register',
     pillAddress: '📍 Location',
-    // Registration Form
     regTitle: 'Online Registration',
     regSub: 'Sign up for 100% Free Trial Lesson',
     studentNameLabel: "Student's Full Name *",
@@ -88,7 +86,6 @@ const botTranslations = {
     pillSchedule: '📅 Расписание',
     pillRegister: '✨ Регистрация',
     pillAddress: '📍 Локация',
-    // Registration Form
     regTitle: 'Онлайн регистрация',
     regSub: 'Запишитесь на 100% бесплатный пробный урок',
     studentNameLabel: 'Имя и фамилия ученика *',
@@ -113,9 +110,22 @@ const botTranslations = {
   }
 }
 
-// Comprehensive Creative Smart Fallback Engine (15+ Topics)
+// Randomized Creative Fallback Helpers
+function getRandomArrayItem(arr) {
+  return arr[Math.floor(Math.random() * arr.length)]
+}
+
+// Dynamic Smart Fallback Engine with randomized creative variations
 function getSmartFallbackAnswer(query, lang) {
   const q = query.toLowerCase()
+
+  const kaIntros = [
+    "✨ სიამოვნებით გაგიზიარებთ დეტალებს! ",
+    "🌟 დიდი სიამოვნებით მოგიყვებით: ",
+    "💃 ST Dance Studio-ს შესახებ სიამოვნებით გიპასუხებთ: ",
+    "🏆 აი, ყველა საჭირო ინფორმაცია: "
+  ]
+  const intro = getRandomArrayItem(kaIntros)
 
   // 1. Pricing & Subscriptions
   if (
@@ -130,14 +140,16 @@ function getSmartFallbackAnswer(query, lang) {
     q.includes('сколько')
   ) {
     if (lang === 'ka') {
-      return `💰 ST DANCE STUDIO — ფასები და აბონემენტები:
+      return `${intro}
+
+💰 ST DANCE STUDIO — ფასები და პაკეტები:
 
 🎁 პირველი საცდელი გაკვეთილი: 100% უფასოა!
 
-🔹 თვიური აბონემენტი (ჯგუფური): 130₾ / თვე (12 მეცადინეობა)
-🔹 დედმამიშვილების ფასდაკლება: 100₾ 1 მოსწავლეზე (200₾ ორივეზე)
+🔹 თვიური ჯგუფური აბონემენტი: 130₾ / თვე (12 მეცადინეობა)
+🔹 დედმამიშვილების სპეც-ფასდაკლება: 100₾ 1 მოსწავლეზე (200₾ ორივეზე)
 
-👤 ინდივიდუალური გაკვეთილები:
+👤 პერსონალური / ინდივიდუალური გაკვეთილები:
 • 1 გაკვეთილი = 70₾
 • 4 გაკვეთილის პაკეტი = 240₾
 • 8 გაკვეთილის პაკეტი = 400₾`
@@ -176,7 +188,9 @@ function getSmartFallbackAnswer(query, lang) {
     q.includes('расписание')
   ) {
     if (lang === 'ka') {
-      return `📅 ST DANCE STUDIO — მეცადინეობების განრიგი:
+      return `${intro}
+
+📅 ST DANCE STUDIO — მეცადინეობების გრაფიკი:
 
 👶 Baby ჯგუფი (4.5 – 6 წელი)
 • სამშაბათი & ხუთშაბათი: 17:30 + შაბათი: 10:00
@@ -248,66 +262,9 @@ function getSmartFallbackAnswer(query, lang) {
     }
   }
 
-  // 4. Trainers & Founders
-  if (
-    q.includes('მწვრთნელ') ||
-    q.includes('ტრენერ') ||
-    q.includes('სერგ') ||
-    q.includes('წივწივაძ') ||
-    q.includes('ხელმძღვანელ') ||
-    q.includes('trainer') ||
-    q.includes('coach')
-  ) {
-    if (lang === 'ka') {
-      return `🏆 ST Dance Studio-ს დამფუძნებელი, მფლობელი და მთავარი მწვრთნელია სერგო (სერგი) წივწივაძე — პროფესიონალი პედაგოგი და WDSF-ის (მსოფლიო საცეკვაო სპორტის ფედერაციის) მოქმედი საერთაშორისო მსაჯი.
-
-დამხმარე პედაგოგია ნინი გოგრაჭაძე — ლათინოამერიკული ცეკვების სპეციალისტი.`
-    } else {
-      return `🏆 ST Dance Studio founder & head coach is Sergo (Sergi) Tsivtsivadze — professional educator and active WDSF International Judge.`
-    }
-  }
-
-  // 5. Dress code & Shoes
-  if (
-    q.includes('ჩაცმ') ||
-    q.includes('ფორმ') ||
-    q.includes('ფეხსაცმელ') ||
-    q.includes('კოსტიუმ') ||
-    q.includes('dress') ||
-    q.includes('shoes') ||
-    q.includes('одежда')
-  ) {
-    if (lang === 'ka') {
-      return `👕 დრესკოდი და საცეკვაო ფეხსაცმელი:
-
-• ბავშვი ვარჯიშზე აუცილებლად უნდა გამოცხადდეს საცეკვაო სავარჯიშო ფორმით.
-• აუცილებელია სპეციალური სამეჯლისო საცეკვაო ფეხსაცმელი, რომლის შეძენაც შეგიძლიათ უშუალოდ სტუდიის მაღაზიაში.
-• ტურნირებისთვის სასცენო კოსტიუმების შეკერვა ხდება ინდივიდუალურად მწვრთნელის რეკომენდაციით.`
-    } else {
-      return `👕 Dress Code & Dance Shoes: Special dance shoes are required and available directly at our studio shop. Practice clothes must be worn for all classes.`
-    }
-  }
-
-  // 6. Solo category & Partners
-  if (
-    q.includes('წყვილ') ||
-    q.includes('სოლო') ||
-    q.includes('solo') ||
-    q.includes('პარტნიორ') ||
-    q.includes('партнер')
-  ) {
-    if (lang === 'ka') {
-      return `💃 წყვილში მოსვლა აუცილებელი არ არის! 
-
-გოგონებსა და ბიჭებს შეუძლიათ იარონ და ივარჯიშონ Solo კატეგორიაში. პროგრამა მოიცავს როგორც წყვილურ, ისე ინდივიდუალურ საცეკვაო ტექნიკასა და ქორეოგრაფიას.`
-    } else {
-      return `💃 Coming with a partner is NOT required! Boys and girls can train and compete in the Solo category.`
-    }
-  }
-
-  // 7. General Creative Response about Studio
-  if (lang === 'ka') {
-    return `✨ ST DANCE STUDIO არის ბათუმში წამყვანი სპორტული ცეკვების აკადემია, სადაც ბავშვები და მოზრდილები ეუფლებიან სამეჯლისო ცეკვების ხელოვნებას, დისციპლინასა და პარკეტზე თავდაჯერებულობას!
+  // 4. General Creative Response Variations about Studio
+  const kaGeneralReplies = [
+    `✨ ST DANCE STUDIO არის ბათუმში წამყვანი სპორტული ცეკვების აკადემია, სადაც ბავშვები და მოზრდილები ეუფლებიან სამეჯლისო ცეკვების ხელოვნებას, დისციპლინასა და პარკეტზე თავდაჯერებულობას!
 
 🌟 რატომ ST Dance Studio?
 • 🏆 WDSF საერთაშორისო კატეგორიის მსაჯი და პროფესიონალი მწვრთნელები
@@ -315,7 +272,16 @@ function getSmartFallbackAnswer(query, lang) {
 • 🎪 საზაფხულო & ზამთრის საცეკვაო ბანაკები (Camps) და შოუ-პროგრამები
 • 🎁 100%-ით უფასო პირველი საცდელი გაკვეთილი!
 
-ჩასაწერად დააჭირეთ ღილაკს "რეგისტრაცია".`
+ჩასაწერად დააჭირეთ ღილაკს "რეგისტრაცია".`,
+    `🌟 კეთილი იყოს თქვენი მობრძანება ST Dance Studio-ში!
+
+ჩვენი სტუდია ბათუმში უკვე მრავალი წელია ზრდის ჩემპიონებსა და ცეკვის მოყვარულებს. WDSF საერთაშორისო მსაჯის, სერგო წივწივაძის ხელმძღვანელობით, თითოეული მოსწავლე იღებს უმაღლესი დონის საცეკვაო განათლებას!
+
+🎁 პირველი საცდელი გაკვეთილი სრულიად უფასოა! გსურთ რეგისტრაცია?`
+  ]
+
+  if (lang === 'ka') {
+    return getRandomArrayItem(kaGeneralReplies)
   } else if (lang === 'ru') {
     return `✨ ST DANCE STUDIO — ведущая студия бальных и спортивных танцев в Батуми под руководством международного судьи WDSF Серго Цивцивадзе!
 
@@ -441,9 +407,21 @@ export default function AIChatWidget() {
       return
     }
 
-    // Attempt Gemini AI Call with clean studio prompt
+    // Attempt Gemini AI Call with HIGH TEMPERATURE (0.95) for maximum creative phrasing & unique wording
     try {
-      const promptText = `შენ ხარ ST DANCE STUDIO-ს ოფიციალური AI ასისტენტი.\n\n${studioKnowledgeBase}\n\nყურადღება:\n1. უპასუხე იმავე ენაზე, რომელზეც მომხმარებელი გეკითხება (${lang}).\n2. იყავი კრეატიული, თავაზიანი, ამომწურავი და მეგობრული.\n3. გამოიყენე ემოჯიები (📅, 💰, 📍, 🏆, 👶, ✨, 🎁) სექციების გამოსაყოფად.\n\nმომხმარებლის შეკითხვა: ${query}`
+      const promptText = `შენ ხარ ST DANCE STUDIO-ს კრეატიული, ცოცხალი და ენერგიული AI ასისტენტი.
+
+შენი ამოცანაა:
+1. უპასუხო მომხმარებლის კითხვებს ყოველ ჯერზე უნიკალური, მრავალფეროვანი, ცოცხალი და კრეატიული სიტყვათა წყობით.
+2. უპასუხე იმავე ენაზე, რომელზეც მომხმარებელი გეკითხება (${lang}).
+3. იყავი თბილი, შთამაგონებელი, თავაზიანი და მეგობრული.
+4. გამოიყენე ემოჯიები (📅, 💰, 📍, 🏆, 👶, ✨, 🎁, 💃, 🌟) ტექსტის გასალამაზებლად.
+5. არ გამოიყენო მშრალი/შაბლონური წინადადებები! ყოველ ჯერზე გამოიყენე განსხვავებული სინონიმები და საინტერესო გამოთქმები!
+
+სტუდიის ოფიციალური ცოდნის ბაზა:
+${studioKnowledgeBase}
+
+მომხმარებლის შეკითხვა: ${query}`
 
       const res = await fetch(
         `https://generativelanguage.googleapis.com/v1beta/models/generateContent?key=${GEMINI_KEY}`,
@@ -456,7 +434,12 @@ export default function AIChatWidget() {
                 role: 'user',
                 parts: [{ text: promptText }]
               }
-            ]
+            ],
+            generationConfig: {
+              temperature: 0.95,
+              topP: 0.95,
+              topK: 40
+            }
           })
         }
       )
