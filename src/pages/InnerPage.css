@@ -569,6 +569,13 @@
 /* ===========================================
    CONTACT MEDIA SHOWCASE (MAP & HALL PHOTO)
    =========================================== */
+.contact-media-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(1.5rem, 3vw, 2.5rem);
+  width: 100%;
+}
+
 .contact-hover-card {
   transition: transform 0.4s var(--ease, ease), border-color 0.4s var(--ease, ease), box-shadow 0.4s var(--ease, ease);
 }
@@ -581,4 +588,10 @@
 
 .contact-hover-card:hover .hall-img-zoom {
   transform: scale(1.08);
+}
+
+@media (max-width: 768px) {
+  .contact-media-grid {
+    grid-template-columns: 1fr;
+  }
 }
