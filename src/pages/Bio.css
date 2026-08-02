@@ -446,8 +446,15 @@
 }
 
 .ai-chat-viewport.tall {
-  min-height: 200px;
-  max-height: 300px;
+  min-height: 280px;
+  max-height: 440px;
+}
+
+@media (max-width: 480px) {
+  .ai-chat-viewport.tall {
+    min-height: 340px;
+    max-height: 58vh;
+  }
 }
 
 .ai-msg-item {
@@ -1046,15 +1053,15 @@
 
 @media (max-width: 480px) {
   .bio-modal-overlay {
-    align-items: flex-start;
-    padding-top: 1.2rem;
-    padding-bottom: 2.5rem;
+    align-items: center;
+    padding-top: 0.8rem;
+    padding-bottom: 0.8rem;
   }
 
   .bio-modal-card {
-    max-height: 82dvh;
-    padding: 1.1rem 0.85rem;
-    border-radius: 18px;
+    max-height: 92dvh;
+    padding: 1.25rem 1rem;
+    border-radius: 20px;
   }
 }
 
