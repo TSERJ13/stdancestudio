@@ -565,3 +565,20 @@
   color: var(--color-text-muted);
   margin-bottom: 2.5rem;
 }
+
+/* ===========================================
+   CONTACT MEDIA SHOWCASE (MAP & HALL PHOTO)
+   =========================================== */
+.contact-hover-card {
+  transition: transform 0.4s var(--ease, ease), border-color 0.4s var(--ease, ease), box-shadow 0.4s var(--ease, ease);
+}
+
+.contact-hover-card:hover {
+  transform: translateY(-6px);
+  border-color: var(--color-gold, #d4a64a) !important;
+  box-shadow: 0 15px 40px rgba(212, 166, 74, 0.25) !important;
+}
+
+.contact-hover-card:hover .hall-img-zoom {
+  transform: scale(1.08);
+}

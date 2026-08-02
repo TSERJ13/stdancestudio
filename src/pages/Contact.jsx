@@ -7,10 +7,11 @@ import './InnerPage.css'
 
 export default function Contact() {
   const { contact } = siteContent
-  const { t } = useLanguage()
+  const { lang, t } = useLanguage()
   const [submitted, setSubmitted] = useState(false)
   const [loading, setLoading] = useState(false)
   const [form, setForm] = useState({ name: '', phone: '', message: '' })
+  const [isPhotoModalOpen, setIsPhotoModalOpen] = useState(false)
 
   const onSubmit = async (e) => {
     e.preventDefault()
@@ -28,7 +29,7 @@ export default function Contact() {
           'Accept': 'application/json'
         },
         body: JSON.stringify({
-          _subject: `📩 ახალი შეტყობინება კონტაქტის გვერდიდან: ${form.name}`,
+          _subject: `<ctrl42> ახალი შეტყობინება კონტაქტის გვერდიდან: ${form.name}`,
           name: form.name,
           phone: form.phone,
           message: form.message,
@@ -99,25 +100,101 @@ export default function Contact() {
               </div>
             </div>
 
-            <div className="contact-map" style={{ marginTop: '3rem' }}>
-              <span className="contact-list__label">Map</span>
-              <a 
-                href="https://maps.app.goo.gl/iyBGVtNeiNUGZmq86" 
-                target="_blank" 
-                rel="noreferrer"
-                style={{ display: 'block', marginTop: '1rem', border: '1px solid var(--color-line)', borderRadius: '4px', overflow: 'hidden', height: '250px', position: 'relative' }}
-              >
-                <iframe
-                  src="https://maps.google.com/maps?q=E.%20Takaishvili%2055,%20Batumi&t=&z=15&ie=UTF8&iwloc=&output=embed"
-                  width="100%"
-                  height="100%"
-                  style={{ border: 0, filter: 'grayscale(1) invert(0.9) contrast(1.2)', pointerEvents: 'none' }}
-                  allowFullScreen=""
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                ></iframe>
-              </a>
+            {/* SIDE-BY-SIDE MEDIA SHOWCASE: GOOGLE MAP & STUDIO HALL PHOTO */}
+            <div className="contact-media-showcase" style={{ marginTop: '2.5rem' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.5rem' }}>
+                
+                {/* 1. Google Map */}
+                <div className="contact-map-box">
+                  <span className="contact-list__label" style={{ display: 'block', marginBottom: '0.5rem' }}>
+                    📍 {lang === 'ka' ? 'მდებარეობა რუკაზე' : lang === 'ru' ? 'Карта' : 'Map Location'}
+                  </span>
+                  <a 
+                    href="https://maps.app.goo.gl/iyBGVtNeiNUGZmq86" 
+                    target="_blank" 
+                    rel="noreferrer"
+                    style={{ 
+                      display: 'block', 
+                      border: '1px solid rgba(212, 166, 74, 0.3)', 
+                      borderRadius: '8px', 
+                      overflow: 'hidden', 
+                      height: '240px', 
+                      position: 'relative',
+                      boxShadow: '0 10px 30px rgba(0,0,0,0.5)',
+                      transition: 'transform 0.3s ease, border-color 0.3s ease'
+                    }}
+                    className="contact-hover-card"
+                  >
+                    <iframe
+                      src="https://maps.google.com/maps?q=E.%20Takaishvili%2055,%20Batumi&t=&z=15&ie=UTF8&iwloc=&output=embed"
+                      width="100%"
+                      height="100%"
+                      style={{ border: 0, filter: 'grayscale(1) invert(0.9) contrast(1.2)', pointerEvents: 'none' }}
+                      allowFullScreen=""
+                      loading="lazy"
+                      referrerPolicy="no-referrer-when-downgrade"
+                    ></iframe>
+                  </a>
+                </div>
+
+                {/* 2. Studio Hall Photo with Luxury Gold Border & Lightbox */}
+                <div className="contact-hall-box">
+                  <span className="contact-list__label" style={{ display: 'block', marginBottom: '0.5rem' }}>
+                    🏛️ {lang === 'ka' ? 'სტუდიის დარბაზი' : lang === 'ru' ? 'Наш Зал' : 'Studio Hall'}
+                  </span>
+                  <div 
+                    onClick={() => setIsPhotoModalOpen(true)}
+                    style={{ 
+                      border: '1px solid rgba(212, 166, 74, 0.35)', 
+                      borderRadius: '8px', 
+                      overflow: 'hidden', 
+                      height: '240px', 
+                      position: 'relative',
+                      cursor: 'pointer',
+                      boxShadow: '0 10px 30px rgba(0,0,0,0.5)',
+                      background: '#0a0908'
+                    }}
+                    className="contact-hover-card"
+                  >
+                    <img 
+                      src="/images/studio-hall.jpg" 
+                      alt="ST Dance Studio Hall" 
+                      style={{ 
+                        width: '100%', 
+                        height: '100%', 
+                        objectFit: 'cover', 
+                        display: 'block',
+                        transition: 'transform 0.5s ease'
+                      }}
+                      className="hall-img-zoom"
+                    />
+                    {/* Badge Overlay */}
+                    <div style={{
+                      position: 'absolute',
+                      bottom: '12px',
+                      left: '12px',
+                      right: '12px',
+                      background: 'rgba(10, 9, 8, 0.82)',
+                      backdropFilter: 'blur(8px)',
+                      border: '1px solid rgba(212, 166, 74, 0.4)',
+                      borderRadius: '6px',
+                      padding: '8px 12px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justify: 'space-between',
+                      color: 'var(--color-gold, #d4a64a)',
+                      fontSize: '12px',
+                      fontWeight: '600'
+                    }}>
+                      <span>✨ {lang === 'ka' ? 'აკადემიური პარკეტი' : lang === 'ru' ? 'Профессиональный паркет' : 'Professional Floor'}</span>
+                      <span style={{ fontSize: '14px' }}>🔍</span>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
             </div>
+
           </div>
 
           <div className="contact-form-wrap">
@@ -177,6 +254,69 @@ export default function Contact() {
           </div>
         </div>
       </section>
+
+      {/* FULLSCREEN LIGHTBOX PHOTO MODAL */}
+      {isPhotoModalOpen && (
+        <div 
+          onClick={() => setIsPhotoModalOpen(false)}
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 9999,
+            background: 'rgba(0,0,0,0.92)',
+            backdropFilter: 'blur(12px)',
+            display: 'flex',
+            alignItems: 'center',
+            justify: 'center',
+            padding: '20px'
+          }}
+        >
+          <div 
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              position: 'relative',
+              maxWidth: '900px',
+              width: '100%',
+              borderRadius: '12px',
+              overflow: 'hidden',
+              border: '1.5px solid var(--color-gold, #d4a64a)',
+              boxShadow: '0 25px 60px rgba(0,0,0,0.9)'
+            }}
+          >
+            <button 
+              onClick={() => setIsPhotoModalOpen(false)}
+              style={{
+                position: 'absolute',
+                top: '15px',
+                right: '15px',
+                background: 'rgba(0,0,0,0.75)',
+                border: '1px solid var(--color-gold, #d4a64a)',
+                color: 'var(--color-gold, #d4a64a)',
+                width: '36px',
+                height: '36px',
+                borderRadius: '50%',
+                cursor: 'pointer',
+                fontSize: '18px',
+                display: 'flex',
+                alignItems: 'center',
+                justify: 'center',
+                zIndex: 10
+              }}
+            >
+              ✕
+            </button>
+            <img 
+              src="/images/studio-hall.jpg" 
+              alt="ST Dance Studio Hall Fullscreen" 
+              style={{ width: '100%', height: 'auto', display: 'block', maxHeight: '80vh', objectFit: 'contain' }}
+            />
+            <div style={{ padding: '16px', background: '#0d0c0b', textAlign: 'center', color: '#fff' }}>
+              <h4 style={{ color: 'var(--color-gold, #d4a64a)', margin: '0 0 4px 0' }}>ST DANCE STUDIO HALL</h4>
+              <p style={{ margin: 0, color: '#a8a39a', fontSize: '13px' }}>ქ. ბათუმი, ექვთიმე თაყაიშვილის ქუჩა №55 • აკადემიური საცეკვაო პარკეტი</p>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   )
 }
