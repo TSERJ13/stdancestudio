@@ -198,16 +198,24 @@ ${pageSummary || '• /: ' + totalViews}
 This is an automated report sent daily at 23:00 to ${REPORT_RECIPIENT}.
 ST Dance Studio Analytics Engine`
 
-  // Send email via FormSpree / Webhook / Email API to stdancegroupduo@gmail.com
+  // Send email via FormSubmit API to stdancestudiodue@gmail.com
   try {
-    await fetch('https://formspree.io/f/stdancegroupduo', {
+    await fetch('https://formsubmit.co/ajax/stdancestudiodue@gmail.com', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
       body: JSON.stringify({
+        _subject: `📊 ST Dance Studio Daily Analytics Report - ${today}`,
         email: REPORT_RECIPIENT,
-        subject: `📊 ST Dance Studio Daily Analytics Report - ${today}`,
         message: emailText,
-        report_data: analyticsData
+        total_pageviews: totalViews,
+        unique_sessions: totalSessions,
+        unique_ips: uniqueIPCount,
+        chatbot_opens: analyticsData.bot_opens,
+        questions_asked: analyticsData.bot_questions,
+        registrations: analyticsData.bot_registrations
       })
     })
   } catch (err) {

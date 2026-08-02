@@ -21,12 +21,14 @@ export default function Contact() {
 
     // 1. Send Email Notification to stdancestudiodue@gmail.com
     try {
-      await fetch('https://formspree.io/f/stdancestudiodue', {
+      await fetch('https://formsubmit.co/ajax/stdancestudiodue@gmail.com', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
         body: JSON.stringify({
-          email: 'stdancestudiodue@gmail.com',
-          subject: `📩 ახალი შეტყობინება კონტაქტის გვერდიდან: ${form.name}`,
+          _subject: `📩 ახალი შეტყობინება კონტაქტის გვერდიდან: ${form.name}`,
           name: form.name,
           phone: form.phone,
           message: form.message,

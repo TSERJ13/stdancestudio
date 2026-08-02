@@ -2704,13 +2704,19 @@ function AnalyticsTab({ showAlert }) {
       
       const text = `📊 ST DANCE STUDIO — Daily Analytics Report (${today})\n\nTotal Pageviews: ${totalViews}\nUnique Visitor Sessions: ${totalSessions}\nUnique IPs: ${ips.length}\n\nCountries:\n${ips.map(ip => `• ${data.unique_visitors[ip].country || 'Georgia'} (${ip})`).join('\n')}\n\nBot Opens: ${data?.bot_opens || 0}\nBot Questions: ${data?.bot_questions || 0}\nBot Registrations: ${data?.bot_registrations || 0}`
 
-      await fetch('https://formspree.io/f/stdancestudiodue', {
+      await fetch('https://formsubmit.co/ajax/stdancestudiodue@gmail.com', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
         body: JSON.stringify({
+          _subject: `📊 ST Dance Studio Daily Analytics Report - ${today}`,
           email: 'stdancestudiodue@gmail.com',
-          subject: `📊 ST Dance Studio Daily Analytics Report - ${today}`,
-          message: text
+          message: text,
+          total_pageviews: totalViews,
+          unique_sessions: totalSessions,
+          unique_ips: ips.length
         })
       })
       showAlert('რეპორტი წარმატებით გაიგზავნა მეილზე: stdancestudiodue@gmail.com')
