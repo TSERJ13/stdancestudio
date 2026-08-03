@@ -62,7 +62,7 @@ export default function Payment() {
         },
         "css_variable": {
           "main": "#d4af37",
-          "card_bg": "#0a0908",
+          "card_bg": "#151515",
           "card_shadow": "#000000"
         }
       };
@@ -104,7 +104,9 @@ export default function Payment() {
               minHeight: '520px',
               borderRadius: '16px',
               overflow: 'visible',
-              background: 'transparent',
+              boxShadow: '0 25px 50px -12px rgba(212, 175, 55, 0.15)',
+              background: 'var(--color-surface)',
+              border: '1px solid rgba(212, 175, 55, 0.2)',
               padding: '16px 12px',
               width: '100%',
               boxSizing: 'border-box',
