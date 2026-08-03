@@ -740,7 +740,9 @@ body.mobile-menu-open .std-bot-widget-container {
 @media (max-width: 767px) {
   .std-bot-widget-container {
     bottom: 5.5rem;
-    right: 1.5rem;
+    left: 1.5rem;
+    right: auto;
+    align-items: flex-start;
   }
 
   .std-bot-overlay {
