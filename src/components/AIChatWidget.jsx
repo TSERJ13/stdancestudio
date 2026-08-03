@@ -233,7 +233,7 @@ function getSmartFallbackAnswer(query, lang) {
     }
   }
 
-  // 3. Location & Address
+  // 3. Location, Address & Contact
   if (
     q.includes('მისამართ') ||
     q.includes('სად') ||
@@ -241,26 +241,50 @@ function getSmartFallbackAnswer(query, lang) {
     q.includes('location') ||
     q.includes('address') ||
     q.includes('где') ||
-    q.includes('адрес')
+    q.includes('адрес') ||
+    q.includes('კონტაქტ') ||
+    q.includes('contact') ||
+    q.includes('ტელეფონ') ||
+    q.includes('ნომერ')
   ) {
-    if (lang === 'ka') {
-      return `📍 ST DANCE STUDIO — ლოკაცია:
+    return (
+      <div className="std-bot-contact-card" style={{ fontSize: '0.9rem', lineHeight: '1.4' }}>
+        <p style={{ margin: '0 0 8px 0' }}>
+          📍 <strong>ST DANCE STUDIO — {lang === 'ka' ? 'ლოკაცია:' : lang === 'ru' ? 'Адрес:' : 'Location:'}</strong>
+        </p>
+        <p style={{ margin: '0 0 12px 0' }}>
+          🏛️ {lang === 'ka' ? 'ქ. ბათუმი, ექვთიმე თაყაიშვილის ქუჩა №55 (3-სართულიანი თეთრი შენობის მე-3 სართული, შესასვლელი ბალოტისფერი სახლის ჭიშკრიდან).' : 
+               lang === 'ru' ? 'Батуми, ул. Эка Такаишвили 55 (3 этаж белого здания).' : 
+               '55 Eka Takaishvili St, Batumi (3rd Floor of white building).'}
+        </p>
+        
+        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '16px' }}>
+          <a href="https://www.google.com/maps/search/ST+DANCE+STUDIO+Batumi" target="_blank" rel="noreferrer" style={{ background: '#d4af37', color: '#0a0908', textDecoration: 'none', padding: '6px 12px', borderRadius: '16px', fontSize: '0.85rem', fontWeight: 'bold' }}>
+            🗺️ {lang === 'ka' ? 'გადადი მაპზე' : lang === 'ru' ? 'Открыть карту' : 'Open in Maps'}
+          </a>
+        </div>
 
-🏛️ ქ. ბათუმი, ექვთიმე თაყაიშვილის ქუჩა №55
-(3-სართულიანი თეთრი შენობის მე-3 სართული, შესასვლელი ბალოტისფერი სახლის ჭიშკრიდან).
+        <p style={{ margin: '0 0 12px 0' }}>
+          📞 <strong>{lang === 'ka' ? 'ტელეფონი / WhatsApp:' : lang === 'ru' ? 'Тел / WhatsApp:' : 'Phone / WhatsApp:'}</strong><br/>
+          +995 514 19 99 66
+        </p>
 
-📞 ტელეფონი / WhatsApp: +995 514 19 99 66`
-    } else if (lang === 'ru') {
-      return `📍 ST DANCE STUDIO — Адрес:
-
-🏛️ Батуми, ул. Эка Такаишвили 55 (3 этаж белого здания).
-📞 Тел / WhatsApp: +995 514 19 99 66`
-    } else {
-      return `📍 ST DANCE STUDIO — Location:
-
-🏛️ 55 Eka Takaishvili St, Batumi (3rd Floor of white building).
-📞 Phone / WhatsApp: +995 514 19 99 66`
-    }
+        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+          <a href="tel:+995514199966" style={{ background: 'rgba(212,175,55,0.1)', color: '#d4af37', border: '1px solid #d4af37', textDecoration: 'none', padding: '6px 12px', borderRadius: '16px', fontSize: '0.85rem' }}>
+            📞 {lang === 'ka' ? 'დარეკვა' : lang === 'ru' ? 'Позвонить' : 'Call'}
+          </a>
+          <a href="https://wa.me/995514199966" target="_blank" rel="noreferrer" style={{ background: 'rgba(37, 211, 102, 0.1)', color: '#25D366', border: '1px solid #25D366', textDecoration: 'none', padding: '6px 12px', borderRadius: '16px', fontSize: '0.85rem' }}>
+            💬 WhatsApp
+          </a>
+          <a href="https://t.me/+995514199966" target="_blank" rel="noreferrer" style={{ background: 'rgba(0, 136, 204, 0.1)', color: '#0088cc', border: '1px solid #0088cc', textDecoration: 'none', padding: '6px 12px', borderRadius: '16px', fontSize: '0.85rem' }}>
+            ✈️ Telegram
+          </a>
+          <a href="https://instagram.com/stdancestudio.ge" target="_blank" rel="noreferrer" style={{ background: 'rgba(225, 48, 108, 0.1)', color: '#e1306c', border: '1px solid #e1306c', textDecoration: 'none', padding: '6px 12px', borderRadius: '16px', fontSize: '0.85rem' }}>
+            📸 Instagram
+          </a>
+        </div>
+      </div>
+    );
   }
 
   // 4. General Creative Response Variations about Studio
