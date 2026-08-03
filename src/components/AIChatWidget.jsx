@@ -3,6 +3,7 @@ import { useLanguage } from '../context/LanguageContext'
 import { submitRegistration } from '../data/classcore'
 import { studioKnowledgeBase } from '../data/aiKnowledge'
 import { trackAnalyticsEvent } from '../utils/analytics'
+import SwallowCrumpleCanvas from './SwallowCrumpleCanvas'
 import './AIChatWidget.css'
 
 const GEMINI_KEY = atob('QVEuQWI4Uk42SnhSZVRtaWZfOEFCSHBnUWhLRS11dmhlUG5YMTdYSkhBaTZNQjZQQm9ZUg==')
@@ -332,9 +333,23 @@ setMessages([{ role: 'bot', text: activeTrans.welcome }])
   // 5. Hide Tooltip after 6 seconds with Swallow Animation
   const [showTooltip, setShowTooltip] = useState(true)
   const [isSwallowing, setIsSwallowing] = useState(false)
+  const [crumpleRect, setCrumpleRect] = useState(null)
+  const [crumpleTarget, setCrumpleTarget] = useState(null)
+  const tooltipRef = useRef(null)
+  const avatarWrapRef = useRef(null)
 
   useEffect(() => {
     const timer1 = setTimeout(() => {
+      // Capture the live layout right before swapping the DOM bubble for the
+      // physics-simulated crumple canvas, so it hands off from the exact spot.
+      const tipEl = tooltipRef.current
+      const mouthEl = avatarWrapRef.current
+      if (tipEl && mouthEl) {
+        const tipRect = tipEl.getBoundingClientRect()
+        const mouthRect = mouthEl.getBoundingClientRect()
+        setCrumpleRect({ x: tipRect.left, y: tipRect.top, width: tipRect.width, height: tipRect.height })
+        setCrumpleTarget({ x: mouthRect.left + mouthRect.width / 2, y: mouthRect.top + mouthRect.height * 0.6 })
+      }
       setIsSwallowing(true)
     }, 6000)
 
@@ -523,11 +538,17 @@ ${studioKnowledgeBase}
       {/* 1. FLOATING LUXURY OBSIDIAN & CHAMPAGNE GOLD BOT BUTTON */}
       <div className="std-bot-widget-container">
         {/* Floating Tooltip Bubble with Dynamic Language */}
-        {!isOpen && showTooltip && (
-          <div className={`std-bot-tooltip-bubble ${isSwallowing ? 'swallow-anim' : ''}`} onClick={toggleOpen}>
+        {!isOpen && showTooltip && !isSwallowing && (
+          <div ref={tooltipRef} className="std-bot-tooltip-bubble" onClick={toggleOpen}>
             <span className="std-bot-pulse-dot"></span>
             <span>{activeTrans.tooltip}</span>
           </div>
+        )}
+
+        {/* Physics-simulated paper crumple takes over from the exact spot the
+            real tooltip was, once the hands grab it */}
+        {!isOpen && showTooltip && isSwallowing && crumpleRect && crumpleTarget && (
+          <SwallowCrumpleCanvas rect={crumpleRect} targetPoint={crumpleTarget} duration={2200} />
         )}
 
         {/* 3D Gold & Obsidian Mascot Trigger */}
@@ -536,7 +557,7 @@ ${studioKnowledgeBase}
           onClick={toggleOpen}
           aria-label="ST Dance AI Chatbot"
         >
-          <div className="std-bot-avatar-3d-wrap">
+          <div className="std-bot-avatar-3d-wrap" ref={avatarWrapRef}>
             {/* Dark Obsidian Circle with Gold Border */}
             <div className="std-bot-3d-sphere"></div>
             {/* Pure Champagne Gold Robot Icon with Blinking Eyes */}
