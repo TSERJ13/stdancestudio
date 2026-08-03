@@ -62,7 +62,7 @@ export default function Payment() {
         },
         "css_variable": {
           "main": "#d4af37",
-          "card_bg": "#1e1e24",
+          "card_bg": "transparent",
           "card_shadow": "#000000"
         }
       };
@@ -105,9 +105,9 @@ export default function Payment() {
               borderRadius: '28px',
               overflow: 'hidden',
               boxShadow: '0 25px 50px -12px rgba(212, 175, 55, 0.15)',
-              background: '#1e1e24',
+              background: '#28282D',
               border: '1px solid rgba(212, 175, 55, 0.2)',
-              padding: '0',
+              padding: '40px 16px 24px 16px',
               width: '100%',
               boxSizing: 'border-box',
               touchAction: 'pan-y',

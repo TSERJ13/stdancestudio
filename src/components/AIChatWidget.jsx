@@ -265,7 +265,7 @@ function getSmartFallbackAnswer(query, lang) {
         </div>
 
         <p style={{ margin: '0 0 12px 0' }}>
-          📞 <strong>{lang === 'ka' ? 'ტელეფონი / WhatsApp:' : lang === 'ru' ? 'Тел / WhatsApp:' : 'Phone / WhatsApp:'}</strong><br/>
+          📞 <strong>{lang === 'ka' ? 'ტელეფონი:' : lang === 'ru' ? 'Тел:' : 'Phone:'}</strong><br/>
           +995 514 19 99 66
         </p>
 
