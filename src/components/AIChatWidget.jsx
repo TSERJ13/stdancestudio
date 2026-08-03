@@ -329,18 +329,18 @@ setMessages([{ role: 'bot', text: activeTrans.welcome }])
     setRegForm((prev) => ({ ...prev, shift: activeTrans.groups[0] }))
   }, [lang])
 
-  // 5. Hide Tooltip after 6 seconds with Swallow Animation
+  // 5. Hide Tooltip after 6 seconds with Simple Fade
   const [showTooltip, setShowTooltip] = useState(true)
-  const [isSwallowing, setIsSwallowing] = useState(false)
+  const [isFadingOut, setIsFadingOut] = useState(false)
 
   useEffect(() => {
     const timer1 = setTimeout(() => {
-      setIsSwallowing(true)
+      setIsFadingOut(true)
     }, 6000)
 
     const timer2 = setTimeout(() => {
       setShowTooltip(false)
-    }, 8500) // 2.5s for the full crumple & swallow animation
+    }, 6500) // 0.5s fade out
 
     return () => {
       clearTimeout(timer1)
@@ -524,7 +524,7 @@ ${studioKnowledgeBase}
       <div className="std-bot-widget-container">
         {/* Floating Tooltip Bubble with Dynamic Language */}
         {!isOpen && showTooltip && (
-          <div className={`std-bot-tooltip-bubble ${isSwallowing ? 'swallow-anim' : ''}`} onClick={toggleOpen}>
+          <div className={`std-bot-tooltip-bubble ${isFadingOut ? 'fade-out-anim' : ''}`} onClick={toggleOpen}>
             <span className="std-bot-pulse-dot"></span>
             <span>{activeTrans.tooltip}</span>
           </div>
@@ -541,23 +541,12 @@ ${studioKnowledgeBase}
             <div className="std-bot-3d-sphere"></div>
             {/* Pure Champagne Gold Robot Icon with Blinking Eyes */}
             <svg
-              className={`std-bot-3d-robot-icon ${isSwallowing ? 'swallow-active' : ''}`}
+              className="std-bot-3d-robot-icon"
               viewBox="0 0 24 24"
               fill="none"
               stroke="#d4af37"
               strokeWidth="2"
-              style={{ overflow: 'visible' }}
             >
-              {/* Hands (Initially hidden, animated during swallow) */}
-              <g className="robot-hand-group left-hand">
-                <path className="robot-hand" d="M4 14 C -2 10, -4 2, -2 -5 C -1 -8, 3 -9, 7 -8" stroke="#d4af37" strokeWidth="2.2" strokeLinecap="round" fill="none" />
-                <circle className="robot-palm" cx="7" cy="-8" r="1.6" fill="#d4af37" />
-              </g>
-              <g className="robot-hand-group right-hand">
-                <path className="robot-hand" d="M20 14 C 26 10, 28 2, 26 -5 C 25 -8, 21 -9, 17 -8" stroke="#d4af37" strokeWidth="2.2" strokeLinecap="round" fill="none" />
-                <circle className="robot-palm" cx="17" cy="-8" r="1.6" fill="#d4af37" />
-              </g>
-              
               <rect x="3" y="11" width="18" height="10" rx="4" fill="rgba(212,175,55,0.1)" />
               <circle cx="8.5" cy="15.5" r="1.5" fill="#d4af37" className="robot-eye" />
               <circle cx="15.5" cy="15.5" r="1.5" fill="#d4af37" className="robot-eye" />
