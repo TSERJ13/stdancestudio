@@ -36,8 +36,9 @@ export default function Payment() {
         },
         "options": {
           "amount_readonly": false,
+          "amount_editable": true,
           "theme": {
-            "type": "light",
+            "type": "dark",
             "preset": "reset"
           },
           "methods": [
@@ -58,9 +59,9 @@ export default function Payment() {
           "hide_button_title": false
         },
         "css_variable": {
-          "main": "#7d8ff8",
-          "card_bg": "#353535",
-          "card_shadow": "#9ADBE8"
+          "main": "#d4af37",
+          "card_bg": "#151515",
+          "card_shadow": "#000000"
         }
       };
       
@@ -101,11 +102,14 @@ export default function Payment() {
               minHeight: '520px',
               borderRadius: '16px',
               overflow: 'visible',
-              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.3)',
-              background: '#fff',
+              boxShadow: '0 25px 50px -12px rgba(212, 175, 55, 0.1)',
+              background: 'var(--color-surface)',
+              border: '1px solid rgba(212, 175, 55, 0.2)',
               padding: '16px 12px',
               width: '100%',
-              boxSizing: 'border-box'
+              boxSizing: 'border-box',
+              touchAction: 'pan-y',
+              WebkitOverflowScrolling: 'touch'
             }}
           >
             {/* Flitt checkout will mount here */}
