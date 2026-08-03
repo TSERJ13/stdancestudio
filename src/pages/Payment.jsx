@@ -107,7 +107,7 @@ export default function Payment() {
               boxShadow: '0 25px 50px -12px rgba(212, 175, 55, 0.15)',
               background: '#0a0908',
               border: '1px solid rgba(212, 175, 55, 0.2)',
-              padding: '64px 24px 32px 24px',
+              padding: '24px 16px 24px 16px',
               width: '100%',
               boxSizing: 'border-box',
               touchAction: 'pan-y',
