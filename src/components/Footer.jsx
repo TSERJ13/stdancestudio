@@ -39,6 +39,8 @@ export default function Footer() {
                 <Link to={item.to}>{item.label}</Link>
               </li>
             ))}
+            <li><Link to={`${basePath}/privacy`}>{lang === 'ka' ? 'კონფიდენციალურობა' : lang === 'ru' ? 'Политика Конфиденциальности' : 'Privacy Policy'}</Link></li>
+            <li><Link to={`${basePath}/terms`}>{lang === 'ka' ? 'წესები და პირობები' : lang === 'ru' ? 'Условия Использования' : 'Terms & Conditions'}</Link></li>
           </ul>
         </div>
 
