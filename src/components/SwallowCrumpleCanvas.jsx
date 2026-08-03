@@ -1,8 +1,10 @@
 import { useEffect, useRef } from 'react'
 
-// Small spring-mass "cloth" grid that simulates the tooltip being grabbed at
-// one corner and dragged toward the robot's mouth — real physics instead of
-// fixed clip-path keyframes, so every fold is a byproduct of the simulation.
+// Small spring-mass "cloth" grid simulating the tooltip being grabbed by two
+// points (one per claw) and dragged toward the robot's mouth. Springs take
+// on permanent (plastic) creases once compressed past a threshold — real
+// paper doesn't spring back — so folds accumulate and stick instead of the
+// mesh just elastically shrinking like rubber.
 const COLS = 10
 const ROWS = 4
 
@@ -22,13 +24,32 @@ function lerpColor(a, b, t) {
   return [lerp(a[0], b[0], t), lerp(a[1], b[1], t), lerp(a[2], b[2], t)]
 }
 
+// deterministic pseudo-random per index, so jitter is stable across frames
+function hash(i) {
+  const s = Math.sin(i * 12.9898) * 43758.5453
+  return s - Math.floor(s)
+}
+
 function buildGrid(rect) {
   const points = []
+  let i = 0
   for (let r = 0; r <= ROWS; r++) {
     for (let c = 0; c <= COLS; c++) {
       const x = rect.x + (rect.width * c) / COLS
       const y = rect.y + (rect.height * r) / ROWS
-      points.push({ x, y, px: x, py: y, vx: 0, vy: 0, grabWeight: 0 })
+      points.push({
+        x,
+        y,
+        px: x,
+        py: y,
+        vx: 0,
+        vy: 0,
+        wL: 0,
+        wR: 0,
+        jitterPhase: hash(i) * Math.PI * 2,
+        jitterFreq: 6 + hash(i + 97) * 5,
+      })
+      i++
     }
   }
   return points
@@ -36,12 +57,15 @@ function buildGrid(rect) {
 
 function precomputeWeights(points, rect) {
   const maxDist = Math.hypot(rect.width, rect.height) || 1
-  const cornerX = rect.x + rect.width
-  const cornerY = rect.y + rect.height
+  const blX = rect.x
+  const blY = rect.y + rect.height
+  const brX = rect.x + rect.width
+  const brY = rect.y + rect.height
   for (const p of points) {
-    const d = Math.hypot(p.px - cornerX, p.py - cornerY)
-    const w = 1 - Math.min(d / maxDist, 1)
-    p.grabWeight = 0.22 + w * 0.78
+    const dL = Math.hypot(p.px - blX, p.py - blY)
+    const dR = Math.hypot(p.px - brX, p.py - brY)
+    p.wL = 0.15 + (1 - Math.min(dL / maxDist, 1)) * 0.85
+    p.wR = 0.15 + (1 - Math.min(dR / maxDist, 1)) * 0.85
   }
 }
 
@@ -50,7 +74,8 @@ function buildSprings(points) {
   const add = (a, b, k) => {
     const dx = points[a].x - points[b].x
     const dy = points[a].y - points[b].y
-    springs.push({ a, b, rest: Math.hypot(dx, dy), k })
+    const rest = Math.hypot(dx, dy)
+    springs.push({ a, b, rest, restLen: rest, k })
   }
   for (let r = 0; r <= ROWS; r++) {
     for (let c = 0; c <= COLS; c++) {
@@ -88,13 +113,21 @@ function step(points, springs, dt, t, duration, grab) {
   const fx = new Array(points.length).fill(0)
   const fy = new Array(points.length).fill(0)
 
+  // Structural springs — plastic: once compressed past ~8%, the rest length
+  // creeps down permanently, so the crease this spring represents "sticks"
+  // instead of springing back out.
   for (const s of springs) {
     const A = points[s.a]
     const B = points[s.b]
     const dx = B.x - A.x
     const dy = B.y - A.y
     const dist = Math.hypot(dx, dy) || 0.0001
-    const diff = ((dist - s.rest) / dist) * s.k
+
+    if (dist < s.restLen * 0.92) {
+      s.restLen += (dist - s.restLen) * 0.05
+    }
+
+    const diff = ((dist - s.restLen) / dist) * s.k
     const fxs = dx * diff
     const fys = dy * diff
     fx[s.a] += fxs
@@ -103,14 +136,35 @@ function step(points, springs, dt, t, duration, grab) {
     fy[s.b] -= fys
   }
 
-  const grabX = lerp(grab.x0, grab.x1, pullEase)
-  const grabY = lerp(grab.y0, grab.y1, pullEase)
+  const grabLX = lerp(grab.lx0, grab.lx1, pullEase)
+  const grabLY = lerp(grab.ly0, grab.ly1, pullEase)
+  const grabRX = lerp(grab.rx0, grab.rx1, pullEase)
+  const grabRY = lerp(grab.ry0, grab.ry1, pullEase)
+
+  const jitterAmp = pullEase * 22
+  const twist = grabProgress * 0.55 + pullEase * 0.35
 
   for (let i = 0; i < points.length; i++) {
     const p = points[i]
-    const pull = (grabProgress * 5 + pullEase * 26) * p.grabWeight
-    fx[i] += (grabX - p.x) * pull
-    fy[i] += (grabY - p.y) * pull
+    const pullL = (grabProgress * 5 + pullEase * 24) * p.wL
+    const pullR = (grabProgress * 5 + pullEase * 24) * p.wR
+
+    const dxL = grabLX - p.x
+    const dyL = grabLY - p.y
+    const dxR = grabRX - p.x
+    const dyR = grabRY - p.y
+
+    fx[i] += dxL * pullL + dxR * pullR
+    fy[i] += dyL * pullL + dyR * pullR
+
+    // slight tangential twist so the pull isn't a perfectly straight drag
+    fx[i] += -dyL * pullL * twist + dyR * pullR * twist * 0.6
+    fy[i] += dxL * pullL * twist - dxR * pullR * twist * 0.6
+
+    // organic per-point wobble, stronger once the grab is underway
+    fx[i] += Math.sin(t * 0.001 * p.jitterFreq + p.jitterPhase) * jitterAmp
+    fy[i] += Math.cos(t * 0.001 * p.jitterFreq + p.jitterPhase * 1.3) * jitterAmp * 0.6
+
     fy[i] += 40 // gentle gravity sag
   }
 
@@ -130,7 +184,7 @@ function cellShade(points, c, r, restAreas) {
   const p01 = points[idx(c, r + 1)]
   const area = Math.abs((p10.x - p00.x) * (p01.y - p00.y) - (p01.x - p00.x) * (p10.y - p00.y))
   const rest = restAreas[r * COLS + c] || 1
-  return clamp(area / rest, 0.15, 1.7)
+  return clamp(area / rest, 0.1, 1.8)
 }
 
 function shadeColor(shade, colors) {
@@ -169,9 +223,9 @@ function render(ctx, points, restAreas, colors, t, duration, cw, ch) {
       ctx.closePath()
       ctx.fill()
 
-      // fold crease: thin highlight along the shared diagonal when this cell is compressed
-      if (shade < 0.75) {
-        ctx.strokeStyle = `rgba(212, 175, 55, ${clamp((0.75 - shade) * 0.9, 0, 0.5)})`
+      // fold crease: thin highlight along the shared diagonal when compressed
+      if (shade < 0.7) {
+        ctx.strokeStyle = `rgba(212, 175, 55, ${clamp((0.7 - shade) * 0.95, 0, 0.55)})`
         ctx.lineWidth = 0.8
         ctx.beginPath()
         ctx.moveTo(p00.x, p00.y)
@@ -245,11 +299,17 @@ export default function SwallowCrumpleCanvas({ rect, targetPoint, duration = 220
     precomputeWeights(points, localRect)
     const springs = buildSprings(points)
     const restAreas = restAreasOf(points)
+
+    // Two independent grab points — one per claw — converging on the mouth
     const grab = {
-      x0: localRect.x + localRect.width,
-      y0: localRect.y + localRect.height,
-      x1: localTarget.x,
-      y1: localTarget.y,
+      lx0: localRect.x,
+      ly0: localRect.y + localRect.height,
+      lx1: localTarget.x - 7,
+      ly1: localTarget.y,
+      rx0: localRect.x + localRect.width,
+      ry0: localRect.y + localRect.height,
+      rx1: localTarget.x + 7,
+      ry1: localTarget.y,
     }
 
     let raf
