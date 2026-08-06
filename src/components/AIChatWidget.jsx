@@ -3,7 +3,6 @@ import { useLanguage } from '../context/LanguageContext'
 import { submitRegistration } from '../data/classcore'
 import { studioKnowledgeBase } from '../data/aiKnowledge'
 import { trackAnalyticsEvent } from '../utils/analytics'
-import SwallowCrumpleCanvas from './SwallowCrumpleCanvas'
 import './AIChatWidget.css'
 
 const GEMINI_KEY = atob('QVEuQWI4Uk42SnhSZVRtaWZfOEFCSHBnUWhLRS11dmhlUG5YMTdYSkhBaTZNQjZQQm9ZUg==')
@@ -354,36 +353,18 @@ setMessages([{ role: 'bot', text: activeTrans.welcome }])
     setRegForm((prev) => ({ ...prev, shift: activeTrans.groups[0] }))
   }, [lang])
 
-  // 5. Hide Tooltip after 6 seconds with Swallow Animation
+  // 5. Hide Tooltip after 6 seconds
   const [showTooltip, setShowTooltip] = useState(true)
-  const [isSwallowing, setIsSwallowing] = useState(false)
-  const [crumpleRect, setCrumpleRect] = useState(null)
-  const [crumpleTarget, setCrumpleTarget] = useState(null)
   const tooltipRef = useRef(null)
   const avatarWrapRef = useRef(null)
 
   useEffect(() => {
-    const timer1 = setTimeout(() => {
-      // Capture the live layout right before swapping the DOM bubble for the
-      // physics-simulated crumple canvas, so it hands off from the exact spot.
-      const tipEl = tooltipRef.current
-      const mouthEl = avatarWrapRef.current
-      if (tipEl && mouthEl) {
-        const tipRect = tipEl.getBoundingClientRect()
-        const mouthRect = mouthEl.getBoundingClientRect()
-        setCrumpleRect({ x: tipRect.left, y: tipRect.top, width: tipRect.width, height: tipRect.height })
-        setCrumpleTarget({ x: mouthRect.left + mouthRect.width / 2, y: mouthRect.top + mouthRect.height * 0.6 })
-      }
-      setIsSwallowing(true)
+    const timer = setTimeout(() => {
+      setShowTooltip(false)
     }, 6000)
 
-    const timer2 = setTimeout(() => {
-      setShowTooltip(false)
-    }, 8500) // 2.5s for the full crumple & swallow animation
-
     return () => {
-      clearTimeout(timer1)
-      clearTimeout(timer2)
+      clearTimeout(timer)
     }
   }, [])
 
@@ -562,17 +543,11 @@ ${studioKnowledgeBase}
       {/* 1. FLOATING LUXURY OBSIDIAN & CHAMPAGNE GOLD BOT BUTTON */}
       <div className="std-bot-widget-container">
         {/* Floating Tooltip Bubble with Dynamic Language */}
-        {!isOpen && showTooltip && !isSwallowing && (
+        {!isOpen && showTooltip && (
           <div ref={tooltipRef} className="std-bot-tooltip-bubble" onClick={toggleOpen}>
             <span className="std-bot-pulse-dot"></span>
             <span>{activeTrans.tooltip}</span>
           </div>
-        )}
-
-        {/* Physics-simulated paper crumple takes over from the exact spot the
-            real tooltip was, once the hands grab it */}
-        {!isOpen && showTooltip && isSwallowing && crumpleRect && crumpleTarget && (
-          <SwallowCrumpleCanvas rect={crumpleRect} targetPoint={crumpleTarget} duration={2200} />
         )}
 
         {/* 3D Gold & Obsidian Mascot Trigger */}
@@ -586,25 +561,13 @@ ${studioKnowledgeBase}
             <div className="std-bot-3d-sphere"></div>
             {/* Pure Champagne Gold Robot Icon with Blinking Eyes */}
             <svg
-              className={`std-bot-3d-robot-icon ${isSwallowing ? 'swallow-active' : ''}`}
+              className="std-bot-3d-robot-icon"
               viewBox="0 0 24 24"
               fill="none"
               stroke="#d4af37"
               strokeWidth="2"
               style={{ overflow: 'visible' }}
             >
-              {/* Hands (Initially hidden, animated during swallow) — forearm + 2-finger claw that opens/closes */}
-              <g className="robot-hand-group left-hand">
-                <path className="robot-arm" d="M4 14 C -2 10, -4 2, -2 -5 C -1 -7.5, 1 -8.5, 3 -9" stroke="#d4af37" strokeWidth="2.2" strokeLinecap="round" fill="none" />
-                <path className="finger finger-a" d="M3 -9 L6.5 -10.8" stroke="#d4af37" strokeWidth="1.8" strokeLinecap="round" />
-                <path className="finger finger-b" d="M3 -9 L6.2 -6.8" stroke="#d4af37" strokeWidth="1.8" strokeLinecap="round" />
-              </g>
-              <g className="robot-hand-group right-hand">
-                <path className="robot-arm" d="M20 14 C 26 10, 28 2, 26 -5 C 25 -7.5, 23 -8.5, 21 -9" stroke="#d4af37" strokeWidth="2.2" strokeLinecap="round" fill="none" />
-                <path className="finger finger-a" d="M21 -9 L17.5 -10.8" stroke="#d4af37" strokeWidth="1.8" strokeLinecap="round" />
-                <path className="finger finger-b" d="M21 -9 L17.8 -6.8" stroke="#d4af37" strokeWidth="1.8" strokeLinecap="round" />
-              </g>
-              
               <rect x="3" y="11" width="18" height="10" rx="4" fill="rgba(212,175,55,0.1)" />
               <circle cx="8.5" cy="15.5" r="1.5" fill="#d4af37" className="robot-eye" />
               <circle cx="15.5" cy="15.5" r="1.5" fill="#d4af37" className="robot-eye" />
