@@ -131,7 +131,7 @@ export default function Payment() {
               borderRadius: '28px',
               overflow: 'hidden',
               boxShadow: '0 25px 50px -12px rgba(212, 175, 55, 0.15)',
-              background: '#383c44',
+              background: '#2f333b',
               border: '1px solid rgba(212, 175, 55, 0.25)',
               padding: '24px 20px 24px 20px',
               width: '100%',
