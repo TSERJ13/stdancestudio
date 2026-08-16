@@ -109,6 +109,45 @@ export default function Payment() {
     script.onload = initCheckout
     script.onerror = () => setLoadError(true)
     document.body.appendChild(script)
+
+    // 6. MutationObserver to translate Russian bank error text into English/Georgian automatically
+    const translateRussianError = (text) => {
+      if (!text) return text
+      let updated = text
+      if (updated.includes('Недостаточно средств')) {
+        updated = updated.replace(/Недостаточно средств на карте\.?/g, 'Insufficient funds on card.')
+        updated = updated.replace(/Недостаточно средств/g, 'Insufficient funds')
+      }
+      if (updated.includes('Отклонено банком')) {
+        updated = updated.replace(/Отклонено банком\.?/g, 'Declined by bank.')
+      }
+      if (updated.includes('Ошибка оплаты')) {
+        updated = updated.replace(/Ошибка оплаты\.?/g, 'Payment error.')
+      }
+      if (updated.includes('Превышен лимит')) {
+        updated = updated.replace(/Превышен лимит\.?/g, 'Transaction limit exceeded.')
+      }
+      return updated
+    }
+
+    const observer = new MutationObserver(() => {
+      const modalElements = document.querySelectorAll('div[class*="f-modal"], div[class*="f-popup"], div[class*="f-response"]')
+      modalElements.forEach(el => {
+        const walk = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null, false)
+        let node
+        while ((node = walk.nextNode())) {
+          if (node.nodeValue && node.nodeValue.match(/[А-Яа-я]/)) {
+            node.nodeValue = translateRussianError(node.nodeValue)
+          }
+        }
+      })
+    })
+
+    observer.observe(document.body, { childList: true, subtree: true })
+
+    return () => {
+      observer.disconnect()
+    }
   }, [lang])
 
   return (
