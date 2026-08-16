@@ -66,7 +66,7 @@ export default function Payment() {
       },
       "css_variable": {
         "main": "#d4af37",
-        "card_bg": "#15171c",
+        "card_bg": "#0a0b0d",
         "card_shadow": "#000000"
       }
     }
