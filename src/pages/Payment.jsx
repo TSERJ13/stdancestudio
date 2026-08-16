@@ -143,10 +143,29 @@ export default function Payment() {
       })
     })
 
-    observer.observe(document.body, { childList: true, subtree: true })
+    // 7. Event listeners to reliably close modal when clicking or tapping close button / backdrop
+    const handleDismiss = (e) => {
+      const target = e.target
+      if (!target) return
+      const isClose = target.closest('[class*="close"]') || target.closest('button') || target.getAttribute('aria-label') === 'close'
+      const isBackdrop = target.classList.contains('f-modal-backdrop') || target.classList.contains('modal-overlay') || target.classList.contains('f-modal')
+
+      if (isClose || isBackdrop) {
+        const modals = document.querySelectorAll('div[class*="f-modal"], div[class*="f-popup"], div[class*="f-response"], div[class*="modal-wrapper"]')
+        modals.forEach(m => {
+          m.style.setProperty('display', 'none', 'important')
+          m.remove()
+        })
+      }
+    }
+
+    window.addEventListener('click', handleDismiss, true)
+    window.addEventListener('touchstart', handleDismiss, { passive: true, capture: true })
 
     return () => {
       observer.disconnect()
+      window.removeEventListener('click', handleDismiss, true)
+      window.removeEventListener('touchstart', handleDismiss, { passive: true, capture: true })
     }
   }, [lang])
 
