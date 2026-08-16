@@ -590,8 +590,63 @@
   transform: scale(1.08);
 }
 
+/* ===========================================
+   FLITT PAYMENT MODAL & RESPONSE DARK OVERRIDES
+   =========================================== */
+div[class*="f-modal"],
+div[class*="f-popup"],
+div[class*="f-response"],
+div[class*="modal-wrapper"],
+div[class*="checkout-modal"] {
+  z-index: 9999999 !important;
+}
+
+/* Force Flitt popup/modal content cards to dark obsidian design */
+div[class*="f-modal"] > div,
+div[class*="f-popup"] > div,
+div[class*="f-response"] > div,
+div[class*="modal-content"],
+div[class*="status-card"],
+div[class*="decline-box"],
+div[class*="response-card"] {
+  background-color: #1a1d24 !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(212, 175, 55, 0.35) !important;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.95), 0 0 30px rgba(212, 175, 55, 0.15) !important;
+}
+
+/* Text and subtitle inside Flitt modals */
+div[class*="f-modal"] p,
+div[class*="f-modal"] span,
+div[class*="f-modal"] div,
+div[class*="f-response"] p,
+div[class*="f-response"] span {
+  color: #e2e8f0 !important;
+}
+
+/* Modal backdrop blur */
+div[class*="f-modal-backdrop"],
+div[class*="modal-overlay"] {
+  background: rgba(0, 0, 0, 0.85) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  z-index: 9999990 !important;
+}
+
+/* Ensure Flitt modal close button is crisp gold/white */
+div[class*="f-modal"] button[class*="close"],
+div[class*="f-popup"] button[class*="close"] {
+  color: #d4af37 !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+}
+
 @media (max-width: 768px) {
-  .contact-media-grid {
-    grid-template-columns: 1fr;
+  /* Lift Flitt modal above mobile browser toolbar */
+  div[class*="f-modal"] > div,
+  div[class*="f-popup"] > div,
+  div[class*="f-response"] > div {
+    margin-bottom: 20px !important;
+    border-radius: 20px !important;
   }
 }
+
