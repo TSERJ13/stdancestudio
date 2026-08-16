@@ -636,17 +636,19 @@ div[class*="checkout-modal"] > div:first-child {
   text-align: center !important;
 }
 
-/* Hide empty graphic box / illustration container completely */
-div[class*="f-modal"] div[class*="card"],
-div[class*="f-modal"] div[class*="icon"],
-div[class*="f-modal"] div[class*="graphic"],
-div[class*="f-modal"] div[class*="picture"],
-div[class*="f-modal"] div[class*="illustration"],
+/* Hide empty graphic box / illustration / card icon container completely */
+div[class*="f-modal"] [class*="card"],
+div[class*="f-modal"] [class*="icon"],
+div[class*="f-modal"] [class*="graphic"],
+div[class*="f-modal"] [class*="picture"],
+div[class*="f-modal"] [class*="illustration"],
 div[class*="f-modal"] [class*="icon-wrap"],
-div[class*="f-response"] div[class*="card"],
-div[class*="f-response"] div[class*="icon"],
-div[class*="f-response"] div[class*="graphic"],
-div[class*="f-response"] [class*="icon-wrap"] {
+div[class*="f-modal"] [class*="image"],
+div[class*="f-response"] [class*="card"],
+div[class*="f-response"] [class*="icon"],
+div[class*="f-response"] [class*="graphic"],
+div[class*="f-response"] [class*="icon-wrap"],
+div[class*="f-response"] [class*="image"] {
   display: none !important;
 }
 
@@ -659,7 +661,20 @@ div[class*="f-response"] * {
   text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8) !important;
 }
 
-/* Make "უარყოფილია" / Title text crisp pure WHITE, centered, bold, AND on a SINGLE LINE */
+/* Ensure modal header stacks vertically so title sits on its own line centered */
+div[class*="f-modal"] [class*="header"],
+div[class*="f-modal"] [class*="head"],
+div[class*="f-response"] [class*="header"],
+div[class*="f-response"] [class*="head"] {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  text-align: center !important;
+}
+
+/* Make "უარყოფილია" / Title text crisp pure WHITE, centered, bold, AND on its OWN single line */
 div[class*="f-modal"] h1,
 div[class*="f-modal"] h2,
 div[class*="f-modal"] h3,
@@ -676,13 +691,14 @@ div[class*="f-response"] [class*="status"] {
   color: #ffffff !important;
   opacity: 1 !important;
   font-weight: 800 !important;
-  font-size: 1.18rem !important;
-  margin-top: 4px !important;
+  font-size: 1.25rem !important;
+  margin-top: 6px !important;
   margin-bottom: 12px !important;
   text-align: center !important;
-  white-space: nowrap !important;
-  overflow: hidden !important;
-  text-overflow: ellipsis !important;
+  width: 100% !important;
+  display: block !important;
+  white-space: normal !important;
+  word-break: keep-all !important;
 }
 
 /* All text, details and subtitles inside Flitt modals MUST BE PURE WHITE */
@@ -699,7 +715,7 @@ div[class*="f-response"] div {
   overflow-wrap: break-word !important;
 }
 
-/* Inner error details pill box ("2019 Недостаточно средств на карте.") */
+/* Inner error details pill box ("2019 Insufficient funds on card.") */
 div[class*="f-modal"] [class*="detail"],
 div[class*="f-modal"] [class*="info"],
 div[class*="f-modal"] [class*="error"],
@@ -731,21 +747,22 @@ div[class*="f-response"] button[class*="close"],
 div[class*="f-modal"] [class*="close"],
 div[class*="f-response"] [class*="close"] {
   position: absolute !important;
-  top: 14px !important;
-  right: 14px !important;
-  width: 34px !important;
-  height: 34px !important;
+  top: 12px !important;
+  right: 12px !important;
+  width: 36px !important;
+  height: 36px !important;
   border-radius: 50% !important;
-  background: rgba(255, 255, 255, 0.12) !important;
-  border: 1px solid rgba(255, 255, 255, 0.25) !important;
+  background: rgba(255, 255, 255, 0.18) !important;
+  border: 1px solid rgba(255, 255, 255, 0.35) !important;
   color: #ffffff !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
   cursor: pointer !important;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.5) !important;
+  pointer-events: auto !important;
+  z-index: 999999 !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.6) !important;
   margin: 0 !important;
-  z-index: 30 !important;
 }
 
 div[class*="f-modal"] button[class*="close"]:hover,
