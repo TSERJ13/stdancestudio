@@ -305,7 +305,7 @@ export default function Contact() {
             />
             <div style={{ padding: '16px', background: '#090807', textAlign: 'center', color: '#fff', borderTop: '1px solid rgba(212,166,74,0.2)' }}>
               <h4 style={{ color: 'var(--color-gold, #d4a64a)', margin: '0 0 4px 0', fontSize: '16px', letterSpacing: '1px' }}>ST DANCE STUDIO HALL</h4>
-              <p style={{ margin: 0, color: '#a8a39a', fontSize: '13px' }}>ქ. ბათუმი, ექვთიმე თაყაიშვილის ქუჩა №55 • აკადემიური საცეკვაო პარკეტი</p>
+              <p style={{ margin: 0, color: '#a8a39a', fontSize: '13px' }}>{t('contact.hallSubtitle')}</p>
             </div>
           </div>
         </div>

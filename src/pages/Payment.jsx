@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
+import { useLanguage } from '../context/LanguageContext'
 import './InnerPage.css'
 
 export default function Payment() {
+  const { t } = useLanguage()
   const containerRef = useRef(null)
   const [loadError, setLoadError] = useState(false)
 
@@ -64,7 +66,7 @@ export default function Payment() {
       },
       "css_variable": {
         "main": "#d4af37",
-        "card_bg": "#21242a",
+        "card_bg": "#15171c",
         "card_shadow": "#000000"
       }
     }
@@ -110,13 +112,13 @@ export default function Payment() {
     <>
       <section className="page-hero">
         <div className="container">
-          <span className="eyebrow">ონლაინ გადახდა</span>
+          <span className="eyebrow">{t('payment.eyebrow')}</span>
           <h1 className="display page-hero__title">
-            სწრაფი და <br />
-            <span className="display-italic">უსაფრთხო</span>
+            {t('payment.title')} <br />
+            <span className="display-italic">{t('payment.titleItalic')}</span>
           </h1>
           <p className="page-hero__lead">
-            გადაიხადეთ სწავლის საფასური მარტივად, ნებისმიერი საბანკო ბარათით.
+            {t('payment.lead')}
           </p>
         </div>
       </section>
@@ -143,7 +145,7 @@ export default function Payment() {
             {loadError ? (
               <div style={{ textAlign: 'center', padding: '60px 20px', color: '#ff6b6b' }}>
                 <p style={{ fontSize: '1.1rem', marginBottom: '16px', color: '#fff' }}>
-                  გადახდის სისტემის ჩატვირთვა ვერ მოხერხდა.
+                  {t('payment.error')}
                 </p>
                 <button 
                   onClick={() => window.location.reload()} 
@@ -157,20 +159,19 @@ export default function Payment() {
                     cursor: 'pointer'
                   }}
                 >
-                  გვერდის განახლება
+                  {t('payment.refresh')}
                 </button>
               </div>
             ) : (
               <div style={{ textAlign: 'center', padding: '40px', color: '#aaa' }}>
-                იტვირთება გადახდის სისტემა...
+                {t('payment.loading')}
               </div>
             )}
           </div>
           
           <div style={{ marginTop: '40px', textAlign: 'center', opacity: 0.7 }}>
             <p style={{ fontSize: '0.9rem' }}>
-              გადახდა ხორციელდება <strong>Flitt</strong> უსაფრთხო სისტემით. <br />
-              თქვენი ბარათის მონაცემები დაცულია.
+              {t('payment.footer')}
             </p>
           </div>
         </div>

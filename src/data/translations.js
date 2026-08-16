@@ -43,10 +43,14 @@ export const translations = {
       desc: 'გაეცანით ჩვენი სტუდიის მიმდინარე განრიგს. ყველა ცვლილება ავტომატურად აისახება აქ.',
     },
     payment: {
-      eyebrow: 'გადახდა',
-      title: 'ონლაინ',
-      titleItalic: 'ანგარიშსწორება',
-      desc: 'აქ შეგიძლიათ სწრაფად და მარტივად გადაიხადოთ მომსახურების საფასური.',
+      eyebrow: 'ონლაინ გადახდა',
+      title: 'სწრაფი და',
+      titleItalic: 'უსაფრთხო',
+      lead: 'გადაიხადეთ სწავლის საფასური მარტივად, ნებისმიერი საბანკო ბარათით.',
+      footer: 'გადახდა ხორციელდება Flitt უსაფრთხო სისტემით. თქვენი ბარათის მონაცემები დაცულია.',
+      error: 'გადახდის სისტემის ჩატვირთვა ვერ მოხერხდა.',
+      refresh: 'გვერდის განახლება',
+      loading: 'იტვირთება გადახდის სისტემა...'
     },
     contact: {
       eyebrow: 'კონტაქტი',
@@ -66,7 +70,8 @@ export const translations = {
       successTitle: 'გადმოგზავნილია!',
       success: 'შეტყობინება წარმატებით გაიგზავნა! მალე დაგიკავშირდებით.',
       mapTitle: 'მდებარეობა რუკაზე',
-      hallTitle: 'სტუდიის დარბაზი'
+      hallTitle: 'სტუდიის დარბაზი',
+      hallSubtitle: 'ქ. ბათუმი, ექვთიმე თაყაიშვილის ქუჩა №55 • აკადემიური საცეკვაო პარკეტი'
     },
     footer: {
       desc: 'სპორტული ცეკვების სტუდია ბათუმში. იგრძენი პარკეტი ჩვენთან ერთად.',
@@ -222,10 +227,14 @@ export const translations = {
       desc: 'Check out our current studio schedule. All changes are reflected here automatically.',
     },
     payment: {
-      eyebrow: 'Payment',
-      title: 'Online',
-      titleItalic: 'Payment',
-      desc: 'Here you can quickly and easily pay for the services.',
+      eyebrow: 'Online Payment',
+      title: 'Fast &',
+      titleItalic: 'Secure',
+      lead: 'Pay your tuition fee easily with any bank card.',
+      footer: 'Payments are securely processed via Flitt. Your card details are protected.',
+      error: 'Failed to load payment gateway.',
+      refresh: 'Refresh Page',
+      loading: 'Loading payment gateway...'
     },
     contact: {
       eyebrow: 'Contact',
@@ -245,7 +254,8 @@ export const translations = {
       successTitle: 'Submitted!',
       success: 'Message sent successfully! We will contact you shortly.',
       mapTitle: 'Map Location',
-      hallTitle: 'Studio Hall'
+      hallTitle: 'Studio Hall',
+      hallSubtitle: '55 Eka Takaishvili St, Batumi • Academic Dance Parquet'
     },
     footer: {
       desc: 'Sports dance studio in Batumi. Feel the parquet with us.',
@@ -401,10 +411,14 @@ export const translations = {
       desc: 'Ознакомьтесь с текущим расписанием нашей студии. Все изменения отражаются здесь автоматически.',
     },
     payment: {
-      eyebrow: 'Оплата',
-      title: 'Онлайн',
-      titleItalic: 'Оплата',
-      desc: 'Здесь вы можете быстро и легко оплатить услуги.',
+      eyebrow: 'Онлайн Оплата',
+      title: 'Быстро и',
+      titleItalic: 'Безопасно',
+      lead: 'Оплатите обучение легко любой банковской картой.',
+      footer: 'Платежи безопасно обрабатываются через Flitt. Ваши данные защищены.',
+      error: 'Не удалось загрузить платежную систему.',
+      refresh: 'Обновить страницу',
+      loading: 'Загрузка платежной системы...'
     },
     contact: {
       eyebrow: 'Контакт',
@@ -424,7 +438,8 @@ export const translations = {
       successTitle: 'Отправлено!',
       success: 'Сообщение успешно отправлено! Мы свяжемся с вами в ближайшее время.',
       mapTitle: 'Локация на карте',
-      hallTitle: 'Наш Зал'
+      hallTitle: 'Наш Зал',
+      hallSubtitle: 'Батуми, ул. Эка Такаишвили 55 • Академический танцевальный паркет'
     },
     footer: {
       desc: 'Студия спортивных танцев в Батуми. Почувствуй паркет с нами.',
