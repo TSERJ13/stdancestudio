@@ -113,6 +113,8 @@ export default function Payment() {
     // 6. Multi-language dictionary for Flitt custom fields & buttons
     const fieldTranslations = {
       ru: {
+        'ბარათით': 'Картой',
+        'თანხა': 'Сумма',
         'ბავშვის სახელი / გვარი': 'Имя и фамилия ребенка',
         'ბავშვის სახელი/გვარი': 'Имя и фамилия ребенка',
         'ბავშვის სახელი': 'Имя ребенка',
@@ -127,9 +129,13 @@ export default function Payment() {
         "Child's Full Name": 'Имя и фамилия ребенка',
         'Which month are you paying for?': 'За какой месяц оплата?',
         'Card Number': 'Номер карты',
-        'Pay': 'Оплатить'
+        'Pay': 'Оплатить',
+        'Card': 'Картой',
+        'Amount': 'Сумма'
       },
       en: {
+        'ბარათით': 'Card',
+        'თანხა': 'Amount',
         'ბავშვის სახელი / გვარი': "Child's Full Name",
         'ბავშვის სახელი/გვარი': "Child's Full Name",
         'ბავშვის სახელი': "Child's Name",
@@ -144,9 +150,15 @@ export default function Payment() {
         'Имя и фамилия ребенка': "Child's Full Name",
         'За какой месяц оплата?': 'Which month are you paying for?',
         'Номер карты': 'Card Number',
-        'Оплатить': 'Pay'
+        'Оплатить': 'Pay',
+        'Картой': 'Card',
+        'Сумма': 'Amount'
       },
       ka: {
+        'Картой': 'ბარათით',
+        'Card': 'ბარათით',
+        'Сумма': 'თანხა',
+        'Amount': 'თანხა',
         'Имя и фамилия ребенка': 'ბავშვის სახელი / გვარი',
         'За какой месяц оплата?': 'რომელი თვის გადასახადს იხდით?',
         'Номер карты': 'ბარათის ნომერი',
