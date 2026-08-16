@@ -3,7 +3,7 @@ import { useLanguage } from '../context/LanguageContext'
 import './InnerPage.css'
 
 export default function Payment() {
-  const { t } = useLanguage()
+  const { lang, t } = useLanguage()
   const containerRef = useRef(null)
   const [loadError, setLoadError] = useState(false)
 
@@ -34,11 +34,16 @@ export default function Payment() {
       }
     })
 
+    const flittLang = lang === 'ru' ? 'ru' : lang === 'en' ? 'en' : 'ka'
+
     const Options = {
       "params": {
         "button": "06de4d988f7d9d20431343ec102f63bb3ee73587"
       },
       "options": {
+        "language": flittLang,
+        "locale": flittLang,
+        "locales": [flittLang],
         "amount_readonly": false,
         "theme": {
           "type": "dark",
@@ -106,7 +111,7 @@ export default function Payment() {
     script.onload = initCheckout
     script.onerror = () => setLoadError(true)
     document.body.appendChild(script)
-  }, [])
+  }, [lang])
 
   return (
     <>
