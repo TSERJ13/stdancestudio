@@ -110,7 +110,119 @@ export default function Payment() {
     script.onerror = () => setLoadError(true)
     document.body.appendChild(script)
 
-    // 6. MutationObserver to translate Russian bank error text into English/Georgian automatically
+    // 6. Multi-language dictionary for Flitt custom fields & buttons
+    const fieldTranslations = {
+      ru: {
+        'ბავშვის სახელი / გვარი': 'Имя и фамилия ребенка',
+        'ბავშვის სახელი/გვარი': 'Имя и фамилия ребенка',
+        'ბავშვის სახელი': 'Имя ребенка',
+        'რომელი თვის გადასახადს იხდით?': 'За какой месяц оплата?',
+        'რომელი თვისას იხდით?': 'За какой месяц оплата?',
+        'რომელი თვის': 'За какой месяц',
+        'ბარათის ნომერი': 'Номер карты',
+        'თვე/წელი': 'ММ/ГГ',
+        'გადახდა': 'Оплатить',
+        'მომხმარებლის ინფორმაცია დაცულია': 'Данные пользователя защищены',
+        'გადახდა ხორციელდება Flitt უსაფრთხო სისტემით. თქვენი ბარათის მონაცემები დაცულია.': 'Оплата обрабатывается безопасной системой Flitt. Ваши данные защищены.',
+        "Child's Full Name": 'Имя и фамилия ребенка',
+        'Which month are you paying for?': 'За какой месяц оплата?',
+        'Card Number': 'Номер карты',
+        'Pay': 'Оплатить'
+      },
+      en: {
+        'ბავშვის სახელი / გვარი': "Child's Full Name",
+        'ბავშვის სახელი/გვარი': "Child's Full Name",
+        'ბავშვის სახელი': "Child's Name",
+        'რომელი თვის გადასახადს იხდით?': 'Which month are you paying for?',
+        'რომელი თვისას იხდით?': 'Which month are you paying for?',
+        'რომელი თვის': 'Which month',
+        'ბარათის ნომერი': 'Card Number',
+        'თვე/წელი': 'MM/YY',
+        'გადახდა': 'Pay',
+        'მომხმარებლის ინფორმაცია დაცულია': 'User information is protected',
+        'გადახდა ხორციელდება Flitt უსაფრთხო სისტემით. თქვენი ბარათის მონაცემები დაცულია.': 'Payments are processed securely via Flitt. Your card details are protected.',
+        'Имя и фамилия ребенка': "Child's Full Name",
+        'За какой месяц оплата?': 'Which month are you paying for?',
+        'Номер карты': 'Card Number',
+        'Оплатить': 'Pay'
+      },
+      ka: {
+        'Имя и фамилия ребенка': 'ბავშვის სახელი / გვარი',
+        'За какой месяц оплата?': 'რომელი თვის გადასახადს იხდით?',
+        'Номер карты': 'ბარათის ნომერი',
+        'ММ/ГГ': 'თვე/წელი',
+        'Оплатить': 'გადახდა',
+        'Данные пользователя защищены': 'მომხმარებლის ინფორმაცია დაცულია',
+        "Child's Full Name": 'ბავშვის სახელი / გვარი',
+        'Which month are you paying for?': 'რომელი თვის გადასახადს იხდით?',
+        'Card Number': 'ბარათის ნომერი',
+        'MM/YY': 'თვე/წელი',
+        'Pay': 'გადახდა',
+        'User information is protected': 'მომხმარებლის ინფორმაცია დაცულია'
+      }
+    }
+
+    const translateFormFields = () => {
+      const container = containerRef.current || document.getElementById('flitt-payment-container')
+      if (!container) return
+
+      const targetLang = lang === 'ru' ? 'ru' : lang === 'en' ? 'en' : 'ka'
+      const dict = fieldTranslations[targetLang]
+      if (!dict) return
+
+      const processNode = (doc) => {
+        // Placeholders
+        const inputs = doc.querySelectorAll('input, select, textarea')
+        inputs.forEach(input => {
+          const ph = input.getAttribute('placeholder')
+          if (ph) {
+            for (const [key, val] of Object.entries(dict)) {
+              if (ph.includes(key)) {
+                input.setAttribute('placeholder', ph.replace(key, val))
+              }
+            }
+          }
+          if (input.value) {
+            for (const [key, val] of Object.entries(dict)) {
+              if (input.value.includes(key)) {
+                input.value = input.value.replace(key, val)
+              }
+            }
+          }
+        })
+
+        // Labels, buttons, text nodes
+        const elements = doc.querySelectorAll('label, button, span, p, div, a, h1, h2, h3, h4')
+        elements.forEach(el => {
+          el.childNodes.forEach(child => {
+            if (child.nodeType === Node.TEXT_NODE && child.nodeValue) {
+              for (const [key, val] of Object.entries(dict)) {
+                if (child.nodeValue.includes(key)) {
+                  child.nodeValue = child.nodeValue.replace(key, val)
+                }
+              }
+            }
+          })
+        })
+      }
+
+      processNode(container)
+
+      // Also process any iframe embedded by Flitt
+      const iframes = container.querySelectorAll('iframe')
+      iframes.forEach(iframe => {
+        try {
+          const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document
+          if (iframeDoc) {
+            processNode(iframeDoc)
+          }
+        } catch (e) {
+          // Cross-origin iframe security fallback
+        }
+      })
+    }
+
+    // 7. MutationObserver to translate Russian bank error text and custom form fields
     const translateRussianError = (text) => {
       if (!text) return text
       let updated = text
@@ -131,6 +243,8 @@ export default function Payment() {
     }
 
     const observer = new MutationObserver(() => {
+      translateFormFields()
+
       const modalElements = document.querySelectorAll('div[class*="f-modal"], div[class*="f-popup"], div[class*="f-response"]')
       modalElements.forEach(el => {
         const walk = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null, false)
@@ -143,7 +257,13 @@ export default function Payment() {
       })
     })
 
-    // 7. Event listeners to reliably close modal when clicking or tapping close button / backdrop
+    observer.observe(document.body, { childList: true, subtree: true })
+
+    // Run translations periodically during initial render
+    const interval = setInterval(translateFormFields, 400)
+    setTimeout(() => clearInterval(interval), 6000)
+
+    // 8. Event listeners to reliably close modal when clicking or tapping close button / backdrop
     const handleDismiss = (e) => {
       const target = e.target
       if (!target) return
@@ -163,6 +283,7 @@ export default function Payment() {
     window.addEventListener('touchstart', handleDismiss, { passive: true, capture: true })
 
     return () => {
+      clearInterval(interval)
       observer.disconnect()
       window.removeEventListener('click', handleDismiss, true)
       window.removeEventListener('touchstart', handleDismiss, { passive: true, capture: true })
