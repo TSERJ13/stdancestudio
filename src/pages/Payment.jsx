@@ -128,10 +128,12 @@ export default function Payment() {
             id="flitt-payment-container" 
             style={{ 
               minHeight: '520px',
-              borderRadius: '24px',
+              borderRadius: '28px',
               overflow: 'hidden',
-              background: 'transparent',
-              padding: '0',
+              boxShadow: '0 25px 50px -12px rgba(212, 175, 55, 0.15)',
+              background: '#383c44',
+              border: '1px solid rgba(212, 175, 55, 0.25)',
+              padding: '24px 20px 24px 20px',
               width: '100%',
               boxSizing: 'border-box',
               touchAction: 'pan-y',
