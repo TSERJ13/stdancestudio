@@ -653,13 +653,25 @@ div[class*="f-response"] [class*="graphic"],
 div[class*="f-response"] [class*="icon-wrap"],
 div[class*="f-response"] [class*="image"] {
   position: relative !important;
-  margin: 0 auto 12px auto !important;
+  margin: 0 auto 8px auto !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
   width: auto !important;
   max-width: 100% !important;
   clear: both !important;
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+div[class*="f-modal"] [class*="card"] *,
+div[class*="f-modal"] [class*="icon"] *,
+div[class*="f-response"] [class*="card"] *,
+div[class*="f-response"] [class*="icon"] * {
+  border: none !important;
+  box-shadow: none !important;
 }
 
 /* Force ALL text, headers, and labels inside Flitt modals to pure bright WHITE */
@@ -702,8 +714,8 @@ div[class*="f-response"] [class*="status"] {
   opacity: 1 !important;
   font-weight: 800 !important;
   font-size: 1.35rem !important;
-  margin-top: 14px !important;
-  margin-bottom: 16px !important;
+  margin-top: 10px !important;
+  margin-bottom: 14px !important;
   text-align: center !important;
   width: 100% !important;
   display: block !important;
@@ -728,7 +740,7 @@ div[class*="f-response"] div {
   overflow-wrap: break-word !important;
 }
 
-/* Inner error details pill box ("2019 Insufficient funds on card.") */
+/* Inner error details pill box ("2000 Declined by card issuer bank...") */
 div[class*="f-modal"] [class*="detail"],
 div[class*="f-modal"] [class*="info"],
 div[class*="f-modal"] [class*="error"],
@@ -785,13 +797,35 @@ div[class*="f-response"] button[class*="close"]:hover {
 }
 
 @media (max-width: 768px) {
-  /* Mobile padding & sizing */
+  /* Mobile padding & sizing for Flitt modals */
   div[class*="f-modal"] > div:first-child,
   div[class*="f-popup"] > div:first-child,
   div[class*="f-response"] > div:first-child {
     width: 92vw !important;
     padding: 24px 16px 20px 16px !important;
     border-radius: 20px !important;
+  }
+
+  /* Compact Payment Page Hero Section on Mobile */
+  .page-hero--payment {
+    padding-top: 6.5rem !important;
+    padding-bottom: 0.75rem !important;
+  }
+
+  .page-hero--payment .page-hero__title {
+    font-size: 1.55rem !important;
+    margin-block: 0.4rem !important;
+  }
+
+  .page-hero--payment .page-hero__lead {
+    font-size: 0.85rem !important;
+    line-height: 1.35 !important;
+    margin-bottom: 0.5rem !important;
+  }
+
+  .page-hero--payment .eyebrow {
+    font-size: 0.7rem !important;
+    letter-spacing: 0.15em !important;
   }
 }
 

@@ -238,18 +238,32 @@ export default function Payment() {
     const translateRussianError = (text) => {
       if (!text) return text
       let updated = text
+      if (updated.includes('Отказ от банка-эмитента')) {
+        updated = updated.replace(/Отказ от банка-эмитента вашей карты, возможно на карте установлены ограничения по расчетам в интернете\.?/gi, 'Declined by issuer bank. Online payment restrictions may be enabled on your card.')
+        updated = updated.replace(/Отказ от банка-эмитента\.?/gi, 'Declined by issuer bank.')
+      }
       if (updated.includes('Недостаточно средств')) {
-        updated = updated.replace(/Недостаточно средств на карте\.?/g, 'Insufficient funds on card.')
-        updated = updated.replace(/Недостаточно средств/g, 'Insufficient funds')
+        updated = updated.replace(/Недостаточно средств на карте\.?/gi, 'Insufficient funds on card.')
+        updated = updated.replace(/Недостаточно средств/gi, 'Insufficient funds')
       }
       if (updated.includes('Отклонено банком')) {
-        updated = updated.replace(/Отклонено банком\.?/g, 'Declined by bank.')
+        updated = updated.replace(/Отклонено банком\.?/gi, 'Declined by bank.')
       }
       if (updated.includes('Ошибка оплаты')) {
-        updated = updated.replace(/Ошибка оплаты\.?/g, 'Payment error.')
+        updated = updated.replace(/Ошибка оплаты\.?/gi, 'Payment error.')
       }
       if (updated.includes('Превышен лимит')) {
-        updated = updated.replace(/Превышен лимит\.?/g, 'Transaction limit exceeded.')
+        updated = updated.replace(/Превышен лимит\.?/gi, 'Transaction limit exceeded.')
+      }
+      if (updated.match(/[А-Яа-я]/)) {
+        updated = updated
+          .replace(/Отказ от банка/gi, 'Declined by bank')
+          .replace(/эмитента/gi, 'issuer')
+          .replace(/вашей карты/gi, 'of your card')
+          .replace(/возможно на карте установлены ограничения по расчетам в интернете/gi, 'online payment restrictions may be active on your card')
+          .replace(/ограничения/gi, 'restrictions')
+          .replace(/расчетам/gi, 'transactions')
+          .replace(/в интернете/gi, 'online')
       }
       return updated
     }
@@ -259,12 +273,35 @@ export default function Payment() {
 
       const modalElements = document.querySelectorAll('div[class*="f-modal"], div[class*="f-popup"], div[class*="f-response"]')
       modalElements.forEach(el => {
+        // 1. Translate any Russian text nodes inside modal to English
         const walk = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null, false)
         let node
         while ((node = walk.nextNode())) {
           if (node.nodeValue && node.nodeValue.match(/[А-Яа-я]/)) {
             node.nodeValue = translateRussianError(node.nodeValue)
           }
+        }
+
+        // 2. Inject custom 100% working close button on the modal card
+        const card = el.querySelector('div:first-child') || el
+        if (card && !card.querySelector('.std-custom-modal-close')) {
+          const btn = document.createElement('button')
+          btn.className = 'std-custom-modal-close'
+          btn.innerHTML = '&times;'
+          btn.setAttribute('type', 'button')
+          btn.setAttribute('aria-label', 'Close')
+          btn.style.cssText = 'position:absolute;top:12px;right:12px;width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,0.25);border:1.5px solid rgba(255,255,255,0.4);color:#ffffff;font-size:24px;line-height:1;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:999999999;box-shadow:0 4px 14px rgba(0,0,0,0.8);outline:none;'
+          
+          const dismiss = (e) => {
+            e.preventDefault()
+            e.stopPropagation()
+            el.style.setProperty('display', 'none', 'important')
+            el.remove()
+          }
+
+          btn.addEventListener('click', dismiss, true)
+          btn.addEventListener('touchstart', dismiss, { passive: false, capture: true })
+          card.appendChild(btn)
         }
       })
     })
@@ -279,7 +316,7 @@ export default function Payment() {
     const handleDismiss = (e) => {
       const target = e.target
       if (!target) return
-      const isClose = target.closest('[class*="close"]') || target.closest('button') || target.getAttribute('aria-label') === 'close'
+      const isClose = target.closest('[class*="close"]') || target.closest('button') || target.getAttribute('aria-label') === 'close' || target.classList.contains('std-custom-modal-close')
       const isBackdrop = target.classList.contains('f-modal-backdrop') || target.classList.contains('modal-overlay') || target.classList.contains('f-modal')
 
       if (isClose || isBackdrop) {
@@ -304,7 +341,7 @@ export default function Payment() {
 
   return (
     <>
-      <section className="page-hero">
+      <section className="page-hero page-hero--payment">
         <div className="container">
           <span className="eyebrow">{t('payment.eyebrow')}</span>
           <h1 className="display page-hero__title">
