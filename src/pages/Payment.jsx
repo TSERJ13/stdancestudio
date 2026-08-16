@@ -41,8 +41,6 @@ export default function Payment() {
         "button": "06de4d988f7d9d20431343ec102f63bb3ee73587"
       },
       "options": {
-        "language": flittLang,
-        "locale": flittLang,
         "locales": [flittLang],
         "amount_readonly": false,
         "theme": {
