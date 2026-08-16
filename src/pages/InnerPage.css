@@ -599,9 +599,14 @@ div[class*="f-response"],
 div[class*="modal-wrapper"],
 div[class*="checkout-modal"] {
   z-index: 9999999 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 20px !important;
+  box-sizing: border-box !important;
 }
 
-/* Force Flitt popup/modal content cards to dark obsidian design */
+/* Force Flitt popup/modal content card to centered dark obsidian design */
 div[class*="f-modal"] > div,
 div[class*="f-popup"] > div,
 div[class*="f-response"] > div,
@@ -609,44 +614,113 @@ div[class*="modal-content"],
 div[class*="status-card"],
 div[class*="decline-box"],
 div[class*="response-card"] {
-  background-color: #1a1d24 !important;
+  background-color: #181a20 !important;
   color: #ffffff !important;
-  border: 1px solid rgba(212, 175, 55, 0.35) !important;
-  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.95), 0 0 30px rgba(212, 175, 55, 0.15) !important;
+  border: 1.5px solid rgba(212, 175, 55, 0.4) !important;
+  border-radius: 24px !important;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.95), 0 0 40px rgba(212, 175, 55, 0.2) !important;
+  position: relative !important;
+  margin: auto !important;
+  padding: 28px 20px 24px 20px !important;
+  max-width: 440px !important;
+  width: 90vw !important;
+  transform: translateY(-20px) !important;
 }
 
-/* Text and subtitle inside Flitt modals */
+/* Make "უარყოფილია" / Title text crisp pure WHITE & bold */
+div[class*="f-modal"] h1,
+div[class*="f-modal"] h2,
+div[class*="f-modal"] h3,
+div[class*="f-modal"] h4,
+div[class*="f-modal"] h5,
+div[class*="f-modal"] [class*="title"],
+div[class*="f-modal"] [class*="header"],
+div[class*="f-response"] h1,
+div[class*="f-response"] h2,
+div[class*="f-response"] h3,
+div[class*="f-response"] h4,
+div[class*="f-response"] [class*="title"],
+div[class*="f-response"] [class*="status"] {
+  color: #ffffff !important;
+  opacity: 1 !important;
+  font-weight: 700 !important;
+  font-size: 1.3rem !important;
+  margin-top: 10px !important;
+  margin-bottom: 12px !important;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.5) !important;
+}
+
+/* Text, details and subtitles inside Flitt modals */
 div[class*="f-modal"] p,
 div[class*="f-modal"] span,
 div[class*="f-modal"] div,
 div[class*="f-response"] p,
 div[class*="f-response"] span {
-  color: #e2e8f0 !important;
+  color: #f1f5f9 !important;
+  opacity: 1 !important;
+}
+
+/* Inner error details box ("Недостаточно средств на карте") */
+div[class*="f-modal"] div[class*="detail"],
+div[class*="f-modal"] div[class*="info"],
+div[class*="f-modal"] div[class*="error"],
+div[class*="f-response"] div[class*="detail"],
+div[class*="f-response"] div[class*="info"],
+div[class*="f-response"] div[class*="error"] {
+  background: rgba(0, 0, 0, 0.45) !important;
+  border: 1px solid rgba(212, 175, 55, 0.3) !important;
+  border-radius: 14px !important;
+  padding: 12px 16px !important;
+  color: #ffffff !important;
+  font-size: 0.92rem !important;
 }
 
 /* Modal backdrop blur */
 div[class*="f-modal-backdrop"],
 div[class*="modal-overlay"] {
-  background: rgba(0, 0, 0, 0.85) !important;
-  backdrop-filter: blur(12px) !important;
-  -webkit-backdrop-filter: blur(12px) !important;
+  background: rgba(0, 0, 0, 0.88) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
   z-index: 9999990 !important;
 }
 
-/* Ensure Flitt modal close button is crisp gold/white */
+/* Sleek close button ('X') cleanly positioned inside top-right corner of card */
 div[class*="f-modal"] button[class*="close"],
-div[class*="f-popup"] button[class*="close"] {
-  color: #d4af37 !important;
-  background: rgba(255, 255, 255, 0.1) !important;
+div[class*="f-popup"] button[class*="close"],
+div[class*="f-response"] button[class*="close"],
+div[class*="f-modal"] [class*="close"],
+div[class*="f-response"] [class*="close"] {
+  position: absolute !important;
+  top: 14px !important;
+  right: 14px !important;
+  width: 36px !important;
+  height: 36px !important;
+  border-radius: 50% !important;
+  background: rgba(255, 255, 255, 0.12) !important;
+  border: 1px solid rgba(255, 255, 255, 0.25) !important;
+  color: #ffffff !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5) !important;
+  margin: 0 !important;
+  z-index: 20 !important;
+}
+
+div[class*="f-modal"] button[class*="close"]:hover,
+div[class*="f-response"] button[class*="close"]:hover {
+  background: #d4af37 !important;
+  color: #000000 !important;
 }
 
 @media (max-width: 768px) {
-  /* Lift Flitt modal above mobile browser toolbar */
+  /* Ensure mobile centering and spacing above bottom bar */
   div[class*="f-modal"] > div,
   div[class*="f-popup"] > div,
   div[class*="f-response"] > div {
-    margin-bottom: 20px !important;
-    border-radius: 20px !important;
+    transform: translateY(-35px) !important;
+    border-radius: 24px !important;
   }
 }
 
