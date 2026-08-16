@@ -602,18 +602,26 @@ div[class*="checkout-modal"] {
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  padding: 20px !important;
+  padding: 16px !important;
   box-sizing: border-box !important;
+  background: rgba(0, 0, 0, 0.88) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
 }
 
-/* Force Flitt popup/modal content card to centered dark obsidian design */
-div[class*="f-modal"] > div,
-div[class*="f-popup"] > div,
-div[class*="f-response"] > div,
-div[class*="modal-content"],
-div[class*="status-card"],
-div[class*="decline-box"],
-div[class*="response-card"] {
+/* Make inner wrapper transparent to avoid double-card boxes */
+div[class*="f-modal"] div,
+div[class*="f-popup"] div,
+div[class*="f-response"] div {
+  box-sizing: border-box !important;
+  max-width: 100% !important;
+}
+
+/* Force ONLY the primary modal card to dark obsidian design */
+div[class*="f-modal"] > div:first-child,
+div[class*="f-popup"] > div:first-child,
+div[class*="f-response"] > div:first-child,
+div[class*="checkout-modal"] > div:first-child {
   background-color: #181a20 !important;
   color: #ffffff !important;
   border: 1.5px solid rgba(212, 175, 55, 0.4) !important;
@@ -622,9 +630,9 @@ div[class*="response-card"] {
   position: relative !important;
   margin: auto !important;
   padding: 28px 20px 24px 20px !important;
-  max-width: 440px !important;
+  max-width: 420px !important;
   width: 90vw !important;
-  transform: translateY(-20px) !important;
+  overflow: hidden !important;
 }
 
 /* Make "უარყოფილია" / Title text crisp pure WHITE & bold */
@@ -644,44 +652,47 @@ div[class*="f-response"] [class*="status"] {
   color: #ffffff !important;
   opacity: 1 !important;
   font-weight: 700 !important;
-  font-size: 1.3rem !important;
-  margin-top: 10px !important;
+  font-size: 1.25rem !important;
+  margin-top: 8px !important;
   margin-bottom: 12px !important;
   text-shadow: 0 2px 10px rgba(0,0,0,0.5) !important;
+  white-space: normal !important;
+  word-break: break-word !important;
 }
 
 /* Text, details and subtitles inside Flitt modals */
 div[class*="f-modal"] p,
 div[class*="f-modal"] span,
-div[class*="f-modal"] div,
 div[class*="f-response"] p,
 div[class*="f-response"] span {
   color: #f1f5f9 !important;
   opacity: 1 !important;
+  white-space: normal !important;
+  word-break: break-word !important;
+  overflow-wrap: break-word !important;
 }
 
-/* Inner error details box ("Недостаточно средств на карте") */
-div[class*="f-modal"] div[class*="detail"],
-div[class*="f-modal"] div[class*="info"],
-div[class*="f-modal"] div[class*="error"],
-div[class*="f-response"] div[class*="detail"],
-div[class*="f-response"] div[class*="info"],
-div[class*="f-response"] div[class*="error"] {
-  background: rgba(0, 0, 0, 0.45) !important;
+/* Inner error details pill box ("2019 Недостаточно средств на карте") */
+div[class*="f-modal"] [class*="detail"],
+div[class*="f-modal"] [class*="info"],
+div[class*="f-modal"] [class*="error"],
+div[class*="f-response"] [class*="detail"],
+div[class*="f-response"] [class*="info"],
+div[class*="f-response"] [class*="error"] {
+  background: rgba(0, 0, 0, 0.5) !important;
   border: 1px solid rgba(212, 175, 55, 0.3) !important;
   border-radius: 14px !important;
-  padding: 12px 16px !important;
+  padding: 12px 14px !important;
   color: #ffffff !important;
-  font-size: 0.92rem !important;
-}
-
-/* Modal backdrop blur */
-div[class*="f-modal-backdrop"],
-div[class*="modal-overlay"] {
-  background: rgba(0, 0, 0, 0.88) !important;
-  backdrop-filter: blur(16px) !important;
-  -webkit-backdrop-filter: blur(16px) !important;
-  z-index: 9999990 !important;
+  font-size: 0.88rem !important;
+  line-height: 1.45 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  white-space: normal !important;
+  word-break: break-word !important;
+  overflow-wrap: break-word !important;
+  margin-top: 10px !important;
 }
 
 /* Sleek close button ('X') cleanly positioned inside top-right corner of card */
@@ -693,8 +704,8 @@ div[class*="f-response"] [class*="close"] {
   position: absolute !important;
   top: 14px !important;
   right: 14px !important;
-  width: 36px !important;
-  height: 36px !important;
+  width: 34px !important;
+  height: 34px !important;
   border-radius: 50% !important;
   background: rgba(255, 255, 255, 0.12) !important;
   border: 1px solid rgba(255, 255, 255, 0.25) !important;
@@ -705,7 +716,7 @@ div[class*="f-response"] [class*="close"] {
   cursor: pointer !important;
   box-shadow: 0 4px 12px rgba(0,0,0,0.5) !important;
   margin: 0 !important;
-  z-index: 20 !important;
+  z-index: 30 !important;
 }
 
 div[class*="f-modal"] button[class*="close"]:hover,
@@ -715,12 +726,13 @@ div[class*="f-response"] button[class*="close"]:hover {
 }
 
 @media (max-width: 768px) {
-  /* Ensure mobile centering and spacing above bottom bar */
-  div[class*="f-modal"] > div,
-  div[class*="f-popup"] > div,
-  div[class*="f-response"] > div {
-    transform: translateY(-35px) !important;
-    border-radius: 24px !important;
+  /* Mobile padding & sizing */
+  div[class*="f-modal"] > div:first-child,
+  div[class*="f-popup"] > div:first-child,
+  div[class*="f-response"] > div:first-child {
+    width: 92vw !important;
+    padding: 24px 16px 20px 16px !important;
+    border-radius: 20px !important;
   }
 }
 
