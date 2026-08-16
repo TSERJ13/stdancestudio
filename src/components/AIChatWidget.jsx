@@ -136,8 +136,19 @@ function getSmartFallbackAnswer(query, lang) {
     q.includes('გადახდ') ||
     q.includes('price') ||
     q.includes('cost') ||
+    q.includes('fee') ||
+    q.includes('rate') ||
+    q.includes('subscription') ||
+    q.includes('discount') ||
+    q.includes('how much') ||
     q.includes('цена') ||
-    q.includes('сколько')
+    q.includes('цены') ||
+    q.includes('сколько') ||
+    q.includes('стоит') ||
+    q.includes('стоимость') ||
+    q.includes('абонемент') ||
+    q.includes('оплат') ||
+    q.includes('скидк')
   ) {
     if (lang === 'ka') {
       return `${intro}
@@ -158,21 +169,25 @@ function getSmartFallbackAnswer(query, lang) {
 
 🎁 Первый пробный урок: 100% Бесплатно!
 
-🔹 Месячный абонемент: 130 GEL / месяц (12 занятий)
-🔹 Скидка для братьев/сестер: 100 GEL за ученика
+🔹 Месячный групповой абонемент: 130 GEL / месяц (12 занятий)
+🔹 Скидка для братьев и сестер: 100 GEL за ученика (200 GEL за двоих)
 
-👤 Индивидуальные уроки:
-• 1 урок = 70 GEL | 4 урока = 240 GEL | 8 уроков = 400 GEL`
+👤 Индивидуальные / Персональные уроки:
+• 1 урок = 70 GEL
+• Пакет из 4 уроков = 240 GEL
+• Пакет из 8 уроков = 400 GEL`
     } else {
       return `💰 ST DANCE STUDIO — Pricing & Packages:
 
 🎁 First Trial Lesson: 100% FREE!
 
-🔹 Monthly Group Subscription: 130 GEL / month
-🔹 Sibling Discount: 100 GEL per student
+🔹 Monthly Group Subscription: 130 GEL / month (12 lessons)
+🔹 Sibling Discount: 100 GEL per student (200 GEL total for 2 siblings)
 
-👤 Private Coaching:
-• 1 Lesson = 70 GEL | 4 Package = 240 GEL | 8 Package = 400 GEL`
+👤 Private Individual Coaching:
+• 1 Lesson = 70 GEL
+• 4 Lessons Package = 240 GEL
+• 8 Lessons Package = 400 GEL`
     }
   }
 
@@ -457,19 +472,22 @@ setMessages([{ role: 'bot', text: activeTrans.welcome }])
 
     // Attempt Gemini AI Call with HIGH TEMPERATURE (0.95) for maximum creative phrasing & unique wording
     try {
-      const promptText = `შენ ხარ ST DANCE STUDIO-ს კრეატიული, ცოცხალი და ენერგიული AI ასისტენტი.
+      const langName = lang === 'ru' ? 'Russian (Русский)' : lang === 'en' ? 'English' : 'Georgian (ქართული)'
+      const promptText = `You are ST DANCE STUDIO's smart, inspiring AI Assistant in Batumi, Georgia.
 
-შენი ამოცანაა:
-1. უპასუხო მომხმარებლის კითხვებს ყოველ ჯერზე უნიკალური, მრავალფეროვანი, ცოცხალი და კრეატიული სიტყვათა წყობით.
-2. უპასუხე იმავე ენაზე, რომელზეც მომხმარებელი გეკითხება (${lang}).
-3. იყავი თბილი, შთამაგონებელი, თავაზიანი და მეგობრული.
-4. გამოიყენე ემოჯიები (📅, 💰, 📍, 🏆, 👶, ✨, 🎁, 💃, 🌟) ტექსტის გასალამაზებლად.
-5. არ გამოიყენო მშრალი/შაბლონური წინადადებები! ყოველ ჯერზე გამოიყენე განსხვავებული სინონიმები და საინტერესო გამოთქმები!
+CRITICAL MULTILINGUAL & PRICING RULES:
+1. ALWAYS respond in the target user language (${langName}). If the user asks in Russian, reply in fluent Russian. If in English, reply in fluent English. If in Georgian, reply in fluent Georgian.
+2. When asked about prices, subscriptions, costs, or trial lessons in ANY language ("цена", "сколько стоит", "стоимость", "абонемент", "price", "cost", "fee", "რა ღირს", "ფასი"), ALWAYS state the exact pricing breakdown in that language:
+   - Trial Lesson: 100% FREE! / 100% Бесплатно! / 100% უფასო!
+   - Monthly Group Pass: 130 GEL/mo (12 lessons) / 130 GEL в месяц (12 занятий) / 130 ლარი თვეში (12 გაკვეთილი)
+   - Sibling Discount: 100 GEL per student / 100 GEL за ученика (200 GEL за двоих) / 100 ლარი 1 მოსწავლეზე (200 ლარი 2 დედმამიშვილზე)
+   - Private Coaching: 1 lesson = 70 GEL | 4 lessons = 240 GEL | 8 lessons = 400 GEL
+3. Be friendly, polite, elegant, and helpful. Use emojis tastefully (📅, 💰, 📍, 🏆, 👶, ✨, 🎁, 💃, 🌟).
 
-სტუდიის ოფიციალური ცოდნის ბაზა:
+ST DANCE STUDIO OFFICIAL KNOWLEDGE BASE:
 ${studioKnowledgeBase}
 
-მომხმარებლის შეკითხვა: ${query}`
+USER QUESTION: ${query}`
 
       const res = await fetch(
         `https://generativelanguage.googleapis.com/v1beta/models/generateContent?key=${GEMINI_KEY}`,
