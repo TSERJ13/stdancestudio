@@ -116,12 +116,30 @@
 @media (max-width: 768px) {
   .hero {
     min-height: 100vh;
-    padding-top: 3.2rem;
+    padding-top: 3.8rem;
   }
   .hero__inner {
     grid-template-columns: 1fr;
     align-items: center;
-    padding-bottom: 6.5rem;
+    padding-bottom: 5.5rem;
+  }
+  .hero__actions {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 0.5rem;
+    width: 100%;
+    max-width: 100%;
+    margin-top: 0.5rem;
+  }
+  .hero__actions .btn {
+    flex: 1;
+    padding: 0.75rem 0.75rem;
+    font-size: 0.78rem;
+    letter-spacing: 0.06em;
+    white-space: nowrap;
+    text-align: center;
+    justify-content: center;
+    box-sizing: border-box;
   }
   .hero__scroll { display: none; }
   .hero__bg img { object-position: 70% center; }
