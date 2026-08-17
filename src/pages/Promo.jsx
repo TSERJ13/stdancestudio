@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react'
 import { Link } from 'react-router-dom'
-import { Play, Pause, Volume2, VolumeX, Sparkles, Award, Gift, MapPin } from 'lucide-react'
+import { Play, Pause, Volume2, VolumeX, Sparkles, Award, Gift, UserCheck } from 'lucide-react'
 import { useLanguage } from '../context/LanguageContext'
 import { translations } from '../data/translations'
 import { submitRegistration } from '../data/classcore'
@@ -186,11 +186,11 @@ export default function Promo() {
 
             <div className="std-promo-feat-item">
               <div className="std-promo-feat-icon">
-                <MapPin size={16} color="var(--color-gold, #d4a64a)" />
+                <UserCheck size={16} color="var(--color-gold, #d4a64a)" />
               </div>
               <div className="std-promo-feat-text">
-                <strong>{lang === 'ka' ? 'ბათუმი' : lang === 'ru' ? 'Батуми' : 'Batumi'}</strong>
-                <span>{lang === 'ka' ? 'ე. თაყაიშვილის 55' : lang === 'ru' ? 'ул. Е. Такаишвили 55' : '55 E. Takaishvili St'}</span>
+                <strong>{lang === 'ka' ? 'ინდივიდუალური მიდგომა' : lang === 'ru' ? 'Индивидуальный подход' : 'Individual Approach'}</strong>
+                <span>{lang === 'ka' ? 'თითოეულ მოსწავლეზე' : lang === 'ru' ? 'Внимание к каждому' : 'Personal attention'}</span>
               </div>
             </div>
           </div>
