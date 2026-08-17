@@ -208,28 +208,29 @@ export default function Register() {
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', maxHeight: '280px', overflowY: 'auto', paddingRight: '4px' }}>
                   {groups.map((g) => {
                     const isSelected = form.group === g.id
+                    const gColor = g.color || '#d4a64a'
                     return (
                       <div
                         key={g.id}
                         onClick={() => setForm({ ...form, group: g.id })}
                         style={{
                           padding: '14px 16px',
-                          background: isSelected ? 'rgba(212,166,74,0.14)' : 'rgba(255,255,255,0.02)',
-                          border: isSelected ? '1px solid var(--color-gold, #d4a64a)' : '1px solid rgba(212, 166, 74, 0.15)',
+                          background: isSelected ? `${gColor}22` : 'rgba(255,255,255,0.02)',
+                          border: isSelected ? `1.5px solid ${gColor}` : '1px solid rgba(255, 255, 255, 0.08)',
                           borderRadius: '8px',
                           cursor: 'pointer',
                           transition: 'all 0.25s ease',
-                          boxShadow: isSelected ? '0 4px 15px rgba(212,166,74,0.15)' : 'none',
+                          boxShadow: isSelected ? `0 4px 15px ${gColor}33` : 'none',
                           display: 'flex',
                           flexDirection: 'column',
                           gap: '6px'
                         }}
                       >
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-                          <span style={{ fontWeight: '600', color: isSelected ? 'var(--color-gold, #d4a64a)' : '#ffffff', fontSize: '14.5px', letterSpacing: '0.02em' }}>
+                          <span style={{ fontWeight: '600', color: isSelected ? gColor : '#ffffff', fontSize: '14.5px', letterSpacing: '0.02em' }}>
                             {g.name}
                           </span>
-                          <span style={{ fontSize: '11px', background: 'rgba(212,166,74,0.12)', color: 'var(--color-gold, #d4a64a)', border: '1px solid rgba(212,166,74,0.3)', padding: '3px 9px', borderRadius: '12px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                          <span style={{ fontSize: '11px', background: `${gColor}22`, color: gColor, border: `1px solid ${gColor}55`, padding: '3px 9px', borderRadius: '12px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                             {g.age}
                           </span>
                         </div>

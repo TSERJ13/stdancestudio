@@ -793,14 +793,15 @@ USER QUESTION: ${query}`
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', maxHeight: '200px', overflowY: 'auto', paddingRight: '2px' }}>
                         {((translations[lang] || translations.ka).register?.groups || []).map((g) => {
                           const isSelected = regForm.shift === g.id
+                          const gColor = g.color || '#d4a64a'
                           return (
                             <div
                               key={g.id}
                               onClick={() => setRegForm({ ...regForm, shift: g.id })}
                               style={{
                                 padding: '10px 12px',
-                                background: isSelected ? 'rgba(212,166,74,0.14)' : 'rgba(255,255,255,0.02)',
-                                border: isSelected ? '1px solid var(--color-gold, #d4a64a)' : '1px solid rgba(212, 166, 74, 0.15)',
+                                background: isSelected ? `${gColor}22` : 'rgba(255,255,255,0.02)',
+                                border: isSelected ? `1.5px solid ${gColor}` : '1px solid rgba(255, 255, 255, 0.08)',
                                 borderRadius: '8px',
                                 cursor: 'pointer',
                                 transition: 'all 0.25s ease',
@@ -810,10 +811,10 @@ USER QUESTION: ${query}`
                               }}
                             >
                               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
-                                <span style={{ fontWeight: '600', color: isSelected ? 'var(--color-gold, #d4a64a)' : '#ffffff', fontSize: '13.5px' }}>
+                                <span style={{ fontWeight: '600', color: isSelected ? gColor : '#ffffff', fontSize: '13.5px' }}>
                                   {g.name}
                                 </span>
-                                <span style={{ fontSize: '10.5px', background: 'rgba(212,166,74,0.12)', color: 'var(--color-gold, #d4a64a)', border: '1px solid rgba(212,166,74,0.3)', padding: '2px 7px', borderRadius: '10px', fontWeight: '600', textTransform: 'uppercase' }}>
+                                <span style={{ fontSize: '10.5px', background: `${gColor}22`, color: gColor, border: `1px solid ${gColor}55`, padding: '2px 7px', borderRadius: '10px', fontWeight: '600', textTransform: 'uppercase' }}>
                                   {g.age}
                                 </span>
                               </div>

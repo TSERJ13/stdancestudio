@@ -154,13 +154,13 @@ export const translations = {
       groupTitle: 'სასურველი ჯგუფი (განრიგი & წლოვანება) *',
       groupSelect: 'აირჩიეთ ჯგუფი...',
       groups: [
-        { id: 'Baby (4.5-6 წელი)', name: 'Baby ჯგუფი', age: '4.5 – 6 წელი', schedule: 'სამშაბათი & ხუთშაბათი 17:30 | შაბათი 10:00' },
-        { id: 'Bronze (დამწყებები)', name: 'Bronze ჯგუფი (დამწყებები)', age: '5+ წელი', schedule: 'სამშაბათი & ხუთშაბათი 18:15' },
-        { id: 'Pre-Silver (1 წლ გამოცდილება)', name: 'Pre-Silver ჯგუფი', age: '6+ წელი (1 წლიანი გამოცდილება)', schedule: 'ორშაბათი, ოთხშაბათი, პარასკევი 17:30' },
-        { id: 'Silver (2+ წლ გამოცდილება)', name: 'Silver ჯგუფი', age: '7+ წელი (2+ წლიანი გამოცდილება)', schedule: 'ორშაბათი, ოთხშაბათი, პარასკევი 19:30' },
-        { id: 'Golden (საკონკურსო)', name: 'Golden ჯგუფი (საკონკურსო)', age: '8+ წელი (5+ წლიანი გამოცდილება)', schedule: 'ორშაბათი, ოთხშაბათი, პარასკევი 16:30' },
-        { id: 'წყვილების ჯგუფი', name: 'წყვილების ჯგუფი', age: '6+ წელი', schedule: 'ორშაბათი, ოთხშაბათი, პარასკევი 18:30' },
-        { id: 'Hobby Class (ზრდასრულები)', name: 'Hobby Class (ზრდასრულები/მოყვარულები)', age: '16+ წელი (ზრდასრულები)', schedule: 'სამშაბათი & ხუთშაბათი 19:15' }
+        { id: 'Baby (4.5-6 წელი)', name: 'Baby ჯგუფი', age: '4.5 – 6 წელი', schedule: 'სამშაბათი & ხუთშაბათი 17:30 | შაბათი 10:00', color: '#f3b23e' },
+        { id: 'Bronze (დამწყებები)', name: 'Bronze ჯგუფი (დამწყებები)', age: '5+ წელი', schedule: 'სამშაბათი & ხუთშაბათი 18:15 | შაბათი 11:00', color: '#d96b5c' },
+        { id: 'Golden ჯგუფი', name: 'Golden ჯგუფი', age: '8+ წელი (5+ წლიანი გამოცდილება)', schedule: 'ორშაბათი, ოთხშაბათი, პარასკევი 16:30', color: '#ff5722' },
+        { id: 'Pre-Silver (1 წლ გამოცდილება)', name: 'Pre-Silver ჯგუფი', age: '6+ წელი (1 წლიანი გამოცდილება)', schedule: 'ორშაბათი, ოთხშაბათი, პარასკევი 17:30', color: '#039be5' },
+        { id: 'წყვილების ჯგუფი', name: 'წყვილების ჯგუფი', age: '6+ წელი', schedule: 'ორშაბათი, ოთხშაბათი, პარასკევი 18:30', color: '#8e24aa' },
+        { id: 'Silver (2+ წლ გამოცდილება)', name: 'Silver ჯგუფი', age: '7+ წელი (2+ წლიანი გამოცდილება)', schedule: 'ორშაბათი, ოთხშაბათი, პარასკევი 19:30', color: '#78909c' },
+        { id: 'Hobby Class (ზრდასრულები)', name: 'Hobby Class (ზრდასრულები/მოყვარულები)', age: '16+ წელი (ზრდასრულები)', schedule: 'სამშაბათი & ხუთშაბათი 19:15', color: '#3f51b5' }
       ],
       shiftTitle: 'რომელ ცვლაში სწავლობს ბავშვი? *',
       shift1: 'I ცვლა',
@@ -349,13 +349,13 @@ export const translations = {
       groupTitle: 'Select Desired Group (Schedule & Age Limit) *',
       groupSelect: 'Select a group...',
       groups: [
-        { id: 'Baby (4.5-6 Yrs)', name: 'Baby Group', age: 'Ages 4.5 – 6', schedule: 'Tue, Thu 17:30 | Sat 10:00' },
-        { id: 'Bronze (Beginners)', name: 'Bronze Group (Beginners)', age: 'Ages 5+', schedule: 'Tue & Thu 18:15' },
-        { id: 'Pre-Silver (1 Yr Exp)', name: 'Pre-Silver Group', age: 'Ages 6+ (1 Yr Experience)', schedule: 'Mon, Wed, Fri 17:30' },
-        { id: 'Silver (2+ Yrs Exp)', name: 'Silver Group', age: 'Ages 7+ (2+ Yrs Experience)', schedule: 'Mon, Wed, Fri 19:30' },
-        { id: 'Golden (Competitive)', name: 'Golden Group (Competitive)', age: 'Ages 8+ (5+ Yrs Experience)', schedule: 'Mon, Wed, Fri 16:30' },
-        { id: 'Couples Group', name: 'Couples Group', age: 'Ages 6+', schedule: 'Mon, Wed, Fri 18:30' },
-        { id: 'Hobby Class (Adults)', name: 'Hobby Class (Adults / Amateurs)', age: 'Ages 16+ (Adults)', schedule: 'Tue & Thu 19:15' }
+        { id: 'Baby (4.5-6 Yrs)', name: 'Baby Group', age: 'Ages 4.5 – 6', schedule: 'Tue, Thu 17:30 | Sat 10:00', color: '#f3b23e' },
+        { id: 'Bronze (Beginners)', name: 'Bronze Group (Beginners)', age: 'Ages 5+', schedule: 'Tue & Thu 18:15 | Sat 11:00', color: '#d96b5c' },
+        { id: 'Golden Group', name: 'Golden Group', age: 'Ages 8+ (5+ Yrs Experience)', schedule: 'Mon, Wed, Fri 16:30', color: '#ff5722' },
+        { id: 'Pre-Silver (1 Yr Exp)', name: 'Pre-Silver Group', age: 'Ages 6+ (1 Yr Experience)', schedule: 'Mon, Wed, Fri 17:30', color: '#039be5' },
+        { id: 'Couples Group', name: 'Couples Group', age: 'Ages 6+', schedule: 'Mon, Wed, Fri 18:30', color: '#8e24aa' },
+        { id: 'Silver (2+ Yrs Exp)', name: 'Silver Group', age: 'Ages 7+ (2+ Yrs Experience)', schedule: 'Mon, Wed, Fri 19:30', color: '#78909c' },
+        { id: 'Hobby Class (Adults)', name: 'Hobby Class (Adults / Amateurs)', age: 'Ages 16+ (Adults)', schedule: 'Tue & Thu 19:15', color: '#3f51b5' }
       ],
       shiftTitle: 'Which school shift does the child attend? *',
       shift1: 'Shift I',
@@ -544,13 +544,13 @@ export const translations = {
       groupTitle: 'Желаемая группа (Расписание и Возраст) *',
       groupSelect: 'Выберите группу...',
       groups: [
-        { id: 'Baby (4.5-6 лет)', name: 'Baby группа', age: '4.5 – 6 лет', schedule: 'Вт, Чт 17:30 | Сб 10:00' },
-        { id: 'Bronze (Новички)', name: 'Bronze группа (Новички)', age: '5+ лет', schedule: 'Вт и Чт 18:15' },
-        { id: 'Pre-Silver (1 год оп.)', name: 'Pre-Silver группа', age: '6+ лет (1 год опыта)', schedule: 'Пн, Ср, Пт 17:30' },
-        { id: 'Silver (2+ года оп.)', name: 'Silver группа', age: '7+ лет (2+ года опыта)', schedule: 'Пн, Ср, Пт 19:30' },
-        { id: 'Golden (Конкурсная)', name: 'Golden группа (Конкурсная)', age: '8+ лет (5+ лет опыта)', schedule: 'Пн, Ср, Пт 16:30' },
-        { id: 'Группа для пар', name: 'Группа для пар', age: '6+ лет', schedule: 'Пн, Ср, Пт 18:30' },
-        { id: 'Hobby Class (Взрослые)', name: 'Hobby Class (Взрослые / Любители)', age: '16+ лет (Взрослые)', schedule: 'Вт и Чт 19:15' }
+        { id: 'Baby (4.5-6 лет)', name: 'Baby группа', age: '4.5 – 6 лет', schedule: 'Вт, Чт 17:30 | Сб 10:00', color: '#f3b23e' },
+        { id: 'Bronze (Новички)', name: 'Bronze группа (Новички)', age: '5+ лет', schedule: 'Вт и Чт 18:15 | Сб 11:00', color: '#d96b5c' },
+        { id: 'Golden группа', name: 'Golden группа', age: '8+ лет (5+ лет опыта)', schedule: 'Пн, Ср, Пт 16:30', color: '#ff5722' },
+        { id: 'Pre-Silver (1 год оп.)', name: 'Pre-Silver группа', age: '6+ лет (1 год опыта)', schedule: 'Пн, Ср, Пт 17:30', color: '#039be5' },
+        { id: 'Группа для пар', name: 'Группа для пар', age: '6+ лет', schedule: 'Пн, Ср, Пт 18:30', color: '#8e24aa' },
+        { id: 'Silver (2+ года оп.)', name: 'Silver группа', age: '7+ лет (2+ года опыта)', schedule: 'Пн, Ср, Пт 19:30', color: '#78909c' },
+        { id: 'Hobby Class (Взрослые)', name: 'Hobby Class (Взрослые / Любители)', age: '16+ лет (Взрослые)', schedule: 'Вт и Чт 19:15', color: '#3f51b5' }
       ],
       shiftTitle: 'В какую смену учится ребенок? *',
       shift1: 'I смена',
