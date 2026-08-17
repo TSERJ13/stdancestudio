@@ -29,6 +29,8 @@ export default function Register() {
     { id: 'თავისუფალი გრაფიკი', label: t('register.shiftFree') }
   ]
 
+  const selectedGroupObj = groups.find(g => g.id === form.group) || groups[0]
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     if (!form.student_name || !form.birth_date || !form.parent_name || !form.parent_phone) {
@@ -39,12 +41,16 @@ export default function Register() {
     setLoading(true)
     setError('')
     
-    const combinedShift = `${form.group ? `[${form.group}] ` : ''}${form.shift ? `(${form.shift})` : ''}`
+    const targetGroup = selectedGroupObj || {}
 
     const res = await submitRegistration({
       student_name: form.student_name,
       birth_date: form.birth_date,
-      shift: combinedShift || 'ზოგადი',
+      group_name: targetGroup.name || form.group,
+      group: form.group,
+      group_schedule: targetGroup.schedule || '',
+      group_age: targetGroup.age || '',
+      shift: form.shift || 'ზოგადი',
       parent_name: form.parent_name,
       parent_phone: form.parent_phone,
       status: 'pending'
@@ -211,7 +217,7 @@ export default function Register() {
                 <label style={{ display: 'block', color: '#a8a39a', fontSize: '13.5px', marginBottom: '10px', fontWeight: '500' }}>
                   {t('register.groupTitle')}
                 </label>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', maxHeight: '260px', overflowY: 'auto', paddingRight: '4px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', maxHeight: '280px', overflowY: 'auto', paddingRight: '4px' }}>
                   {groups.map((g) => {
                     const isSelected = form.group === g.id
                     return (
@@ -219,25 +225,28 @@ export default function Register() {
                         key={g.id}
                         onClick={() => setForm({ ...form, group: g.id })}
                         style={{
-                          padding: '12px 14px',
+                          padding: '14px 16px',
                           background: isSelected ? 'rgba(212,166,74,0.14)' : 'rgba(255,255,255,0.02)',
                           border: isSelected ? '1px solid var(--color-gold, #d4a64a)' : '1px solid rgba(212, 166, 74, 0.15)',
                           borderRadius: '8px',
                           cursor: 'pointer',
                           transition: 'all 0.25s ease',
-                          boxShadow: isSelected ? '0 4px 15px rgba(212,166,74,0.15)' : 'none'
+                          boxShadow: isSelected ? '0 4px 15px rgba(212,166,74,0.15)' : 'none',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          gap: '6px'
                         }}
                       >
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px', gap: '8px', flexWrap: 'wrap' }}>
-                          <span style={{ fontWeight: '600', color: isSelected ? 'var(--color-gold, #d4a64a)' : '#fff', fontSize: '14px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                          <span style={{ fontWeight: '600', color: isSelected ? 'var(--color-gold, #d4a64a)' : '#ffffff', fontSize: '14.5px', letterSpacing: '0.02em' }}>
                             {g.name}
                           </span>
-                          <span style={{ fontSize: '11px', background: 'rgba(212,166,74,0.15)', color: '#f0c878', border: '1px solid rgba(212,166,74,0.3)', padding: '2px 8px', borderRadius: '12px', fontWeight: '500' }}>
-                            👶 {g.age}
+                          <span style={{ fontSize: '11px', background: 'rgba(212,166,74,0.12)', color: 'var(--color-gold, #d4a64a)', border: '1px solid rgba(212,166,74,0.3)', padding: '3px 9px', borderRadius: '12px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                            {g.age}
                           </span>
                         </div>
-                        <div style={{ fontSize: '12px', color: '#a8a39a', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                          <span>📅 {g.schedule}</span>
+                        <div style={{ fontSize: '12.5px', color: '#a8a39a', fontWeight: '400' }}>
+                          {g.schedule}
                         </div>
                       </div>
                     )

@@ -501,7 +501,7 @@ export async function sendSms(toPhone, text) {
 /* ── Studio Registrations ────────────────────────── */
 export async function submitRegistration(regData) {
   try {
-    // 1. Send Welcome SMS to parent (async, doesn't block email notification)
+    // 1. Send Welcome SMS to parent (async)
     try {
       const welcomeMessage = `მოგესალმებით, გილოცავთ ST Dance Studio-ში წარმატებულ რეგისტრაციას! თქვენი პირადი კაბინეტი უკვე შექმნილია. პორტალზე შესასვლელად ეწვიეთ: stdance.ge/portal და ავტორიზაციისთვის გამოიყენეთ თქვენი ტელეფონის ნომერი.`;
       sendSms(regData.parent_phone, welcomeMessage);
@@ -509,7 +509,29 @@ export async function submitRegistration(regData) {
       console.error('Failed to send welcome SMS:', smsErr);
     }
 
-    // 2. Send email notification via FormSubmit directly (bypassing Supabase)
+    // 2. Save registration record in Supabase registrations table
+    try {
+      await fetch(`${SUPABASE_URL}/rest/v1/registrations`, {
+        method: 'POST',
+        headers: {
+          'apikey': ANON_KEY,
+          'Authorization': `Bearer ${ANON_KEY}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          student_name: regData.student_name,
+          birth_date: regData.birth_date,
+          shift: `${regData.group_name || regData.group ? `[${regData.group_name || regData.group}] ` : ''}${regData.shift ? `(${regData.shift})` : ''}`,
+          parent_name: regData.parent_name,
+          parent_phone: regData.parent_phone,
+          status: 'pending'
+        })
+      });
+    } catch (dbErr) {
+      console.warn('Supabase registration insert warning:', dbErr);
+    }
+
+    // 3. Send COMPLETE email notification via FormSubmit to stdancegroupdue@gmail.com
     const emailRes = await fetch('https://formsubmit.co/ajax/stdancegroupdue@gmail.com', {
       method: 'POST',
       headers: {
@@ -517,18 +539,21 @@ export async function submitRegistration(regData) {
         'Accept': 'application/json'
       },
       body: JSON.stringify({
-        name: 'სარეგისტრაციო ფორმა',
-        _subject: 'ახალი ონლაინ რეგისტრაცია: ' + regData.student_name,
-        "ბავშვის სახელი და გვარი": regData.student_name,
+        name: 'ST Dance Studio — ონლაინ რეგისტრაცია',
+        _subject: `📌 ახალი ონლაინ რეგისტრაცია: ${regData.student_name} (${regData.group_name || regData.group || 'ჯგუფი'})`,
+        "მოსწავლის სახელი და გვარი": regData.student_name,
         "დაბადების თარიღი": regData.birth_date,
-        "ცვლა": regData.shift,
-        "მშობლის სახელი": regData.parent_name,
-        "მშობლის ტელეფონი": regData.parent_phone,
-        "რეგისტრაციის დრო": new Date().toLocaleString('ka-GE')
+        "არჩეული ჯგუფი": regData.group_name || regData.group || 'მითითებული არ არის',
+        "ჯგუფის განრიგი": regData.group_schedule || 'მითითებული არ არის',
+        "წლოვანების შეზღუდვა": regData.group_age || 'მითითებული არ არის',
+        "სკოლის ცვლა": regData.shift || 'თავისუფალი გრაფიკი',
+        "მშობლის სახელი და გვარი": regData.parent_name,
+        "მშობლის ტელეფონი (WhatsApp)": regData.parent_phone,
+        "რეგისტრაციის თარიღი და დრო": new Date().toLocaleString('ka-GE')
       })
     });
 
-    // 3. Track registration in daily analytics engine
+    // 4. Track registration in daily analytics engine
     try {
       const { trackAnalyticsRegistration } = await import('../utils/analytics')
       trackAnalyticsRegistration(regData)
@@ -542,7 +567,7 @@ export async function submitRegistration(regData) {
 
     return true;
   } catch (err) {
-    console.error('❌ Direct submitRegistration error (Bypassed Supabase):', err);
+    console.error('❌ Direct submitRegistration error:', err);
     return false;
   }
 }
