@@ -209,6 +209,11 @@
     gap: 0.5rem;
     text-align: center;
   }
+
+  .footer-address-text .address-city,
+  .footer-address-text .address-street {
+    display: block;
+  }
 }
 
 

@@ -57,7 +57,10 @@ export default function Footer() {
             </li>
             <li>
               <span>{t('contact.address')}</span>
-              <p>{t('contact.addressText')}</p>
+              <p className="footer-address-text">
+                <span className="address-city">{lang === 'ka' ? 'ბათუმი,' : lang === 'ru' ? 'Батуми,' : 'Batumi,'}</span>{' '}
+                <span className="address-street">{lang === 'ka' ? 'ე. თაყაიშვილის 55' : lang === 'ru' ? 'ул. Е. Такаишвили 55' : '55 E. Takaishvili St'}</span>
+              </p>
             </li>
           </ul>
         </div>
