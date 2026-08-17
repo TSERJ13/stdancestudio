@@ -737,10 +737,10 @@ body.mobile-menu-open .std-bot-widget-container {
 /* 4. MOBILE FULL-SCREEN RESPONSIVE STYLING (< 768px) */
 @media (max-width: 768px) {
   .std-bot-widget-container {
-    bottom: 1.5rem !important;
-    left: 1.5rem !important;
-    right: auto !important;
-    align-items: flex-start !important;
+    bottom: 5.5rem !important;
+    right: 1.25rem !important;
+    left: auto !important;
+    align-items: flex-end !important;
   }
 
   .std-bot-overlay {

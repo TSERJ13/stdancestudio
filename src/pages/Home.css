@@ -3,11 +3,12 @@
    =========================================== */
 .hero {
   position: relative;
-  min-height: 100vh;
+  min-height: 85vh;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   overflow: hidden;
-  padding-top: 6rem;
+  padding-top: 6.5rem;
+  padding-bottom: 3rem;
 }
 
 .hero__bg {
@@ -42,9 +43,9 @@
   width: 100%;
   display: grid;
   grid-template-columns: 1fr auto;
-  align-items: end;
-  padding-block: 4rem;
-  min-height: calc(100vh - 6rem);
+  align-items: flex-start;
+  padding-block: 1rem;
+  min-height: auto;
 }
 
 .hero__copy {
@@ -52,16 +53,17 @@
 }
 
 .hero__title {
-  font-size: clamp(3rem, 9vw, 7rem);
-  margin-block: 1.5rem 2rem;
+  font-size: clamp(2.5rem, 6.5vw, 5.5rem);
+  margin-block: 1rem 1.5rem;
   color: var(--color-text);
+  line-height: 1.15;
 }
 
 .hero__desc {
   max-width: 520px;
-  font-size: clamp(1rem, 1.4vw, 1.15rem);
+  font-size: clamp(0.95rem, 1.3vw, 1.1rem);
   color: var(--color-text-muted);
-  margin-bottom: 2.5rem;
+  margin-bottom: 2rem;
   line-height: 1.7;
 }
 
@@ -76,8 +78,8 @@
   flex-direction: column;
   align-items: center;
   gap: 0.75rem;
-  align-self: end;
-  padding-bottom: 1rem;
+  align-self: flex-start;
+  padding-top: 2rem;
 }
 
 .hero__scroll span {
@@ -113,9 +115,45 @@
 }
 
 @media (max-width: 768px) {
-  .hero__inner { grid-template-columns: 1fr; }
+  .hero {
+    min-height: auto;
+    padding-top: 5rem;
+    padding-bottom: 3.5rem;
+  }
+  .hero__inner {
+    grid-template-columns: 1fr;
+    padding-block: 0.5rem;
+  }
+  .hero__copy {
+    width: 100%;
+    max-width: 100%;
+  }
+  .hero__title {
+    font-size: clamp(1.9rem, 7.5vw, 2.8rem);
+    margin-block: 0.6rem 1rem;
+    line-height: 1.2;
+  }
+  .hero__desc {
+    font-size: 0.92rem;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+    max-width: 100%;
+  }
+  .hero__actions {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 100%;
+    gap: 0.75rem;
+  }
+  .hero__actions .btn {
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+    box-sizing: border-box;
+  }
   .hero__scroll { display: none; }
-  .hero__bg img { object-position: 70% center; }
+  .hero__bg img { object-position: 75% center; }
 }
 
 /* ===========================================
