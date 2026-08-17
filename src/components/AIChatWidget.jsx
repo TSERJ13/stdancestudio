@@ -252,48 +252,95 @@ function getSmartFallbackAnswer(query, lang) {
     q.includes('მისამართ') ||
     q.includes('სად') ||
     q.includes('მდებარეობ') ||
+    q.includes('ლოკაცი') ||
+    q.includes('მაპ') ||
+    q.includes('რუკ') ||
+    q.includes('როგორ მოვიდ') ||
     q.includes('location') ||
     q.includes('address') ||
+    q.includes('where') ||
+    q.includes('map') ||
+    q.includes('find') ||
+    q.includes('directions') ||
     q.includes('где') ||
     q.includes('адрес') ||
+    q.includes('карта') ||
+    q.includes('находитесь') ||
+    q.includes('как добраться') ||
+    q.includes('локация') ||
     q.includes('კონტაქტ') ||
     q.includes('contact') ||
+    q.includes('контакт') ||
     q.includes('ტელეფონ') ||
+    q.includes('телефон') ||
+    q.includes('phone') ||
     q.includes('ნომერ')
   ) {
     return (
       <div className="std-bot-contact-card" style={{ fontSize: '0.9rem', lineHeight: '1.4' }}>
-        <p style={{ margin: '0 0 8px 0' }}>
+        <p style={{ margin: '0 0 6px 0', fontSize: '0.95rem' }}>
           📍 <strong>ST DANCE STUDIO — {lang === 'ka' ? 'ლოკაცია:' : lang === 'ru' ? 'Адрес:' : 'Location:'}</strong>
         </p>
-        <p style={{ margin: '0 0 12px 0' }}>
-          🏛️ {lang === 'ka' ? 'ქ. ბათუმი, ექვთიმე თაყაიშვილის ქუჩა №55 (3-სართულიანი თეთრი შენობის მე-3 სართული, შესასვლელი ბალოტისფერი სახლის ჭიშკრიდან).' : 
-               lang === 'ru' ? 'Батуми, ул. Эка Такаишвили 55 (3 этаж белого здания).' : 
-               '55 Eka Takaishvili St, Batumi (3rd Floor of white building).'}
+        <p style={{ margin: '0 0 10px 0', color: '#e8d3a7' }}>
+          🏛️ {lang === 'ka' ? 'ქ. ბათუმი, ექვთიმე თაყაიშვილის ქუჩა №55 (3-სართულიანი თეთრი შენობის მე-3 სართული).' : 
+               lang === 'ru' ? 'г. Батуми, ул. Эка Такаишвили 55 (3 этаж 3-этажного белого здания).' : 
+               '55 Eka Takaishvili St, Batumi, Georgia (3rd Floor of white 3-story building).'}
         </p>
-        
-        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '16px' }}>
-          <a href="https://www.google.com/maps/search/ST+DANCE+STUDIO+Batumi" target="_blank" rel="noreferrer" style={{ background: '#d4af37', color: '#0a0908', textDecoration: 'none', padding: '6px 12px', borderRadius: '16px', fontSize: '0.85rem', fontWeight: 'bold' }}>
-            🗺️ {lang === 'ka' ? 'გადადი მაპზე' : lang === 'ru' ? 'Открыть карту' : 'Open in Maps'}
+
+        {/* Embedded Interactive Google Map */}
+        <div style={{ margin: '10px 0', borderRadius: '12px', overflow: 'hidden', border: '1px solid rgba(212,166,74,0.4)', boxShadow: '0 4px 16px rgba(0,0,0,0.5)' }}>
+          <iframe
+            title="ST Dance Studio Google Map"
+            src="https://maps.google.com/maps?q=ST+DANCE+STUDIO+Batumi+Eka+Takaishvili+55&z=16&output=embed"
+            width="100%"
+            height="150"
+            style={{ border: 0, display: 'block' }}
+            allowFullScreen=""
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+          />
+        </div>
+
+        {/* Open in Google Maps Button */}
+        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '14px' }}>
+          <a 
+            href="https://www.google.com/maps/search/?api=1&query=ST+DANCE+STUDIO+Batumi+Eka+Takaishvili+55" 
+            target="_blank" 
+            rel="noreferrer" 
+            style={{ 
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              background: 'linear-gradient(135deg, #d4af37, #f0c878)', 
+              color: '#0a0908', 
+              textDecoration: 'none', 
+              padding: '8px 14px', 
+              borderRadius: '20px', 
+              fontSize: '0.85rem', 
+              fontWeight: 'bold',
+              boxShadow: '0 4px 12px rgba(212,175,55,0.35)',
+              transition: 'transform 0.2s ease'
+            }}
+          >
+            🗺️ {lang === 'ka' ? 'Google Maps-ში გახსნა' : lang === 'ru' ? 'Открыть в Google Maps' : 'Open in Google Maps'}
           </a>
         </div>
 
-        <p style={{ margin: '0 0 12px 0' }}>
-          📞 <strong>{lang === 'ka' ? 'ტელეფონი:' : lang === 'ru' ? 'Тел:' : 'Phone:'}</strong><br/>
-          +995 514 19 99 66
+        <p style={{ margin: '0 0 10px 0' }}>
+          📞 <strong>{lang === 'ka' ? 'ტელეფონი:' : lang === 'ru' ? 'Тел:' : 'Phone:'}</strong> +995 514 19 99 66
         </p>
 
         <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-          <a href="tel:+995514199966" style={{ background: 'rgba(212,175,55,0.1)', color: '#d4af37', border: '1px solid #d4af37', textDecoration: 'none', padding: '6px 12px', borderRadius: '16px', fontSize: '0.85rem' }}>
+          <a href="tel:+995514199966" style={{ background: 'rgba(212,175,55,0.15)', color: '#f0c878', border: '1px solid #d4af37', textDecoration: 'none', padding: '6px 12px', borderRadius: '16px', fontSize: '0.82rem', fontWeight: '600' }}>
             📞 {lang === 'ka' ? 'დარეკვა' : lang === 'ru' ? 'Позвонить' : 'Call'}
           </a>
-          <a href="https://wa.me/995514199966" target="_blank" rel="noreferrer" style={{ background: 'rgba(37, 211, 102, 0.1)', color: '#25D366', border: '1px solid #25D366', textDecoration: 'none', padding: '6px 12px', borderRadius: '16px', fontSize: '0.85rem' }}>
+          <a href="https://wa.me/995514199966" target="_blank" rel="noreferrer" style={{ background: 'rgba(37, 211, 102, 0.15)', color: '#25D366', border: '1px solid #25D366', textDecoration: 'none', padding: '6px 12px', borderRadius: '16px', fontSize: '0.82rem', fontWeight: '600' }}>
             💬 WhatsApp
           </a>
-          <a href="https://t.me/+995514199966" target="_blank" rel="noreferrer" style={{ background: 'rgba(0, 136, 204, 0.1)', color: '#0088cc', border: '1px solid #0088cc', textDecoration: 'none', padding: '6px 12px', borderRadius: '16px', fontSize: '0.85rem' }}>
+          <a href="https://t.me/+995514199966" target="_blank" rel="noreferrer" style={{ background: 'rgba(0, 136, 204, 0.15)', color: '#0088cc', border: '1px solid #0088cc', textDecoration: 'none', padding: '6px 12px', borderRadius: '16px', fontSize: '0.82rem', fontWeight: '600' }}>
             ✈️ Telegram
           </a>
-          <a href="https://instagram.com/stdancestudio.ge" target="_blank" rel="noreferrer" style={{ background: 'rgba(225, 48, 108, 0.1)', color: '#e1306c', border: '1px solid #e1306c', textDecoration: 'none', padding: '6px 12px', borderRadius: '16px', fontSize: '0.85rem' }}>
+          <a href="https://instagram.com/stdancestudio.ge" target="_blank" rel="noreferrer" style={{ background: 'rgba(225, 48, 108, 0.15)', color: '#e1306c', border: '1px solid #e1306c', textDecoration: 'none', padding: '6px 12px', borderRadius: '16px', fontSize: '0.82rem', fontWeight: '600' }}>
             📸 Instagram
           </a>
         </div>
@@ -464,6 +511,41 @@ setMessages([{ role: 'bot', text: activeTrans.welcome }])
                 : lang === 'ru'
                 ? '✨ Форма онлайн-регистрации открыта. Пожалуйста, заполните данные.'
                 : 'With pleasure! Please fill out the registration form below.'
+          }
+        ])
+      }, 300)
+      return
+    }
+
+    // Check Location & Address Intent across all 3 languages (GE, EN, RU)
+    if (
+      qLower.includes('მისამართ') ||
+      qLower.includes('სად') ||
+      qLower.includes('მდებარეობ') ||
+      qLower.includes('ლოკაცი') ||
+      qLower.includes('მაპ') ||
+      qLower.includes('რუკ') ||
+      qLower.includes('როგორ მოვიდ') ||
+      qLower.includes('location') ||
+      qLower.includes('address') ||
+      qLower.includes('where') ||
+      qLower.includes('map') ||
+      qLower.includes('find') ||
+      qLower.includes('directions') ||
+      qLower.includes('где') ||
+      qLower.includes('адрес') ||
+      qLower.includes('карта') ||
+      qLower.includes('находитесь') ||
+      qLower.includes('как добраться') ||
+      qLower.includes('локация')
+    ) {
+      setTimeout(() => {
+        setIsTyping(false)
+        setMessages((prev) => [
+          ...prev,
+          {
+            role: 'bot',
+            text: getSmartFallbackAnswer(query, lang)
           }
         ])
       }, 300)
