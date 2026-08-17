@@ -60,6 +60,7 @@ export default function Home() {
 
             <h1 className="hero__title display fade-up" style={{ animationDelay: '0.35s' }}>
               {t('hero.title')}{' '}
+              {lang === 'en' && <br />}
               <span className="display-italic">{t('hero.titleItalic')}</span>
               <br />
               {t('hero.titleEnd')}
