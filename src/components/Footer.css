@@ -90,7 +90,7 @@
   gap: 0.25rem;
 }
 
-.footer__contact span {
+.footer__contact-label {
   font-family: var(--font-accent);
   font-size: 0.7rem;
   color: var(--color-text-dim);
@@ -99,9 +99,13 @@
 }
 
 .footer__contact a,
-.footer__contact p {
+.footer__contact p,
+.footer-address-text span {
   color: var(--color-text);
   font-size: 0.95rem;
+  font-family: inherit;
+  letter-spacing: normal;
+  text-transform: none;
   transition: color 0.3s var(--ease);
 }
 

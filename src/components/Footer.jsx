@@ -48,15 +48,15 @@ export default function Footer() {
           <h4 className="footer__heading">{t('contact.eyebrow')}</h4>
           <ul className="footer__contact">
             <li>
-              <span>{t('contact.phone')}</span>
+              <span className="footer__contact-label">{t('contact.phone')}</span>
               <a href={`tel:${contact.phone.replace(/\s/g, '')}`}>{contact.phone}</a>
             </li>
             <li>
-              <span>{t('contact.email')}</span>
+              <span className="footer__contact-label">{t('contact.email')}</span>
               <a href={`mailto:${contact.email}`}>{contact.email}</a>
             </li>
             <li>
-              <span>{t('contact.address')}</span>
+              <span className="footer__contact-label">{t('contact.address')}</span>
               <p className="footer-address-text">
                 <span className="address-city">{lang === 'ka' ? 'ბათუმი,' : lang === 'ru' ? 'Батуми,' : 'Batumi,'}</span>{' '}
                 <span className="address-street">{lang === 'ka' ? 'ე. თაყაიშვილის 55' : lang === 'ru' ? 'ул. Е. Такаишвили 55' : '55 E. Takaishvili St'}</span>
