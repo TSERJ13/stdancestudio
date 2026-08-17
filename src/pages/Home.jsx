@@ -53,7 +53,7 @@ export default function Home() {
         </div>
 
         <div className="hero__inner container">
-          <div className="hero__copy">
+          <div className={`hero__copy ${lang !== 'ka' ? 'hero__copy--non-ka' : ''}`}>
             <span className="eyebrow fade-up" style={{ animationDelay: '0.2s' }}>
               {t('hero.eyebrow')}
             </span>

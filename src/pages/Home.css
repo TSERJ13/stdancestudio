@@ -123,6 +123,9 @@
     align-items: center;
     padding-bottom: 5.5rem;
   }
+  .hero__copy--non-ka {
+    margin-top: -1.25rem;
+  }
   .hero__actions {
     display: flex;
     flex-wrap: nowrap;
