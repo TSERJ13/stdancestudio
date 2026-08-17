@@ -116,15 +116,12 @@
 @media (max-width: 768px) {
   .hero {
     min-height: 100vh;
-    padding-top: 3.8rem;
+    padding-top: 2.3rem;
   }
   .hero__inner {
     grid-template-columns: 1fr;
     align-items: center;
-    padding-bottom: 5.5rem;
-  }
-  .hero__copy--non-ka {
-    margin-top: -1.25rem;
+    padding-bottom: 7.5rem;
   }
   .hero__actions {
     display: flex;
