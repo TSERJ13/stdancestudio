@@ -66,20 +66,8 @@ export default function Register() {
   }
 
   return (
-    <div className="inner-page" style={{ padding: '110px 16px 80px', minHeight: '85vh', display: 'flex', justifyContent: 'center', alignItems: 'center', background: 'radial-gradient(circle at center, #1c1a17 0%, #0a0908 100%)' }}>
-      <div style={{ 
-        maxWidth: '560px', 
-        width: '100%', 
-        boxSizing: 'border-box',
-        background: 'rgba(15, 14, 13, 0.92)', 
-        backdropFilter: 'blur(16px)', 
-        border: '1px solid rgba(212, 166, 74, 0.3)', 
-        borderRadius: '14px', 
-        padding: '35px 24px', 
-        boxShadow: '0 20px 50px rgba(0,0,0,0.85), inset 0 1px 0 rgba(255,255,255,0.05)',
-        position: 'relative',
-        overflow: 'hidden'
-      }}>
+    <div className="inner-page" style={{ padding: '100px 12px 80px', minHeight: '85vh', display: 'flex', justifyContent: 'center', alignItems: 'center', background: 'radial-gradient(circle at center, #1c1a17 0%, #0a0908 100%)' }}>
+      <div className="register-form-card">
         {/* Subtle Luxury Top Accent Line */}
         <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '3px', background: 'linear-gradient(90deg, transparent 0%, var(--color-gold, #d4a64a) 50%, transparent 100%)' }}></div>
         
