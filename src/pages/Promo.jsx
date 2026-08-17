@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react'
 import { Link } from 'react-router-dom'
+import { Play, Pause, Volume2, VolumeX, Sparkles, Award, Gift, MapPin } from 'lucide-react'
 import { useLanguage } from '../context/LanguageContext'
 import { translations } from '../data/translations'
 import { submitRegistration } from '../data/classcore'
@@ -30,13 +31,6 @@ export default function Promo() {
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState('')
-
-  const shifts = [
-    { id: 'I ცვლა', label: t('register.shift1') },
-    { id: 'II ცვლა', label: t('register.shift2') },
-    { id: 'ბაღის მოსწავლე', label: t('register.shiftGarden') },
-    { id: 'თავისუფალი გრაფიკი', label: t('register.shiftFree') }
-  ]
 
   const togglePlay = () => {
     if (videoRef.current) {
@@ -120,18 +114,18 @@ export default function Promo() {
                 type="button" 
                 className="std-promo-ctrl-btn" 
                 onClick={togglePlay}
-                title={isPlaying ? "Pause" : "Play"}
+                aria-label={isPlaying ? "Pause" : "Play"}
               >
-                {isPlaying ? '⏸' : '▶'}
+                {isPlaying ? <Pause size={18} fill="#ffffff" /> : <Play size={18} fill="#ffffff" style={{ marginLeft: '2px' }} />}
               </button>
 
               <button 
                 type="button" 
                 className="std-promo-ctrl-btn" 
                 onClick={toggleMute}
-                title={isMuted ? "Unmute" : "Mute"}
+                aria-label={isMuted ? "Unmute" : "Mute"}
               >
-                {isMuted ? '🔇' : '🔊'}
+                {isMuted ? <VolumeX size={18} /> : <Volume2 size={18} />}
               </button>
             </div>
           </div>
@@ -145,17 +139,35 @@ export default function Promo() {
                lang === 'ru' ? 'Почувствуй Паркет с ST Dance Studio!' :
                'Feel the Parquet with ST Dance Studio!'}
             </h1>
-            <p>
+            <p style={{ marginBottom: '20px' }}>
               {lang === 'ka' ? 'უყურეთ ჩვენს პრომო ვიდეოს და დარეგისტრირდით 100%-ით უფასო პირველ საცდელ გაკვეთილზე Батуми-ში!' :
                lang === 'ru' ? 'Смотрите наше промо-видео и запишитесь на 100% бесплатный пробный урок в Батуми!' :
                'Watch our promo video and sign up for 100% Free First Trial Lesson in Batumi!'}
             </p>
+
+            {/* PRIMARY REGISTRATION CTA BUTTON PLACED DIRECTLY UNDER TEXT */}
+            <div className="std-promo-cta-box" style={{ marginTop: '0', marginBottom: '24px' }}>
+              <button 
+                type="button" 
+                className="std-promo-main-btn"
+                onClick={() => setShowRegModal(true)}
+              >
+                <Sparkles size={18} style={{ display: 'inline-block', verticalAlign: 'middle', marginRight: '8px' }} />
+                {lang === 'ka' ? 'უფასო საცდელ გაკვეთილზე რეგისტრაცია' : lang === 'ru' ? 'Записаться на Бесплатный Урок' : 'Register for Free Trial Lesson'}
+              </button>
+
+              <Link to="/register" style={{ color: 'var(--color-gold, #d4a64a)', fontSize: '13.5px', textAlign: 'center', textDecoration: 'underline' }}>
+                {lang === 'ka' ? 'სრული სარეგისტრაციო გვერდის გახსნა ➔' : lang === 'ru' ? 'Открыть полную страницу регистрации ➔' : 'Open full registration page ➔'}
+              </Link>
+            </div>
           </div>
 
           {/* Quick Studio Features */}
           <div className="std-promo-features">
             <div className="std-promo-feat-item">
-              <div className="std-promo-feat-icon">🏆</div>
+              <div className="std-promo-feat-icon">
+                <Award size={16} color="var(--color-gold, #d4a64a)" />
+              </div>
               <div className="std-promo-feat-text">
                 <strong>WDSF Judge</strong>
                 <span>სერგო ცივცივაძე</span>
@@ -163,7 +175,9 @@ export default function Promo() {
             </div>
 
             <div className="std-promo-feat-item">
-              <div className="std-promo-feat-icon">🎁</div>
+              <div className="std-promo-feat-icon">
+                <Gift size={16} color="var(--color-gold, #d4a64a)" />
+              </div>
               <div className="std-promo-feat-text">
                 <strong>100% უფასო</strong>
                 <span>პირველი გაკვეთილი</span>
@@ -171,27 +185,14 @@ export default function Promo() {
             </div>
 
             <div className="std-promo-feat-item">
-              <div className="std-promo-feat-icon">📍</div>
+              <div className="std-promo-feat-icon">
+                <MapPin size={16} color="var(--color-gold, #d4a64a)" />
+              </div>
               <div className="std-promo-feat-text">
                 <strong>ბათუმი</strong>
                 <span>გრიბოედოვის 5</span>
               </div>
             </div>
-          </div>
-
-          {/* CTA & INLINE FORM WIDGET */}
-          <div className="std-promo-cta-box">
-            <button 
-              type="button" 
-              className="std-promo-main-btn"
-              onClick={() => setShowRegModal(true)}
-            >
-              ✨ {lang === 'ka' ? 'უფასო საცდელ გაკვეთილზე რეგისტრაცია' : lang === 'ru' ? 'Записаться на Бесплатный Урок' : 'Register for Free Trial Lesson'}
-            </button>
-
-            <Link to="/register" style={{ color: 'var(--color-gold, #d4a64a)', fontSize: '13px', textAlign: 'center', textDecoration: 'underline' }}>
-              {lang === 'ka' ? 'სრული სარეგისტრაციო გვერდის გახსნა ➔' : lang === 'ru' ? 'Открыть полную страницу регистрации ➔' : 'Open full registration page ➔'}
-            </Link>
           </div>
         </div>
 
