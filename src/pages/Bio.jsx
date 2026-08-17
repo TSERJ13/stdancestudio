@@ -350,11 +350,11 @@ Click the Online Registration button to sign up.`
     q.includes('руковод')
   ) {
     if (lang === 'ka') {
-      return 'ST Dance Studio-ს დამფუძნებელი, მფლობელი და მთავარი მწვრთნელია სერგო (სერგი) წივწივაძე — პროფესიონალი პედაგოგი და WDSF-ის მოქმედი საერთაშორისო მსაჯი.'
+      return 'ST Dance Studio-ს დამფუძნებელი, მფლობელი და მთავარი მწვრთნელია სერგო (სერგი) წივწივაძე — პროფესიონალი მოცეკვავე და პედაგოგი.'
     } else if (lang === 'en') {
-      return 'ST Dance Studio founder and head coach is Sergo (Sergi) Tsivtsivadze — professional educator and active international WDSF Judge.'
+      return 'ST Dance Studio founder and head coach is Sergo (Sergi) Tsivtsivadze — professional dancer and instructor.'
     } else {
-      return 'Основатель и главный тренер ST Dance Studio — Серго (Серги) Цивцивадзе, профессиональный педагог и действующий международный судья WDSF.'
+      return 'Основатель и главный тренер ST Dance Studio — Серго (Серги) Цивцивадзе, профессиональный танцор и педагог.'
     }
   }
 

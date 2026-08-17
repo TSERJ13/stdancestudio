@@ -128,7 +128,7 @@ export const translations = {
         name: 'სერგი წივწივაძე',
         role: 'მთავარი ტრენერი',
         photo: '/images/sergi.jpg?v=2',
-        bio: 'სტუდიის დამფუძნებელი და მთავარი ტრენერი. სპორტული ცეკვების ოსტატი, მრავალგზის ჩემპიონი და საერთაშორისო ტურნირების (WDSF) მსაჯი.'
+        bio: 'სტუდიის დამფუძნებელი და მთავარი ტრენერი. სპორტული ცეკვების პროფესიონალი მოცეკვავე და მრავალგზის ჩემპიონი.'
       },
       {
         name: 'ნინი გოგრაჭაძე',
@@ -320,10 +320,10 @@ export const translations = {
     ],
     teachers: [
       {
-        name: 'Sergi Tsivtsivadze',
-        role: 'Head Coach & Founder',
+        name: 'Sergi Tsivtivadze',
+        role: 'Head Coach',
         photo: '/images/sergi.jpg?v=2',
-        bio: 'Studio Founder and Head Coach. Master of Sports Dance, multiple-time champion, and active WDSF International Judge.'
+        bio: 'Studio Founder and Head Coach. Professional Master of Sports Dance and multiple-time champion.'
       },
       {
         name: 'Nini Gograchadze',
@@ -515,10 +515,10 @@ export const translations = {
     ],
     teachers: [
       {
-        name: 'Серги Цивцивадзе',
-        role: 'Главный тренер и основатель',
+        name: 'Серго Цивцивадзе',
+        role: 'Главный тренер',
         photo: '/images/sergi.jpg?v=2',
-        bio: 'Основатель студии и главный тренер. Мастер спортивного танца, многократный чемпион и действующий международный судья WDSF.'
+        bio: 'Основатель студии и главный тренер. Профессиональный танцор спортивных бальных танцев и многократный чемпион.'
       },
       {
         name: 'Нини Гограчадзе',

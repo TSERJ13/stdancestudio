@@ -135,14 +135,14 @@ export default function Promo() {
         <div className="std-promo-content">
           <div className="std-promo-title-block">
             <h1>
-              {lang === 'ka' ? 'იგრძენი პარკეტი ST Dance Studio-სთან ერთად!' :
-               lang === 'ru' ? 'Почувствуй Паркет с ST Dance Studio!' :
-               'Feel the Parquet with ST Dance Studio!'}
+              {lang === 'ka' ? 'აღმოაჩინე ცეკვის სამყარო ST Dance Studio-სთან ერთად!' :
+               lang === 'ru' ? 'Откройте мир танца с ST Dance Studio!' :
+               'Discover the World of Dance with ST Dance Studio!'}
             </h1>
             <p style={{ marginBottom: '20px' }}>
-              {lang === 'ka' ? 'უყურეთ ჩვენს პრომო ვიდეოს და დარეგისტრირდით 100%-ით უფასო პირველ საცდელ გაკვეთილზე Батуми-ში!' :
-               lang === 'ru' ? 'Смотрите наше промо-видео и запишитесь на 100% бесплатный пробный урок в Батуми!' :
-               'Watch our promo video and sign up for 100% Free First Trial Lesson in Batumi!'}
+              {lang === 'ka' ? 'გახდი ჩვენი საცეკვაო ოჯახის ნაწილი ბათუმში! ისწავლე სპორტული ცეკვები პროფესიონალებთან ერთად — ჩაეწერე შენს პირველ უფასო გაკვეთილზე.' :
+               lang === 'ru' ? 'Станьте частью нашей танцевальной семьи в Батуми! Обучайтесь спортивным бальным танцам у профессионалов — запишитесь на первый бесплатный урок.' :
+               'Become part of our dance family in Batumi! Learn sports ballroom dance with top professionals — sign up for your first free class today.'}
             </p>
 
             {/* PRIMARY REGISTRATION CTA BUTTON PLACED DIRECTLY UNDER TEXT */}
@@ -153,7 +153,7 @@ export default function Promo() {
                 onClick={() => setShowRegModal(true)}
               >
                 <Sparkles size={18} style={{ display: 'inline-block', verticalAlign: 'middle', marginRight: '8px' }} />
-                {lang === 'ka' ? 'უფასო საცდელ გაკვეთილზე რეგისტრაცია' : lang === 'ru' ? 'Записаться на Бесплатный Урок' : 'Register for Free Trial Lesson'}
+                {lang === 'ka' ? '✨ ჩაეწერე პირველ უფასო გაკვეთილზე' : lang === 'ru' ? '✨ Записаться на бесплатный урок' : '✨ Book Your First Free Class'}
               </button>
 
               <Link to="/register" style={{ color: 'var(--color-gold, #d4a64a)', fontSize: '13.5px', textAlign: 'center', textDecoration: 'underline' }}>
@@ -169,8 +169,8 @@ export default function Promo() {
                 <Award size={16} color="var(--color-gold, #d4a64a)" />
               </div>
               <div className="std-promo-feat-text">
-                <strong>WDSF Judge</strong>
-                <span>სერგო ცივცივაძე</span>
+                <strong>{lang === 'ka' ? 'პროფესიონალი მოცეკვავე' : lang === 'ru' ? 'Профессиональный танцор' : 'Professional Dancer'}</strong>
+                <span>{lang === 'ka' ? 'სერგო წივწივაძე' : lang === 'ru' ? 'Серго Цивцивадзе' : 'Sergi Tsivtsivadze'}</span>
               </div>
             </div>
 
@@ -179,8 +179,8 @@ export default function Promo() {
                 <Gift size={16} color="var(--color-gold, #d4a64a)" />
               </div>
               <div className="std-promo-feat-text">
-                <strong>100% უფასო</strong>
-                <span>პირველი გაკვეთილი</span>
+                <strong>100% {lang === 'ka' ? 'უფასო' : lang === 'ru' ? 'Бесплатно' : 'Free'}</strong>
+                <span>{lang === 'ka' ? 'პირველი საცდელი გაკვეთილი' : lang === 'ru' ? 'Первый пробный урок' : 'First Trial Lesson'}</span>
               </div>
             </div>
 
@@ -189,8 +189,8 @@ export default function Promo() {
                 <MapPin size={16} color="var(--color-gold, #d4a64a)" />
               </div>
               <div className="std-promo-feat-text">
-                <strong>ბათუმი</strong>
-                <span>გრიბოედოვის 5</span>
+                <strong>{lang === 'ka' ? 'ბათუმი' : lang === 'ru' ? 'Батуми' : 'Batumi'}</strong>
+                <span>{lang === 'ka' ? 'ე. თაყაიშვილის 55' : lang === 'ru' ? 'ул. Е. Такаишвили 55' : '55 E. Takaishvili St'}</span>
               </div>
             </div>
           </div>
