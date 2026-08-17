@@ -488,14 +488,27 @@ setMessages([{ role: 'bot', text: activeTrans.welcome }])
     setInputMsg('')
     setIsTyping(true)
 
-    // Check registration intent
+    // Check Registration Intent across all 3 languages (GE, EN, RU)
     const qLower = query.toLowerCase()
     if (
       qLower.includes('რეგისტრაცი') ||
       qLower.includes('დამარეგისტრირ') ||
       qLower.includes('ჩაწერ') ||
+      qLower.includes('მიღებ') ||
       qLower.includes('register') ||
-      qLower.includes('записаться')
+      qLower.includes('registration') ||
+      qLower.includes('sign up') ||
+      qLower.includes('signup') ||
+      qLower.includes('enroll') ||
+      qLower.includes('join') ||
+      qLower.includes('trial') ||
+      qLower.includes('регистраци') ||
+      qLower.includes('зарегистр') ||
+      qLower.includes('записаться') ||
+      qLower.includes('запись') ||
+      qLower.includes('запишите') ||
+      qLower.includes('записать') ||
+      qLower.includes('пробный')
     ) {
       trackAnalyticsEvent('bot_registration_triggered')
       setTimeout(() => {
@@ -507,10 +520,10 @@ setMessages([{ role: 'bot', text: activeTrans.welcome }])
             role: 'bot',
             text:
               lang === 'ka'
-                ? '✨ ონლაინ რეგისტრაციის ფორმა გაგიხსენით. გთხოვთ შეავსოთ მოსწავლის მონაცემები.'
+                ? '✨ ონლაინ რეგისტრაციის ფორმა გაგიხსენით. გთხოვთ შეავსოთ მოსწავლის მონაცემები 100% უფასო საცდელი გაკვეთილისთვის.'
                 : lang === 'ru'
-                ? '✨ Форма онлайн-регистрации открыта. Пожалуйста, заполните данные.'
-                : 'With pleasure! Please fill out the registration form below.'
+                ? '✨ Форма онлайн-регистрации открыта! Пожалуйста, заполните данные для 100% бесплатного пробного урока.'
+                : '✨ Online registration form is ready! Please fill in student details for a 100% free trial lesson.'
           }
         ])
       }, 300)
