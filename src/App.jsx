@@ -18,6 +18,8 @@ import AdminDashboard from './pages/admin/AdminDashboard'
 import PortalLogin from './pages/portal/PortalLogin'
 import StudentDashboard from './pages/portal/StudentDashboard'
 
+import Promo from './pages/Promo'
+
 import { trackPageView } from './utils/analytics'
 
 function ScrollToTop() {
@@ -38,6 +40,7 @@ const AppRoutes = () => (
     <Route path="success" element={<Success />} />
     <Route path="contact" element={<Contact />} />
     <Route path="register" element={<Register />} />
+    <Route path="promo" element={<Promo />} />
     <Route path="privacy" element={<Privacy />} />
     <Route path="terms" element={<Terms />} />
     <Route path="bio" element={<Bio />} />

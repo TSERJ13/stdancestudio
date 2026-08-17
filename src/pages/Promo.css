@@ -1,0 +1,245 @@
+/* ==========================================================================
+   ST DANCE STUDIO — MODERN 9:16 PROMO VIDEO & REGISTRATION SHOWCASE
+   ========================================================================== */
+
+.std-promo-page {
+  min-height: 90vh;
+  padding: clamp(90px, 12vw, 120px) 16px 80px;
+  background: radial-gradient(circle at top center, #1f1c18 0%, #0c0b0a 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Glowing Background Ambient Light */
+.std-promo-page::before {
+  content: '';
+  position: absolute;
+  top: 15%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(90vw, 500px);
+  height: 500px;
+  background: radial-gradient(circle, rgba(212, 166, 74, 0.18) 0%, transparent 70%);
+  filter: blur(90px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.std-promo-container {
+  max-width: 1080px;
+  width: 100%;
+  display: grid;
+  grid-template-columns: minmax(300px, 420px) 1fr;
+  gap: clamp(24px, 5vw, 50px);
+  align-items: center;
+  position: relative;
+  z-index: 1;
+}
+
+@media (max-width: 860px) {
+  .std-promo-container {
+    grid-template-columns: 1fr;
+    max-width: 520px;
+  }
+}
+
+/* 9:16 VERTICAL REELS / TIKTOK FRAME */
+.std-promo-video-wrap {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+  aspect-ratio: 9 / 16;
+  background: #000000;
+  border-radius: 24px;
+  border: 1.5px solid rgba(212, 166, 74, 0.4);
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.9), 0 0 35px rgba(212, 166, 74, 0.25);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.std-promo-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Video Controls Overlay */
+.std-promo-video-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(0,0,0,0.5) 0%, transparent 20%, transparent 75%, rgba(0,0,0,0.85) 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+.std-promo-video-badge {
+  pointer-events: auto;
+  align-self: flex-start;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(212, 166, 74, 0.4);
+  color: var(--color-gold, #d4a64a);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 6px 14px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.std-promo-pulse-dot {
+  width: 7px;
+  height: 7px;
+  background: var(--color-gold, #d4a64a);
+  border-radius: 50%;
+  box-shadow: 0 0 8px var(--color-gold, #d4a64a);
+  animation: promoPulse 1.8s infinite ease-in-out;
+}
+
+@keyframes promoPulse {
+  0% { transform: scale(0.8); opacity: 0.6; }
+  50% { transform: scale(1.4); opacity: 1; }
+  100% { transform: scale(0.8); opacity: 0.6; }
+}
+
+.std-promo-video-ctrls {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.std-promo-ctrl-btn {
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.std-promo-ctrl-btn:hover {
+  background: var(--color-gold, #d4a64a);
+  color: #000000;
+  border-color: var(--color-gold, #d4a64a);
+}
+
+/* PROMO DETAILS & REGISTRATION SECTION */
+.std-promo-content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.std-promo-title-block h1 {
+  font-family: var(--font-display, "Cormorant Garamond", serif);
+  font-size: clamp(26px, 4vw, 40px);
+  color: #ffffff;
+  margin: 0 0 10px 0;
+  line-height: 1.25;
+  font-weight: 500;
+}
+
+.std-promo-title-block p {
+  color: #a8a39a;
+  font-size: 15px;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.std-promo-features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+  margin-top: 5px;
+}
+
+.std-promo-feat-item {
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid rgba(212, 166, 74, 0.15);
+  border-radius: 10px;
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.std-promo-feat-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(212, 166, 74, 0.12);
+  border: 1px solid rgba(212, 166, 74, 0.3);
+  color: var(--color-gold, #d4a64a);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.std-promo-feat-text strong {
+  display: block;
+  color: #ffffff;
+  font-size: 13.5px;
+}
+
+.std-promo-feat-text span {
+  display: block;
+  color: #8c867a;
+  font-size: 11.5px;
+}
+
+/* CTA BUTTON & INLINE FORM WIDGET */
+.std-promo-cta-box {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.std-promo-main-btn {
+  background: linear-gradient(135deg, #d4a64a 0%, #aa7c28 100%);
+  color: #000000;
+  border: none;
+  padding: 16px 28px;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 10px 30px rgba(212, 166, 74, 0.3);
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.std-promo-main-btn:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 15px 40px rgba(212, 166, 74, 0.5);
+  color: #000000;
+}
