@@ -151,6 +151,17 @@ export const translations = {
       studentName: 'ბავშვის სახელი და გვარი *',
       studentNamePlaceholder: 'მაგ: ნინი ბერიძე',
       birthDate: 'დაბადების თარიღი *',
+      groupTitle: 'სასურველი ჯგუფი (განრიგი & წლოვანება) *',
+      groupSelect: 'აირჩიეთ ჯგუფი...',
+      groups: [
+        { id: 'Baby (4.5-6 წელი)', name: 'Baby ჯგუფი', age: '4.5 – 6 წელი', schedule: 'სამშ, ხუთშ 17:30 | შაბ 10:00' },
+        { id: 'Bronze (დამწყებები)', name: 'Bronze ჯგუფი (დამწყებები)', age: '5+ წელი', schedule: 'სამშაბათი & ხუთშაბათი 18:15' },
+        { id: 'Pre-Silver (1 წლ exp)', name: 'Pre-Silver ჯგუფი', age: '6+ წელი (1 წლიანი გამოცდილება)', schedule: 'ორშ, ოთხშ, პარ 17:30' },
+        { id: 'Silver (2+ წლ exp)', name: 'Silver ჯგუფი', age: '7+ წელი (2+ წლიანი გამოცდილება)', schedule: 'ორშ, ოთხშ, პარ 19:30' },
+        { id: 'Golden (საკონკურსო)', name: 'Golden ჯგუფი (საკონკურსო)', age: '8+ წელი (5+ წლიანი გამოცდილება)', schedule: 'ორშ, ოთხშ, პარ 16:30' },
+        { id: 'წყვილების ჯგუფი', name: 'წყვილების ჯგუფი', age: '6+ წელი', schedule: 'ორშ, ოთხშ, პარ 18:30' },
+        { id: 'Hobby Class (ზრდასრულები)', name: 'Hobby Class (ზრდასრულები/მოყვარულები)', age: '16+ წელი', schedule: 'სამშაბათი & ხუთშაბათი 19:15' }
+      ],
       shiftTitle: 'რომელ ცვლაში სწავლობს ბავშვი? *',
       shift1: 'I ცვლა',
       shift2: 'II ცვლა',
@@ -158,13 +169,13 @@ export const translations = {
       shiftFree: 'თავისუფალი გრაფიკი',
       parentName: 'მშობლის სახელი და გვარი *',
       parentNamePlaceholder: 'მაგ: გიორგი ბერიძე',
-      parentPhone: 'მშობლის ტელეფონის ნომერი *',
+      parentPhone: 'მშობლის ტელეფონის ნომერი (WhatsApp) *',
       parentPhonePlaceholder: 'მაგ: 599123456',
       submit: 'განაცხადის გაგზავნა',
       submitting: 'იგზავნება...',
       successTitle: 'რეგისტრაცია წარმატებით გაიგზავნა!',
       successDesc: 'თქვენი განაცხადი მიღებულია. სტუდიის ადმინისტრაცია მალე დაგიკავშირდებათ.',
-      error: 'დაფიქსირდა შეცდომა. გთხოვთ სცადოთ თავიდან.'
+      error: 'დაფიქსირდა შეცდომა. გთხოვთ შეავსოთ ყველა სავალდებულო ველი.'
     },
     customForm: {
       notFound: 'ფორმა / გამოკითხვა ვერ მოიძებნა',
@@ -335,6 +346,17 @@ export const translations = {
       studentName: "Child's Name and Surname *",
       studentNamePlaceholder: 'e.g. Nini Beridze',
       birthDate: 'Date of Birth *',
+      groupTitle: 'Select Desired Group (Schedule & Age Limit) *',
+      groupSelect: 'Select a group...',
+      groups: [
+        { id: 'Baby (4.5-6 Yrs)', name: 'Baby Group', age: 'Ages 4.5 – 6', schedule: 'Tue, Thu 17:30 | Sat 10:00' },
+        { id: 'Bronze (Beginners)', name: 'Bronze Group (Beginners)', age: 'Ages 5+', schedule: 'Tue & Thu 18:15' },
+        { id: 'Pre-Silver (1 Yr Exp)', name: 'Pre-Silver Group', age: 'Ages 6+ (1 Yr Experience)', schedule: 'Mon, Wed, Fri 17:30' },
+        { id: 'Silver (2+ Yrs Exp)', name: 'Silver Group', age: 'Ages 7+ (2+ Yrs Experience)', schedule: 'Mon, Wed, Fri 19:30' },
+        { id: 'Golden (Competitive)', name: 'Golden Group (Competitive)', age: 'Ages 8+ (5+ Yrs Experience)', schedule: 'Mon, Wed, Fri 16:30' },
+        { id: 'Couples Group', name: 'Couples Group', age: 'Ages 6+', schedule: 'Mon, Wed, Fri 18:30' },
+        { id: 'Hobby Class (Adults)', name: 'Hobby Class (Adults / Amateurs)', age: 'Ages 16+ (Adults)', schedule: 'Tue & Thu 19:15' }
+      ],
       shiftTitle: 'Which school shift does the child attend? *',
       shift1: 'Shift I',
       shift2: 'Shift II',
@@ -342,13 +364,13 @@ export const translations = {
       shiftFree: 'Flexible Schedule',
       parentName: "Parent's Name and Surname *",
       parentNamePlaceholder: 'e.g. Giorgi Beridze',
-      parentPhone: "Parent's Phone Number *",
+      parentPhone: "Parent's Phone Number (WhatsApp) *",
       parentPhonePlaceholder: 'e.g. 599123456',
       submit: 'Submit Application',
       submitting: 'Submitting...',
       successTitle: 'Registration Submitted Successfully!',
       successDesc: 'Your application has been received. Our administration will contact you shortly.',
-      error: 'An error occurred. Please try again.'
+      error: 'An error occurred. Please fill in all required fields.'
     },
     customForm: {
       notFound: 'Form / Poll not found',
@@ -519,6 +541,17 @@ export const translations = {
       studentName: 'Имя и фамилия ребенка *',
       studentNamePlaceholder: 'напр. Нини Беридзе',
       birthDate: 'Дата рождения *',
+      groupTitle: 'Желаемая группа (Расписание и Возраст) *',
+      groupSelect: 'Выберите группу...',
+      groups: [
+        { id: 'Baby (4.5-6 лет)', name: 'Baby группа', age: '4.5 – 6 лет', schedule: 'Вт, Чт 17:30 | Сб 10:00' },
+        { id: 'Bronze (Новички)', name: 'Bronze группа (Новички)', age: '5+ лет', schedule: 'Вт и Чт 18:15' },
+        { id: 'Pre-Silver (1 год оп.)', name: 'Pre-Silver группа', age: '6+ лет (1 год опыта)', schedule: 'Пн, Ср, Пт 17:30' },
+        { id: 'Silver (2+ года оп.)', name: 'Silver группа', age: '7+ лет (2+ года опыта)', schedule: 'Пн, Ср, Пт 19:30' },
+        { id: 'Golden (Конкурсная)', name: 'Golden группа (Конкурсная)', age: '8+ лет (5+ лет опыта)', schedule: 'Пн, Ср, Пт 16:30' },
+        { id: 'Группа для пар', name: 'Группа для пар', age: '6+ лет', schedule: 'Пн, Ср, Пт 18:30' },
+        { id: 'Hobby Class (Взрослые)', name: 'Hobby Class (Взрослые / Любители)', age: '16+ лет (Взрослые)', schedule: 'Вт и Чт 19:15' }
+      ],
       shiftTitle: 'В какую смену учится ребенок? *',
       shift1: 'I смена',
       shift2: 'II смена',
@@ -526,13 +559,13 @@ export const translations = {
       shiftFree: 'Свободный график',
       parentName: 'Имя и фамилия родителя *',
       parentNamePlaceholder: 'напр. Георгий Беридзе',
-      parentPhone: 'Номер телефона родителя *',
+      parentPhone: 'Номер телефона родителя (WhatsApp) *',
       parentPhonePlaceholder: 'напр. 599123456',
       submit: 'Отправить заявку',
       submitting: 'Отправка...',
       successTitle: 'Регистрация успешно отправлена!',
       successDesc: 'Ваша заявка принята. Администрация студии свяжется с вами в ближайшее время.',
-      error: 'Произошла ошибка. Пожалуйста, попробуйте еще раз.'
+      error: 'Произошла ошибка. Пожалуйста, заполните все обязательные поля.'
     },
     customForm: {
       notFound: 'Форма / Опрос не найден',

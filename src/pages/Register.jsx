@@ -1,13 +1,18 @@
 import React, { useState } from 'react'
 import { submitRegistration } from '../data/classcore'
 import { useLanguage } from '../context/LanguageContext'
+import { translations } from '../data/translations'
 import './InnerPage.css'
 
 export default function Register() {
-  const { t } = useLanguage()
+  const { lang, t } = useLanguage()
+  const activeTrans = translations[lang] || translations.ka
+  const groups = activeTrans.register.groups || []
+
   const [form, setForm] = useState({
     student_name: '',
     birth_date: '',
+    group: groups[0]?.id || '',
     shift: '',
     parent_name: '',
     parent_phone: ''
@@ -26,7 +31,7 @@ export default function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    if (!form.student_name || !form.birth_date || !form.shift || !form.parent_name || !form.parent_phone) {
+    if (!form.student_name || !form.birth_date || !form.parent_name || !form.parent_phone) {
       setError(t('register.error'))
       return
     }
@@ -34,10 +39,12 @@ export default function Register() {
     setLoading(true)
     setError('')
     
+    const combinedShift = `${form.group ? `[${form.group}] ` : ''}${form.shift ? `(${form.shift})` : ''}`
+
     const res = await submitRegistration({
       student_name: form.student_name,
       birth_date: form.birth_date,
-      shift: form.shift,
+      shift: combinedShift || 'ზოგადი',
       parent_name: form.parent_name,
       parent_phone: form.parent_phone,
       status: 'pending'
@@ -46,22 +53,23 @@ export default function Register() {
     setLoading(false)
     if (res) {
       setSuccess(true)
-      setForm({ student_name: '', birth_date: '', shift: '', parent_name: '', parent_phone: '' })
+      setForm({ student_name: '', birth_date: '', group: groups[0]?.id || '', shift: '', parent_name: '', parent_phone: '' })
     } else {
       setError(t('register.error'))
     }
   }
 
   return (
-    <div className="inner-page" style={{ padding: '120px 20px 80px', minHeight: '85vh', display: 'flex', justifyContent: 'center', alignItems: 'center', background: 'radial-gradient(circle at center, #1c1a17 0%, #0a0908 100%)' }}>
+    <div className="inner-page" style={{ padding: '110px 16px 80px', minHeight: '85vh', display: 'flex', justifyContent: 'center', alignItems: 'center', background: 'radial-gradient(circle at center, #1c1a17 0%, #0a0908 100%)' }}>
       <div style={{ 
         maxWidth: '560px', 
         width: '100%', 
-        background: 'rgba(15, 14, 13, 0.9)', 
+        boxSizing: 'border-box',
+        background: 'rgba(15, 14, 13, 0.92)', 
         backdropFilter: 'blur(16px)', 
         border: '1px solid rgba(212, 166, 74, 0.3)', 
-        borderRadius: '12px', 
-        padding: '45px 35px', 
+        borderRadius: '14px', 
+        padding: '35px 24px', 
         boxShadow: '0 20px 50px rgba(0,0,0,0.85), inset 0 1px 0 rgba(255,255,255,0.05)',
         position: 'relative',
         overflow: 'hidden'
@@ -102,15 +110,16 @@ export default function Register() {
           </div>
         ) : (
           <form onSubmit={handleSubmit}>
-            <div style={{ textAlign: 'center', marginBottom: '35px' }}>
+            <div style={{ textAlign: 'center', marginBottom: '30px' }}>
               <h1 style={{ 
-                fontFamily: 'var(--font-title, "Times New Roman", serif)', 
+                fontFamily: 'var(--font-display, "Cormorant Garamond", serif)', 
                 color: '#fff', 
-                fontSize: '32px', 
-                marginBottom: '8px', 
-                letterSpacing: '1.5px',
-                fontWeight: '400',
-                textTransform: 'uppercase'
+                fontSize: 'clamp(20px, 5.5vw, 30px)', 
+                marginBottom: '6px', 
+                letterSpacing: '1px',
+                fontWeight: '500',
+                textTransform: 'uppercase',
+                lineHeight: '1.2'
               }}>
                 {t('register.title')}
               </h1>
@@ -121,12 +130,12 @@ export default function Register() {
             </div>
 
             {error && (
-              <div style={{ background: 'rgba(220,53,69,0.08)', border: '1px solid rgba(220,53,69,0.3)', color: '#ff6b7b', padding: '12px', borderRadius: '4px', marginBottom: '25px', fontSize: '13.5px', textAlign: 'center' }}>
+              <div style={{ background: 'rgba(220,53,69,0.08)', border: '1px solid rgba(220,53,69,0.3)', color: '#ff6b7b', padding: '12px', borderRadius: '6px', marginBottom: '20px', fontSize: '13.5px', textAlign: 'center' }}>
                 {error}
               </div>
             )}
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '22px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
               
               {/* Student Name */}
               <div>
@@ -140,10 +149,11 @@ export default function Register() {
                   placeholder={t('register.studentNamePlaceholder')}
                   style={{ 
                     width: '100%', 
+                    boxSizing: 'border-box',
                     padding: '13px 16px', 
                     background: 'rgba(255,255,255,0.02)', 
-                    border: '1px solid rgba(212, 166, 74, 0.15)', 
-                    borderRadius: '4px', 
+                    border: '1px solid rgba(212, 166, 74, 0.2)', 
+                    borderRadius: '6px', 
                     color: '#fff', 
                     fontSize: '14.5px', 
                     outline: 'none', 
@@ -154,7 +164,7 @@ export default function Register() {
                     e.target.style.boxShadow = '0 0 10px rgba(212,166,74,0.15)'
                   }}
                   onBlur={e => {
-                    e.target.style.borderColor = 'rgba(212, 166, 74, 0.15)'
+                    e.target.style.borderColor = 'rgba(212, 166, 74, 0.2)'
                     e.target.style.boxShadow = 'none'
                   }}
                   required
@@ -172,13 +182,16 @@ export default function Register() {
                   onChange={e => setForm({ ...form, birth_date: e.target.value })}
                   style={{ 
                     width: '100%', 
+                    boxSizing: 'border-box',
                     padding: '13px 16px', 
                     background: 'rgba(255,255,255,0.02)', 
-                    border: '1px solid rgba(212, 166, 74, 0.15)', 
-                    borderRadius: '4px', 
+                    border: '1px solid rgba(212, 166, 74, 0.2)', 
+                    borderRadius: '6px', 
                     color: '#fff', 
+                    colorScheme: 'dark',
                     fontSize: '14.5px', 
                     outline: 'none',
+                    minHeight: '48px',
                     transition: 'all 0.3s'
                   }}
                   onFocus={e => {
@@ -186,14 +199,53 @@ export default function Register() {
                     e.target.style.boxShadow = '0 0 10px rgba(212,166,74,0.15)'
                   }}
                   onBlur={e => {
-                    e.target.style.borderColor = 'rgba(212, 166, 74, 0.15)'
+                    e.target.style.borderColor = 'rgba(212, 166, 74, 0.2)'
                     e.target.style.boxShadow = 'none'
                   }}
                   required
                 />
               </div>
 
-              {/* Shift */}
+              {/* Group Selection with Schedule & Age Limits */}
+              <div>
+                <label style={{ display: 'block', color: '#a8a39a', fontSize: '13.5px', marginBottom: '10px', fontWeight: '500' }}>
+                  {t('register.groupTitle')}
+                </label>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', maxHeight: '260px', overflowY: 'auto', paddingRight: '4px' }}>
+                  {groups.map((g) => {
+                    const isSelected = form.group === g.id
+                    return (
+                      <div
+                        key={g.id}
+                        onClick={() => setForm({ ...form, group: g.id })}
+                        style={{
+                          padding: '12px 14px',
+                          background: isSelected ? 'rgba(212,166,74,0.14)' : 'rgba(255,255,255,0.02)',
+                          border: isSelected ? '1px solid var(--color-gold, #d4a64a)' : '1px solid rgba(212, 166, 74, 0.15)',
+                          borderRadius: '8px',
+                          cursor: 'pointer',
+                          transition: 'all 0.25s ease',
+                          boxShadow: isSelected ? '0 4px 15px rgba(212,166,74,0.15)' : 'none'
+                        }}
+                      >
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px', gap: '8px', flexWrap: 'wrap' }}>
+                          <span style={{ fontWeight: '600', color: isSelected ? 'var(--color-gold, #d4a64a)' : '#fff', fontSize: '14px' }}>
+                            {g.name}
+                          </span>
+                          <span style={{ fontSize: '11px', background: 'rgba(212,166,74,0.15)', color: '#f0c878', border: '1px solid rgba(212,166,74,0.3)', padding: '2px 8px', borderRadius: '12px', fontWeight: '500' }}>
+                            👶 {g.age}
+                          </span>
+                        </div>
+                        <div style={{ fontSize: '12px', color: '#a8a39a', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                          <span>📅 {g.schedule}</span>
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+
+              {/* School Shift */}
               <div>
                 <label style={{ display: 'block', color: '#a8a39a', fontSize: '13.5px', marginBottom: '10px', fontWeight: '500' }}>
                   {t('register.shiftTitle')}
@@ -206,9 +258,9 @@ export default function Register() {
                       onClick={() => setForm({ ...form, shift: s.id })}
                       style={{ 
                         padding: '12px 10px', 
-                        background: form.shift === s.id ? 'rgba(212,166,74,0.12)' : 'rgba(255,255,255,0.01)', 
+                        background: form.shift === s.id ? 'rgba(212,166,74,0.14)' : 'rgba(255,255,255,0.01)', 
                         border: form.shift === s.id ? '1px solid var(--color-gold, #d4a64a)' : '1px solid rgba(255,255,255,0.06)', 
-                        borderRadius: '4px', 
+                        borderRadius: '6px', 
                         color: form.shift === s.id ? 'var(--color-gold, #d4a64a)' : '#a8a39a', 
                         fontSize: '13px', 
                         cursor: 'pointer', 
@@ -235,10 +287,11 @@ export default function Register() {
                   placeholder={t('register.parentNamePlaceholder')}
                   style={{ 
                     width: '100%', 
+                    boxSizing: 'border-box',
                     padding: '13px 16px', 
                     background: 'rgba(255,255,255,0.02)', 
-                    border: '1px solid rgba(212, 166, 74, 0.15)', 
-                    borderRadius: '4px', 
+                    border: '1px solid rgba(212, 166, 74, 0.2)', 
+                    borderRadius: '6px', 
                     color: '#fff', 
                     fontSize: '14.5px', 
                     outline: 'none',
@@ -249,7 +302,7 @@ export default function Register() {
                     e.target.style.boxShadow = '0 0 10px rgba(212,166,74,0.15)'
                   }}
                   onBlur={e => {
-                    e.target.style.borderColor = 'rgba(212, 166, 74, 0.15)'
+                    e.target.style.borderColor = 'rgba(212, 166, 74, 0.2)'
                     e.target.style.boxShadow = 'none'
                   }}
                   required
@@ -268,10 +321,11 @@ export default function Register() {
                   placeholder={t('register.parentPhonePlaceholder')}
                   style={{ 
                     width: '100%', 
+                    boxSizing: 'border-box',
                     padding: '13px 16px', 
                     background: 'rgba(255,255,255,0.02)', 
-                    border: '1px solid rgba(212, 166, 74, 0.15)', 
-                    borderRadius: '4px', 
+                    border: '1px solid rgba(212, 166, 74, 0.2)', 
+                    borderRadius: '6px', 
                     color: '#fff', 
                     fontSize: '14.5px', 
                     outline: 'none',
@@ -282,7 +336,7 @@ export default function Register() {
                     e.target.style.boxShadow = '0 0 10px rgba(212,166,74,0.15)'
                   }}
                   onBlur={e => {
-                    e.target.style.borderColor = 'rgba(212, 166, 74, 0.15)'
+                    e.target.style.borderColor = 'rgba(212, 166, 74, 0.2)'
                     e.target.style.boxShadow = 'none'
                   }}
                   required
@@ -297,7 +351,7 @@ export default function Register() {
               className="btn btn-primary"
               style={{ 
                 width: '100%', 
-                marginTop: '40px', 
+                marginTop: '32px', 
                 padding: '15px 0', 
                 fontSize: '14px', 
                 fontWeight: '600', 
@@ -305,7 +359,8 @@ export default function Register() {
                 textTransform: 'uppercase',
                 display: 'block',
                 textAlign: 'center',
-                cursor: 'pointer'
+                cursor: 'pointer',
+                borderRadius: '6px'
               }}
             >
               {loading ? t('register.submitting') : t('register.submit')}
