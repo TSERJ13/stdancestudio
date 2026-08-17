@@ -116,12 +116,12 @@
 @media (max-width: 768px) {
   .hero {
     min-height: 100vh;
-    padding-top: 4.5rem;
+    padding-top: 3.2rem;
   }
   .hero__inner {
     grid-template-columns: 1fr;
     align-items: center;
-    padding-bottom: 5rem;
+    padding-bottom: 6.5rem;
   }
   .hero__scroll { display: none; }
   .hero__bg img { object-position: 70% center; }
