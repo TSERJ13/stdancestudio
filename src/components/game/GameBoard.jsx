@@ -56,34 +56,44 @@ export default function GameBoard({ availableLives, onSpendLife, onGameOver, onS
 
   const toggleFullscreen = () => {
     const el = containerRef.current;
-    if (!el) return;
+    const nextState = !isFullscreen;
+    setIsFullscreen(nextState);
 
-    if (!document.fullscreenElement && !document.webkitFullscreenElement) {
-      if (el.requestFullscreen) {
-        el.requestFullscreen();
-      } else if (el.webkitRequestFullscreen) {
-        el.webkitRequestFullscreen();
-      }
-      setIsFullscreen(true);
+    if (nextState) {
+      document.body.classList.add('app-fullscreen-active');
+      try {
+        if (el && el.requestFullscreen) el.requestFullscreen();
+        else if (el && el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+      } catch (err) { /* ignore iOS restriction */ }
     } else {
-      if (document.exitFullscreen) {
-        document.exitFullscreen();
-      } else if (document.webkitExitFullscreen) {
-        document.webkitExitFullscreen();
-      }
-      setIsFullscreen(false);
+      document.body.classList.remove('app-fullscreen-active');
+      try {
+        if (document.exitFullscreen) document.exitFullscreen();
+        else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+      } catch (err) { /* ignore */ }
     }
+
+    // Force canvas resize calculation after state update
+    setTimeout(() => {
+      window.dispatchEvent(new Event('resize'));
+    }, 100);
   };
 
   useEffect(() => {
     const handleFsChange = () => {
-      setIsFullscreen(!!(document.fullscreenElement || document.webkitFullscreenElement));
+      const isFs = !!(document.fullscreenElement || document.webkitFullscreenElement);
+      setIsFullscreen(isFs);
+      if (isFs) document.body.classList.add('app-fullscreen-active');
+      else document.body.classList.remove('app-fullscreen-active');
+      window.dispatchEvent(new Event('resize'));
     };
+
     document.addEventListener('fullscreenchange', handleFsChange);
     document.addEventListener('webkitfullscreenchange', handleFsChange);
     return () => {
       document.removeEventListener('fullscreenchange', handleFsChange);
       document.removeEventListener('webkitfullscreenchange', handleFsChange);
+      document.body.classList.remove('app-fullscreen-active');
     };
   }, []);
 
@@ -317,12 +327,14 @@ export default function GameBoard({ availableLives, onSpendLife, onGameOver, onS
       const container = containerRef.current;
       if (!container) return;
 
-      const isFs = !!(document.fullscreenElement || document.webkitFullscreenElement);
-      const availableW = isFs ? window.innerWidth - 30 : Math.min(container.clientWidth - 20, 520);
-      const availableH = isFs ? window.innerHeight - 100 : Math.round(availableW * 1.35);
+      const isFs = isFullscreen || document.body.classList.contains('app-fullscreen-active');
+      const winW = window.innerWidth;
+      const winH = window.innerHeight;
 
-      const w = Math.min(availableW, 560);
-      const h = availableH;
+      let w = isFs ? Math.min(winW - 16, 520) : Math.min(container.clientWidth - 16, 500);
+      let h = isFs ? (winH - 85) : Math.round(w * 1.35);
+
+      if (h < 350) h = 350;
 
       canvas.width = w;
       canvas.height = h;
@@ -520,7 +532,7 @@ export default function GameBoard({ availableLives, onSpendLife, onGameOver, onS
       cancelAnimationFrame(animId);
       window.removeEventListener('resize', resize);
     };
-  }, [onGameOver, onScoreUpdate]);
+  }, [isFullscreen, onGameOver, onScoreUpdate]);
 
   return (
     <div className={`game-board-container ${isFullscreen ? 'is-fullscreen' : ''}`} ref={containerRef}>

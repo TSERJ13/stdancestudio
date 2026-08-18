@@ -9,6 +9,57 @@ body.page-game-active .chat-fab {
   pointer-events: none !important;
 }
 
+/* =========================================================
+   BULLETPROOF FULLSCREEN OVERRIDES (iOS, Safari, Chrome)
+   ========================================================= */
+body.app-fullscreen-active {
+  overflow: hidden !important;
+}
+
+body.app-fullscreen-active header,
+body.app-fullscreen-active nav.navbar,
+body.app-fullscreen-active footer,
+body.app-fullscreen-active .app-header,
+body.app-fullscreen-active .app-nav {
+  display: none !important;
+}
+
+body.app-fullscreen-active .game-page-wrap {
+  padding: 0 !important;
+  margin: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+}
+
+body.app-fullscreen-active .game-board-container,
+.game-board-container.is-fullscreen,
+.game-board-container:fullscreen,
+.game-board-container:-webkit-full-screen {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  max-width: none !important;
+  background: #05060a !important;
+  padding: 8px !important;
+  z-index: 9999999 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  align-items: center !important;
+  box-sizing: border-box !important;
+}
+
+body.app-fullscreen-active .canvas-wrapper,
+.game-board-container.is-fullscreen .canvas-wrapper,
+.game-board-container:fullscreen .canvas-wrapper,
+.game-board-container:-webkit-full-screen .canvas-wrapper {
+  width: 100% !important;
+  max-width: 520px !important;
+  height: calc(100vh - 75px) !important;
+  max-height: none !important;
+}
+
 .game-page-wrap {
   display: flex;
   justify-content: center;
