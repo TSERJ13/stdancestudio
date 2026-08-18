@@ -19,6 +19,7 @@ import PortalLogin from './pages/portal/PortalLogin'
 import StudentDashboard from './pages/portal/StudentDashboard'
 
 import Promo from './pages/Promo'
+import Game from './pages/Game'
 
 import { trackPageView } from './utils/analytics'
 
@@ -41,6 +42,8 @@ const AppRoutes = () => (
     <Route path="contact" element={<Contact />} />
     <Route path="register" element={<Register />} />
     <Route path="promo" element={<Promo />} />
+    <Route path="game" element={<Game />} />
+    <Route path="dancing-bricks" element={<Game />} />
     <Route path="privacy" element={<Privacy />} />
     <Route path="terms" element={<Terms />} />
     <Route path="bio" element={<Bio />} />
