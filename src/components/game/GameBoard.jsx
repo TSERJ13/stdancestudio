@@ -22,7 +22,6 @@ export default function GameBoard({ availableLives, onSpendLife, onGameOver, onS
   const [ballCount, setBallCount] = useState(1);
   const [speedMult, setSpeedMult] = useState(1.0);
   const [muted, setMuted] = useState(false);
-  const [bannerMsg, setBannerMsg] = useState('');
   const [isFullscreen, setIsFullscreen] = useState(false);
 
   const engineRef = useRef({
@@ -40,6 +39,8 @@ export default function GameBoard({ availableLives, onSpendLife, onGameOver, onS
     balls: [],
     pickups: [],
     particles: [],
+    bannerText: '',
+    bannerTimer: 0,
     round: 1,
     score: 0,
     ballCount: 1,
@@ -64,7 +65,7 @@ export default function GameBoard({ availableLives, onSpendLife, onGameOver, onS
       try {
         if (el && el.requestFullscreen) el.requestFullscreen();
         else if (el && el.webkitRequestFullscreen) el.webkitRequestFullscreen();
-      } catch (err) { /* ignore iOS restriction */ }
+      } catch (err) { /* ignore */ }
     } else {
       document.body.classList.remove('app-fullscreen-active');
       try {
@@ -73,7 +74,6 @@ export default function GameBoard({ availableLives, onSpendLife, onGameOver, onS
       } catch (err) { /* ignore */ }
     }
 
-    // Force canvas resize calculation after state update
     setTimeout(() => {
       window.dispatchEvent(new Event('resize'));
     }, 100);
@@ -97,9 +97,10 @@ export default function GameBoard({ availableLives, onSpendLife, onGameOver, onS
     };
   }, []);
 
-  const showBanner = (msg, duration = 2000) => {
-    setBannerMsg(msg);
-    setTimeout(() => setBannerMsg(''), duration);
+  const showBannerOnCanvas = (text) => {
+    const engine = engineRef.current;
+    engine.bannerText = text;
+    engine.bannerTimer = 120; // ~2 seconds at 60fps
   };
 
   const createParticles = (x, y, color) => {
@@ -186,6 +187,8 @@ export default function GameBoard({ availableLives, onSpendLife, onGameOver, onS
     engine.balls = [];
     engine.pickups = [];
     engine.particles = [];
+    engine.bannerText = '';
+    engine.bannerTimer = 0;
     engine.state = 'AIM';
 
     setRound(1);
@@ -243,12 +246,12 @@ export default function GameBoard({ availableLives, onSpendLife, onGameOver, onS
     if (!left) {
       if (Math.random() < 0.5) {
         engine.superShots = 2;
-        showBanner('⚡ SUPER BALL ACTIVATED!');
+        showBannerOnCanvas('⚡ სუპერ ბურთი!');
         soundFx.playPowerup();
       } else {
         engine.ballCount += 3;
         setBallCount(engine.ballCount);
-        showBanner('🎉 +3 EXTRA BALLS!');
+        showBannerOnCanvas('🎉 +3 ბურთი!');
         soundFx.playPowerup();
       }
     }
@@ -331,8 +334,8 @@ export default function GameBoard({ availableLives, onSpendLife, onGameOver, onS
       const winW = window.innerWidth;
       const winH = window.innerHeight;
 
-      let w = isFs ? Math.min(winW - 16, 520) : Math.min(container.clientWidth - 16, 500);
-      let h = isFs ? (winH - 85) : Math.round(w * 1.35);
+      let w = isFs ? Math.min(winW - 16, 520) : Math.min(container.clientWidth - 16, 480);
+      let h = isFs ? (winH - 85) : Math.round(w * 1.32);
 
       if (h < 350) h = 350;
 
@@ -369,7 +372,7 @@ export default function GameBoard({ availableLives, onSpendLife, onGameOver, onS
       ctx.fillStyle = bgGrad;
       ctx.fillRect(0, 0, w, h);
 
-      // Grid line
+      // Grid lines
       ctx.strokeStyle = 'rgba(212,165,90,.05)';
       ctx.lineWidth = 1;
       for (let gx = 0; gx < w; gx += engine.cell) {
@@ -523,6 +526,37 @@ export default function GameBoard({ availableLives, onSpendLife, onGameOver, onS
         ctx.restore();
       });
 
+      // RENDER POWERUP BANNER DIRECTLY ON CANVAS (Prevents 0px DOM layout movement!)
+      if (engine.bannerTimer > 0) {
+        engine.bannerTimer--;
+        ctx.save();
+        const bannerW = 200;
+        const bannerH = 34;
+        const bannerX = (w - bannerW) / 2;
+        const bannerY = 24;
+
+        ctx.shadowColor = 'rgba(240,217,168,0.6)';
+        ctx.shadowBlur = 12;
+        ctx.fillStyle = 'linear-gradient(90deg, #D4A55A, #F0D9A8, #D4A55A)';
+        const grad = ctx.createLinearGradient(bannerX, bannerY, bannerX + bannerW, bannerY);
+        grad.addColorStop(0, '#D4A55A');
+        grad.addColorStop(0.5, '#F0D9A8');
+        grad.addColorStop(1, '#D4A55A');
+        ctx.fillStyle = grad;
+
+        ctx.beginPath();
+        if (ctx.roundRect) ctx.roundRect(bannerX, bannerY, bannerW, bannerH, 10);
+        else ctx.rect(bannerX, bannerY, bannerW, bannerH);
+        ctx.fill();
+
+        ctx.fillStyle = '#151100';
+        ctx.font = 'bold 12px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(engine.bannerText, w / 2, bannerY + bannerH / 2);
+        ctx.restore();
+      }
+
       animId = requestAnimationFrame(render);
     };
 
@@ -564,40 +598,26 @@ export default function GameBoard({ availableLives, onSpendLife, onGameOver, onS
         </div>
       </div>
 
-      {bannerMsg && (
-        <div className="game-banner-popup animate-bounce">
-          <Zap size={16} color="#151100" />
-          <span>{bannerMsg}</span>
-        </div>
-      )}
-
-      <div
-        className="canvas-wrapper"
-        onMouseDown={handlePointerDown}
-        onMouseMove={handlePointerMove}
-        onMouseUp={handlePointerUp}
-        onTouchStart={handlePointerDown}
-        onTouchMove={handlePointerMove}
-        onTouchEnd={handlePointerUp}
-      >
+      <div className="canvas-wrapper">
         <canvas ref={canvasRef} />
 
         {gameState === 'READY' && (
           <div className="overlay-screen glass">
             <div className="game-logo">
               <Award size={48} className="text-gold animate-pulse" />
-              <h2>Dancing Bricks</h2>
-              <p>Aim, break golden ST bricks, and top the studio leaderboard!</p>
+              <h2>DANCING BRICKS</h2>
+              <p>დაამსხვრიე ოქროსფერი ST აგურები და გახდი ლიდერბორდის გამარჯვებული!</p>
             </div>
+
             {availableLives > 0 ? (
               <button className="btn-play-big" onClick={startGame}>
-                <Play size={22} fill="black" /> START GAME (-1 ❤️)
+                <Play size={20} fill="black" /> დაწყება / START GAME (-1 ❤️)
               </button>
             ) : (
               <div className="no-lives-box">
                 <ShieldAlert size={32} color="#ef4444" />
-                <p>No lives left for today!</p>
-                <span>Answer Quiz (+1 ❤️) or Share Post (+1 ❤️) to get bonus lives!</span>
+                <p>სიცოცხლე ამოიწურა!</p>
+                <span>გაიარე კვიზი (+1 ❤️) ან გააზიარე (+1 ❤️) ბონუსისთვის!</span>
                 <div style={{ display: 'flex', gap: '8px', marginTop: '10px' }}>
                   <button className="btn-secondary" style={{ padding: '8px 14px', fontSize: '11px' }} onClick={onOpenQuiz}>
                     ❓ Dance Quiz (+1 ❤️)
@@ -617,17 +637,17 @@ export default function GameBoard({ availableLives, onSpendLife, onGameOver, onS
             <div className="final-score">
               <span>FINAL SCORE</span>
               <strong>{score.toLocaleString()}</strong>
-              <span style={{ fontSize: '11px', color: '#a1a1aa', marginTop: '4px' }}>Round Reached: #{round}</span>
+              <span style={{ fontSize: '11px', color: '#a1a1aa', marginTop: '4px' }}>რაუნდი: #{round}</span>
             </div>
             {availableLives > 0 ? (
               <button className="btn-play-big" onClick={startGame}>
-                <RotateCcw size={20} /> PLAY AGAIN (-1 ❤️)
+                <RotateCcw size={18} /> ხელახლა დაწყება (-1 ❤️)
               </button>
             ) : (
               <div className="no-lives-box">
                 <ShieldAlert size={32} color="#ef4444" />
-                <p>Out of lives!</p>
-                <span>Complete Dance Quiz or Share Post to earn bonus lives!</span>
+                <p>სიცოცხლეები ამოიწურა!</p>
+                <span>გაიარე კვიზი ან გააზიარე +1 ❤️ ბონუსისთვის</span>
                 <div style={{ display: 'flex', gap: '8px', marginTop: '10px' }}>
                   <button className="btn-secondary" style={{ padding: '8px 14px', fontSize: '11px' }} onClick={onOpenQuiz}>
                     ❓ Quiz (+1 ❤️)

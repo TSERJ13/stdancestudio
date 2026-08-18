@@ -69,7 +69,8 @@ body.app-fullscreen-active .canvas-wrapper,
 
 .game-page-wrap .app-container {
   width: 100%;
-  max-width: 580px;
+  max-width: 540px;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -251,6 +252,7 @@ body.app-fullscreen-active .canvas-wrapper,
   display: flex;
   justify-content: space-between;
   align-items: center;
+  box-sizing: border-box;
 }
 
 .game-page-wrap .stat-pill {
@@ -292,18 +294,20 @@ body.app-fullscreen-active .canvas-wrapper,
   justify-content: center;
 }
 
+/* Canvas Wrapper & Overlay Alignment */
 .game-page-wrap .canvas-wrapper {
-  position: relative;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  position: relative !important;
+  width: 100% !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
   border-radius: 20px;
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
   background: #05060a;
   touch-action: none;
+  box-sizing: border-box !important;
 }
 
 .game-page-wrap canvas {
@@ -311,9 +315,101 @@ body.app-fullscreen-active .canvas-wrapper,
   width: 100%;
 }
 
-/* =========================================================
-   LEADERBOARD / RANKS LAYOUT FIXES
-   ========================================================= */
+.game-page-wrap .overlay-screen {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 16px !important;
+  padding: 24px !important;
+  text-align: center !important;
+  background: rgba(5, 6, 10, 0.94) !important;
+  box-sizing: border-box !important;
+  z-index: 10;
+}
+
+.game-page-wrap .game-logo h2 {
+  font-size: 22px;
+  font-weight: 900;
+  margin-top: 6px;
+  letter-spacing: 1px;
+  color: #F0D9A8;
+}
+
+.game-page-wrap .game-logo p {
+  font-size: 13px;
+  color: #a1a1aa;
+  margin-top: 6px;
+  max-width: 300px;
+  line-height: 1.4;
+}
+
+.game-page-wrap .btn-play-big {
+  height: 50px;
+  padding: 0 28px;
+  border-radius: 14px;
+  background: #1db954;
+  color: black;
+  font-weight: 900;
+  font-size: 14px;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 0 20px rgba(29, 185, 84, 0.4);
+  transition: transform 0.15s;
+}
+
+.game-page-wrap .btn-play-big:active {
+  transform: scale(0.96);
+}
+
+.game-page-wrap .no-lives-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  padding: 14px 18px;
+  border-radius: 14px;
+}
+
+.game-page-wrap .no-lives-box p {
+  font-size: 14px;
+  font-weight: 800;
+  color: #ef4444;
+}
+
+.game-page-wrap .no-lives-box span {
+  font-size: 11px;
+  color: #a1a1aa;
+}
+
+.game-page-wrap .final-score {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.game-page-wrap .final-score span {
+  font-size: 11px;
+  color: #a1a1aa;
+  font-weight: 800;
+}
+
+.game-page-wrap .final-score strong {
+  font-size: 28px;
+  color: var(--color-gold, #d4a64a);
+}
+
+/* Leaderboard / Ranks */
 .game-page-wrap .leaderboard-container {
   padding: 18px;
   width: 100%;
