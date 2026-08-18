@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
-import { Play, RotateCcw, Volume2, VolumeX, ShieldAlert, Award, Zap, Maximize2, Minimize2 } from 'lucide-react';
+import { Play, RotateCcw, Volume2, VolumeX, ShieldAlert, Award, Zap, Maximize2, Minimize2, FastForward } from 'lucide-react';
 import { soundFx } from '../../utils/soundFx';
 
 const GOLD_L = '#F0D9A8';
@@ -52,6 +52,7 @@ export default function GameBoard({ availableLives, onSpendLife, onGameOver, onS
     superShots: 0,
     shootTimer: 0,
     speedMult: 1.0,
+    holdingBoost: false,
     animId: null
   });
 
@@ -189,6 +190,7 @@ export default function GameBoard({ availableLives, onSpendLife, onGameOver, onS
     engine.particles = [];
     engine.bannerText = '';
     engine.bannerTimer = 0;
+    engine.holdingBoost = false;
     engine.state = 'AIM';
 
     setRound(1);
@@ -208,6 +210,7 @@ export default function GameBoard({ availableLives, onSpendLife, onGameOver, onS
     engine.shootTimer = 0;
     engine.balls = [];
     engine.nextLaunchX = null;
+    engine.holdingBoost = false;
     setGameState('SHOOT');
   };
 
@@ -263,6 +266,7 @@ export default function GameBoard({ availableLives, onSpendLife, onGameOver, onS
     engine.pickups = engine.pickups.filter(p => !p.taken);
     if (engine.superShots > 0) engine.superShots--;
     if (engine.nextLaunchX !== null) engine.launchX = engine.nextLaunchX;
+    engine.holdingBoost = false;
 
     engine.round++;
     setRound(engine.round);
@@ -302,9 +306,15 @@ export default function GameBoard({ availableLives, onSpendLife, onGameOver, onS
 
   const handlePointerDown = (e) => {
     const engine = engineRef.current;
-    if (engine.state !== 'AIM') return;
-    if (e.cancelable && e.type.startsWith('touch')) e.preventDefault();
+    if (e.cancelable && e.type && e.type.startsWith('touch')) e.preventDefault();
 
+    if (engine.state === 'SHOOT') {
+      // Hold down during flight to FAST FORWARD
+      engine.holdingBoost = true;
+      return;
+    }
+
+    if (engine.state !== 'AIM') return;
     engine.aiming = true;
     const clientX = e.touches ? e.touches[0].clientX : e.clientX;
     const clientY = e.touches ? e.touches[0].clientY : e.clientY;
@@ -313,8 +323,10 @@ export default function GameBoard({ availableLives, onSpendLife, onGameOver, onS
 
   const handlePointerMove = (e) => {
     const engine = engineRef.current;
+    if (e.cancelable && e.type && e.type.startsWith('touch')) e.preventDefault();
+
+    if (engine.state === 'SHOOT') return;
     if (!engine.aiming || engine.state !== 'AIM') return;
-    if (e.cancelable && e.type.startsWith('touch')) e.preventDefault();
 
     const clientX = e.touches ? e.touches[0].clientX : e.clientX;
     const clientY = e.touches ? e.touches[0].clientY : e.clientY;
@@ -323,8 +335,14 @@ export default function GameBoard({ availableLives, onSpendLife, onGameOver, onS
 
   const handlePointerUp = (e) => {
     const engine = engineRef.current;
-    if (!engine.aiming || engine.state !== 'AIM') return;
     if (e.cancelable && e.type && e.type.startsWith('touch')) e.preventDefault();
+
+    if (engine.state === 'SHOOT') {
+      engine.holdingBoost = false;
+      return;
+    }
+
+    if (!engine.aiming || engine.state !== 'AIM') return;
     engine.aiming = false;
     launch();
   };
@@ -442,9 +460,8 @@ export default function GameBoard({ availableLives, onSpendLife, onGameOver, onS
       });
       engine.particles = engine.particles.filter(pt => pt.alpha > 0);
 
-      // FAINT LAUNCHER INDICATOR & AIM TRAJECTORY (მკრთალად ინიშნებოდეს ბურთის გამშვები ადგილი)
+      // FAINT LAUNCHER INDICATOR & AIM TRAJECTORY
       if (engine.state === 'AIM') {
-        // Faint glowing launcher base ring
         ctx.save();
         ctx.shadowColor = GOLD_L;
         ctx.shadowBlur = 15;
@@ -457,7 +474,6 @@ export default function GameBoard({ availableLives, onSpendLife, onGameOver, onS
         ctx.stroke();
         ctx.restore();
 
-        // Dotted Aim Trajectory
         ctx.save();
         ctx.setLineDash([4, 6]);
         ctx.strokeStyle = engine.superShots > 0 ? GOLD_L : 'rgba(240,217,168,.65)';
@@ -468,7 +484,6 @@ export default function GameBoard({ availableLives, onSpendLife, onGameOver, onS
         ctx.stroke();
         ctx.restore();
 
-        // Launch Ball
         ctx.save();
         ctx.shadowColor = engine.superShots > 0 ? GOLD_L : '#FFFFFF';
         ctx.shadowBlur = engine.superShots > 0 ? 20 : 12;
@@ -482,18 +497,21 @@ export default function GameBoard({ availableLives, onSpendLife, onGameOver, onS
         }
       }
 
-      // Shooting Balls update
+      // Shooting Balls update with FAST FORWARD HOLD BOOST (ეკრანზე დაწოლით დაჩქარება)
       if (engine.state === 'SHOOT') {
         engine.shootTimer++;
-        const shootInterval = Math.max(3, 6 - Math.floor(engine.round / 4));
+        const shootInterval = Math.max(2, 6 - Math.floor(engine.round / 4));
         if (engine.ballsPending > 0 && engine.shootTimer % shootInterval === 0) {
           spawnBall();
         }
 
+        // Holding boost multiplier: 2.5x speed boost when holding screen!
+        const steps = engine.holdingBoost ? 5 : 2;
+
         engine.balls.forEach(b => {
           if (!b.alive) return;
-          for (let s = 0; s < 2; s++) {
-            b.x += b.vx / 2; b.y += b.vy / 2;
+          for (let s = 0; s < steps; s++) {
+            b.x += (b.vx / 2); b.y += (b.vy / 2);
             if (b.x < b.r) { b.x = b.r; b.vx = Math.abs(b.vx); soundFx.playHit(); }
             if (b.x > w - b.r) { b.x = w - b.r; b.vx = -Math.abs(b.vx); soundFx.playHit(); }
             if (b.y < b.r) { b.y = b.r; b.vy = Math.abs(b.vy); soundFx.playHit(); }
@@ -541,6 +559,26 @@ export default function GameBoard({ availableLives, onSpendLife, onGameOver, onS
         if (engine.ballsPending <= 0 && engine.balls.length === 0) {
           endRound();
         }
+
+        // Draw Fast Forward Hold Badge on Canvas
+        if (engine.holdingBoost) {
+          ctx.save();
+          ctx.fillStyle = 'rgba(239, 68, 68, 0.2)';
+          ctx.strokeStyle = '#EF4444';
+          ctx.lineWidth = 1.5;
+          const bw = 150, bh = 28, bx = (w - bw) / 2, by = h - 45;
+          ctx.beginPath();
+          if (ctx.roundRect) ctx.roundRect(bx, by, bw, bh, 8);
+          else ctx.rect(bx, by, bw, bh);
+          ctx.fill(); ctx.stroke();
+
+          ctx.fillStyle = '#FF6B6B';
+          ctx.font = 'bold 11px sans-serif';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText('⏩ დაჩქარება (FAST 2.5x)', w / 2, by + bh / 2);
+          ctx.restore();
+        }
       }
 
       // Draw Balls
@@ -553,7 +591,7 @@ export default function GameBoard({ availableLives, onSpendLife, onGameOver, onS
         ctx.restore();
       });
 
-      // Canvas Powerup Banners (0px DOM shifting!)
+      // Canvas Powerup Banners
       if (engine.bannerTimer > 0) {
         engine.bannerTimer--;
         ctx.save();
