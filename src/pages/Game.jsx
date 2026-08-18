@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Play, Trophy, HelpCircle, Share2, Heart, Clock, Sparkles, Award, UserCheck, LogIn, IdCard } from 'lucide-react';
+import { Play, Trophy, HelpCircle, Share2, Heart, Clock, Sparkles, Award, UserCheck, LogIn, IdCard, Check } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import GameBoard from '../components/game/GameBoard';
 import QuizModal from '../components/game/QuizModal';
@@ -26,12 +26,12 @@ export const gameTranslations = {
     loginBtn: '🆔 შესვლა',
     studentIdLabel: 'მოსწავლის ID',
     noLives: 'სიცოცხლე ამოიწურა!',
-    quizBonus: '❓ Dance Quiz (+1 ❤️)',
-    shareBonus: '📱 Share (+1 ❤️)',
+    quizBonus: '❓ Quiz +1 ❤️',
+    shareBonus: '📱 Share +1 ❤️',
     tabs: {
       game: 'თამაში',
-      quiz: '4-ე კვიზი',
-      share: '5-ე გაზიარება',
+      quiz: 'Quiz +1 ❤️',
+      share: 'Share +1 ❤️',
       ranks: 'რეიტინგი',
       rules: 'წესები'
     }
@@ -52,12 +52,12 @@ export const gameTranslations = {
     loginBtn: '🆔 LOGIN',
     studentIdLabel: 'Student ID',
     noLives: 'Out of lives!',
-    quizBonus: '❓ Dance Quiz (+1 ❤️)',
-    shareBonus: '📱 Share (+1 ❤️)',
+    quizBonus: '❓ Quiz +1 ❤️',
+    shareBonus: '📱 Share +1 ❤️',
     tabs: {
       game: 'Game',
-      quiz: '4th Quiz',
-      share: '5th Share',
+      quiz: 'Quiz +1 ❤️',
+      share: 'Share +1 ❤️',
       ranks: 'Ranks',
       rules: 'Rules'
     }
@@ -82,8 +82,8 @@ export const gameTranslations = {
     shareBonus: '📱 Поделиться (+1 ❤️)',
     tabs: {
       game: 'Игра',
-      quiz: '4-я Викторина',
-      share: '5-я Поделиться',
+      quiz: 'Quiz +1 ❤️',
+      share: 'Share +1 ❤️',
       ranks: 'Рейтинг',
       rules: 'Правила'
     }
@@ -291,39 +291,39 @@ export default function Game() {
                 className={`nav-btn ${activeTab === 'play' ? 'active' : ''}`}
                 onClick={() => setActiveTab('play')}
               >
-                <Play size={16} /> {tGame.tabs.game}
+                <Play size={15} /> {tGame.tabs.game}
               </button>
 
               <button
-                className={`nav-btn bonus-btn ${livesData.hasQuizLife ? 'unlocked' : ''}`}
+                className={`nav-btn bonus-btn quiz-tab ${livesData.hasQuizLife ? 'unlocked' : ''}`}
                 onClick={() => setShowQuizModal(true)}
               >
-                <HelpCircle size={16} color={livesData.hasQuizLife ? '#22c55e' : '#f59e0b'} />
-                <span>{tGame.tabs.quiz}</span>
-                {livesData.hasQuizLife && <span className="check-badge">✓</span>}
+                <HelpCircle size={15} color={livesData.hasQuizLife ? '#22c55e' : '#f59e0b'} />
+                <span>Quiz +1 ❤️</span>
+                {livesData.hasQuizLife && <span className="check-badge"><Check size={10} strokeWidth={3} /></span>}
               </button>
 
               <button
-                className={`nav-btn bonus-btn ${livesData.hasShareLife ? 'unlocked' : ''}`}
+                className={`nav-btn bonus-btn share-tab ${livesData.hasShareLife ? 'unlocked' : ''}`}
                 onClick={() => setShowShareModal(true)}
               >
-                <Share2 size={16} color={livesData.hasShareLife ? '#22c55e' : '#ec4899'} />
-                <span>{tGame.tabs.share}</span>
-                {livesData.hasShareLife && <span className="check-badge">✓</span>}
+                <Share2 size={15} color={livesData.hasShareLife ? '#22c55e' : '#ec4899'} />
+                <span>Share +1 ❤️</span>
+                {livesData.hasShareLife && <span className="check-badge"><Check size={10} strokeWidth={3} /></span>}
               </button>
 
               <button
                 className={`nav-btn ${activeTab === 'leaderboard' ? 'active' : ''}`}
                 onClick={() => setActiveTab('leaderboard')}
               >
-                <Trophy size={16} /> {tGame.tabs.ranks}
+                <Trophy size={15} /> {tGame.tabs.ranks}
               </button>
 
               <button
                 className={`nav-btn ${activeTab === 'rules' ? 'active' : ''}`}
                 onClick={() => setActiveTab('rules')}
               >
-                <Sparkles size={16} /> {tGame.tabs.rules}
+                <Sparkles size={15} /> {tGame.tabs.rules}
               </button>
             </nav>
 
@@ -363,7 +363,7 @@ export default function Game() {
                     <div className="rule-item">
                       <HelpCircle size={24} color="#f59e0b" />
                       <div>
-                        <strong>4th Life Unlock (Dance Quiz)</strong>
+                        <strong>4th Life Unlock (Quiz +1 ❤️)</strong>
                         <p>Answer 3 dance questions correctly in the Dance Quiz challenge to gain +1 Bonus Life (❤️ #4).</p>
                       </div>
                     </div>
@@ -371,7 +371,7 @@ export default function Game() {
                     <div className="rule-item">
                       <Share2 size={24} color="#ec4899" />
                       <div>
-                        <strong>5th Life Unlock (Instagram Share)</strong>
+                        <strong>5th Life Unlock (Share +1 ❤️)</strong>
                         <p>Share our studio link or Instagram post to unlock your 5th Bonus Life (❤️ #5).</p>
                       </div>
                     </div>
