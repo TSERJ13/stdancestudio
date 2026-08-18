@@ -87,38 +87,67 @@ export default function QuizModal({ isOpen, onClose, onUnlockQuizLife, hasQuizLi
 
   return (
     <div className="modal-overlay">
-      <div className="modal-content glass animate-in" style={{ maxWidth: '480px' }}>
-        <div className="modal-header">
+      <div className="modal-content glass animate-in" style={{ maxWidth: '440px', padding: '20px' }}>
+        <div className="modal-header" style={{ marginBottom: '14px' }}>
           <div className="quiz-title-badge">
-            <HelpCircle size={20} color="#d4a64a" />
-            <span>{t.title}</span>
+            <HelpCircle size={18} color="#d4a64a" />
+            <span style={{ fontSize: '12px', fontWeight: '800' }}>{t.title}</span>
           </div>
           <button className="btn-close" onClick={onClose}>✕</button>
         </div>
 
         {hasQuizLife ? (
-          <div className="quiz-unlocked-state">
-            <CheckCircle2 size={56} color="#22c55e" className="animate-bounce" />
-            <h3>{t.unlockedTitle}</h3>
-            <p>{t.unlockedSub}</p>
-            <button className="btn-primary" style={{ marginTop: '10px' }} onClick={onClose}>
+          <div className="quiz-unlocked-state" style={{ padding: '16px 0', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <div style={{
+              width: '72px',
+              height: '72px',
+              borderRadius: '50%',
+              background: 'rgba(34,197,94,0.15)',
+              border: '2px solid rgba(34,197,94,0.4)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginBottom: '12px',
+              boxShadow: '0 0 20px rgba(34,197,94,0.3)'
+            }}>
+              <CheckCircle2 size={44} color="#22c55e" className="animate-bounce" />
+            </div>
+
+            <h3 style={{ fontSize: '17px', fontWeight: '900', color: 'white', margin: '4px 0 6px' }}>{t.unlockedTitle}</h3>
+            <p style={{ fontSize: '12.5px', color: '#e4e4e7', margin: '0 0 16px', lineHeight: '1.4' }}>{t.unlockedSub}</p>
+
+            <button
+              onClick={onClose}
+              style={{
+                width: '100%',
+                height: '44px',
+                borderRadius: '12px',
+                background: 'linear-gradient(135deg, #d4a64a, #f0d9a8)',
+                border: 'none',
+                color: '#151100',
+                fontWeight: '900',
+                fontSize: '13.5px',
+                cursor: 'pointer'
+              }}
+            >
               {t.backBtn}
             </button>
           </div>
         ) : !isFinished ? (
           <div className="quiz-body">
-            <div className="quiz-progress-bar">
-              <div className="quiz-progress-fill" style={{ width: `${((currentIdx + 1) / 3) * 100}%` }} />
+            <div className="quiz-progress-bar" style={{ height: '6px', background: 'rgba(255,255,255,0.06)', borderRadius: '4px', overflow: 'hidden', marginBottom: '10px' }}>
+              <div className="quiz-progress-fill" style={{ width: `${((currentIdx + 1) / 3) * 100}%`, height: '100%', background: 'linear-gradient(90deg, #d4a64a, #f0d9a8)', transition: 'width 0.3s' }} />
             </div>
-            <div className="quiz-meta">
+
+            <div className="quiz-meta" style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: '#d4a64a', fontWeight: '800', marginBottom: '12px' }}>
               <span>{t.qMeta(currentIdx + 1, 3, correctCount)}</span>
             </div>
 
-            <h3 className="quiz-question-text" style={{ fontSize: '15px', color: 'white', marginTop: '10px' }}>
+            <h3 className="quiz-question-text" style={{ fontSize: '15px', fontWeight: '900', color: 'white', margin: '0 0 14px', lineHeight: '1.4' }}>
               {currentQ.question}
             </h3>
 
-            <div className="quiz-options-list" style={{ marginTop: '14px' }}>
+            <div className="quiz-options-list" style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
               {currentQ.options.map((opt, i) => {
                 let statusClass = '';
                 if (selectedOption !== null) {
@@ -128,12 +157,29 @@ export default function QuizModal({ isOpen, onClose, onUnlockQuizLife, hasQuizLi
                 return (
                   <button
                     key={i}
-                    className={`quiz-opt-btn ${statusClass}`}
                     onClick={() => handleSelect(i)}
                     disabled={selectedOption !== null}
+                    style={{
+                      width: '100%',
+                      padding: '12px 14px',
+                      borderRadius: '12px',
+                      background: statusClass === 'correct' ? 'rgba(34,197,94,0.2)' : statusClass === 'wrong' ? 'rgba(239,68,68,0.2)' : 'rgba(255,255,255,0.05)',
+                      border: statusClass === 'correct' ? '1.5px solid #22c55e' : statusClass === 'wrong' ? '1.5px solid #ef4444' : '1px solid rgba(255,255,255,0.1)',
+                      color: 'white',
+                      fontWeight: '800',
+                      fontSize: '13px',
+                      textAlign: 'left',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '10px',
+                      boxSizing: 'border-box'
+                    }}
                   >
-                    <span className="opt-letter">{String.fromCharCode(65 + i)}</span>
-                    <span className="opt-text">{opt}</span>
+                    <span style={{ width: '24px', height: '24px', borderRadius: '50%', background: 'rgba(212,166,74,0.2)', color: '#F0D9A8', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px', fontWeight: '900' }}>
+                      {String.fromCharCode(65 + i)}
+                    </span>
+                    <span style={{ flex: 1 }}>{opt}</span>
                     {statusClass === 'correct' && <CheckCircle2 size={18} color="#22c55e" />}
                     {statusClass === 'wrong' && <XCircle size={18} color="#ef4444" />}
                   </button>
@@ -142,22 +188,48 @@ export default function QuizModal({ isOpen, onClose, onUnlockQuizLife, hasQuizLi
             </div>
           </div>
         ) : (
-          <div className="quiz-result-state">
+          <div className="quiz-result-state" style={{ padding: '16px 0', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             {correctCount >= 3 ? (
               <>
-                <Sparkles size={56} color="#d4a64a" className="animate-bounce" />
-                <h3>{t.perfectScore}</h3>
-                <p>{t.perfectSub}</p>
-                <button className="btn-primary" style={{ marginTop: '12px' }} onClick={onClose}>
+                <Sparkles size={48} color="#d4a64a" className="animate-bounce" style={{ marginBottom: '10px' }} />
+                <h3 style={{ fontSize: '17px', fontWeight: '900', color: '#F0D9A8', margin: '4px 0 6px' }}>{t.perfectScore}</h3>
+                <p style={{ fontSize: '12.5px', color: '#e4e4e7', margin: '0 0 16px' }}>{t.perfectSub}</p>
+                <button
+                  onClick={onClose}
+                  style={{
+                    width: '100%',
+                    height: '44px',
+                    borderRadius: '12px',
+                    background: 'linear-gradient(135deg, #d4a64a, #f0d9a8)',
+                    border: 'none',
+                    color: '#151100',
+                    fontWeight: '900',
+                    fontSize: '13.5px',
+                    cursor: 'pointer'
+                  }}
+                >
                   {t.claimBtn}
                 </button>
               </>
             ) : (
               <>
-                <XCircle size={56} color="#ef4444" />
-                <h3>{t.failedTitle} ({correctCount}/3)</h3>
-                <p>{t.failedSub}</p>
-                <button className="btn-secondary" style={{ marginTop: '12px' }} onClick={resetQuiz}>
+                <XCircle size={48} color="#ef4444" style={{ marginBottom: '10px' }} />
+                <h3 style={{ fontSize: '17px', fontWeight: '900', color: '#ef4444', margin: '4px 0 6px' }}>{t.failedTitle} ({correctCount}/3)</h3>
+                <p style={{ fontSize: '12.5px', color: '#a1a1aa', margin: '0 0 16px' }}>{t.failedSub}</p>
+                <button
+                  onClick={resetQuiz}
+                  style={{
+                    width: '100%',
+                    height: '44px',
+                    borderRadius: '12px',
+                    background: 'rgba(255,255,255,0.08)',
+                    border: '1px solid rgba(255,255,255,0.15)',
+                    color: 'white',
+                    fontWeight: '900',
+                    fontSize: '13.5px',
+                    cursor: 'pointer'
+                  }}
+                >
                   {t.retryBtn}
                 </button>
               </>
