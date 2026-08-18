@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Play, Trophy, HelpCircle, Share2, Heart, Clock, Sparkles, Award, UserCheck, LogIn, IdCard, Check } from 'lucide-react';
+import { Play, Trophy, HelpCircle, Share2, Heart, Clock, Sparkles, Award, UserCheck, IdCard } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import GameBoard from '../components/game/GameBoard';
 import QuizModal from '../components/game/QuizModal';
@@ -11,9 +11,9 @@ import './Game.css';
 
 export const gameTranslations = {
   ka: {
-    fastForward: '⏩ დაჩქარება',
-    superBall: '⚡ სუპერ ბურთი!',
-    extraBalls: '🎉 +3 ბურთი!',
+    fastForward: 'დაჩქარება',
+    superBall: 'სუპერ ბურთი!',
+    extraBalls: '+3 ბურთი!',
     round: 'რაუნდი',
     speed: 'სიჩქარე',
     balls: 'ბურთები',
@@ -23,23 +23,23 @@ export const gameTranslations = {
     subtitle: 'დაამსხვრიე ოქროსფერი ST აგურები და გახდი ლიდერბორდის გამარჯვებული!',
     gameOver: 'GAME OVER',
     finalScore: 'საბოლოო ქულა',
-    loginBtn: '🆔 შესვლა',
+    loginBtn: 'ID შესვლა',
     studentIdLabel: 'მოსწავლის ID',
     noLives: 'სიცოცხლე ამოიწურა!',
-    quizBonus: '❓ Quiz +1 ❤️',
-    shareBonus: '📱 Share +1 ❤️',
+    quizBonus: 'Quiz +1 Life',
+    shareBonus: 'Share +1 Life',
     tabs: {
       game: 'თამაში',
-      quiz: 'Quiz +1 ❤️',
-      share: 'Share +1 ❤️',
+      quiz: 'Quiz +1 Life',
+      share: 'Share +1 Life',
       ranks: 'რეიტინგი',
       rules: 'წესები'
     }
   },
   en: {
-    fastForward: '⏩ FAST FORWARD',
-    superBall: '⚡ SUPER BALL!',
-    extraBalls: '🎉 +3 EXTRA BALLS!',
+    fastForward: 'FAST FORWARD',
+    superBall: 'SUPER BALL!',
+    extraBalls: '+3 EXTRA BALLS!',
     round: 'ROUND',
     speed: 'SPEED',
     balls: 'BALLS',
@@ -49,23 +49,23 @@ export const gameTranslations = {
     subtitle: 'Break golden ST bricks and top the studio leaderboard!',
     gameOver: 'GAME OVER',
     finalScore: 'FINAL SCORE',
-    loginBtn: '🆔 LOGIN',
+    loginBtn: 'ID LOGIN',
     studentIdLabel: 'Student ID',
     noLives: 'Out of lives!',
-    quizBonus: '❓ Quiz +1 ❤️',
-    shareBonus: '📱 Share +1 ❤️',
+    quizBonus: 'Quiz +1 Life',
+    shareBonus: 'Share +1 Life',
     tabs: {
       game: 'Game',
-      quiz: 'Quiz +1 ❤️',
-      share: 'Share +1 ❤️',
+      quiz: 'Quiz +1 Life',
+      share: 'Share +1 Life',
       ranks: 'Ranks',
       rules: 'Rules'
     }
   },
   ru: {
-    fastForward: '⏩ УСКОРЕНИЕ',
-    superBall: '⚡ СУПЕР МЯЧ!',
-    extraBalls: '🎉 +3 МЯЧА!',
+    fastForward: 'УСКОРЕНИЕ',
+    superBall: 'СУПЕР МЯЧ!',
+    extraBalls: '+3 МЯЧА!',
     round: 'РАУНД',
     speed: 'СКОРОСТЬ',
     balls: 'МЯЧИ',
@@ -75,15 +75,15 @@ export const gameTranslations = {
     subtitle: 'Разбивайте золотые блоки ST и возглавьте лидерборд студии!',
     gameOver: 'ИГРА ОКОНЧЕНА',
     finalScore: 'ИТОГОВЫЙ СЧЕТ',
-    loginBtn: '🆔 ВХОД',
+    loginBtn: 'ID ВХОД',
     studentIdLabel: 'ID Ученика',
     noLives: 'Жизни закончились!',
-    quizBonus: '❓ Викторина (+1 ❤️)',
-    shareBonus: '📱 Поделиться (+1 ❤️)',
+    quizBonus: 'Quiz +1 Life',
+    shareBonus: 'Share +1 Life',
     tabs: {
       game: 'Игра',
-      quiz: 'Quiz +1 ❤️',
-      share: 'Share +1 ❤️',
+      quiz: 'Quiz +1 Life',
+      share: 'Share +1 Life',
       ranks: 'Рейтинг',
       rules: 'Правила'
     }
@@ -299,7 +299,7 @@ export default function Game() {
                 onClick={() => setShowQuizModal(true)}
               >
                 <HelpCircle size={15} color={livesData.hasQuizLife ? '#22c55e' : '#f59e0b'} />
-                <span>Quiz +1 ❤️</span>
+                <span>Quiz +1 Life</span>
               </button>
 
               <button
@@ -307,7 +307,7 @@ export default function Game() {
                 onClick={() => setShowShareModal(true)}
               >
                 <Share2 size={15} color={livesData.hasShareLife ? '#22c55e' : '#ec4899'} />
-                <span>Share +1 ❤️</span>
+                <span>Share +1 Life</span>
               </button>
 
               <button
@@ -348,12 +348,12 @@ export default function Game() {
 
               {activeTab === 'rules' && (
                 <div className="rules-card glass animate-in">
-                  <h2>📜 How to Play Dancing Bricks</h2>
+                  <h2>How to Play Dancing Bricks</h2>
                   <div className="rules-list">
                     <div className="rule-item">
                       <Heart size={24} color="#ef4444" />
                       <div>
-                        <strong>3 Base Daily Lives (❤️❤️❤️)</strong>
+                        <strong>3 Base Daily Lives</strong>
                         <p>Every player gets 3 lives every day. Playing 1 game spends 1 life. Lives refresh automatically at 22:00 Georgia Time (UTC+4).</p>
                       </div>
                     </div>
@@ -361,16 +361,16 @@ export default function Game() {
                     <div className="rule-item">
                       <HelpCircle size={24} color="#f59e0b" />
                       <div>
-                        <strong>4th Life Unlock (Quiz +1 ❤️)</strong>
-                        <p>Answer 3 dance questions correctly in the Dance Quiz challenge to gain +1 Bonus Life (❤️ #4).</p>
+                        <strong>4th Life Unlock (Quiz +1 Life)</strong>
+                        <p>Answer 3 dance questions correctly in the Dance Quiz challenge to gain +1 Bonus Life.</p>
                       </div>
                     </div>
 
                     <div className="rule-item">
                       <Share2 size={24} color="#ec4899" />
                       <div>
-                        <strong>5th Life Unlock (Share +1 ❤️)</strong>
-                        <p>Share our studio link or Instagram post to unlock your 5th Bonus Life (❤️ #5).</p>
+                        <strong>5th Life Unlock (Share +1 Life)</strong>
+                        <p>Share our studio link or Instagram post to unlock your 5th Bonus Life.</p>
                       </div>
                     </div>
 

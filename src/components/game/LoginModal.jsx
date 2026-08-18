@@ -86,7 +86,6 @@ export default function LoginModal({ isOpen, onClose, currentUser, onLogin, onLo
       finalName = STUDENT_ID_MAP[finalId] || nameInput.trim() || `მოსწავლე #${finalId}`;
     }
 
-    // Save ID permanently in localStorage
     localStorage.setItem('dancing_bricks_saved_id', finalId);
 
     const userData = {
@@ -113,7 +112,7 @@ export default function LoginModal({ isOpen, onClose, currentUser, onLogin, onLo
         <div className="modal-header" style={{ marginBottom: '14px' }}>
           <div className="quiz-title-badge">
             <IdCard size={18} color="#d4a64a" />
-            <span style={{ fontSize: '12.5px', fontWeight: '800' }}>🆔 მოსწავლის ID-ით შესვლა</span>
+            <span style={{ fontSize: '12.5px', fontWeight: '800' }}>მოსწავლის ID-ით შესვლა</span>
           </div>
           <button className="btn-close" onClick={onClose}>✕</button>
         </div>
@@ -135,7 +134,7 @@ export default function LoginModal({ isOpen, onClose, currentUser, onLogin, onLo
               <h3 style={{ fontSize: '17px', fontWeight: '900', color: 'white', margin: '4px 0 2px' }}>{currentUser.name}</h3>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', marginTop: '4px' }}>
                 <span style={{ fontSize: '12px', color: '#d4a64a', fontWeight: '800', background: 'rgba(212,166,74,0.12)', padding: '3px 10px', borderRadius: '12px', border: '1px solid rgba(212,166,74,0.3)' }}>
-                  🆔 ID: {currentUser.studentId || 'ST-GUEST'}
+                  ID: {currentUser.studentId || 'ST-GUEST'}
                 </span>
                 {currentUser.isClassCore && (
                   <span style={{ fontSize: '10px', color: '#22c55e', background: 'rgba(34,197,94,0.15)', padding: '3px 8px', borderRadius: '10px', border: '1px solid rgba(34,197,94,0.4)', fontWeight: '800', display: 'flex', alignItems: 'center', gap: '3px' }}>
@@ -209,7 +208,7 @@ export default function LoginModal({ isOpen, onClose, currentUser, onLogin, onLo
             {/* Test ID Quick Pill Buttons */}
             <div style={{ background: 'rgba(255,255,255,0.03)', padding: '10px 12px', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.06)' }}>
               <span style={{ fontSize: '10.5px', color: '#a1a1aa', fontWeight: '700', display: 'block', marginBottom: '6px' }}>
-                💡 სატესტო ID კოდები (დააჭირე შესავსებად):
+                სატესტო ID კოდები (დააჭირე შესავსებად):
               </span>
               <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
                 {['101', '102', '103', '104'].map(testId => (

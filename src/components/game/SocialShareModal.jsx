@@ -13,40 +13,40 @@ function InstagramIcon({ size = 20, color = 'currentColor' }) {
 
 const shareTranslations = {
   ka: {
-    title: '📱 5-ე სიცოცხლის გამოწვევა — ინსტაგრამზე გაზიარება',
-    unlockedTitle: '🎉 5-ე სიცოცხლე გახსნილია! (❤️ #5)',
+    title: '5-ე სიცოცხლის გამოწვევა — ინსტაგრამზე გაზიარება',
+    unlockedTitle: '5-ე სიცოცხლე გახსნილია! (+1 Life)',
     unlockedSub: 'ინსტაგრამზე გაზიარებით შენ მიიღე დღევანდელი მე-5 ბონუს სიცოცხლე!',
     backBtn: 'თამაშში დაბრუნება',
-    shareTitle: 'გააზიარე ST Dance Studio და მიიღე +1 ბონუს სიცოცხლე (❤️ #5)',
-    shareSub: 'გახსენი @stdancestudio ინსტაგრამზე ან დააკოპირე თამაშის პრომო ლინკი მე-5 სიცოცხლის მისაღებად!',
-    igBtn: '📸 გაზიარება Instagram-ზე (+1 ❤️)',
-    copyBtn: '📋 თამაშის ლინკის კოპირება',
+    shareTitle: 'გააზიარე ST Dance Studio და მიიღე +1 ბონუს სიცოცხლე',
+    shareSub: 'გახსენი @stdancestudio.ge ინსტაგრამზე ან დააკოპირე თამაშის პრომო ლინკი მე-5 სიცოცხლის მისაღებად!',
+    igBtn: 'გაზიარება Instagram-ზე (+1 Life)',
+    copyBtn: 'თამაშის ლინკის კოპირება',
     copiedText: '✓ ლინკი დაკოპირდა!',
-    successBonus: '🎉 +1 ❤️ ბონუს სიცოცხლე ჩაირიცხა!'
+    successBonus: '+1 Bonus Life Added!'
   },
   en: {
-    title: '📱 5th Life Challenge — Instagram Share',
-    unlockedTitle: '🎉 5th Life Unlocked! (❤️ #5)',
+    title: '5th Life Challenge — Instagram Share',
+    unlockedTitle: '5th Life Unlocked! (+1 Life)',
     unlockedSub: 'You earned your 5th bonus life for today by sharing on Instagram!',
     backBtn: 'Back to Game',
-    shareTitle: 'Share ST Dance Studio to get +1 Bonus Life (❤️ #5)',
-    shareSub: 'Open @stdancestudio on Instagram or copy game link to unlock your 5th daily life!',
-    igBtn: '📸 Share on Instagram (+1 ❤️)',
-    copyBtn: '📋 Copy Game Promo Link',
+    shareTitle: 'Share ST Dance Studio to get +1 Bonus Life',
+    shareSub: 'Open @stdancestudio.ge on Instagram or copy game link to unlock your 5th daily life!',
+    igBtn: 'Share on Instagram (+1 Life)',
+    copyBtn: 'Copy Game Promo Link',
     copiedText: '✓ Link Copied to Clipboard!',
-    successBonus: '🎉 +1 ❤️ Bonus Life Added!'
+    successBonus: '+1 Bonus Life Added!'
   },
   ru: {
-    title: '📱 5-я Жизнь — Поделиться в Instagram',
-    unlockedTitle: '🎉 5-я Жизнь Разблокирована! (❤️ #5)',
+    title: '5-я Жизнь — Поделиться в Instagram',
+    unlockedTitle: '5-я Жизнь Разблокирована! (+1 Life)',
     unlockedSub: 'Вы получили 5-ю бонусную жизнь на сегодня за публикацию в Instagram!',
     backBtn: 'Вернуться в игру',
-    shareTitle: 'Поделитесь ST Dance Studio и получите +1 Бонусную Жизнь (❤️ #5)',
-    shareSub: 'Откройте @stdancestudio в Instagram или скопируйте ссылку на игру для получения 5-й жизни!',
-    igBtn: '📸 Поделиться в Instagram (+1 ❤️)',
-    copyBtn: '📋 Скопировать ссылку на игру',
+    shareTitle: 'Поделитесь ST Dance Studio и получите +1 Бонусную Жизнь',
+    shareSub: 'Откройте @stdancestudio.ge в Instagram или скопируйте ссылку на игру для получения 5-й жизни!',
+    igBtn: 'Поделиться в Instagram (+1 Life)',
+    copyBtn: 'Скопировать ссылку на игру',
     copiedText: '✓ Ссылка скопирована!',
-    successBonus: '🎉 +1 ❤️ Бонусная Жизнь Добавлена!'
+    successBonus: '+1 Bonus Life Added!'
   }
 };
 
@@ -110,11 +110,11 @@ export default function SocialShareModal({ isOpen, onClose, onUnlockShareLife, h
             </p>
 
             <div className="share-actions-column" style={{ width: '100%', marginTop: '14px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              <button className="btn-ig-share" onClick={handleInstagramShare} style={{ width: '100%', height: '46px', fontSize: '13px' }}>
+              <button className="btn-ig-share" onClick={handleInstagramShare} style={{ width: '100%', height: '46px', fontSize: '13px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
                 <InstagramIcon size={18} color="white" /> {t.igBtn}
               </button>
 
-              <button className="btn-copy-link" onClick={handleCopyLink} style={{ width: '100%', height: '44px', fontSize: '13px' }}>
+              <button className="btn-copy-link" onClick={handleCopyLink} style={{ width: '100%', height: '44px', fontSize: '13px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
                 {copied ? <Check size={18} color="#22c55e" /> : <Copy size={18} />}
                 {copied ? t.copiedText : t.copyBtn}
               </button>

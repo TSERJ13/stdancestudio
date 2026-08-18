@@ -20,9 +20,9 @@ export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOv
   const containerRef = useRef(null);
 
   const t = tGame || {
-    fastForward: '⏩ დაჩქარება',
-    superBall: '⚡ სუპერ ბურთი!',
-    extraBalls: '🎉 +3 ბურთი!',
+    fastForward: 'FAST FORWARD',
+    superBall: 'SUPER BALL!',
+    extraBalls: '+3 BALLS!',
     round: 'ROUND',
     speed: 'SPEED',
     balls: 'BALLS',
@@ -233,7 +233,8 @@ export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOv
     engine.speedMult = currentSpd;
     setSpeedMult(currentSpd);
 
-    const baseSp = engine.superShots > 0 ? 12 : 10;
+    // 20% REDUCED SPEED: Base 8 (was 10), Super 9.6 (was 12)
+    const baseSp = engine.superShots > 0 ? 9.6 : 8.0;
     const sp = baseSp * currentSpd;
 
     engine.balls.push({
@@ -486,7 +487,7 @@ export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOv
         }
       }
 
-      // Shooting Balls update with FAST FORWARD HOLD BOOST
+      // Shooting Balls update
       if (engine.state === 'SHOOT') {
         engine.shootTimer++;
         const shootInterval = Math.max(2, 6 - Math.floor(engine.round / 4));
@@ -548,13 +549,13 @@ export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOv
           endRound();
         }
 
-        // Clean Bottom Badge Text on Canvas ("⏩ დაჩქარება")
+        // Clean Bottom Badge Text on Canvas (0 EMOJIS)
         if (engine.holdingBoost) {
           ctx.save();
           ctx.fillStyle = 'rgba(239, 68, 68, 0.25)';
           ctx.strokeStyle = '#EF4444';
           ctx.lineWidth = 1.5;
-          const bw = 130, bh = 26, bx = (w - bw) / 2, by = h - 42;
+          const bw = 120, bh = 26, bx = (w - bw) / 2, by = h - 42;
           ctx.beginPath();
           if (ctx.roundRect) ctx.roundRect(bx, by, bw, bh, 8);
           else ctx.rect(bx, by, bw, bh);
@@ -579,12 +580,12 @@ export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOv
         ctx.restore();
       });
 
-      // Canvas Powerup Banners
+      // Canvas Powerup Banners (0 EMOJIS)
       if (engine.bannerTimer > 0) {
         engine.bannerTimer--;
         ctx.save();
-        const bannerW = 200;
-        const bannerH = 34;
+        const bannerW = 180;
+        const bannerH = 32;
         const bannerX = (w - bannerW) / 2;
         const bannerY = 24;
 
@@ -670,7 +671,7 @@ export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOv
 
             {availableLives > 0 ? (
               <button className="btn-play-big" onClick={startGame}>
-                <Play size={20} fill="black" /> {t.startGame} (-1 ❤️)
+                <Play size={20} fill="black" /> {t.startGame} (-1 LIFE)
               </button>
             ) : (
               <div className="no-lives-box">
@@ -699,7 +700,7 @@ export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOv
             </div>
             {availableLives > 0 ? (
               <button className="btn-play-big" onClick={startGame}>
-                <RotateCcw size={18} /> {t.playAgain} (-1 ❤️)
+                <RotateCcw size={18} /> {t.playAgain} (-1 LIFE)
               </button>
             ) : (
               <div className="no-lives-box">
