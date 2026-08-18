@@ -270,8 +270,8 @@ export default function Leaderboard({ currentHighScore, playerName, onUpdatePlay
                   flexWrap: 'wrap'
                 }}
               >
-                <div style={{ width: '80px', height: '60px', borderRadius: '10px', overflow: 'hidden', background: 'linear-gradient(135deg, #15120a, #261f10)', flexShrink: 0, border: '1px solid rgba(212,166,74,0.4)', padding: '2px' }}>
-                  <img src={v.prizeImg} alt={v.prizeName} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '8px' }} />
+                <div style={{ width: '84px', height: '64px', borderRadius: '10px', overflow: 'hidden', background: '#ffffff', flexShrink: 0, border: '1.5px solid #d4a64a', padding: '2px' }}>
+                  <img src={v.prizeImg} alt={v.prizeName} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
                 </div>
 
                 <div style={{ flex: 1, minWidth: '160px' }}>

@@ -46,12 +46,14 @@ export default function SpinModal({ isOpen, onClose, winnerName = 'ჩემპ�
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
-    const size = 320; // High DPI crisp resolution
+    const size = 360; // Extra High DPI Crisp Resolution
     canvas.width = size;
     canvas.height = size;
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
 
     const center = size / 2;
-    const radius = size / 2 - 10;
+    const radius = size / 2 - 12;
     const numSlices = PRIZES.length;
     const sliceAngle = (Math.PI * 2) / numSlices;
 
@@ -60,9 +62,9 @@ export default function SpinModal({ isOpen, onClose, winnerName = 'ჩემპ�
     // Draw Outer Gold Ring Glow
     ctx.save();
     ctx.shadowColor = '#d4a64a';
-    ctx.shadowBlur = 20;
+    ctx.shadowBlur = 22;
     ctx.strokeStyle = '#d4a64a';
-    ctx.lineWidth = 7;
+    ctx.lineWidth = 8;
     ctx.beginPath();
     ctx.arc(center, center, radius, 0, Math.PI * 2);
     ctx.stroke();
@@ -83,7 +85,7 @@ export default function SpinModal({ isOpen, onClose, winnerName = 'ჩემპ�
       ctx.fillStyle = i % 2 === 0 ? 'rgba(212, 166, 74, 0.22)' : 'rgba(15, 15, 25, 0.95)';
       ctx.fill();
       ctx.strokeStyle = 'rgba(212, 166, 74, 0.4)';
-      ctx.lineWidth = 1.5;
+      ctx.lineWidth = 1.8;
       ctx.stroke();
 
       // Transform context to slice middle angle
@@ -95,9 +97,9 @@ export default function SpinModal({ isOpen, onClose, winnerName = 'ჩემპ�
       // 1. Draw Text Label near outer rim (radius * 0.82)
       ctx.save();
       ctx.translate(radius * 0.82, 0);
-      ctx.rotate(Math.PI / 2); // Orient text cleanly along the rim curve
+      ctx.rotate(Math.PI / 2);
       ctx.fillStyle = '#F0D9A8';
-      ctx.font = '900 10.5px sans-serif';
+      ctx.font = '900 11px sans-serif';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       ctx.shadowColor = '#000000';
@@ -105,38 +107,33 @@ export default function SpinModal({ isOpen, onClose, winnerName = 'ჩემპ�
       ctx.fillText(prize.name, 0, 0);
       ctx.restore();
 
-      // 2. Draw Prize Image Thumbnail in inner middle (radius * 0.48)
+      // 2. Draw Prize Image Thumbnail on PURE WHITE BACKGROUND CIRCLE (radius * 0.48)
       const img = loadedImgsRef.current[i];
       const imgDist = radius * 0.48;
-      const imgSize = 42;
+      const imgSize = 48;
 
       if (img) {
         ctx.save();
         ctx.translate(imgDist, 0);
         ctx.rotate(Math.PI / 2);
 
-        // Circular Masking (Dark Background, NO white box)
+        // Pure White Circular Background (No dark/checkerboard background)
         ctx.beginPath();
         ctx.arc(0, 0, imgSize / 2, 0, Math.PI * 2);
         ctx.closePath();
-        ctx.fillStyle = '#100e08';
+        ctx.fillStyle = '#ffffff';
         ctx.fill();
         ctx.clip();
 
-        // Draw image slightly inset to crop out white border edges
-        const cropInset = 2;
-        ctx.drawImage(
-          img,
-          cropInset, cropInset, img.width - cropInset * 2, img.height - cropInset * 2,
-          -imgSize / 2, -imgSize / 2, imgSize, imgSize
-        );
+        // Draw image cleanly centered inside white circle
+        ctx.drawImage(img, -imgSize / 2, -imgSize / 2, imgSize, imgSize);
         ctx.restore();
 
-        // Glowing Gold Ring Around Image Circle
+        // Glowing Gold Ring Around White Image Circle
         ctx.save();
         ctx.translate(imgDist, 0);
         ctx.strokeStyle = '#d4a64a';
-        ctx.lineWidth = 1.8;
+        ctx.lineWidth = 2;
         ctx.shadowColor = '#d4a64a';
         ctx.shadowBlur = 8;
         ctx.beginPath();
@@ -148,11 +145,11 @@ export default function SpinModal({ isOpen, onClose, winnerName = 'ჩემპ�
       ctx.restore();
     }
 
-    // Center Golden Cap
+    // Center Golden Cap (NO ST TEXT)
     ctx.save();
     ctx.shadowColor = '#000000';
-    ctx.shadowBlur = 12;
-    const capRadius = 28;
+    ctx.shadowBlur = 14;
+    const capRadius = 26;
     const grad = ctx.createLinearGradient(center - capRadius, center - capRadius, center + capRadius, center + capRadius);
     grad.addColorStop(0, '#d4a64a');
     grad.addColorStop(1, '#f0d9a8');
@@ -164,12 +161,11 @@ export default function SpinModal({ isOpen, onClose, winnerName = 'ჩემპ�
     ctx.lineWidth = 3;
     ctx.stroke();
 
-    // Center Award Icon
+    // Center Gold Star Accent (No ST text)
     ctx.fillStyle = '#151100';
-    ctx.font = 'bold 16px sans-serif';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText('ST', center, center);
+    ctx.beginPath();
+    ctx.arc(center, center, 6, 0, Math.PI * 2);
+    ctx.fill();
     ctx.restore();
   };
 
@@ -189,7 +185,6 @@ export default function SpinModal({ isOpen, onClose, winnerName = 'ჩემპ�
 
     const prizeIdx = Math.floor(Math.random() * PRIZES.length);
     const sliceAngle = (Math.PI * 2) / PRIZES.length;
-    // Calculate winning angle so winning slice stops at top pointer (270 deg / -90 deg)
     const targetSliceAngle = (PRIZES.length - prizeIdx) * sliceAngle - sliceAngle / 2 - Math.PI / 2;
     const totalRotation = Math.PI * 2 * 6 + targetSliceAngle;
 
@@ -277,7 +272,6 @@ export default function SpinModal({ isOpen, onClose, winnerName = 'ჩემპ�
 
             {/* High Resolution Canvas Wheel Container with Top Pointer */}
             <div style={{ position: 'relative', width: '300px', height: '300px', margin: '4px 0 16px' }}>
-              {/* Pointer Arrow */}
               <div style={{
                 position: 'absolute',
                 top: '-14px',
@@ -328,20 +322,20 @@ export default function SpinModal({ isOpen, onClose, winnerName = 'ჩემპ�
               {wonPrize.name}
             </h3>
 
-            {/* Seamless Luxury Prize Showcase Card */}
+            {/* Crisp Pure White Studio Background Showcase Card */}
             <div style={{
               width: '260px',
-              height: '160px',
+              height: '170px',
               borderRadius: '16px',
               overflow: 'hidden',
-              border: '2px solid rgba(212,166,74,0.6)',
-              boxShadow: '0 8px 25px rgba(212,166,74,0.25)',
+              border: '2.5px solid #d4a64a',
+              boxShadow: '0 8px 25px rgba(212,166,74,0.35)',
               marginBottom: '14px',
-              background: 'linear-gradient(135deg, #15120a, #261f10)',
+              background: '#ffffff',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              padding: '6px',
+              padding: '10px',
               boxSizing: 'border-box'
             }}>
               <img
@@ -350,8 +344,7 @@ export default function SpinModal({ isOpen, onClose, winnerName = 'ჩემპ�
                 style={{
                   width: '100%',
                   height: '100%',
-                  objectFit: 'cover',
-                  borderRadius: '12px'
+                  objectFit: 'contain'
                 }}
               />
             </div>
