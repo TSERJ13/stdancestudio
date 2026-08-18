@@ -12,15 +12,29 @@ const TIERS = [
   { f: 'rgba(255,68,68,.25)', s: '#FF4444', t: '#FFB3B3' }
 ];
 
-// SOLID IMMUTABLE CANVAS RESOLUTION (440x580)
 const CANVAS_W = 440;
 const CANVAS_H = 580;
 
-export default function GameBoard({ availableLives, onSpendLife, onGameOver, onScoreUpdate, onOpenQuiz, onOpenShare }) {
+export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOver, onScoreUpdate, onOpenQuiz, onOpenShare }) {
   const canvasRef = useRef(null);
   const containerRef = useRef(null);
 
-  const [gameState, setGameState] = useState('READY'); // READY, AIM, SHOOT, GAMEOVER
+  const t = tGame || {
+    fastForward: '⏩ დაჩქარება',
+    superBall: '⚡ სუპერ ბურთი!',
+    extraBalls: '🎉 +3 ბურთი!',
+    round: 'ROUND',
+    speed: 'SPEED',
+    balls: 'BALLS',
+    score: 'SCORE',
+    startGame: 'START GAME',
+    playAgain: 'PLAY AGAIN',
+    subtitle: 'Break golden ST bricks and top the studio leaderboard!',
+    gameOver: 'GAME OVER',
+    finalScore: 'FINAL SCORE'
+  };
+
+  const [gameState, setGameState] = useState('READY');
   const [round, setRound] = useState(1);
   const [score, setScore] = useState(0);
   const [ballCount, setBallCount] = useState(1);
@@ -248,12 +262,12 @@ export default function GameBoard({ availableLives, onSpendLife, onGameOver, onS
     if (!left) {
       if (Math.random() < 0.5) {
         engine.superShots = 2;
-        showBannerOnCanvas('⚡ სუპერ ბურთი!');
+        showBannerOnCanvas(t.superBall);
         soundFx.playPowerup();
       } else {
         engine.ballCount += 3;
         setBallCount(engine.ballCount);
-        showBannerOnCanvas('🎉 +3 ბურთი!');
+        showBannerOnCanvas(t.extraBalls);
         soundFx.playPowerup();
       }
     }
@@ -295,7 +309,6 @@ export default function GameBoard({ availableLives, onSpendLife, onGameOver, onS
     const rect = canvas.getBoundingClientRect();
     const engine = engineRef.current;
 
-    // Scale mouse/touch coordinates to internal 440x580 canvas resolution
     const scaleX = CANVAS_W / rect.width;
     const scaleY = CANVAS_H / rect.height;
 
@@ -354,7 +367,6 @@ export default function GameBoard({ availableLives, onSpendLife, onGameOver, onS
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    // Solid Immutable Internal Canvas Dimensions
     canvas.width = CANVAS_W;
     canvas.height = CANVAS_H;
     const ctx = canvas.getContext('2d');
@@ -536,22 +548,23 @@ export default function GameBoard({ availableLives, onSpendLife, onGameOver, onS
           endRound();
         }
 
+        // Clean Bottom Badge Text on Canvas ("⏩ დაჩქარება")
         if (engine.holdingBoost) {
           ctx.save();
-          ctx.fillStyle = 'rgba(239, 68, 68, 0.2)';
+          ctx.fillStyle = 'rgba(239, 68, 68, 0.25)';
           ctx.strokeStyle = '#EF4444';
           ctx.lineWidth = 1.5;
-          const bw = 150, bh = 28, bx = (w - bw) / 2, by = h - 45;
+          const bw = 130, bh = 26, bx = (w - bw) / 2, by = h - 42;
           ctx.beginPath();
           if (ctx.roundRect) ctx.roundRect(bx, by, bw, bh, 8);
           else ctx.rect(bx, by, bw, bh);
           ctx.fill(); ctx.stroke();
 
           ctx.fillStyle = '#FF6B6B';
-          ctx.font = 'bold 11px sans-serif';
+          ctx.font = 'bold 12px sans-serif';
           ctx.textAlign = 'center';
           ctx.textBaseline = 'middle';
-          ctx.fillText('⏩ დაჩქარება (FAST 2.5x)', w / 2, by + bh / 2);
+          ctx.fillText(t.fastForward, w / 2, by + bh / 2);
           ctx.restore();
         }
       }
@@ -604,25 +617,25 @@ export default function GameBoard({ availableLives, onSpendLife, onGameOver, onS
     return () => {
       cancelAnimationFrame(animId);
     };
-  }, [isFullscreen, onGameOver, onScoreUpdate]);
+  }, [isFullscreen, onGameOver, onScoreUpdate, t]);
 
   return (
     <div className={`game-board-container ${isFullscreen ? 'is-fullscreen' : ''}`} ref={containerRef}>
       <div className="game-top-bar glass">
         <div className="stat-pill">
-          <span className="stat-lbl">ROUND</span>
+          <span className="stat-lbl">{t.round}</span>
           <span className="stat-val text-gold">{round}</span>
         </div>
         <div className="stat-pill">
-          <span className="stat-lbl">SPEED</span>
+          <span className="stat-lbl">{t.speed}</span>
           <span className="stat-val text-red">{speedMult.toFixed(1)}x</span>
         </div>
         <div className="stat-pill">
-          <span className="stat-lbl">BALLS</span>
+          <span className="stat-lbl">{t.balls}</span>
           <span className="stat-val">{ballCount}</span>
         </div>
         <div className="stat-pill">
-          <span className="stat-lbl">SCORE</span>
+          <span className="stat-lbl">{t.score}</span>
           <span className="stat-val text-gold">{score.toLocaleString()}</span>
         </div>
 
@@ -652,24 +665,23 @@ export default function GameBoard({ availableLives, onSpendLife, onGameOver, onS
             <div className="game-logo">
               <Award size={48} className="text-gold animate-pulse" />
               <h2>DANCING BRICKS</h2>
-              <p>დაამსხვრიე ოქროსფერი ST აგურები და გახდი ლიდერბორდის გამარჯვებული!</p>
+              <p>{t.subtitle}</p>
             </div>
 
             {availableLives > 0 ? (
               <button className="btn-play-big" onClick={startGame}>
-                <Play size={20} fill="black" /> დაწყება / START GAME (-1 ❤️)
+                <Play size={20} fill="black" /> {t.startGame} (-1 ❤️)
               </button>
             ) : (
               <div className="no-lives-box">
                 <ShieldAlert size={32} color="#ef4444" />
-                <p>სიცოცხლე ამოიწურა!</p>
-                <span>გაიარე კვიზი (+1 ❤️) ან გააზიარე (+1 ❤️) ბონუსისთვის!</span>
+                <p>{t.noLives}</p>
                 <div style={{ display: 'flex', gap: '8px', marginTop: '10px' }}>
                   <button className="btn-secondary" style={{ padding: '8px 14px', fontSize: '11px' }} onClick={onOpenQuiz}>
-                    ❓ Dance Quiz (+1 ❤️)
+                    {t.quizBonus}
                   </button>
                   <button className="btn-secondary" style={{ padding: '8px 14px', fontSize: '11px' }} onClick={onOpenShare}>
-                    📱 Share (+1 ❤️)
+                    {t.shareBonus}
                   </button>
                 </div>
               </div>
@@ -679,27 +691,26 @@ export default function GameBoard({ availableLives, onSpendLife, onGameOver, onS
 
         {gameState === 'GAMEOVER' && (
           <div className="overlay-screen glass animate-in">
-            <h2>GAME OVER</h2>
+            <h2>{t.gameOver}</h2>
             <div className="final-score">
-              <span>FINAL SCORE</span>
+              <span>{t.finalScore}</span>
               <strong>{score.toLocaleString()}</strong>
-              <span style={{ fontSize: '11px', color: '#a1a1aa', marginTop: '4px' }}>რაუნდი: #{round}</span>
+              <span style={{ fontSize: '11px', color: '#a1a1aa', marginTop: '4px' }}>{t.round}: #{round}</span>
             </div>
             {availableLives > 0 ? (
               <button className="btn-play-big" onClick={startGame}>
-                <RotateCcw size={18} /> ხელახლა დაწყება (-1 ❤️)
+                <RotateCcw size={18} /> {t.playAgain} (-1 ❤️)
               </button>
             ) : (
               <div className="no-lives-box">
                 <ShieldAlert size={32} color="#ef4444" />
-                <p>სიცოცხლეები ამოიწურა!</p>
-                <span>გაიარე კვიზი ან გააზიარე +1 ❤️ ბონუსისთვის</span>
+                <p>{t.noLives}</p>
                 <div style={{ display: 'flex', gap: '8px', marginTop: '10px' }}>
                   <button className="btn-secondary" style={{ padding: '8px 14px', fontSize: '11px' }} onClick={onOpenQuiz}>
-                    ❓ Quiz (+1 ❤️)
+                    {t.quizBonus}
                   </button>
                   <button className="btn-secondary" style={{ padding: '8px 14px', fontSize: '11px' }} onClick={onOpenShare}>
-                    📱 Share (+1 ❤️)
+                    {t.shareBonus}
                   </button>
                 </div>
               </div>

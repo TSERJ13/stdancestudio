@@ -380,6 +380,11 @@ function getSmartFallbackAnswer(query, lang) {
 }
 
 export default function AIChatWidget() {
+  const path = typeof window !== 'undefined' ? window.location.pathname : ''
+  if (path.includes('/game') || path.includes('/dancing-bricks')) {
+    return null
+  }
+
   const { lang } = useLanguage()
   const activeTrans = botTranslations[lang] || botTranslations.ka
 

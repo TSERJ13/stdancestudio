@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Play, Trophy, HelpCircle, Share2, Heart, Clock, Sparkles, Award, UserCheck, LogIn, IdCard } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 import GameBoard from '../components/game/GameBoard';
 import QuizModal from '../components/game/QuizModal';
 import SocialShareModal from '../components/game/SocialShareModal';
@@ -8,8 +9,92 @@ import LoginModal from '../components/game/LoginModal';
 import { loadLivesData, saveLivesData, calculateAvailableLives, formatTimeUntilReset, getGeorgiaResetTime } from '../utils/livesManager';
 import './Game.css';
 
+export const gameTranslations = {
+  ka: {
+    fastForward: '⏩ დაჩქარება',
+    superBall: '⚡ სუპერ ბურთი!',
+    extraBalls: '🎉 +3 ბურთი!',
+    round: 'რაუნდი',
+    speed: 'სიჩქარე',
+    balls: 'ბურთები',
+    score: 'ქულა',
+    startGame: 'დაწყება',
+    playAgain: 'ხელახლა დაწყება',
+    subtitle: 'დაამსხვრიე ოქროსფერი ST აგურები და გახდი ლიდერბორდის გამარჯვებული!',
+    gameOver: 'GAME OVER',
+    finalScore: 'საბოლოო ქულა',
+    loginBtn: '🆔 შესვლა',
+    studentIdLabel: 'მოსწავლის ID',
+    noLives: 'სიცოცხლე ამოიწურა!',
+    quizBonus: '❓ Dance Quiz (+1 ❤️)',
+    shareBonus: '📱 Share (+1 ❤️)',
+    tabs: {
+      game: 'თამაში',
+      quiz: '4-ე კვიზი',
+      share: '5-ე გაზიარება',
+      ranks: 'რეიტინგი',
+      rules: 'წესები'
+    }
+  },
+  en: {
+    fastForward: '⏩ FAST FORWARD',
+    superBall: '⚡ SUPER BALL!',
+    extraBalls: '🎉 +3 EXTRA BALLS!',
+    round: 'ROUND',
+    speed: 'SPEED',
+    balls: 'BALLS',
+    score: 'SCORE',
+    startGame: 'START GAME',
+    playAgain: 'PLAY AGAIN',
+    subtitle: 'Break golden ST bricks and top the studio leaderboard!',
+    gameOver: 'GAME OVER',
+    finalScore: 'FINAL SCORE',
+    loginBtn: '🆔 LOGIN',
+    studentIdLabel: 'Student ID',
+    noLives: 'Out of lives!',
+    quizBonus: '❓ Dance Quiz (+1 ❤️)',
+    shareBonus: '📱 Share (+1 ❤️)',
+    tabs: {
+      game: 'Game',
+      quiz: '4th Quiz',
+      share: '5th Share',
+      ranks: 'Ranks',
+      rules: 'Rules'
+    }
+  },
+  ru: {
+    fastForward: '⏩ УСКОРЕНИЕ',
+    superBall: '⚡ СУПЕР МЯЧ!',
+    extraBalls: '🎉 +3 МЯЧА!',
+    round: 'РАУНД',
+    speed: 'СКОРОСТЬ',
+    balls: 'МЯЧИ',
+    score: 'СЧЕТ',
+    startGame: 'НАЧАТЬ ИГРУ',
+    playAgain: 'ИГРАТЬ СНОВА',
+    subtitle: 'Разбивайте золотые блоки ST и возглавьте лидерборд студии!',
+    gameOver: 'ИГРА ОКОНЧЕНА',
+    finalScore: 'ИТОГОВЫЙ СЧЕТ',
+    loginBtn: '🆔 ВХОД',
+    studentIdLabel: 'ID Ученика',
+    noLives: 'Жизни закончились!',
+    quizBonus: '❓ Викторина (+1 ❤️)',
+    shareBonus: '📱 Поделиться (+1 ❤️)',
+    tabs: {
+      game: 'Игра',
+      quiz: '4-я Викторина',
+      share: '5-я Поделиться',
+      ranks: 'Рейтинг',
+      rules: 'Правила'
+    }
+  }
+};
+
 export default function Game() {
-  const [activeTab, setActiveTab] = useState('play'); // play, leaderboard, rules
+  const { lang } = useLanguage();
+  const tGame = gameTranslations[lang] || gameTranslations.ka;
+
+  const [activeTab, setActiveTab] = useState('play');
   const [livesData, setLivesData] = useState(() => loadLivesData());
   const [countdown, setCountdown] = useState('');
 
@@ -32,7 +117,6 @@ export default function Game() {
 
   const availableLives = calculateAvailableLives(livesData);
 
-  // Hide floating chat bot & language selector while playing game
   useEffect(() => {
     document.body.classList.add('page-game-active');
     return () => {
@@ -160,7 +244,7 @@ export default function Game() {
                     ) : (
                       <>
                         <IdCard size={14} color="#d4a64a" />
-                        <span>🆔 შესვლა</span>
+                        <span>{tGame.loginBtn}</span>
                       </>
                     )}
                   </button>
@@ -207,7 +291,7 @@ export default function Game() {
                 className={`nav-btn ${activeTab === 'play' ? 'active' : ''}`}
                 onClick={() => setActiveTab('play')}
               >
-                <Play size={16} /> Game
+                <Play size={16} /> {tGame.tabs.game}
               </button>
 
               <button
@@ -215,7 +299,7 @@ export default function Game() {
                 onClick={() => setShowQuizModal(true)}
               >
                 <HelpCircle size={16} color={livesData.hasQuizLife ? '#22c55e' : '#f59e0b'} />
-                <span>4th Quiz</span>
+                <span>{tGame.tabs.quiz}</span>
                 {livesData.hasQuizLife && <span className="check-badge">✓</span>}
               </button>
 
@@ -224,7 +308,7 @@ export default function Game() {
                 onClick={() => setShowShareModal(true)}
               >
                 <Share2 size={16} color={livesData.hasShareLife ? '#22c55e' : '#ec4899'} />
-                <span>5th Share</span>
+                <span>{tGame.tabs.share}</span>
                 {livesData.hasShareLife && <span className="check-badge">✓</span>}
               </button>
 
@@ -232,20 +316,21 @@ export default function Game() {
                 className={`nav-btn ${activeTab === 'leaderboard' ? 'active' : ''}`}
                 onClick={() => setActiveTab('leaderboard')}
               >
-                <Trophy size={16} /> Ranks
+                <Trophy size={16} /> {tGame.tabs.ranks}
               </button>
 
               <button
                 className={`nav-btn ${activeTab === 'rules' ? 'active' : ''}`}
                 onClick={() => setActiveTab('rules')}
               >
-                <Sparkles size={16} /> Rules
+                <Sparkles size={16} /> {tGame.tabs.rules}
               </button>
             </nav>
 
             <main className="main-content" style={{ width: '100%' }}>
               {activeTab === 'play' && (
                 <GameBoard
+                  tGame={tGame}
                   availableLives={availableLives}
                   onSpendLife={handleSpendLife}
                   onGameOver={handleGameOver}
