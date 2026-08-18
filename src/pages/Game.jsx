@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Play, Trophy, HelpCircle, Share2, Heart, Clock, Sparkles, Award } from 'lucide-react';
+import { Play, Trophy, HelpCircle, Share2, Heart, Clock, Sparkles, Award, UserCheck, LogIn } from 'lucide-react';
 import GameBoard from '../components/game/GameBoard';
 import QuizModal from '../components/game/QuizModal';
 import SocialShareModal from '../components/game/SocialShareModal';
 import Leaderboard from '../components/game/Leaderboard';
+import LoginModal from '../components/game/LoginModal';
 import { loadLivesData, saveLivesData, calculateAvailableLives, formatTimeUntilReset, getGeorgiaResetTime } from '../utils/livesManager';
 import './Game.css';
 
@@ -11,12 +12,33 @@ export default function Game() {
   const [activeTab, setActiveTab] = useState('play'); // play, leaderboard, rules
   const [livesData, setLivesData] = useState(() => loadLivesData());
   const [countdown, setCountdown] = useState('');
-  const [playerName, setPlayerName] = useState(() => localStorage.getItem('dancing_bricks_player_name') || 'Dancer');
+
+  const [userProfile, setUserProfile] = useState(() => {
+    try {
+      const saved = localStorage.getItem('dancing_bricks_user_profile');
+      if (saved) return JSON.parse(saved);
+    } catch {}
+    return {
+      name: localStorage.getItem('dancing_bricks_player_name') || 'Dancer',
+      isLoggedIn: false,
+      highScore: 0,
+      totalGames: 0
+    };
+  });
 
   const [showQuizModal, setShowQuizModal] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
 
   const availableLives = calculateAvailableLives(livesData);
+
+  // Hide floating chat bot & language selector while playing game
+  useEffect(() => {
+    document.body.classList.add('page-game-active');
+    return () => {
+      document.body.classList.remove('page-game-active');
+    };
+  }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -41,15 +63,26 @@ export default function Game() {
   };
 
   const handleScoreUpdate = (score) => {
-    if (score > livesData.highScore) {
-      setLivesData(prev => {
+    if (score > (userProfile.highScore || 0)) {
+      setUserProfile(prev => {
         const updated = { ...prev, highScore: score };
-        return saveLivesData(updated);
+        localStorage.setItem('dancing_bricks_user_profile', JSON.stringify(updated));
+        return updated;
       });
     }
   };
 
   const handleGameOver = (score) => {
+    setUserProfile(prev => {
+      const updated = {
+        ...prev,
+        totalGames: (prev.totalGames || 0) + 1,
+        highScore: Math.max(prev.highScore || 0, score)
+      };
+      localStorage.setItem('dancing_bricks_user_profile', JSON.stringify(updated));
+      return updated;
+    });
+
     setLivesData(prev => {
       const updated = {
         ...prev,
@@ -74,76 +107,113 @@ export default function Game() {
     });
   };
 
-  const handleUpdatePlayerName = (name) => {
-    setPlayerName(name);
-    localStorage.setItem('dancing_bricks_player_name', name);
+  const handleLogin = (userData) => {
+    const updated = {
+      ...userProfile,
+      ...userData,
+      isLoggedIn: true
+    };
+    setUserProfile(updated);
+    localStorage.setItem('dancing_bricks_user_profile', JSON.stringify(updated));
+    localStorage.setItem('dancing_bricks_player_name', userData.name);
+  };
+
+  const handleLogout = () => {
+    const updated = {
+      name: 'Dancer',
+      isLoggedIn: false,
+      highScore: userProfile.highScore || 0,
+      totalGames: userProfile.totalGames || 0
+    };
+    setUserProfile(updated);
+    localStorage.setItem('dancing_bricks_user_profile', JSON.stringify(updated));
   };
 
   return (
-    <div className="inner-page game-page-wrap" style={{ padding: '90px 12px 60px', minHeight: '90vh' }}>
+    <div className="inner-page game-page-wrap">
       <div className="app-container">
+        {/* Compact Mobile Header */}
         <header className="app-header glass">
           <div className="header-brand">
             <div className="brand-icon">
-              <Award size={28} color="#d4a64a" />
+              <Award size={24} color="#d4a64a" />
             </div>
             <div>
               <h1 className="brand-title">DANCING BRICKS</h1>
-              <span className="brand-sub">ST Dance Studio Batumi</span>
+              <span className="brand-sub">ST DANCE STUDIO</span>
             </div>
           </div>
 
           <div className="header-status-strip">
-            <div className="lives-display">
-              <span className="lives-label">LIVES ({availableLives}/5):</span>
-              <div className="hearts-row">
-                {[1, 2, 3].map(num => (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <button
+                className="user-login-btn glass"
+                onClick={() => setShowLoginModal(true)}
+              >
+                {userProfile.isLoggedIn ? (
+                  <>
+                    <UserCheck size={15} color="#22c55e" />
+                    <span>{userProfile.name}</span>
+                  </>
+                ) : (
+                  <>
+                    <LogIn size={15} color="#d4a64a" />
+                    <span>შესვლა</span>
+                  </>
+                )}
+              </button>
+
+              <div className="lives-display">
+                <div className="hearts-row">
+                  {[1, 2, 3].map(num => (
+                    <Heart
+                      key={`base_${num}`}
+                      size={18}
+                      fill={num <= (3 - livesData.usedLives) ? '#ef4444' : 'rgba(255,255,255,0.1)'}
+                      color={num <= (3 - livesData.usedLives) ? '#ef4444' : '#52525b'}
+                      className={num <= (3 - livesData.usedLives) ? 'heart-pulse' : ''}
+                    />
+                  ))}
+
                   <Heart
-                    key={`base_${num}`}
-                    size={20}
-                    fill={num <= (3 - livesData.usedLives) ? '#ef4444' : 'rgba(255,255,255,0.1)'}
-                    color={num <= (3 - livesData.usedLives) ? '#ef4444' : '#52525b'}
-                    className={num <= (3 - livesData.usedLives) ? 'heart-pulse' : ''}
+                    key="quiz_4"
+                    size={18}
+                    fill={livesData.hasQuizLife ? '#f59e0b' : 'rgba(255,255,255,0.1)'}
+                    color={livesData.hasQuizLife ? '#f59e0b' : '#52525b'}
                   />
-                ))}
 
-                <Heart
-                  key="quiz_4"
-                  size={20}
-                  fill={livesData.hasQuizLife ? '#f59e0b' : 'rgba(255,255,255,0.1)'}
-                  color={livesData.hasQuizLife ? '#f59e0b' : '#52525b'}
-                />
-
-                <Heart
-                  key="share_5"
-                  size={20}
-                  fill={livesData.hasShareLife ? '#ec4899' : 'rgba(255,255,255,0.1)'}
-                  color={livesData.hasShareLife ? '#ec4899' : '#52525b'}
-                />
+                  <Heart
+                    key="share_5"
+                    size={18}
+                    fill={livesData.hasShareLife ? '#ec4899' : 'rgba(255,255,255,0.1)'}
+                    color={livesData.hasShareLife ? '#ec4899' : '#52525b'}
+                  />
+                </div>
               </div>
             </div>
 
             <div className="timer-badge">
-              <Clock size={15} color="#d4a64a" />
-              <span>Reset at 22:00: <strong>{countdown || '22:00:00'}</strong></span>
+              <Clock size={13} color="#d4a64a" />
+              <span>Reset 22:00: <strong>{countdown || '22:00:00'}</strong></span>
             </div>
           </div>
         </header>
 
+        {/* Compact Navigation Bar */}
         <nav className="app-nav glass">
           <button
             className={`nav-btn ${activeTab === 'play' ? 'active' : ''}`}
             onClick={() => setActiveTab('play')}
           >
-            <Play size={18} /> Game
+            <Play size={16} /> Game
           </button>
 
           <button
             className={`nav-btn bonus-btn ${livesData.hasQuizLife ? 'unlocked' : ''}`}
             onClick={() => setShowQuizModal(true)}
           >
-            <HelpCircle size={18} color={livesData.hasQuizLife ? '#22c55e' : '#f59e0b'} />
-            <span>4th Life (Quiz)</span>
+            <HelpCircle size={16} color={livesData.hasQuizLife ? '#22c55e' : '#f59e0b'} />
+            <span>4th Quiz</span>
             {livesData.hasQuizLife && <span className="check-badge">✓</span>}
           </button>
 
@@ -151,8 +221,8 @@ export default function Game() {
             className={`nav-btn bonus-btn ${livesData.hasShareLife ? 'unlocked' : ''}`}
             onClick={() => setShowShareModal(true)}
           >
-            <Share2 size={18} color={livesData.hasShareLife ? '#22c55e' : '#ec4899'} />
-            <span>5th Life (Share)</span>
+            <Share2 size={16} color={livesData.hasShareLife ? '#22c55e' : '#ec4899'} />
+            <span>5th Share</span>
             {livesData.hasShareLife && <span className="check-badge">✓</span>}
           </button>
 
@@ -160,14 +230,14 @@ export default function Game() {
             className={`nav-btn ${activeTab === 'leaderboard' ? 'active' : ''}`}
             onClick={() => setActiveTab('leaderboard')}
           >
-            <Trophy size={18} /> Leaderboard
+            <Trophy size={16} /> Ranks
           </button>
 
           <button
             className={`nav-btn ${activeTab === 'rules' ? 'active' : ''}`}
             onClick={() => setActiveTab('rules')}
           >
-            <Sparkles size={18} /> Rules
+            <Sparkles size={16} /> Rules
           </button>
         </nav>
 
@@ -185,9 +255,9 @@ export default function Game() {
 
           {activeTab === 'leaderboard' && (
             <Leaderboard
-              currentHighScore={livesData.highScore}
-              playerName={playerName}
-              onUpdatePlayerName={handleUpdatePlayerName}
+              currentHighScore={userProfile.highScore || livesData.highScore}
+              playerName={userProfile.name}
+              onUpdatePlayerName={(name) => handleLogin({ name })}
             />
           )}
 
@@ -243,6 +313,14 @@ export default function Game() {
           onClose={() => setShowShareModal(false)}
           hasShareLife={livesData.hasShareLife}
           onUnlockShareLife={handleUnlockShareLife}
+        />
+
+        <LoginModal
+          isOpen={showLoginModal}
+          onClose={() => setShowLoginModal(false)}
+          currentUser={userProfile}
+          onLogin={handleLogin}
+          onLogout={handleLogout}
         />
       </div>
     </div>
