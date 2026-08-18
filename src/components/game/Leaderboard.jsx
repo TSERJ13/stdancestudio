@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Trophy, Gift, Ticket, History, Award, CheckCircle2, Copy, Check } from 'lucide-react';
+import React, { useState } from 'react';
+import { Trophy, Gift, Ticket, History, Copy, Check } from 'lucide-react';
 import SpinModal from './SpinModal';
 
 const TEST_LEADERBOARD = [
@@ -270,8 +270,8 @@ export default function Leaderboard({ currentHighScore, playerName, onUpdatePlay
                   flexWrap: 'wrap'
                 }}
               >
-                <div style={{ width: '70px', height: '70px', borderRadius: '12px', overflow: 'hidden', background: '#000', flexShrink: 0, border: '1px solid rgba(212,166,74,0.3)' }}>
-                  <img src={v.prizeImg} alt={v.prizeName} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                <div style={{ width: '80px', height: '60px', borderRadius: '10px', overflow: 'hidden', background: 'linear-gradient(135deg, #15120a, #261f10)', flexShrink: 0, border: '1px solid rgba(212,166,74,0.4)', padding: '2px' }}>
+                  <img src={v.prizeImg} alt={v.prizeName} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '8px' }} />
                 </div>
 
                 <div style={{ flex: 1, minWidth: '160px' }}>

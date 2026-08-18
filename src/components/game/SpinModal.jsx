@@ -1,23 +1,151 @@
-import React, { useState } from 'react';
-import { Gift, Sparkles, Trophy, Award, RotateCw, CheckCircle2, Ticket, Mail, Copy, Check } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Gift, Sparkles, Trophy, Award, RotateCw, Ticket, Copy, Check } from 'lucide-react';
 
 export const PRIZES = [
-  { id: 'bottle', name: 'წყლის ბოთლი', desc: 'ST Dance Studio ბრენდირებული წყლის ბოთლი', img: '/images/prizes/water_bottle.jpg', color: '#3b82f6' },
-  { id: 'umbrella', name: 'ქოლგა', desc: 'ST Dance Studio ბრენდირებული ქოლგა', img: '/images/prizes/umbrella.jpg', color: '#8b5cf6' },
-  { id: 'v50', name: '-50% ვაუჩერი', desc: '-50% ფასდაკლების ვაუჩერი Danceshop.Ge-ზე', img: '/images/prizes/voucher_50.jpg', color: '#eab308' },
-  { id: 'raincoat', name: 'საწვიმარი', desc: 'ST Dance Studio ბრენდირებული საწვიმარი', img: '/images/prizes/raincoat.jpg', color: '#06b6d4' },
-  { id: 'backpack', name: 'ზურგჩანთა', desc: 'ST Dance Studio ბრენდირებული ზურგჩანთა', img: '/images/prizes/backpack.jpg', color: '#ec4899' },
-  { id: 'phone_case', name: 'მობილურის ქეისი', desc: 'ST Dance Studio ბრენდირებული ქეისი', img: '/images/prizes/phone_case.jpg', color: '#10b981' },
-  { id: 'v30', name: '-30% ვაუჩერი', desc: '-30% ფასდაკლების ვაუჩერი Danceshop.Ge-ზე', img: '/images/prizes/voucher_30.jpg', color: '#f97316' },
-  { id: 'v100', name: '-100% ვაუჩერი', desc: '100% უფასო სრული ვაუჩერი Danceshop.Ge-ზე', img: '/images/prizes/voucher_100.jpg', color: '#ef4444' }
+  { id: 'bottle', name: 'წყლის ბოთლი', desc: 'ST Dance Studio ბრენდირებული წყლის ბოთლი', img: '/images/prizes/water_bottle.jpg', color: '#F0D9A8' },
+  { id: 'umbrella', name: 'ქოლგა', desc: 'ST Dance Studio ბრენდირებული ქოლგა', img: '/images/prizes/umbrella.jpg', color: '#6FC3E0' },
+  { id: 'v50', name: '-50% ვაუჩერი', desc: '-50% ფასდაკლების ვაუჩერი Danceshop.Ge-ზე', img: '/images/prizes/voucher_50.jpg', color: '#F0D9A8' },
+  { id: 'raincoat', name: 'საწვიმარი', desc: 'ST Dance Studio ბრენდირებული საწვიმარი', img: '/images/prizes/raincoat.jpg', color: '#B87BDE' },
+  { id: 'backpack', name: 'ზურგჩანთა', desc: 'ST Dance Studio ბრენდირებული ზურგჩანთა', img: '/images/prizes/backpack.jpg', color: '#E0764A' },
+  { id: 'phone_case', name: 'ქეისი', desc: 'ST Dance Studio ბრენდირებული ქეისი', img: '/images/prizes/phone_case.jpg', color: '#6FD98F' },
+  { id: 'v30', name: '-30% ვაუჩერი', desc: '-30% ფასდაკლების ვაუჩერი Danceshop.Ge-ზე', img: '/images/prizes/voucher_30.jpg', color: '#F0D9A8' },
+  { id: 'v100', name: '-100% ვაუჩერი', desc: '100% უფასო სრული ვაუჩერი Danceshop.Ge-ზე', img: '/images/prizes/voucher_100.jpg', color: '#FF4444' }
 ];
 
 export default function SpinModal({ isOpen, onClose, winnerName = 'ჩემპიონი', onClaimPrize }) {
+  const canvasRef = useRef(null);
   const [spinning, setSpinning] = useState(false);
-  const [rotation, setRotation] = useState(0);
   const [wonPrize, setWonPrize] = useState(null);
   const [voucherCode, setVoucherCode] = useState('');
   const [copied, setCopied] = useState(false);
+
+  const angleRef = useRef(0);
+  const loadedImgsRef = useRef([]);
+
+  useEffect(() => {
+    const loaded = [];
+    let count = 0;
+    PRIZES.forEach((p, idx) => {
+      const img = new Image();
+      img.src = p.img;
+      img.onload = () => {
+        count++;
+        loaded[idx] = img;
+        if (count === PRIZES.length && canvasRef.current) {
+          drawWheel(angleRef.current);
+        }
+      };
+      img.onerror = () => {
+        loaded[idx] = null;
+      };
+    });
+    loadedImgsRef.current = loaded;
+  }, []);
+
+  const drawWheel = (currentAngle) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const size = 280;
+    canvas.width = size;
+    canvas.height = size;
+
+    const center = size / 2;
+    const radius = size / 2 - 8;
+    const numSlices = PRIZES.length;
+    const sliceAngle = (Math.PI * 2) / numSlices;
+
+    ctx.clearRect(0, 0, size, size);
+
+    // Draw Outer Gold Ring Glow
+    ctx.save();
+    ctx.shadowColor = '#d4a64a';
+    ctx.shadowBlur = 18;
+    ctx.strokeStyle = '#d4a64a';
+    ctx.lineWidth = 6;
+    ctx.beginPath();
+    ctx.arc(center, center, radius, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.restore();
+
+    // Draw Slices
+    for (let i = 0; i < numSlices; i++) {
+      const startA = currentAngle + i * sliceAngle;
+      const endA = startA + sliceAngle;
+      const prize = PRIZES[i];
+
+      ctx.beginPath();
+      ctx.moveTo(center, center);
+      ctx.arc(center, center, radius, startA, endA);
+      ctx.closePath();
+
+      ctx.fillStyle = i % 2 === 0 ? 'rgba(212, 166, 74, 0.22)' : 'rgba(20, 20, 30, 0.9)';
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(212, 166, 74, 0.35)';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+
+      ctx.save();
+      const midA = startA + sliceAngle / 2;
+      ctx.translate(center, center);
+      ctx.rotate(midA);
+
+      const img = loadedImgsRef.current[i];
+      const imgRadius = radius * 0.55;
+      const imgSize = 36;
+
+      if (img) {
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(imgRadius, 0, imgSize / 2, 0, Math.PI * 2);
+        ctx.closePath();
+        ctx.fillStyle = '#15120a';
+        ctx.fill();
+        ctx.clip();
+        ctx.drawImage(img, imgRadius - imgSize / 2, -imgSize / 2, imgSize, imgSize);
+        ctx.restore();
+
+        ctx.strokeStyle = '#d4a64a';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.arc(imgRadius, 0, imgSize / 2, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+
+      ctx.fillStyle = prize.color;
+      ctx.font = 'bold 9.5px sans-serif';
+      ctx.textAlign = 'right';
+      ctx.textBaseline = 'middle';
+      ctx.shadowColor = '#000';
+      ctx.shadowBlur = 4;
+      ctx.fillText(prize.name, radius - 14, 0);
+
+      ctx.restore();
+    }
+
+    // Center Golden Cap
+    ctx.save();
+    ctx.shadowColor = '#000';
+    ctx.shadowBlur = 10;
+    const capRadius = 26;
+    const grad = ctx.createLinearGradient(center - capRadius, center - capRadius, center + capRadius, center + capRadius);
+    grad.addColorStop(0, '#d4a64a');
+    grad.addColorStop(1, '#f0d9a8');
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.arc(center, center, capRadius, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = '#000';
+    ctx.lineWidth = 2.5;
+    ctx.stroke();
+    ctx.restore();
+  };
+
+  useEffect(() => {
+    if (isOpen) {
+      setTimeout(() => drawWheel(angleRef.current), 50);
+    }
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -28,46 +156,61 @@ export default function SpinModal({ isOpen, onClose, winnerName = 'ჩემპ�
     setWonPrize(null);
 
     const prizeIdx = Math.floor(Math.random() * PRIZES.length);
-    const segmentAngle = 360 / PRIZES.length;
-    const targetAngle = 360 * 5 + (360 - (prizeIdx * segmentAngle + segmentAngle / 2));
+    const sliceAngle = (Math.PI * 2) / PRIZES.length;
+    const targetSliceAngle = (PRIZES.length - prizeIdx) * sliceAngle - sliceAngle / 2 - Math.PI / 2;
+    const totalRotation = Math.PI * 2 * 6 + targetSliceAngle;
 
-    setRotation(prev => prev + targetAngle);
+    const startAngle = angleRef.current;
+    const startTime = performance.now();
+    const duration = 4800;
 
-    setTimeout(() => {
-      setSpinning(false);
-      const prize = PRIZES[prizeIdx];
-      const randomCode = `ST-WIN-${Math.floor(1000 + Math.random() * 9000)}`;
-      setWonPrize(prize);
-      setVoucherCode(randomCode);
+    const animateWheel = (now) => {
+      const elapsed = now - startTime;
+      const progress = Math.min(1, elapsed / duration);
+      const easeOut = 1 - Math.pow(1 - progress, 3.5);
+      const currentAngle = startAngle + (totalRotation - startAngle) * easeOut;
 
-      // Save won prize to local state & invoke claim callback
-      const newVoucher = {
-        id: Date.now(),
-        code: randomCode,
-        prizeName: prize.name,
-        prizeDesc: prize.desc,
-        prizeImg: prize.img,
-        winnerName,
-        date: new Date().toLocaleDateString('ka-GE')
-      };
+      angleRef.current = currentAngle;
+      drawWheel(currentAngle);
 
-      if (onClaimPrize) onClaimPrize(newVoucher);
+      if (progress < 1) {
+        requestAnimationFrame(animateWheel);
+      } else {
+        setSpinning(false);
+        const prize = PRIZES[prizeIdx];
+        const randomCode = `ST-WIN-${Math.floor(1000 + Math.random() * 9000)}`;
+        setWonPrize(prize);
+        setVoucherCode(randomCode);
 
-      // Send silent email notification simulation
-      try {
-        fetch('https://formspree.io/f/sergitsivtsivadze@gmail.com', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            subject: `🎉 ST DANCE GAME WINNER: ${winnerName}`,
-            winner: winnerName,
-            prize: prize.name,
-            code: randomCode,
-            date: new Date().toISOString()
-          })
-        }).catch(() => {});
-      } catch {}
-    }, 4500);
+        const newVoucher = {
+          id: Date.now(),
+          code: randomCode,
+          prizeName: prize.name,
+          prizeDesc: prize.desc,
+          prizeImg: prize.img,
+          winnerName,
+          date: new Date().toLocaleDateString('ka-GE')
+        };
+
+        if (onClaimPrize) onClaimPrize(newVoucher);
+
+        try {
+          fetch('https://formspree.io/f/sergitsivtsivadze@gmail.com', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              subject: `ST DANCE GAME WINNER: ${winnerName}`,
+              winner: winnerName,
+              prize: prize.name,
+              code: randomCode,
+              date: new Date().toISOString()
+            })
+          }).catch(() => {});
+        } catch {}
+      }
+    };
+
+    requestAnimationFrame(animateWheel);
   };
 
   const handleCopyCode = () => {
@@ -99,11 +242,10 @@ export default function SpinModal({ isOpen, onClose, winnerName = 'ჩემპ�
               დაატრიალე დოლურა და მიიღე ST DANCE STUDIO & Danceshop.Ge-ს პრიზი!
             </p>
 
-            {/* Wheel Container with Pointer */}
-            <div style={{ position: 'relative', width: '260px', height: '260px', margin: '6px 0 16px' }}>
+            <div style={{ position: 'relative', width: '280px', height: '280px', margin: '4px 0 16px' }}>
               <div style={{
                 position: 'absolute',
-                top: '-14px',
+                top: '-12px',
                 left: '50%',
                 transform: 'translateX(-50%)',
                 width: 0,
@@ -111,76 +253,11 @@ export default function SpinModal({ isOpen, onClose, winnerName = 'ჩემპ�
                 borderLeft: '12px solid transparent',
                 borderRight: '12px solid transparent',
                 borderTop: '20px solid #ef4444',
-                zIndex: 20,
-                filter: 'drop-shadow(0 2px 6px rgba(0,0,0,0.8))'
+                zIndex: 30,
+                filter: 'drop-shadow(0 2px 6px rgba(0,0,0,0.9))'
               }} />
 
-              <div
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  borderRadius: '50%',
-                  border: '6px solid #d4a64a',
-                  boxShadow: '0 0 25px rgba(212,166,74,0.4)',
-                  position: 'relative',
-                  overflow: 'hidden',
-                  transform: `rotate(${rotation}deg)`,
-                  transition: spinning ? 'transform 4.5s cubic-bezier(0.15, 0.9, 0.15, 1)' : 'none'
-                }}
-              >
-                {PRIZES.map((prize, i) => {
-                  const angle = (360 / PRIZES.length) * i;
-                  return (
-                    <div
-                      key={prize.id}
-                      style={{
-                        position: 'absolute',
-                        top: 0,
-                        right: 0,
-                        width: '50%',
-                        height: '50%',
-                        transformOrigin: '0% 100%',
-                        transform: `rotate(${angle}deg)`,
-                        background: i % 2 === 0 ? 'rgba(212,166,74,0.22)' : 'rgba(255,255,255,0.06)',
-                        borderLeft: '1px solid rgba(212,166,74,0.3)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        boxSizing: 'border-box'
-                      }}
-                    >
-                      <span style={{
-                        transform: `rotate(${360 / PRIZES.length / 2}deg) translateY(-35px)`,
-                        fontSize: '9px',
-                        fontWeight: '800',
-                        color: prize.color,
-                        whiteSpace: 'nowrap',
-                        textShadow: '0 1px 3px rgba(0,0,0,0.9)'
-                      }}>
-                        {prize.name}
-                      </span>
-                    </div>
-                  );
-                })}
-
-                <div style={{
-                  position: 'absolute',
-                  inset: '50%',
-                  transform: 'translate(-50%, -50%)',
-                  width: '50px',
-                  height: '50px',
-                  borderRadius: '50%',
-                  background: 'linear-gradient(135deg, #d4a64a, #f0d9a8)',
-                  border: '3px solid #000',
-                  boxShadow: '0 0 10px rgba(0,0,0,0.8)',
-                  zIndex: 10,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center'
-                }}>
-                  <Award size={22} color="#151100" />
-                </div>
-              </div>
+              <canvas ref={canvasRef} style={{ display: 'block', width: '100%', height: '100%' }} />
             </div>
 
             <button
@@ -216,21 +293,32 @@ export default function SpinModal({ isOpen, onClose, winnerName = 'ჩემპ�
               {wonPrize.name}
             </h3>
 
-            {/* Prize Image Showcase */}
+            {/* Seamless Luxury Prize Showcase Card without checkerboard background */}
             <div style={{
-              width: '180px',
+              width: '260px',
               height: '160px',
               borderRadius: '16px',
               overflow: 'hidden',
-              border: '2px solid rgba(212,166,74,0.5)',
-              boxShadow: '0 8px 24px rgba(0,0,0,0.6)',
-              marginBottom: '12px',
-              background: '#0a0a0f',
+              border: '2px solid rgba(212,166,74,0.6)',
+              boxShadow: '0 8px 25px rgba(212,166,74,0.25)',
+              marginBottom: '14px',
+              background: 'linear-gradient(135deg, #15120a, #261f10)',
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'center'
+              justifyContent: 'center',
+              padding: '6px',
+              boxSizing: 'border-box'
             }}>
-              <img src={wonPrize.img} alt={wonPrize.name} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+              <img
+                src={wonPrize.img}
+                alt={wonPrize.name}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  borderRadius: '12px'
+                }}
+              />
             </div>
 
             {/* Official Voucher Card */}
