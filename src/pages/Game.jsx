@@ -300,7 +300,6 @@ export default function Game() {
               >
                 <HelpCircle size={15} color={livesData.hasQuizLife ? '#22c55e' : '#f59e0b'} />
                 <span>Quiz +1 ❤️</span>
-                {livesData.hasQuizLife && <span className="check-badge"><Check size={10} strokeWidth={3} /></span>}
               </button>
 
               <button
@@ -309,7 +308,6 @@ export default function Game() {
               >
                 <Share2 size={15} color={livesData.hasShareLife ? '#22c55e' : '#ec4899'} />
                 <span>Share +1 ❤️</span>
-                {livesData.hasShareLife && <span className="check-badge"><Check size={10} strokeWidth={3} /></span>}
               </button>
 
               <button
