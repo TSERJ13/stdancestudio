@@ -26,12 +26,12 @@ export const gameTranslations = {
     loginBtn: 'ID შესვლა',
     studentIdLabel: 'მოსწავლის ID',
     noLives: 'სიცოცხლე ამოიწურა!',
-    quizBonus: 'Quiz +1 Life',
-    shareBonus: 'Share +1 Life',
+    quizBonus: 'Quiz +1',
+    shareBonus: 'Share +1',
     tabs: {
       game: 'თამაში',
-      quiz: 'Quiz +1 Life',
-      share: 'Share +1 Life',
+      quiz: 'Quiz +1',
+      share: 'Share +1',
       ranks: 'რეიტინგი',
       rules: 'წესები'
     }
@@ -52,12 +52,12 @@ export const gameTranslations = {
     loginBtn: 'ID LOGIN',
     studentIdLabel: 'Student ID',
     noLives: 'Out of lives!',
-    quizBonus: 'Quiz +1 Life',
-    shareBonus: 'Share +1 Life',
+    quizBonus: 'Quiz +1',
+    shareBonus: 'Share +1',
     tabs: {
       game: 'Game',
-      quiz: 'Quiz +1 Life',
-      share: 'Share +1 Life',
+      quiz: 'Quiz +1',
+      share: 'Share +1',
       ranks: 'Ranks',
       rules: 'Rules'
     }
@@ -78,12 +78,12 @@ export const gameTranslations = {
     loginBtn: 'ID ВХОД',
     studentIdLabel: 'ID Ученика',
     noLives: 'Жизни закончились!',
-    quizBonus: 'Quiz +1 Life',
-    shareBonus: 'Share +1 Life',
+    quizBonus: 'Quiz +1',
+    shareBonus: 'Share +1',
     tabs: {
       game: 'Игра',
-      quiz: 'Quiz +1 Life',
-      share: 'Share +1 Life',
+      quiz: 'Quiz +1',
+      share: 'Share +1',
       ranks: 'Рейтинг',
       rules: 'Правила'
     }
@@ -299,7 +299,7 @@ export default function Game() {
                 onClick={() => setShowQuizModal(true)}
               >
                 <HelpCircle size={15} color={livesData.hasQuizLife ? '#22c55e' : '#f59e0b'} />
-                <span>Quiz +1 Life</span>
+                <span>Quiz +1</span>
               </button>
 
               <button
@@ -307,7 +307,7 @@ export default function Game() {
                 onClick={() => setShowShareModal(true)}
               >
                 <Share2 size={15} color={livesData.hasShareLife ? '#22c55e' : '#ec4899'} />
-                <span>Share +1 Life</span>
+                <span>Share +1</span>
               </button>
 
               <button
@@ -361,7 +361,7 @@ export default function Game() {
                     <div className="rule-item">
                       <HelpCircle size={24} color="#f59e0b" />
                       <div>
-                        <strong>4th Life Unlock (Quiz +1 Life)</strong>
+                        <strong>4th Life Unlock (Quiz +1)</strong>
                         <p>Answer 3 dance questions correctly in the Dance Quiz challenge to gain +1 Bonus Life.</p>
                       </div>
                     </div>
@@ -369,7 +369,7 @@ export default function Game() {
                     <div className="rule-item">
                       <Share2 size={24} color="#ec4899" />
                       <div>
-                        <strong>5th Life Unlock (Share +1 Life)</strong>
+                        <strong>5th Life Unlock (Share +1)</strong>
                         <p>Share our studio link or Instagram post to unlock your 5th Bonus Life.</p>
                       </div>
                     </div>

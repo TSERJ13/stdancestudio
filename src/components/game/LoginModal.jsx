@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { User, ShieldCheck, CheckCircle2, IdCard, LogIn, KeyRound, LogOut, Loader2, Sparkles } from 'lucide-react';
+import { User, ShieldCheck, CheckCircle2, IdCard, LogIn, KeyRound, LogOut, Loader2, Sparkles, X } from 'lucide-react';
 import { fetchStudioData, getStudentName } from '../../data/classcore';
 
 const STUDENT_ID_MAP = {
@@ -109,12 +109,15 @@ export default function LoginModal({ isOpen, onClose, currentUser, onLogin, onLo
   return (
     <div className="modal-overlay">
       <div className="modal-content glass animate-in" style={{ maxWidth: '400px', padding: '20px' }}>
-        <div className="modal-header" style={{ marginBottom: '14px' }}>
-          <div className="quiz-title-badge">
+        {/* Clean Header Bar */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', borderBottom: '1px solid rgba(255,255,255,0.08)', paddingBottom: '10px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <IdCard size={18} color="#d4a64a" />
-            <span style={{ fontSize: '12.5px', fontWeight: '800' }}>მოსწავლის ID-ით შესვლა</span>
+            <span style={{ fontSize: '13px', fontWeight: '900', color: '#F0D9A8' }}>მოსწავლის ID-ით შესვლა</span>
           </div>
-          <button className="btn-close" onClick={onClose}>✕</button>
+          <button onClick={onClose} style={{ background: 'transparent', border: 'none', color: '#a1a1aa', cursor: 'pointer', padding: '4px', display: 'flex', alignItems: 'center' }}>
+            <X size={18} />
+          </button>
         </div>
 
         {isSubmitted ? (
