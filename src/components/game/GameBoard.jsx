@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
-import { Play, RotateCcw, Volume2, VolumeX, ShieldAlert, Award, Zap, Maximize2, Minimize2, FastForward } from 'lucide-react';
+import { Play, RotateCcw, Volume2, VolumeX, ShieldAlert, Award, Zap, Maximize2, Minimize2 } from 'lucide-react';
 import { soundFx } from '../../utils/soundFx';
 
 const GOLD_L = '#F0D9A8';
@@ -11,6 +11,10 @@ const TIERS = [
   { f: 'rgba(120,220,150,.16)', s: '#6FD98F', t: '#C3F0D2' },
   { f: 'rgba(255,68,68,.25)', s: '#FF4444', t: '#FFB3B3' }
 ];
+
+// SOLID IMMUTABLE CANVAS RESOLUTION (440x580)
+const CANVAS_W = 440;
+const CANVAS_H = 580;
 
 export default function GameBoard({ availableLives, onSpendLife, onGameOver, onScoreUpdate, onOpenQuiz, onOpenShare }) {
   const canvasRef = useRef(null);
@@ -25,15 +29,15 @@ export default function GameBoard({ availableLives, onSpendLife, onGameOver, onS
   const [isFullscreen, setIsFullscreen] = useState(false);
 
   const engineRef = useRef({
-    width: 440,
-    height: 600,
-    cell: 0,
+    width: CANVAS_W,
+    height: CANVAS_H,
+    cell: (CANVAS_W - 16) / 7,
     pad: 8,
-    brickH: 0,
+    brickH: ((CANVAS_W - 16) / 7) * 0.78,
     cols: 7,
     topY: 10,
-    deathY: 0,
-    launchY: 0,
+    deathY: CANVAS_H - 52,
+    launchY: CANVAS_H - 28,
     state: 'READY',
     bricks: [],
     balls: [],
@@ -47,7 +51,7 @@ export default function GameBoard({ availableLives, onSpendLife, onGameOver, onS
     ballsPending: 0,
     aiming: false,
     aimAngle: 0,
-    launchX: 220,
+    launchX: CANVAS_W / 2,
     nextLaunchX: null,
     superShots: 0,
     shootTimer: 0,
@@ -74,10 +78,6 @@ export default function GameBoard({ availableLives, onSpendLife, onGameOver, onS
         else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
       } catch (err) { /* ignore */ }
     }
-
-    setTimeout(() => {
-      window.dispatchEvent(new Event('resize'));
-    }, 100);
   };
 
   useEffect(() => {
@@ -86,7 +86,6 @@ export default function GameBoard({ availableLives, onSpendLife, onGameOver, onS
       setIsFullscreen(isFs);
       if (isFs) document.body.classList.add('app-fullscreen-active');
       else document.body.classList.remove('app-fullscreen-active');
-      window.dispatchEvent(new Event('resize'));
     };
 
     document.addEventListener('fullscreenchange', handleFsChange);
@@ -182,7 +181,7 @@ export default function GameBoard({ availableLives, onSpendLife, onGameOver, onS
     engine.ballCount = 1;
     engine.superShots = 0;
     engine.nextLaunchX = null;
-    engine.launchX = engine.width / 2;
+    engine.launchX = CANVAS_W / 2;
     engine.aimAngle = 0;
     engine.bricks = [];
     engine.balls = [];
@@ -295,8 +294,13 @@ export default function GameBoard({ availableLives, onSpendLife, onGameOver, onS
     if (!canvas) return;
     const rect = canvas.getBoundingClientRect();
     const engine = engineRef.current;
-    const touchX = clientX - rect.left;
-    const touchY = clientY - rect.top;
+
+    // Scale mouse/touch coordinates to internal 440x580 canvas resolution
+    const scaleX = CANVAS_W / rect.width;
+    const scaleY = CANVAS_H / rect.height;
+
+    const touchX = (clientX - rect.left) * scaleX;
+    const touchY = (clientY - rect.top) * scaleY;
 
     const dx = touchX - engine.launchX;
     const dy = touchY - engine.launchY;
@@ -309,7 +313,6 @@ export default function GameBoard({ availableLives, onSpendLife, onGameOver, onS
     if (e.cancelable && e.type && e.type.startsWith('touch')) e.preventDefault();
 
     if (engine.state === 'SHOOT') {
-      // Hold down during flight to FAST FORWARD
       engine.holdingBoost = true;
       return;
     }
@@ -350,44 +353,18 @@ export default function GameBoard({ availableLives, onSpendLife, onGameOver, onS
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
+
+    // Solid Immutable Internal Canvas Dimensions
+    canvas.width = CANVAS_W;
+    canvas.height = CANVAS_H;
     const ctx = canvas.getContext('2d');
-
-    const resize = () => {
-      const container = containerRef.current;
-      if (!container) return;
-
-      const isFs = isFullscreen || document.body.classList.contains('app-fullscreen-active');
-      const winW = window.innerWidth;
-      const winH = window.innerHeight;
-
-      let w = isFs ? Math.min(winW - 16, 520) : Math.min(container.clientWidth - 16, 480);
-      let h = isFs ? (winH - 85) : Math.round(w * 1.32);
-
-      if (h < 350) h = 350;
-
-      canvas.width = w;
-      canvas.height = h;
-
-      const engine = engineRef.current;
-      engine.width = w;
-      engine.height = h;
-      engine.cell = (w - engine.pad * 2) / engine.cols;
-      engine.brickH = engine.cell * 0.78;
-      engine.deathY = h - 52;
-      engine.launchY = h - 28;
-      if (engine.state === 'READY') engine.launchX = w / 2;
-      layoutBricks();
-    };
-
-    resize();
-    window.addEventListener('resize', resize);
 
     let animId;
 
     const render = () => {
       const engine = engineRef.current;
-      const w = engine.width;
-      const h = engine.height;
+      const w = CANVAS_W;
+      const h = CANVAS_H;
 
       ctx.clearRect(0, 0, w, h);
 
@@ -497,7 +474,7 @@ export default function GameBoard({ availableLives, onSpendLife, onGameOver, onS
         }
       }
 
-      // Shooting Balls update with FAST FORWARD HOLD BOOST (ეკრანზე დაწოლით დაჩქარება)
+      // Shooting Balls update with FAST FORWARD HOLD BOOST
       if (engine.state === 'SHOOT') {
         engine.shootTimer++;
         const shootInterval = Math.max(2, 6 - Math.floor(engine.round / 4));
@@ -505,7 +482,6 @@ export default function GameBoard({ availableLives, onSpendLife, onGameOver, onS
           spawnBall();
         }
 
-        // Holding boost multiplier: 2.5x speed boost when holding screen!
         const steps = engine.holdingBoost ? 5 : 2;
 
         engine.balls.forEach(b => {
@@ -560,7 +536,6 @@ export default function GameBoard({ availableLives, onSpendLife, onGameOver, onS
           endRound();
         }
 
-        // Draw Fast Forward Hold Badge on Canvas
         if (engine.holdingBoost) {
           ctx.save();
           ctx.fillStyle = 'rgba(239, 68, 68, 0.2)';
@@ -628,7 +603,6 @@ export default function GameBoard({ availableLives, onSpendLife, onGameOver, onS
 
     return () => {
       cancelAnimationFrame(animId);
-      window.removeEventListener('resize', resize);
     };
   }, [isFullscreen, onGameOver, onScoreUpdate]);
 
