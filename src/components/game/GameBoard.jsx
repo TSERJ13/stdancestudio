@@ -1,148 +1,278 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
-import { Play, RotateCcw, Volume2, VolumeX, ShieldAlert, Award, Zap } from 'lucide-react';
+import { Play, RotateCcw, Volume2, VolumeX, ShieldAlert, Award, Zap, Trophy } from 'lucide-react';
 import { soundFx } from '../../utils/soundFx';
 
-const BRICK_COLORS = {
-  'Samba': '#f97316',
-  'Cha-Cha': '#f59e0b',
-  'Rumba': '#ef4444',
-  'Paso Doble': '#8b5cf6',
-  'Jive': '#22c55e',
-  'Waltz': '#3b82f6',
-  'Tango': '#dc2626',
-  'Quickstep': '#10b981',
-  'GOC Special': '#ff416c'
-};
+const GOLD_L = '#F0D9A8';
+const TIERS = [
+  { f: 'rgba(212,165,90,.16)', s: '#D4A55A', t: '#F0D9A8' },
+  { f: 'rgba(120,190,220,.16)', s: '#6FC3E0', t: '#BEE7F5' },
+  { f: 'rgba(190,120,220,.16)', s: '#B87BDE', t: '#E3C6F5' },
+  { f: 'rgba(230,120,90,.16)', s: '#E0764A', t: '#F5C7B0' },
+  { f: 'rgba(120,220,150,.16)', s: '#6FD98F', t: '#C3F0D2' },
+  { f: 'rgba(255,68,68,.25)', s: '#FF4444', t: '#FFB3B3' }
+];
 
-export default function GameBoard({ onGameOver, onScoreUpdate, availableLives, onSpendLife }) {
+export default function GameBoard({ availableLives, onSpendLife, onGameOver, onScoreUpdate, onOpenQuiz, onOpenShare }) {
   const canvasRef = useRef(null);
   const containerRef = useRef(null);
 
-  const [gameState, setGameState] = useState('READY'); // READY, PLAYING, GAMEOVER, WON
+  const [gameState, setGameState] = useState('READY'); // READY, AIM, SHOOT, GAMEOVER
+  const [round, setRound] = useState(1);
   const [score, setScore] = useState(0);
-  const [combo, setCombo] = useState(0);
+  const [ballCount, setBallCount] = useState(1);
+  const [speedMult, setSpeedMult] = useState(1.0);
   const [muted, setMuted] = useState(false);
+  const [bannerMsg, setBannerMsg] = useState('');
 
   const engineRef = useRef({
-    score: 0,
-    combo: 0,
-    comboTimer: null,
-    paddle: { x: 0, w: 100, h: 14, speed: 8 },
-    balls: [],
+    width: 440,
+    height: 600,
+    cell: 0,
+    pad: 8,
+    brickH: 0,
+    cols: 7,
+    topY: 10,
+    deathY: 0,
+    launchY: 0,
+    state: 'READY',
     bricks: [],
+    balls: [],
+    pickups: [],
     particles: [],
-    animId: null,
-    width: 600,
-    height: 500
+    round: 1,
+    score: 0,
+    ballCount: 1,
+    ballsPending: 0,
+    aiming: false,
+    aimAngle: 0,
+    launchX: 220,
+    nextLaunchX: null,
+    superShots: 0,
+    shootTimer: 0,
+    speedMult: 1.0,
+    animId: null
   });
 
-  const initGame = useCallback(() => {
-    const engine = engineRef.current;
-    engine.score = 0;
-    engine.combo = 0;
-    setScore(0);
-    setCombo(0);
-
-    const w = engine.width;
-    const h = engine.height;
-
-    engine.paddle = {
-      x: w / 2 - 50,
-      y: h - 30,
-      w: 100,
-      h: 14,
-      color: '#1db954'
-    };
-
-    engine.balls = [{
-      x: w / 2,
-      y: h - 50,
-      vx: (Math.random() > 0.5 ? 1 : -1) * (3.5 + Math.random()),
-      vy: -5,
-      r: 8,
-      color: '#ffffff'
-    }];
-
-    const rows = 5;
-    const cols = 7;
-    const padding = 8;
-    const offsetTop = 50;
-    const offsetLeft = 15;
-    const brickW = (w - (offsetLeft * 2) - (padding * (cols - 1))) / cols;
-    const brickH = 24;
-
-    const styles = ['Samba', 'Cha-Cha', 'Rumba', 'Paso Doble', 'Jive', 'Waltz', 'Tango'];
-
-    const bricks = [];
-    for (let r = 0; r < rows; r++) {
-      for (let c = 0; c < cols; c++) {
-        const style = styles[(r + c) % styles.length];
-        bricks.push({
-          x: offsetLeft + c * (brickW + padding),
-          y: offsetTop + r * (brickH + padding),
-          w: brickW,
-          h: brickH,
-          style: style,
-          color: BRICK_COLORS[style] || '#1db954',
-          hp: r === 0 ? 2 : 1,
-          maxHp: r === 0 ? 2 : 1,
-          points: (rows - r) * 10
-        });
-      }
-    }
-    engine.bricks = bricks;
-    engine.particles = [];
-  }, []);
+  const showBanner = (msg, duration = 2000) => {
+    setBannerMsg(msg);
+    setTimeout(() => setBannerMsg(''), duration);
+  };
 
   const createParticles = (x, y, color) => {
     const engine = engineRef.current;
-    for (let i = 0; i < 12; i++) {
+    for (let i = 0; i < 10; i++) {
       const angle = Math.random() * Math.PI * 2;
-      const speed = 1 + Math.random() * 4;
+      const spd = 1 + Math.random() * 3;
       engine.particles.push({
         x, y,
-        vx: Math.cos(angle) * speed,
-        vy: Math.sin(angle) * speed,
-        r: 2 + Math.random() * 3,
+        vx: Math.cos(angle) * spd,
+        vy: Math.sin(angle) * spd,
         alpha: 1,
         color
       });
     }
   };
 
+  const addRow = useCallback(() => {
+    const engine = engineRef.current;
+    engine.bricks.forEach(b => b.row++);
+    engine.pickups.forEach(p => p.row++);
+
+    const hp = Math.min(8, 1 + Math.floor(engine.round / 2) + (engine.round > 6 ? 1 : 0));
+    const logoRow = (engine.round % 4 === 1 && engine.round > 1);
+    const used = [];
+    const n = Math.min(6, 3 + Math.floor(Math.random() * 3) + (engine.round > 5 ? 1 : 0));
+
+    for (let k = 0; k < n; k++) {
+      const c = Math.floor(Math.random() * engine.cols);
+      if (used.includes(c)) continue;
+      used.push(c);
+      const brickHp = (Math.random() < 0.3 && engine.round > 3) ? hp + 1 : hp;
+      engine.bricks.push({ col: c, row: 0, hp: brickHp, logo: false, x: 0, y: 0, w: 0, h: 0 });
+    }
+
+    if (logoRow) {
+      const freeCols = [];
+      for (let c = 0; c < engine.cols; c++) if (!used.includes(c)) freeCols.push(c);
+      for (let j = 0; j < 2 && freeCols.length > 0; j++) {
+        const pk = freeCols.splice(Math.floor(Math.random() * freeCols.length), 1)[0];
+        engine.bricks.push({ col: pk, row: 0, hp: Math.max(2, hp), logo: true, x: 0, y: 0, w: 0, h: 0 });
+        used.push(pk);
+      }
+    }
+
+    const pickupFree = [];
+    for (let c = 0; c < engine.cols; c++) if (!used.includes(c)) pickupFree.push(c);
+    if (pickupFree.length > 0 && Math.random() < 0.75) {
+      const pc = pickupFree[Math.floor(Math.random() * pickupFree.length)];
+      engine.pickups.push({ col: pc, row: 0, x: 0, y: 0, r: 7, taken: false });
+    }
+
+    layoutBricks();
+  }, []);
+
+  const layoutBricks = () => {
+    const engine = engineRef.current;
+    engine.bricks.forEach(b => {
+      b.x = engine.pad + b.col * engine.cell;
+      b.y = engine.topY + b.row * (engine.brickH + 6);
+      b.w = engine.cell - 5;
+      b.h = engine.brickH;
+    });
+    engine.pickups.forEach(p => {
+      p.x = engine.pad + p.col * engine.cell + engine.cell / 2;
+      p.y = engine.topY + p.row * (engine.brickH + 6) + engine.brickH / 2;
+    });
+  };
+
   const startGame = () => {
     if (availableLives <= 0) return;
     soundFx.init();
     onSpendLife();
-    initGame();
-    setGameState('PLAYING');
+
+    const engine = engineRef.current;
+    engine.round = 1;
+    engine.score = 0;
+    engine.ballCount = 1;
+    engine.superShots = 0;
+    engine.nextLaunchX = null;
+    engine.launchX = engine.width / 2;
+    engine.aimAngle = 0;
+    engine.bricks = [];
+    engine.balls = [];
+    engine.pickups = [];
+    engine.particles = [];
+    engine.state = 'AIM';
+
+    setRound(1);
+    setScore(0);
+    setBallCount(1);
+    setSpeedMult(1.0);
+    setGameState('AIM');
+
+    addRow(); addRow(); addRow();
   };
 
-  const handlePointerMove = (e) => {
-    if (gameState !== 'PLAYING') return;
+  const launch = () => {
+    const engine = engineRef.current;
+    if (engine.state !== 'AIM') return;
+    engine.state = 'SHOOT';
+    engine.ballsPending = engine.ballCount;
+    engine.shootTimer = 0;
+    engine.balls = [];
+    engine.nextLaunchX = null;
+    setGameState('SHOOT');
+  };
+
+  const spawnBall = () => {
+    const engine = engineRef.current;
+    const currentSpd = Math.min(2.2, 1.0 + (engine.round - 1) * 0.05);
+    engine.speedMult = currentSpd;
+    setSpeedMult(currentSpd);
+
+    const baseSp = engine.superShots > 0 ? 12 : 10;
+    const sp = baseSp * currentSpd;
+
+    engine.balls.push({
+      x: engine.launchX,
+      y: engine.launchY,
+      vx: Math.sin(engine.aimAngle) * sp,
+      vy: -Math.cos(engine.aimAngle) * sp,
+      r: engine.superShots > 0 ? 9 : 6,
+      alive: true,
+      sup: engine.superShots > 0
+    });
+    engine.ballsPending--;
+  };
+
+  const hitTest = (b, r) => {
+    const cx = Math.max(r.x, Math.min(b.x, r.x + r.w));
+    const cy = Math.max(r.y, Math.min(b.y, r.y + r.h));
+    const dx = b.x - cx;
+    const dy = b.y - cy;
+    return dx * dx + dy * dy < b.r * b.r;
+  };
+
+  const checkLogo = () => {
+    const engine = engineRef.current;
+    const left = engine.bricks.some(x => x.logo && x.hp > 0);
+    if (!left) {
+      if (Math.random() < 0.5) {
+        engine.superShots = 2;
+        showBanner('⚡ SUPER BALL ACTIVATED!');
+        soundFx.playPowerup();
+      } else {
+        engine.ballCount += 3;
+        setBallCount(engine.ballCount);
+        showBanner('🎉 +3 EXTRA BALLS!');
+        soundFx.playPowerup();
+      }
+    }
+  };
+
+  const endRound = () => {
+    const engine = engineRef.current;
+    engine.bricks = engine.bricks.filter(b => b.hp > 0);
+    engine.pickups = engine.pickups.filter(p => !p.taken);
+    if (engine.superShots > 0) engine.superShots--;
+    if (engine.nextLaunchX !== null) engine.launchX = engine.nextLaunchX;
+
+    engine.round++;
+    setRound(engine.round);
+    engine.score += 10;
+    if (engine.round % 5 === 0) engine.score += 25;
+    setScore(engine.score);
+    onScoreUpdate(engine.score);
+
+    addRow();
+
+    const over = engine.bricks.some(b => b.y + b.h >= engine.deathY);
+    if (over) {
+      soundFx.playGameOver();
+      engine.state = 'GAMEOVER';
+      setGameState('GAMEOVER');
+      onGameOver(engine.score);
+      return;
+    }
+
+    engine.state = 'AIM';
+    setGameState('AIM');
+  };
+
+  const setAim = (clientX, clientY) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const rect = canvas.getBoundingClientRect();
-    const clientX = e.clientX || (e.touches && e.touches[0] ? e.touches[0].clientX : 0);
-    const relX = clientX - rect.left;
-    const scaleX = canvas.width / rect.width;
     const engine = engineRef.current;
-    engine.paddle.x = Math.max(0, Math.min(canvas.width - engine.paddle.w, (relX * scaleX) - (engine.paddle.w / 2)));
+    const dx = (clientX - rect.left) - engine.launchX;
+    const dy = (clientY - rect.top) - engine.launchY;
+    const clampedDy = Math.min(-10, dy);
+    engine.aimAngle = Math.max(-1.35, Math.min(1.35, Math.atan2(dx, -clampedDy)));
   };
 
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (gameState !== 'PLAYING') return;
-      const engine = engineRef.current;
-      if (e.key === 'ArrowLeft') {
-        engine.paddle.x = Math.max(0, engine.paddle.x - 20);
-      } else if (e.key === 'ArrowRight') {
-        engine.paddle.x = Math.min(engine.width - engine.paddle.w, engine.paddle.x + 20);
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [gameState]);
+  const handlePointerDown = (e) => {
+    const engine = engineRef.current;
+    if (engine.state !== 'AIM') return;
+    engine.aiming = true;
+    const clientX = e.clientX || (e.touches && e.touches[0] ? e.touches[0].clientX : 0);
+    const clientY = e.clientY || (e.touches && e.touches[0] ? e.touches[0].clientY : 0);
+    setAim(clientX, clientY);
+  };
+
+  const handlePointerMove = (e) => {
+    const engine = engineRef.current;
+    if (!engine.aiming || engine.state !== 'AIM') return;
+    const clientX = e.clientX || (e.touches && e.touches[0] ? e.touches[0].clientX : 0);
+    const clientY = e.clientY || (e.touches && e.touches[0] ? e.touches[0].clientY : 0);
+    setAim(clientX, clientY);
+  };
+
+  const handlePointerUp = () => {
+    const engine = engineRef.current;
+    if (!engine.aiming || engine.state !== 'AIM') return;
+    engine.aiming = false;
+    launch();
+  };
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -152,18 +282,26 @@ export default function GameBoard({ onGameOver, onScoreUpdate, availableLives, o
     const resize = () => {
       const container = containerRef.current;
       if (!container) return;
-      const w = Math.min(container.clientWidth - 20, 600);
-      const h = Math.round(w * 0.82);
+      const w = Math.min(container.clientWidth - 20, 440);
+      const h = Math.round(w * 1.35);
       canvas.width = w;
       canvas.height = h;
-      engineRef.current.width = w;
-      engineRef.current.height = h;
+
+      const engine = engineRef.current;
+      engine.width = w;
+      engine.height = h;
+      engine.cell = (w - engine.pad * 2) / engine.cols;
+      engine.brickH = engine.cell * 0.78;
+      engine.deathY = h - 52;
+      engine.launchY = h - 28;
+      if (engine.state === 'READY') engine.launchX = w / 2;
+      layoutBricks();
     };
 
     resize();
     window.addEventListener('resize', resize);
 
-    let animationFrameId;
+    let animId;
 
     const render = () => {
       const engine = engineRef.current;
@@ -172,155 +310,218 @@ export default function GameBoard({ onGameOver, onScoreUpdate, availableLives, o
 
       ctx.clearRect(0, 0, w, h);
 
+      // Background Gradient
       const bgGrad = ctx.createLinearGradient(0, 0, 0, h);
-      bgGrad.addColorStop(0, '#0a0a0f');
-      bgGrad.addColorStop(1, '#12121e');
+      bgGrad.addColorStop(0, '#05060a');
+      bgGrad.addColorStop(1, '#0b0a10');
       ctx.fillStyle = bgGrad;
       ctx.fillRect(0, 0, w, h);
 
-      if (gameState === 'PLAYING') {
-        const p = engine.paddle;
-        p.y = h - 25;
-        const padGrad = ctx.createLinearGradient(p.x, p.y, p.x + p.w, p.y);
-        padGrad.addColorStop(0, '#d4a64a');
-        padGrad.addColorStop(1, '#f59e0b');
-        ctx.fillStyle = padGrad;
-        ctx.shadowColor = '#d4a64a';
-        ctx.shadowBlur = 10;
-        ctx.beginPath();
-        if (ctx.roundRect) ctx.roundRect(p.x, p.y, p.w, p.h, 7);
-        else ctx.rect(p.x, p.y, p.w, p.h);
-        ctx.fill();
-        ctx.shadowBlur = 0;
-
-        engine.balls.forEach((b) => {
-          b.x += b.vx;
-          b.y += b.vy;
-
-          if (b.x - b.r <= 0) { b.x = b.r; b.vx *= -1; soundFx.playHit(); }
-          if (b.x + b.r >= w) { b.x = w - b.r; b.vx *= -1; soundFx.playHit(); }
-          if (b.y - b.r <= 0) { b.y = b.r; b.vy *= -1; soundFx.playHit(); }
-
-          if (b.y + b.r >= p.y && b.y - b.r <= p.y + p.h && b.x >= p.x && b.x <= p.x + p.w) {
-            b.vy = -Math.abs(b.vy);
-            const hitPoint = (b.x - (p.x + p.w / 2)) / (p.w / 2);
-            b.vx = hitPoint * 6;
-            soundFx.playPaddleHit();
-          }
-
-          ctx.fillStyle = '#ffffff';
-          ctx.shadowColor = '#ffffff';
-          ctx.shadowBlur = 8;
-          ctx.beginPath();
-          ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
-          ctx.fill();
-          ctx.shadowBlur = 0;
-
-          engine.bricks.forEach((brick) => {
-            if (brick.hp <= 0) return;
-            if (
-              b.x + b.r >= brick.x &&
-              b.x - b.r <= brick.x + brick.w &&
-              b.y + b.r >= brick.y &&
-              b.y - b.r <= brick.y + brick.h
-            ) {
-              b.vy *= -1;
-              brick.hp -= 1;
-
-              if (brick.hp <= 0) {
-                createParticles(brick.x + brick.w / 2, brick.y + brick.h / 2, brick.color);
-                engine.combo += 1;
-                const pointsGained = brick.points * Math.min(engine.combo, 5);
-                engine.score += pointsGained;
-                setScore(engine.score);
-                setCombo(engine.combo);
-                onScoreUpdate(engine.score);
-                soundFx.playCombo(engine.combo);
-              } else {
-                soundFx.playHit();
-              }
-            }
-          });
-        });
-
-        engine.balls = engine.balls.filter(b => b.y - b.r < h);
-        if (engine.balls.length === 0) {
-          soundFx.playGameOver();
-          setGameState('GAMEOVER');
-          onGameOver(engine.score);
-        }
-
-        const remainingBricks = engine.bricks.filter(b => b.hp > 0);
-        if (remainingBricks.length === 0) {
-          soundFx.playVictory();
-          setGameState('WON');
-        }
-
-        engine.bricks.forEach((brick) => {
-          if (brick.hp <= 0) return;
-          ctx.fillStyle = brick.color;
-          ctx.shadowColor = brick.color;
-          ctx.shadowBlur = 6;
-          ctx.beginPath();
-          if (ctx.roundRect) ctx.roundRect(brick.x, brick.y, brick.w, brick.h, 5);
-          else ctx.rect(brick.x, brick.y, brick.w, brick.h);
-          ctx.fill();
-          ctx.shadowBlur = 0;
-
-          ctx.fillStyle = '#ffffff';
-          ctx.font = 'bold 9px system-ui, sans-serif';
-          ctx.textAlign = 'center';
-          ctx.textBaseline = 'middle';
-          ctx.fillText(brick.style, brick.x + brick.w / 2, brick.y + brick.h / 2);
-        });
-
-        engine.particles.forEach(pt => {
-          pt.x += pt.vx;
-          pt.y += pt.vy;
-          pt.alpha -= 0.025;
-          ctx.globalAlpha = Math.max(0, pt.alpha);
-          ctx.fillStyle = pt.color;
-          ctx.beginPath();
-          ctx.arc(pt.x, pt.y, pt.r, 0, Math.PI * 2);
-          ctx.fill();
-          ctx.globalAlpha = 1;
-        });
-        engine.particles = engine.particles.filter(pt => pt.alpha > 0);
+      // Grid line
+      ctx.strokeStyle = 'rgba(212,165,90,.05)';
+      ctx.lineWidth = 1;
+      for (let gx = 0; gx < w; gx += engine.cell) {
+        ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, h); ctx.stroke();
       }
 
-      animationFrameId = requestAnimationFrame(render);
+      // Red Line
+      ctx.save();
+      ctx.setLineDash([6, 6]);
+      ctx.strokeStyle = 'rgba(224,86,60,.7)';
+      ctx.lineWidth = 1.8;
+      ctx.beginPath(); ctx.moveTo(0, engine.deathY); ctx.lineTo(w, engine.deathY); ctx.stroke();
+      ctx.restore();
+
+      // Bricks
+      engine.bricks.forEach(b => {
+        if (b.hp <= 0) return;
+        const s = b.logo ? { f: 'rgba(212,165,90,.3)', s: GOLD_L, t: '#1a1200' } : TIERS[Math.min(b.hp - 1, TIERS.length - 1)];
+        ctx.save();
+        ctx.shadowColor = s.s;
+        ctx.shadowBlur = b.logo ? 16 : 9;
+        ctx.fillStyle = s.f;
+        ctx.strokeStyle = s.s;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        if (ctx.roundRect) ctx.roundRect(b.x, b.y, b.w, b.h, 6);
+        else ctx.rect(b.x, b.y, b.w, b.h);
+        ctx.fill(); ctx.stroke();
+        ctx.restore();
+
+        ctx.fillStyle = b.logo ? GOLD_L : s.t;
+        ctx.font = '700 ' + Math.round(engine.cell * 0.3) + 'px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(b.logo ? 'ST' : String(b.hp), b.x + b.w / 2, b.y + b.h / 2 + 1);
+      });
+
+      // Pickups (+1 Balls)
+      engine.pickups.forEach(p => {
+        if (p.taken) return;
+        ctx.save();
+        ctx.shadowColor = GOLD_L; ctx.shadowBlur = 12;
+        ctx.strokeStyle = GOLD_L; ctx.lineWidth = 2; ctx.fillStyle = 'rgba(240,217,168,.15)';
+        ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+        ctx.restore();
+        ctx.fillStyle = GOLD_L; ctx.font = '700 9px sans-serif';
+        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillText('+1', p.x, p.y + .5);
+      });
+
+      // Particles
+      engine.particles.forEach(pt => {
+        ctx.save();
+        ctx.globalAlpha = Math.max(0, pt.alpha);
+        ctx.fillStyle = pt.color;
+        ctx.beginPath(); ctx.arc(pt.x, pt.y, 2.5, 0, Math.PI * 2); ctx.fill();
+        ctx.restore();
+        pt.x += pt.vx; pt.y += pt.vy; pt.alpha -= 0.04;
+      });
+      engine.particles = engine.particles.filter(pt => pt.alpha > 0);
+
+      // Aim Line & Launch Ball
+      if (engine.state === 'AIM') {
+        ctx.save();
+        ctx.setLineDash([3, 7]); ctx.strokeStyle = 'rgba(240,217,168,.5)'; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(engine.launchX, engine.launchY);
+        ctx.lineTo(engine.launchX + Math.sin(engine.aimAngle) * h * 1.5, engine.launchY - Math.cos(engine.aimAngle) * h * 1.5);
+        ctx.stroke(); ctx.restore();
+
+        // Draw Launching ball
+        ctx.save();
+        ctx.shadowColor = engine.superShots > 0 ? GOLD_L : '#FFFFFF';
+        ctx.shadowBlur = engine.superShots > 0 ? 20 : 12;
+        ctx.fillStyle = engine.superShots > 0 ? GOLD_L : '#FFFFFF';
+        ctx.beginPath(); ctx.arc(engine.launchX, engine.launchY, 7, 0, Math.PI * 2); ctx.fill();
+        ctx.restore();
+
+        if (engine.ballCount > 1) {
+          ctx.fillStyle = GOLD_L; ctx.font = '700 11px sans-serif'; ctx.textAlign = 'center';
+          ctx.fillText('x' + engine.ballCount, engine.launchX, engine.launchY + 19);
+        }
+      }
+
+      // Shooting Balls update
+      if (engine.state === 'SHOOT') {
+        engine.shootTimer++;
+        const shootInterval = Math.max(3, 6 - Math.floor(engine.round / 4));
+        if (engine.ballsPending > 0 && engine.shootTimer % shootInterval === 0) {
+          spawnBall();
+        }
+
+        engine.balls.forEach(b => {
+          if (!b.alive) return;
+          for (let s = 0; s < 2; s++) {
+            b.x += b.vx / 2; b.y += b.vy / 2;
+            if (b.x < b.r) { b.x = b.r; b.vx = Math.abs(b.vx); soundFx.playHit(); }
+            if (b.x > w - b.r) { b.x = w - b.r; b.vx = -Math.abs(b.vx); soundFx.playHit(); }
+            if (b.y < b.r) { b.y = b.r; b.vy = Math.abs(b.vy); soundFx.playHit(); }
+
+            engine.bricks.forEach(br => {
+              if (br.hp <= 0) return;
+              if (hitTest(b, br)) {
+                br.hp--;
+                if (br.hp <= 0) {
+                  engine.score += 2;
+                  setScore(engine.score);
+                  createParticles(br.x + br.w / 2, br.y + br.h / 2, br.logo ? GOLD_L : '#E0764A');
+                  if (br.logo) checkLogo();
+                  soundFx.playCombo(engine.round);
+                } else {
+                  soundFx.playHit();
+                }
+                if (!b.sup) {
+                  const ox = Math.min(Math.abs(b.x - br.x), Math.abs(b.x - (br.x + br.w)));
+                  const oy = Math.min(Math.abs(b.y - br.y), Math.abs(b.y - (br.y + br.h)));
+                  if (oy < ox) b.vy = -b.vy; else b.vx = -b.vx;
+                }
+              }
+            });
+
+            engine.pickups.forEach(pu => {
+              if (pu.taken) return;
+              const ddx = b.x - pu.x, ddy = b.y - pu.y;
+              if (ddx * ddx + ddy * ddy < (b.r + pu.r) * (b.r + pu.r)) {
+                pu.taken = true;
+                engine.ballCount++;
+                setBallCount(engine.ballCount);
+                soundFx.playPowerup();
+              }
+            });
+
+            if (b.y > engine.launchY) {
+              b.alive = false;
+              if (engine.nextLaunchX === null) engine.nextLaunchX = Math.max(12, Math.min(w - 12, b.x));
+            }
+          }
+        });
+
+        engine.balls = engine.balls.filter(b => b.alive);
+        if (engine.ballsPending <= 0 && engine.balls.length === 0) {
+          endRound();
+        }
+      }
+
+      // Draw Balls
+      engine.balls.forEach(b => {
+        if (!b.alive) return;
+        ctx.save();
+        ctx.shadowColor = b.sup ? GOLD_L : '#FFFFFF'; ctx.shadowBlur = b.sup ? 20 : 12;
+        ctx.fillStyle = b.sup ? GOLD_L : '#FFFFFF';
+        ctx.beginPath(); ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2); ctx.fill();
+        ctx.restore();
+      });
+
+      animId = requestAnimationFrame(render);
     };
 
     render();
 
     return () => {
-      cancelAnimationFrame(animationFrameId);
+      cancelAnimationFrame(animId);
       window.removeEventListener('resize', resize);
     };
-  }, [gameState, onGameOver, onScoreUpdate]);
+  }, [onGameOver, onScoreUpdate]);
 
   return (
     <div className="game-board-container" ref={containerRef}>
       <div className="game-top-bar glass">
         <div className="stat-pill">
+          <span className="stat-lbl">ROUND</span>
+          <span className="stat-val text-gold">{round}</span>
+        </div>
+        <div className="stat-pill">
+          <span className="stat-lbl">SPEED</span>
+          <span className="stat-val text-red">{speedMult.toFixed(1)}x</span>
+        </div>
+        <div className="stat-pill">
+          <span className="stat-lbl">BALLS</span>
+          <span className="stat-val">{ballCount}</span>
+        </div>
+        <div className="stat-pill">
           <span className="stat-lbl">SCORE</span>
           <span className="stat-val text-gold">{score.toLocaleString()}</span>
         </div>
-        {combo > 1 && (
-          <div className="stat-pill combo-pill animate-bounce">
-            <Zap size={14} color="#f59e0b" />
-            <span className="stat-val">{combo}x COMBO!</span>
-          </div>
-        )}
         <button className="btn-icon" onClick={() => { soundFx.muted = !muted; setMuted(!muted); }}>
           {muted ? <VolumeX size={18} /> : <Volume2 size={18} />}
         </button>
       </div>
 
+      {bannerMsg && (
+        <div className="game-banner-popup animate-bounce">
+          <Zap size={16} color="#151100" />
+          <span>{bannerMsg}</span>
+        </div>
+      )}
+
       <div
         className="canvas-wrapper"
+        onMouseDown={handlePointerDown}
         onMouseMove={handlePointerMove}
+        onMouseUp={handlePointerUp}
+        onTouchStart={handlePointerDown}
         onTouchMove={handlePointerMove}
+        onTouchEnd={handlePointerUp}
       >
         <canvas ref={canvasRef} />
 
@@ -329,17 +530,25 @@ export default function GameBoard({ onGameOver, onScoreUpdate, availableLives, o
             <div className="game-logo">
               <Award size={48} className="text-gold animate-pulse" />
               <h2>Dancing Bricks</h2>
-              <p>Break the dance bricks and reach the top leaderboard!</p>
+              <p>Aim, break golden ST bricks, and top the studio leaderboard!</p>
             </div>
             {availableLives > 0 ? (
               <button className="btn-play-big" onClick={startGame}>
-                <Play size={22} fill="black" /> START GAME (1 ❤️)
+                <Play size={22} fill="black" /> START GAME (-1 ❤️)
               </button>
             ) : (
               <div className="no-lives-box">
                 <ShieldAlert size={32} color="#ef4444" />
                 <p>No lives left for today!</p>
                 <span>Answer Quiz (+1 ❤️) or Share Post (+1 ❤️) to get bonus lives!</span>
+                <div style={{ display: 'flex', gap: '8px', marginTop: '10px' }}>
+                  <button className="btn-secondary" style={{ padding: '8px 14px', fontSize: '11px' }} onClick={onOpenQuiz}>
+                    ❓ Dance Quiz (+1 ❤️)
+                  </button>
+                  <button className="btn-secondary" style={{ padding: '8px 14px', fontSize: '11px' }} onClick={onOpenShare}>
+                    📱 Share (+1 ❤️)
+                  </button>
+                </div>
               </div>
             )}
           </div>
@@ -351,30 +560,27 @@ export default function GameBoard({ onGameOver, onScoreUpdate, availableLives, o
             <div className="final-score">
               <span>FINAL SCORE</span>
               <strong>{score.toLocaleString()}</strong>
+              <span style={{ fontSize: '11px', color: '#a1a1aa', marginTop: '4px' }}>Round Reached: #{round}</span>
             </div>
             {availableLives > 0 ? (
               <button className="btn-play-big" onClick={startGame}>
-                <RotateCcw size={20} /> PLAY AGAIN (1 ❤️)
+                <RotateCcw size={20} /> PLAY AGAIN (-1 ❤️)
               </button>
             ) : (
               <div className="no-lives-box">
+                <ShieldAlert size={32} color="#ef4444" />
                 <p>Out of lives!</p>
-                <span>Complete Quiz or Share to earn +1 ❤️</span>
+                <span>Complete Dance Quiz or Share Post to earn bonus lives!</span>
+                <div style={{ display: 'flex', gap: '8px', marginTop: '10px' }}>
+                  <button className="btn-secondary" style={{ padding: '8px 14px', fontSize: '11px' }} onClick={onOpenQuiz}>
+                    ❓ Quiz (+1 ❤️)
+                  </button>
+                  <button className="btn-secondary" style={{ padding: '8px 14px', fontSize: '11px' }} onClick={onOpenShare}>
+                    📱 Share (+1 ❤️)
+                  </button>
+                </div>
               </div>
             )}
-          </div>
-        )}
-
-        {gameState === 'WON' && (
-          <div className="overlay-screen glass animate-in">
-            <h2>🏆 STAGE CLEARED!</h2>
-            <div className="final-score">
-              <span>WINNING SCORE</span>
-              <strong>{score.toLocaleString()}</strong>
-            </div>
-            <button className="btn-play-big" onClick={startGame}>
-              <Play size={20} fill="black" /> NEXT STAGE
-            </button>
           </div>
         )}
       </div>
