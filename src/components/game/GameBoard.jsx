@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
-import { Play, RotateCcw, Volume2, VolumeX, ShieldAlert, Award, Zap, Trophy } from 'lucide-react';
+import { Play, RotateCcw, Volume2, VolumeX, ShieldAlert, Award, Zap, Maximize2, Minimize2 } from 'lucide-react';
 import { soundFx } from '../../utils/soundFx';
 
 const GOLD_L = '#F0D9A8';
@@ -23,6 +23,7 @@ export default function GameBoard({ availableLives, onSpendLife, onGameOver, onS
   const [speedMult, setSpeedMult] = useState(1.0);
   const [muted, setMuted] = useState(false);
   const [bannerMsg, setBannerMsg] = useState('');
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   const engineRef = useRef({
     width: 440,
@@ -52,6 +53,39 @@ export default function GameBoard({ availableLives, onSpendLife, onGameOver, onS
     speedMult: 1.0,
     animId: null
   });
+
+  const toggleFullscreen = () => {
+    const el = containerRef.current;
+    if (!el) return;
+
+    if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+      if (el.requestFullscreen) {
+        el.requestFullscreen();
+      } else if (el.webkitRequestFullscreen) {
+        el.webkitRequestFullscreen();
+      }
+      setIsFullscreen(true);
+    } else {
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      } else if (document.webkitExitFullscreen) {
+        document.webkitExitFullscreen();
+      }
+      setIsFullscreen(false);
+    }
+  };
+
+  useEffect(() => {
+    const handleFsChange = () => {
+      setIsFullscreen(!!(document.fullscreenElement || document.webkitFullscreenElement));
+    };
+    document.addEventListener('fullscreenchange', handleFsChange);
+    document.addEventListener('webkitfullscreenchange', handleFsChange);
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFsChange);
+      document.removeEventListener('webkitfullscreenchange', handleFsChange);
+    };
+  }, []);
 
   const showBanner = (msg, duration = 2000) => {
     setBannerMsg(msg);
@@ -282,8 +316,14 @@ export default function GameBoard({ availableLives, onSpendLife, onGameOver, onS
     const resize = () => {
       const container = containerRef.current;
       if (!container) return;
-      const w = Math.min(container.clientWidth - 20, 440);
-      const h = Math.round(w * 1.35);
+
+      const isFs = !!(document.fullscreenElement || document.webkitFullscreenElement);
+      const availableW = isFs ? window.innerWidth - 30 : Math.min(container.clientWidth - 20, 520);
+      const availableH = isFs ? window.innerHeight - 100 : Math.round(availableW * 1.35);
+
+      const w = Math.min(availableW, 560);
+      const h = availableH;
+
       canvas.width = w;
       canvas.height = h;
 
@@ -387,7 +427,6 @@ export default function GameBoard({ availableLives, onSpendLife, onGameOver, onS
         ctx.lineTo(engine.launchX + Math.sin(engine.aimAngle) * h * 1.5, engine.launchY - Math.cos(engine.aimAngle) * h * 1.5);
         ctx.stroke(); ctx.restore();
 
-        // Draw Launching ball
         ctx.save();
         ctx.shadowColor = engine.superShots > 0 ? GOLD_L : '#FFFFFF';
         ctx.shadowBlur = engine.superShots > 0 ? 20 : 12;
@@ -484,7 +523,7 @@ export default function GameBoard({ availableLives, onSpendLife, onGameOver, onS
   }, [onGameOver, onScoreUpdate]);
 
   return (
-    <div className="game-board-container" ref={containerRef}>
+    <div className={`game-board-container ${isFullscreen ? 'is-fullscreen' : ''}`} ref={containerRef}>
       <div className="game-top-bar glass">
         <div className="stat-pill">
           <span className="stat-lbl">ROUND</span>
@@ -502,9 +541,15 @@ export default function GameBoard({ availableLives, onSpendLife, onGameOver, onS
           <span className="stat-lbl">SCORE</span>
           <span className="stat-val text-gold">{score.toLocaleString()}</span>
         </div>
-        <button className="btn-icon" onClick={() => { soundFx.muted = !muted; setMuted(!muted); }}>
-          {muted ? <VolumeX size={18} /> : <Volume2 size={18} />}
-        </button>
+
+        <div style={{ display: 'flex', gap: '6px' }}>
+          <button className="btn-icon" onClick={toggleFullscreen} title="Toggle Fullscreen">
+            {isFullscreen ? <Minimize2 size={18} /> : <Maximize2 size={18} />}
+          </button>
+          <button className="btn-icon" onClick={() => { soundFx.muted = !muted; setMuted(!muted); }}>
+            {muted ? <VolumeX size={18} /> : <Volume2 size={18} />}
+          </button>
+        </div>
       </div>
 
       {bannerMsg && (

@@ -171,6 +171,27 @@
   gap: 12px;
   align-items: center;
   width: 100%;
+  transition: all 0.3s ease;
+}
+
+/* Fullscreen Mode Styling */
+.game-page-wrap .game-board-container.is-fullscreen,
+.game-board-container:fullscreen,
+.game-board-container:-webkit-full-screen {
+  width: 100vw !important;
+  height: 100vh !important;
+  max-width: none !important;
+  background: #05060a !important;
+  padding: 16px !important;
+  justify-content: center !important;
+  align-items: center !important;
+}
+
+.game-page-wrap .game-board-container.is-fullscreen .canvas-wrapper,
+.game-board-container:fullscreen .canvas-wrapper,
+.game-board-container:-webkit-full-screen .canvas-wrapper {
+  max-width: 560px !important;
+  height: calc(100vh - 120px) !important;
 }
 
 .game-page-wrap .game-top-bar {
@@ -203,6 +224,10 @@
   color: var(--color-gold, #d4a64a);
 }
 
+.game-page-wrap .text-red {
+  color: #ef4444;
+}
+
 .game-page-wrap .btn-icon {
   background: rgba(255, 255, 255, 0.05);
   border: none;
@@ -214,6 +239,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: background 0.2s;
+}
+
+.game-page-wrap .btn-icon:hover {
+  background: rgba(255, 255, 255, 0.15);
 }
 
 .game-page-wrap .canvas-wrapper {
