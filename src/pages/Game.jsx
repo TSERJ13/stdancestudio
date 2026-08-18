@@ -1,248 +1,30 @@
-import React, { useState, useEffect } from 'react';
-import { Play, Trophy, HelpCircle, Share2, Heart, Clock, Sparkles, Award } from 'lucide-react';
-import GameBoard from '../components/game/GameBoard';
-import QuizModal from '../components/game/QuizModal';
-import SocialShareModal from '../components/game/SocialShareModal';
-import Leaderboard from '../components/game/Leaderboard';
-import { loadLivesData, saveLivesData, calculateAvailableLives, formatTimeUntilReset, getGeorgiaResetTime } from '../utils/livesManager';
-import './Game.css';
+import React from 'react';
 
 export default function Game() {
-  const [activeTab, setActiveTab] = useState('play'); // play, leaderboard, rules
-  const [livesData, setLivesData] = useState(() => loadLivesData());
-  const [countdown, setCountdown] = useState('');
-  const [playerName, setPlayerName] = useState(() => localStorage.getItem('dancing_bricks_player_name') || 'Dancer');
-
-  const [showQuizModal, setShowQuizModal] = useState(false);
-  const [showShareModal, setShowShareModal] = useState(false);
-
-  const availableLives = calculateAvailableLives(livesData);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const { nextResetTimeMs } = getGeorgiaResetTime();
-      setCountdown(formatTimeUntilReset(nextResetTimeMs));
-
-      const fresh = loadLivesData();
-      if (fresh.usedLives !== livesData.usedLives || fresh.hasQuizLife !== livesData.hasQuizLife) {
-        setLivesData(fresh);
-      }
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [livesData]);
-
-  const handleSpendLife = () => {
-    if (availableLives <= 0) return;
-    setLivesData(prev => {
-      const updated = { ...prev, usedLives: prev.usedLives + 1 };
-      return saveLivesData(updated);
-    });
-  };
-
-  const handleScoreUpdate = (score) => {
-    if (score > livesData.highScore) {
-      setLivesData(prev => {
-        const updated = { ...prev, highScore: score };
-        return saveLivesData(updated);
-      });
-    }
-  };
-
-  const handleGameOver = (score) => {
-    setLivesData(prev => {
-      const updated = {
-        ...prev,
-        totalGamesPlayed: (prev.totalGamesPlayed || 0) + 1,
-        highScore: Math.max(prev.highScore || 0, score)
-      };
-      return saveLivesData(updated);
-    });
-  };
-
-  const handleUnlockQuizLife = () => {
-    setLivesData(prev => {
-      const updated = { ...prev, hasQuizLife: true };
-      return saveLivesData(updated);
-    });
-  };
-
-  const handleUnlockShareLife = () => {
-    setLivesData(prev => {
-      const updated = { ...prev, hasShareLife: true };
-      return saveLivesData(updated);
-    });
-  };
-
-  const handleUpdatePlayerName = (name) => {
-    setPlayerName(name);
-    localStorage.setItem('dancing_bricks_player_name', name);
-  };
-
   return (
-    <div className="inner-page game-page-wrap" style={{ padding: '90px 12px 60px', minHeight: '90vh' }}>
-      <div className="app-container">
-        <header className="app-header glass">
-          <div className="header-brand">
-            <div className="brand-icon">
-              <Award size={28} color="#d4a64a" />
-            </div>
-            <div>
-              <h1 className="brand-title">DANCING BRICKS</h1>
-              <span className="brand-sub">ST Dance Studio Batumi</span>
-            </div>
-          </div>
-
-          <div className="header-status-strip">
-            <div className="lives-display">
-              <span className="lives-label">LIVES ({availableLives}/5):</span>
-              <div className="hearts-row">
-                {[1, 2, 3].map(num => (
-                  <Heart
-                    key={`base_${num}`}
-                    size={20}
-                    fill={num <= (3 - livesData.usedLives) ? '#ef4444' : 'rgba(255,255,255,0.1)'}
-                    color={num <= (3 - livesData.usedLives) ? '#ef4444' : '#52525b'}
-                    className={num <= (3 - livesData.usedLives) ? 'heart-pulse' : ''}
-                  />
-                ))}
-
-                <Heart
-                  key="quiz_4"
-                  size={20}
-                  fill={livesData.hasQuizLife ? '#f59e0b' : 'rgba(255,255,255,0.1)'}
-                  color={livesData.hasQuizLife ? '#f59e0b' : '#52525b'}
-                />
-
-                <Heart
-                  key="share_5"
-                  size={20}
-                  fill={livesData.hasShareLife ? '#ec4899' : 'rgba(255,255,255,0.1)'}
-                  color={livesData.hasShareLife ? '#ec4899' : '#52525b'}
-                />
-              </div>
-            </div>
-
-            <div className="timer-badge">
-              <Clock size={15} color="#d4a64a" />
-              <span>Reset at 22:00: <strong>{countdown || '22:00:00'}</strong></span>
-            </div>
-          </div>
-        </header>
-
-        <nav className="app-nav glass">
-          <button
-            className={`nav-btn ${activeTab === 'play' ? 'active' : ''}`}
-            onClick={() => setActiveTab('play')}
-          >
-            <Play size={18} /> Game
-          </button>
-
-          <button
-            className={`nav-btn bonus-btn ${livesData.hasQuizLife ? 'unlocked' : ''}`}
-            onClick={() => setShowQuizModal(true)}
-          >
-            <HelpCircle size={18} color={livesData.hasQuizLife ? '#22c55e' : '#f59e0b'} />
-            <span>4th Life (Quiz)</span>
-            {livesData.hasQuizLife && <span className="check-badge">✓</span>}
-          </button>
-
-          <button
-            className={`nav-btn bonus-btn ${livesData.hasShareLife ? 'unlocked' : ''}`}
-            onClick={() => setShowShareModal(true)}
-          >
-            <Share2 size={18} color={livesData.hasShareLife ? '#22c55e' : '#ec4899'} />
-            <span>5th Life (Share)</span>
-            {livesData.hasShareLife && <span className="check-badge">✓</span>}
-          </button>
-
-          <button
-            className={`nav-btn ${activeTab === 'leaderboard' ? 'active' : ''}`}
-            onClick={() => setActiveTab('leaderboard')}
-          >
-            <Trophy size={18} /> Leaderboard
-          </button>
-
-          <button
-            className={`nav-btn ${activeTab === 'rules' ? 'active' : ''}`}
-            onClick={() => setActiveTab('rules')}
-          >
-            <Sparkles size={18} /> Rules
-          </button>
-        </nav>
-
-        <main className="main-content">
-          {activeTab === 'play' && (
-            <GameBoard
-              availableLives={availableLives}
-              onSpendLife={handleSpendLife}
-              onGameOver={handleGameOver}
-              onScoreUpdate={handleScoreUpdate}
-            />
-          )}
-
-          {activeTab === 'leaderboard' && (
-            <Leaderboard
-              currentHighScore={livesData.highScore}
-              playerName={playerName}
-              onUpdatePlayerName={handleUpdatePlayerName}
-            />
-          )}
-
-          {activeTab === 'rules' && (
-            <div className="rules-card glass animate-in">
-              <h2>📜 How to Play Dancing Bricks</h2>
-              <div className="rules-list">
-                <div className="rule-item">
-                  <Heart size={24} color="#ef4444" />
-                  <div>
-                    <strong>3 Base Daily Lives (❤️❤️❤️)</strong>
-                    <p>Every player gets 3 lives every day. Lives refresh automatically at 22:00 Georgia Time (UTC+4).</p>
-                  </div>
-                </div>
-
-                <div className="rule-item">
-                  <HelpCircle size={24} color="#f59e0b" />
-                  <div>
-                    <strong>4th Life Unlock (Dance Quiz)</strong>
-                    <p>Answer 3 dance questions correctly in the Dance Quiz challenge to gain +1 Bonus Life (❤️ #4).</p>
-                  </div>
-                </div>
-
-                <div className="rule-item">
-                  <Share2 size={24} color="#ec4899" />
-                  <div>
-                    <strong>5th Life Unlock (Instagram Share)</strong>
-                    <p>Share our studio link or Instagram post to unlock your 5th Bonus Life (❤️ #5).</p>
-                  </div>
-                </div>
-
-                <div className="rule-item">
-                  <Trophy size={24} color="#d4a64a" />
-                  <div>
-                    <strong>Leaderboard & High Scores</strong>
-                    <p>Break Samba, Cha-Cha, Rumba, Paso Doble, Jive & Waltz bricks to score points and top the Studio Leaderboard!</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-        </main>
-
-        <QuizModal
-          isOpen={showQuizModal}
-          onClose={() => setShowQuizModal(false)}
-          hasQuizLife={livesData.hasQuizLife}
-          onUnlockQuizLife={handleUnlockQuizLife}
-        />
-
-        <SocialShareModal
-          isOpen={showShareModal}
-          onClose={() => setShowShareModal(false)}
-          hasShareLife={livesData.hasShareLife}
-          onUnlockShareLife={handleUnlockShareLife}
-        />
-      </div>
+    <div style={{
+      width: '100%',
+      minHeight: '100vh',
+      background: '#05060a',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      paddingTop: '70px',
+      paddingBottom: '20px'
+    }}>
+      <iframe
+        src="/game.html"
+        title="Dancing Bricks Original Game"
+        style={{
+          width: '100%',
+          maxWidth: '460px',
+          height: 'calc(100vh - 90px)',
+          minHeight: '620px',
+          border: 'none',
+          borderRadius: '16px',
+          boxShadow: '0 0 30px rgba(212, 165, 90, 0.25)'
+        }}
+      />
     </div>
   );
 }
