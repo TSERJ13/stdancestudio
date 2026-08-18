@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Trophy, User } from 'lucide-react';
+import { Trophy, User, Sparkles } from 'lucide-react';
 
 const INITIAL_LEADERBOARD = [
   { id: '1', name: 'სერგო წივწივაძე', score: 18500, games: 42, badge: '🏆 Head Coach' },
@@ -87,7 +87,7 @@ export default function Leaderboard({ currentHighScore, playerName, onUpdatePlay
               <div className="lb-rank">
                 {index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `#${index + 1}`}
               </div>
-              <div className="lb-avatar" style={{ background: isTop3 ? 'rgba(212, 166, 74, 0.2)' : 'rgba(255,255,255,0.05)' }}>
+              <div className="lb-avatar" style={{ background: isTop3 ? 'rgba(212, 166, 74, 0.2)' : 'rgba(255,255,255,0.06)' }}>
                 {item.name.charAt(0).toUpperCase()}
               </div>
               <div className="lb-user-info">
