@@ -57,6 +57,7 @@ export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOv
     balls: [],
     pickups: [],
     particles: [],
+    bumper: { x: CANVAS_W / 2 - 35, y: 220, w: 70, h: 12, vx: 1.8, active: false },
     bannerText: '',
     bannerTimer: 0,
     round: 1,
@@ -137,17 +138,19 @@ export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOv
     engine.bricks.forEach(b => b.row++);
     engine.pickups.forEach(p => p.row++);
 
-    const hp = Math.min(8, 1 + Math.floor(engine.round / 2) + (engine.round > 6 ? 1 : 0));
+    // Increased HP scaling per round for competitive balance
+    const hp = Math.min(12, 1 + Math.floor(engine.round * 0.75));
     const logoRow = (engine.round % 4 === 1 && engine.round > 1);
     const used = [];
-    const n = Math.min(6, 3 + Math.floor(Math.random() * 3) + (engine.round > 5 ? 1 : 0));
+    const n = Math.min(6, 4 + Math.floor(Math.random() * 3));
 
     for (let k = 0; k < n; k++) {
       const c = Math.floor(Math.random() * engine.cols);
       if (used.includes(c)) continue;
       used.push(c);
-      const brickHp = (Math.random() < 0.3 && engine.round > 3) ? hp + 1 : hp;
-      engine.bricks.push({ col: c, row: 0, hp: brickHp, logo: false, x: 0, y: 0, w: 0, h: 0 });
+      const isArmored = (engine.round >= 3 && Math.random() < 0.25);
+      const brickHp = isArmored ? hp + 3 : hp;
+      engine.bricks.push({ col: c, row: 0, hp: brickHp, logo: false, armored: isArmored, x: 0, y: 0, w: 0, h: 0 });
     }
 
     if (logoRow) {
@@ -155,16 +158,24 @@ export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOv
       for (let c = 0; c < engine.cols; c++) if (!used.includes(c)) freeCols.push(c);
       for (let j = 0; j < 2 && freeCols.length > 0; j++) {
         const pk = freeCols.splice(Math.floor(Math.random() * freeCols.length), 1)[0];
-        engine.bricks.push({ col: pk, row: 0, hp: Math.max(2, hp), logo: true, x: 0, y: 0, w: 0, h: 0 });
+        engine.bricks.push({ col: pk, row: 0, hp: Math.max(3, hp), logo: true, armored: false, x: 0, y: 0, w: 0, h: 0 });
         used.push(pk);
       }
     }
 
     const pickupFree = [];
     for (let c = 0; c < engine.cols; c++) if (!used.includes(c)) pickupFree.push(c);
-    if (pickupFree.length > 0 && Math.random() < 0.75) {
+    if (pickupFree.length > 0 && Math.random() < 0.7) {
       const pc = pickupFree[Math.floor(Math.random() * pickupFree.length)];
       engine.pickups.push({ col: pc, row: 0, x: 0, y: 0, r: 7, taken: false });
+    }
+
+    // Activate moving bumper starting round 4
+    if (engine.round >= 4) {
+      engine.bumper.active = true;
+      engine.bumper.y = 180 + (engine.round % 3) * 35;
+    } else {
+      engine.bumper.active = false;
     }
 
     layoutBricks();
@@ -204,6 +215,7 @@ export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOv
     engine.bannerText = '';
     engine.bannerTimer = 0;
     engine.holdingBoost = false;
+    engine.bumper.active = false;
     engine.state = 'AIM';
 
     setRound(1);
@@ -229,11 +241,10 @@ export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOv
 
   const spawnBall = () => {
     const engine = engineRef.current;
-    const currentSpd = Math.min(2.2, 1.0 + (engine.round - 1) * 0.05);
+    const currentSpd = Math.min(2.4, 1.0 + (engine.round - 1) * 0.06);
     engine.speedMult = currentSpd;
     setSpeedMult(currentSpd);
 
-    // 20% REDUCED SPEED: Base 8 (was 10), Super 9.6 (was 12)
     const baseSp = engine.superShots > 0 ? 9.6 : 8.0;
     const sp = baseSp * currentSpd;
 
@@ -244,7 +255,8 @@ export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOv
       vy: -Math.cos(engine.aimAngle) * sp,
       r: engine.superShots > 0 ? 9 : 6,
       alive: true,
-      sup: engine.superShots > 0
+      sup: engine.superShots > 0,
+      sideBounces: 0
     });
     engine.ballsPending--;
   };
@@ -318,8 +330,10 @@ export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOv
 
     const dx = touchX - engine.launchX;
     const dy = touchY - engine.launchY;
-    const clampedDy = Math.min(-10, dy);
-    engine.aimAngle = Math.max(-1.38, Math.min(1.38, Math.atan2(dx, -clampedDy)));
+    const clampedDy = Math.min(-12, dy);
+
+    // CLAMP AIM ANGLE TO MAX 1.15 RAD (~65.8 deg) TO PREVENT PARALLEL SIDE WALL EXPLOIT!
+    engine.aimAngle = Math.max(-1.15, Math.min(1.15, Math.atan2(dx, -clampedDy)));
   };
 
   const handlePointerDown = (e) => {
@@ -403,16 +417,45 @@ export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOv
       ctx.beginPath(); ctx.moveTo(0, engine.deathY); ctx.lineTo(w, engine.deathY); ctx.stroke();
       ctx.restore();
 
+      // Moving Bumper Barrier (Round 4+)
+      if (engine.bumper.active) {
+        engine.bumper.x += engine.bumper.vx;
+        if (engine.bumper.x < 15 || engine.bumper.x + engine.bumper.w > w - 15) {
+          engine.bumper.vx = -engine.bumper.vx;
+        }
+
+        ctx.save();
+        ctx.shadowColor = '#6FC3E0';
+        ctx.shadowBlur = 12;
+        ctx.fillStyle = 'rgba(111,195,224,0.25)';
+        ctx.strokeStyle = '#6FC3E0';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        if (ctx.roundRect) ctx.roundRect(engine.bumper.x, engine.bumper.y, engine.bumper.w, engine.bumper.h, 6);
+        else ctx.rect(engine.bumper.x, engine.bumper.y, engine.bumper.w, engine.bumper.h);
+        ctx.fill(); ctx.stroke();
+
+        ctx.fillStyle = '#BEE7F5';
+        ctx.font = 'bold 9px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('SHIELD BARRIER', engine.bumper.x + engine.bumper.w / 2, engine.bumper.y + engine.bumper.h / 2);
+        ctx.restore();
+      }
+
       // Bricks
       engine.bricks.forEach(b => {
         if (b.hp <= 0) return;
-        const s = b.logo ? { f: 'rgba(212,165,90,.3)', s: GOLD_L, t: '#1a1200' } : TIERS[Math.min(b.hp - 1, TIERS.length - 1)];
+        const s = b.logo ? { f: 'rgba(212,165,90,.3)', s: GOLD_L, t: '#1a1200' } :
+                  b.armored ? { f: 'rgba(160,160,175,.35)', s: '#A0A0AF', t: '#FFFFFF' } :
+                  TIERS[Math.min(b.hp - 1, TIERS.length - 1)];
+
         ctx.save();
         ctx.shadowColor = s.s;
-        ctx.shadowBlur = b.logo ? 16 : 9;
+        ctx.shadowBlur = b.logo ? 16 : b.armored ? 12 : 9;
         ctx.fillStyle = s.f;
         ctx.strokeStyle = s.s;
-        ctx.lineWidth = 2;
+        ctx.lineWidth = b.armored ? 2.8 : 2;
         ctx.beginPath();
         if (ctx.roundRect) ctx.roundRect(b.x, b.y, b.w, b.h, 6);
         else ctx.rect(b.x, b.y, b.w, b.h);
@@ -450,7 +493,7 @@ export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOv
       });
       engine.particles = engine.particles.filter(pt => pt.alpha > 0);
 
-      // FAINT LAUNCHER INDICATOR & AIM TRAJECTORY
+      // FAINT LAUNCHER INDICATOR & CLAMPED AIM TRAJECTORY
       if (engine.state === 'AIM') {
         ctx.save();
         ctx.shadowColor = GOLD_L;
@@ -487,7 +530,7 @@ export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOv
         }
       }
 
-      // Shooting Balls update
+      // Shooting Balls update with anti-exploit wall bounce physics
       if (engine.state === 'SHOOT') {
         engine.shootTimer++;
         const shootInterval = Math.max(2, 6 - Math.floor(engine.round / 4));
@@ -501,18 +544,50 @@ export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOv
           if (!b.alive) return;
           for (let s = 0; s < steps; s++) {
             b.x += (b.vx / 2); b.y += (b.vy / 2);
-            if (b.x < b.r) { b.x = b.r; b.vx = Math.abs(b.vx); soundFx.playHit(); }
-            if (b.x > w - b.r) { b.x = w - b.r; b.vx = -Math.abs(b.vx); soundFx.playHit(); }
-            if (b.y < b.r) { b.y = b.r; b.vy = Math.abs(b.vy); soundFx.playHit(); }
 
+            // Left / Right Wall Bounce with anti-loop deflection logic
+            if (b.x < b.r) {
+              b.x = b.r;
+              b.vx = Math.abs(b.vx);
+              b.sideBounces = (b.sideBounces || 0) + 1;
+              // If bouncing shallowly on side walls, force a slight downward vector push
+              if (b.sideBounces > 6) {
+                b.vy += 0.25;
+              }
+              soundFx.playHit();
+            }
+            if (b.x > w - b.r) {
+              b.x = w - b.r;
+              b.vx = -Math.abs(b.vx);
+              b.sideBounces = (b.sideBounces || 0) + 1;
+              if (b.sideBounces > 6) {
+                b.vy += 0.25;
+              }
+              soundFx.playHit();
+            }
+
+            if (b.y < b.r) {
+              b.y = b.r;
+              b.vy = Math.abs(b.vy);
+              soundFx.playHit();
+            }
+
+            // Moving Bumper Hit Test (Round 4+)
+            if (engine.bumper.active && hitTest(b, engine.bumper)) {
+              b.vy = -Math.abs(b.vy);
+              createParticles(b.x, b.y, '#6FC3E0');
+              soundFx.playHit();
+            }
+
+            // Bricks Collision
             engine.bricks.forEach(br => {
               if (br.hp <= 0) return;
               if (hitTest(b, br)) {
                 br.hp--;
                 if (br.hp <= 0) {
-                  engine.score += 2;
+                  engine.score += br.armored ? 5 : 2;
                   setScore(engine.score);
-                  createParticles(br.x + br.w / 2, br.y + br.h / 2, br.logo ? GOLD_L : '#E0764A');
+                  createParticles(br.x + br.w / 2, br.y + br.h / 2, br.logo ? GOLD_L : br.armored ? '#A0A0AF' : '#E0764A');
                   if (br.logo) checkLogo();
                   soundFx.playCombo(engine.round);
                 } else {
@@ -549,7 +624,6 @@ export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOv
           endRound();
         }
 
-        // Clean Bottom Badge Text on Canvas (0 EMOJIS)
         if (engine.holdingBoost) {
           ctx.save();
           ctx.fillStyle = 'rgba(239, 68, 68, 0.25)';
@@ -580,7 +654,7 @@ export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOv
         ctx.restore();
       });
 
-      // Canvas Powerup Banners (0 EMOJIS)
+      // Canvas Powerup Banners
       if (engine.bannerTimer > 0) {
         engine.bannerTimer--;
         ctx.save();
