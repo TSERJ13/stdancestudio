@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { User, ShieldCheck, CheckCircle2, IdCard, LogIn, KeyRound, LogOut, Loader2, Sparkles } from 'lucide-react';
-import { fetchStudioData, getStudentName, findStudentByPhone } from '../../data/classcore';
+import { fetchStudioData, getStudentName } from '../../data/classcore';
 
 const STUDENT_ID_MAP = {
   '101': 'სერგო წივწივაძე (Head Coach)',
@@ -18,21 +18,22 @@ const STUDENT_ID_MAP = {
 };
 
 export default function LoginModal({ isOpen, onClose, currentUser, onLogin, onLogout }) {
-  const [idInput, setIdInput] = useState(currentUser?.studentId || '');
+  const [idInput, setIdInput] = useState(() => {
+    return localStorage.getItem('dancing_bricks_saved_id') || currentUser?.studentId || '';
+  });
   const [nameInput, setNameInput] = useState(currentUser?.name || '');
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [classcoreStudents, setClasscoreStudents] = useState([]);
-  const [foundStudent, setFoundStudent] = useState(null);
 
   useEffect(() => {
     if (isOpen) {
-      // Pre-fetch ClassCore students for instant validation
+      const savedId = localStorage.getItem('dancing_bricks_saved_id');
+      if (savedId && !idInput) setIdInput(savedId);
+
       fetchStudioData()
         .then(data => {
-          if (data && data.students) {
-            setClasscoreStudents(data.students);
-          }
+          if (data && data.students) setClasscoreStudents(data.students);
         })
         .catch(err => console.warn('ClassCore fetch note:', err.message));
     }
@@ -52,11 +53,9 @@ export default function LoginModal({ isOpen, onClose, currentUser, onLogin, onLo
     let isClassCoreMatched = false;
 
     try {
-      // 1. Fetch fresh ClassCore data
       const ccData = await fetchStudioData();
       const students = ccData?.students || classcoreStudents;
 
-      // 2. Search in ClassCore by ID, Code, Phone, or Name
       const match = students.find(s => {
         const sid = String(s.id || '').toUpperCase();
         const code = String(s.code || s.student_code || s.data?.code || '').toUpperCase();
@@ -78,16 +77,17 @@ export default function LoginModal({ isOpen, onClose, currentUser, onLogin, onLo
         finalName = getStudentName(match);
         finalId = match.code || match.student_code || `ST-${match.id}`;
         isClassCoreMatched = true;
-        setFoundStudent(match);
       }
     } catch (err) {
       console.warn('ClassCore lookup fallback:', err.message);
     }
 
-    // 3. Fall back to local map or entered name
     if (!finalName) {
       finalName = STUDENT_ID_MAP[finalId] || nameInput.trim() || `მოსწავლე #${finalId}`;
     }
+
+    // Save ID permanently in localStorage
+    localStorage.setItem('dancing_bricks_saved_id', finalId);
 
     const userData = {
       studentId: finalId,
@@ -113,7 +113,7 @@ export default function LoginModal({ isOpen, onClose, currentUser, onLogin, onLo
         <div className="modal-header" style={{ marginBottom: '14px' }}>
           <div className="quiz-title-badge">
             <IdCard size={18} color="#d4a64a" />
-            <span style={{ fontSize: '12px', fontWeight: '800' }}>CLASSCORE STUDENT LOGIN</span>
+            <span style={{ fontSize: '12.5px', fontWeight: '800' }}>🆔 მოსწავლის ID-ით შესვლა</span>
           </div>
           <button className="btn-close" onClick={onClose}>✕</button>
         </div>
@@ -174,18 +174,13 @@ export default function LoginModal({ isOpen, onClose, currentUser, onLogin, onLo
           </div>
         ) : (
           <form className="login-form-body" onSubmit={handleIdSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-            <div style={{ textAlign: 'center' }}>
-              <h3 style={{ fontSize: '15px', fontWeight: '900', color: 'white', marginBottom: '4px' }}>
-                🆔 ClassCore მოსწავლის ID-თ შესვლა
-              </h3>
-              <p style={{ fontSize: '11px', color: '#a1a1aa', margin: 0, lineHeight: '1.4' }}>
-                შეიყვანე ClassCore-ის მოსწავლის ID კოდი ან ტელეფონის ნომერი!
-              </p>
-            </div>
+            <p style={{ fontSize: '12px', color: '#a1a1aa', margin: 0, textAlign: 'center', lineHeight: '1.4' }}>
+              შეიყვანე ClassCore-ის მოსწავლის ID კოდი, რომ შენი რეკორდები და ქულები ავტომატურად შეინახოს!
+            </p>
 
             <div className="input-group">
               <label style={{ fontSize: '11px', fontWeight: '800', color: '#d4a64a', display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '6px' }}>
-                <KeyRound size={14} /> მოსწავლის ID კოდი / ტელეფონი:
+                <KeyRound size={14} /> მოსწავლის ID კოდი:
               </label>
               <input
                 type="text"
@@ -209,6 +204,34 @@ export default function LoginModal({ isOpen, onClose, currentUser, onLogin, onLo
                   boxSizing: 'border-box'
                 }}
               />
+            </div>
+
+            {/* Test ID Quick Pill Buttons */}
+            <div style={{ background: 'rgba(255,255,255,0.03)', padding: '10px 12px', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.06)' }}>
+              <span style={{ fontSize: '10.5px', color: '#a1a1aa', fontWeight: '700', display: 'block', marginBottom: '6px' }}>
+                💡 სატესტო ID კოდები (დააჭირე შესავსებად):
+              </span>
+              <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                {['101', '102', '103', '104'].map(testId => (
+                  <button
+                    key={testId}
+                    type="button"
+                    onClick={() => setIdInput(testId)}
+                    style={{
+                      padding: '4px 10px',
+                      borderRadius: '8px',
+                      background: idInput === testId ? 'rgba(212,166,74,0.3)' : 'rgba(255,255,255,0.06)',
+                      border: idInput === testId ? '1px solid #d4a64a' : '1px solid rgba(255,255,255,0.1)',
+                      color: idInput === testId ? '#F0D9A8' : '#e4e4e7',
+                      fontSize: '11px',
+                      fontWeight: '800',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    #{testId}
+                  </button>
+                ))}
+              </div>
             </div>
 
             <div className="input-group">
@@ -238,10 +261,10 @@ export default function LoginModal({ isOpen, onClose, currentUser, onLogin, onLo
             <button
               type="submit"
               disabled={loading}
-              style={{ width: '100%', height: '44px', borderRadius: '12px', background: 'linear-gradient(135deg, #d4a64a, #f0d9a8)', border: 'none', color: '#151100', fontWeight: '900', fontSize: '14px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginTop: '4px', opacity: loading ? 0.7 : 1 }}
+              style={{ width: '100%', height: '44px', borderRadius: '12px', background: 'linear-gradient(135deg, #d4a64a, #f0d9a8)', border: 'none', color: '#151100', fontWeight: '900', fontSize: '14px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginTop: '2px', opacity: loading ? 0.7 : 1 }}
             >
               {loading ? <Loader2 size={18} className="animate-spin" /> : <LogIn size={18} />}
-              {loading ? 'ClassCore-ში გადამოწმება...' : 'ID კოდით შესვლა'}
+              {loading ? 'გადამოწმება...' : 'ID კოდით შესვლა'}
             </button>
           </form>
         )}
