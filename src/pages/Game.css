@@ -60,20 +60,30 @@ body.app-fullscreen-active .canvas-wrapper,
   max-height: none !important;
 }
 
+/* =========================================================
+   PERFECT CENTER ALIGNMENT FOR DANCING BRICKS
+   ========================================================= */
 .game-page-wrap {
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  padding: 80px 8px 30px !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: flex-start !important;
+  align-items: center !important;
+  padding: 80px 12px 40px !important;
+  margin: 0 auto !important;
+  box-sizing: border-box !important;
 }
 
 .game-page-wrap .app-container {
-  width: 100%;
-  max-width: 540px;
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+  width: 100% !important;
+  max-width: 500px !important;
+  margin: 0 auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 12px !important;
+  box-sizing: border-box !important;
 }
 
 .game-page-wrap .glass {
@@ -82,15 +92,19 @@ body.app-fullscreen-active .canvas-wrapper,
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 16px;
+  width: 100% !important;
+  box-sizing: border-box !important;
 }
 
 .game-page-wrap .app-header {
+  width: 100% !important;
   padding: 10px 14px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
   flex-wrap: wrap;
   gap: 8px;
+  box-sizing: border-box !important;
 }
 
 .game-page-wrap .header-brand {
@@ -185,15 +199,18 @@ body.app-fullscreen-active .canvas-wrapper,
 }
 
 .game-page-wrap .app-nav {
-  display: flex;
+  width: 100% !important;
+  display: flex !important;
+  justify-content: space-around !important;
   gap: 4px;
   padding: 4px;
   overflow-x: auto;
+  box-sizing: border-box !important;
 }
 
 .game-page-wrap .nav-btn {
   flex: 1;
-  min-width: 75px;
+  min-width: 70px;
   height: 36px;
   border-radius: 12px;
   background: transparent;
@@ -239,20 +256,22 @@ body.app-fullscreen-active .canvas-wrapper,
 }
 
 .game-page-wrap .game-board-container {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  align-items: center;
-  width: 100%;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+  align-items: center !important;
+  width: 100% !important;
+  margin: 0 auto !important;
+  box-sizing: border-box !important;
 }
 
 .game-page-wrap .game-top-bar {
-  width: 100%;
+  width: 100% !important;
   padding: 8px 12px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  box-sizing: border-box;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  box-sizing: border-box !important;
 }
 
 .game-page-wrap .stat-pill {
@@ -298,6 +317,7 @@ body.app-fullscreen-active .canvas-wrapper,
 .game-page-wrap .canvas-wrapper {
   position: relative !important;
   width: 100% !important;
+  max-width: 100% !important;
   display: flex !important;
   justify-content: center !important;
   align-items: center !important;
@@ -307,12 +327,14 @@ body.app-fullscreen-active .canvas-wrapper,
   box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
   background: #05060a;
   touch-action: none;
+  margin: 0 auto !important;
   box-sizing: border-box !important;
 }
 
 .game-page-wrap canvas {
   display: block;
-  width: 100%;
+  width: 100% !important;
+  margin: 0 auto !important;
 }
 
 .game-page-wrap .overlay-screen {
