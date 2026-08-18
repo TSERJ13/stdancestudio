@@ -100,7 +100,7 @@ export default function GameBoard({ availableLives, onSpendLife, onGameOver, onS
   const showBannerOnCanvas = (text) => {
     const engine = engineRef.current;
     engine.bannerText = text;
-    engine.bannerTimer = 120; // ~2 seconds at 60fps
+    engine.bannerTimer = 120;
   };
 
   const createParticles = (x, y, color) => {
@@ -286,37 +286,45 @@ export default function GameBoard({ availableLives, onSpendLife, onGameOver, onS
     setGameState('AIM');
   };
 
-  const setAim = (clientX, clientY) => {
+  const setAimFromCoords = (clientX, clientY) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const rect = canvas.getBoundingClientRect();
     const engine = engineRef.current;
-    const dx = (clientX - rect.left) - engine.launchX;
-    const dy = (clientY - rect.top) - engine.launchY;
+    const touchX = clientX - rect.left;
+    const touchY = clientY - rect.top;
+
+    const dx = touchX - engine.launchX;
+    const dy = touchY - engine.launchY;
     const clampedDy = Math.min(-10, dy);
-    engine.aimAngle = Math.max(-1.35, Math.min(1.35, Math.atan2(dx, -clampedDy)));
+    engine.aimAngle = Math.max(-1.38, Math.min(1.38, Math.atan2(dx, -clampedDy)));
   };
 
   const handlePointerDown = (e) => {
     const engine = engineRef.current;
     if (engine.state !== 'AIM') return;
+    if (e.cancelable && e.type.startsWith('touch')) e.preventDefault();
+
     engine.aiming = true;
-    const clientX = e.clientX || (e.touches && e.touches[0] ? e.touches[0].clientX : 0);
-    const clientY = e.clientY || (e.touches && e.touches[0] ? e.touches[0].clientY : 0);
-    setAim(clientX, clientY);
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    setAimFromCoords(clientX, clientY);
   };
 
   const handlePointerMove = (e) => {
     const engine = engineRef.current;
     if (!engine.aiming || engine.state !== 'AIM') return;
-    const clientX = e.clientX || (e.touches && e.touches[0] ? e.touches[0].clientX : 0);
-    const clientY = e.clientY || (e.touches && e.touches[0] ? e.touches[0].clientY : 0);
-    setAim(clientX, clientY);
+    if (e.cancelable && e.type.startsWith('touch')) e.preventDefault();
+
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    setAimFromCoords(clientX, clientY);
   };
 
-  const handlePointerUp = () => {
+  const handlePointerUp = (e) => {
     const engine = engineRef.current;
     if (!engine.aiming || engine.state !== 'AIM') return;
+    if (e.cancelable && e.type && e.type.startsWith('touch')) e.preventDefault();
     engine.aiming = false;
     launch();
   };
@@ -434,14 +442,33 @@ export default function GameBoard({ availableLives, onSpendLife, onGameOver, onS
       });
       engine.particles = engine.particles.filter(pt => pt.alpha > 0);
 
-      // Aim Line & Launch Ball
+      // FAINT LAUNCHER INDICATOR & AIM TRAJECTORY (მკრთალად ინიშნებოდეს ბურთის გამშვები ადგილი)
       if (engine.state === 'AIM') {
+        // Faint glowing launcher base ring
         ctx.save();
-        ctx.setLineDash([3, 7]); ctx.strokeStyle = 'rgba(240,217,168,.5)'; ctx.lineWidth = 2;
-        ctx.beginPath(); ctx.moveTo(engine.launchX, engine.launchY);
-        ctx.lineTo(engine.launchX + Math.sin(engine.aimAngle) * h * 1.5, engine.launchY - Math.cos(engine.aimAngle) * h * 1.5);
-        ctx.stroke(); ctx.restore();
+        ctx.shadowColor = GOLD_L;
+        ctx.shadowBlur = 15;
+        ctx.fillStyle = 'rgba(240, 217, 168, 0.12)';
+        ctx.strokeStyle = 'rgba(240, 217, 168, 0.4)';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.arc(engine.launchX, engine.launchY, 18, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+        ctx.restore();
 
+        // Dotted Aim Trajectory
+        ctx.save();
+        ctx.setLineDash([4, 6]);
+        ctx.strokeStyle = engine.superShots > 0 ? GOLD_L : 'rgba(240,217,168,.65)';
+        ctx.lineWidth = 2.2;
+        ctx.beginPath();
+        ctx.moveTo(engine.launchX, engine.launchY);
+        ctx.lineTo(engine.launchX + Math.sin(engine.aimAngle) * h * 1.5, engine.launchY - Math.cos(engine.aimAngle) * h * 1.5);
+        ctx.stroke();
+        ctx.restore();
+
+        // Launch Ball
         ctx.save();
         ctx.shadowColor = engine.superShots > 0 ? GOLD_L : '#FFFFFF';
         ctx.shadowBlur = engine.superShots > 0 ? 20 : 12;
@@ -451,7 +478,7 @@ export default function GameBoard({ availableLives, onSpendLife, onGameOver, onS
 
         if (engine.ballCount > 1) {
           ctx.fillStyle = GOLD_L; ctx.font = '700 11px sans-serif'; ctx.textAlign = 'center';
-          ctx.fillText('x' + engine.ballCount, engine.launchX, engine.launchY + 19);
+          ctx.fillText('x' + engine.ballCount, engine.launchX, engine.launchY + 28);
         }
       }
 
@@ -526,7 +553,7 @@ export default function GameBoard({ availableLives, onSpendLife, onGameOver, onS
         ctx.restore();
       });
 
-      // RENDER POWERUP BANNER DIRECTLY ON CANVAS (Prevents 0px DOM layout movement!)
+      // Canvas Powerup Banners (0px DOM shifting!)
       if (engine.bannerTimer > 0) {
         engine.bannerTimer--;
         ctx.save();
@@ -537,7 +564,6 @@ export default function GameBoard({ availableLives, onSpendLife, onGameOver, onS
 
         ctx.shadowColor = 'rgba(240,217,168,0.6)';
         ctx.shadowBlur = 12;
-        ctx.fillStyle = 'linear-gradient(90deg, #D4A55A, #F0D9A8, #D4A55A)';
         const grad = ctx.createLinearGradient(bannerX, bannerY, bannerX + bannerW, bannerY);
         grad.addColorStop(0, '#D4A55A');
         grad.addColorStop(0.5, '#F0D9A8');
@@ -599,7 +625,15 @@ export default function GameBoard({ availableLives, onSpendLife, onGameOver, onS
       </div>
 
       <div className="canvas-wrapper">
-        <canvas ref={canvasRef} />
+        <canvas
+          ref={canvasRef}
+          onMouseDown={handlePointerDown}
+          onMouseMove={handlePointerMove}
+          onMouseUp={handlePointerUp}
+          onTouchStart={handlePointerDown}
+          onTouchMove={handlePointerMove}
+          onTouchEnd={handlePointerUp}
+        />
 
         {gameState === 'READY' && (
           <div className="overlay-screen glass">
