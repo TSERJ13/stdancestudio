@@ -11,20 +11,65 @@ function InstagramIcon({ size = 20, color = 'currentColor' }) {
   );
 }
 
-export default function SocialShareModal({ isOpen, onClose, onUnlockShareLife, hasShareLife }) {
+const shareTranslations = {
+  ka: {
+    title: '📱 5-ე სიცოცხლის გამოწვევა — ინსტაგრამზე გაზიარება',
+    unlockedTitle: '🎉 5-ე სიცოცხლე გახსნილია! (❤️ #5)',
+    unlockedSub: 'ინსტაგრამზე გაზიარებით შენ მიიღე დღევანდელი მე-5 ბონუს სიცოცხლე!',
+    backBtn: 'თამაშში დაბრუნება',
+    shareTitle: 'გააზიარე ST Dance Studio და მიიღე +1 ბონუს სიცოცხლე (❤️ #5)',
+    shareSub: 'გახსენი @stdancestudio ინსტაგრამზე ან დააკოპირე თამაშის პრომო ლინკი მე-5 სიცოცხლის მისაღებად!',
+    igBtn: '📸 გაზიარება Instagram-ზე (+1 ❤️)',
+    copyBtn: '📋 თამაშის ლინკის კოპირება',
+    copiedText: '✓ ლინკი დაკოპირდა!',
+    successBonus: '🎉 +1 ❤️ ბონუს სიცოცხლე ჩაირიცხა!'
+  },
+  en: {
+    title: '📱 5th Life Challenge — Instagram Share',
+    unlockedTitle: '🎉 5th Life Unlocked! (❤️ #5)',
+    unlockedSub: 'You earned your 5th bonus life for today by sharing on Instagram!',
+    backBtn: 'Back to Game',
+    shareTitle: 'Share ST Dance Studio to get +1 Bonus Life (❤️ #5)',
+    shareSub: 'Open @stdancestudio on Instagram or copy game link to unlock your 5th daily life!',
+    igBtn: '📸 Share on Instagram (+1 ❤️)',
+    copyBtn: '📋 Copy Game Promo Link',
+    copiedText: '✓ Link Copied to Clipboard!',
+    successBonus: '🎉 +1 ❤️ Bonus Life Added!'
+  },
+  ru: {
+    title: '📱 5-я Жизнь — Поделиться в Instagram',
+    unlockedTitle: '🎉 5-я Жизнь Разблокирована! (❤️ #5)',
+    unlockedSub: 'Вы получили 5-ю бонусную жизнь на сегодня за публикацию в Instagram!',
+    backBtn: 'Вернуться в игру',
+    shareTitle: 'Поделитесь ST Dance Studio и получите +1 Бонусную Жизнь (❤️ #5)',
+    shareSub: 'Откройте @stdancestudio в Instagram или скопируйте ссылку на игру для получения 5-й жизни!',
+    igBtn: '📸 Поделиться в Instagram (+1 ❤️)',
+    copyBtn: '📋 Скопировать ссылку на игру',
+    copiedText: '✓ Ссылка скопирована!',
+    successBonus: '🎉 +1 ❤️ Бонусная Жизнь Добавлена!'
+  }
+};
+
+export default function SocialShareModal({ isOpen, onClose, onUnlockShareLife, hasShareLife, lang = 'ka' }) {
+  const t = shareTranslations[lang] || shareTranslations.ka;
+
   const [copied, setCopied] = useState(false);
   const [shared, setShared] = useState(false);
 
   if (!isOpen) return null;
 
   const handleCopyLink = () => {
-    navigator.clipboard.writeText('https://stdance.ge/promo');
+    navigator.clipboard.writeText('https://stdance.ge/game');
     setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    setTimeout(() => {
+      setCopied(false);
+      setShared(true);
+      onUnlockShareLife();
+    }, 1500);
   };
 
   const handleInstagramShare = () => {
-    window.open('https://www.instagram.com/stdancestudio/', '_blank');
+    window.open('https://www.instagram.com/stdancestudio.ge', '_blank');
     setTimeout(() => {
       setShared(true);
       onUnlockShareLife();
@@ -33,11 +78,11 @@ export default function SocialShareModal({ isOpen, onClose, onUnlockShareLife, h
 
   return (
     <div className="modal-overlay">
-      <div className="modal-content glass animate-in" style={{ maxWidth: '480px' }}>
+      <div className="modal-content glass animate-in" style={{ maxWidth: '460px' }}>
         <div className="modal-header">
           <div className="quiz-title-badge">
             <Share2 size={20} color="#d4a64a" />
-            <span>5TH LIFE CHALLENGE — SOCIAL SHARE</span>
+            <span>{t.title}</span>
           </div>
           <button className="btn-close" onClick={onClose}>✕</button>
         </div>
@@ -45,34 +90,40 @@ export default function SocialShareModal({ isOpen, onClose, onUnlockShareLife, h
         {hasShareLife ? (
           <div className="quiz-unlocked-state">
             <Heart size={56} fill="#ef4444" color="#ef4444" className="animate-bounce" />
-            <h3>5th Life Unlocked! (❤️ #5)</h3>
-            <p>You earned your 5th life for today by sharing on Instagram!</p>
-            <button className="btn-primary" onClick={onClose}>Back to Game</button>
+            <h3>{t.unlockedTitle}</h3>
+            <p>{t.unlockedSub}</p>
+            <button className="btn-primary" style={{ marginTop: '10px' }} onClick={onClose}>
+              {t.backBtn}
+            </button>
           </div>
         ) : (
           <div className="share-modal-body">
-            <div className="share-hero-icon">
+            <div className="share-hero-icon" style={{ background: 'rgba(225,48,108,0.12)', padding: '16px', borderRadius: '50%' }}>
               <InstagramIcon size={48} color="#e1306c" />
             </div>
 
-            <h3>Share ST Dance Studio to get +1 Bonus Life (❤️ #5)</h3>
-            <p>Share our Instagram Reel / Studio page or copy the invite link to unlock your 5th daily life!</p>
+            <h3 style={{ fontSize: '16px', fontWeight: '900', color: 'white', marginTop: '10px' }}>
+              {t.shareTitle}
+            </h3>
+            <p style={{ fontSize: '12px', color: '#a1a1aa', lineHeight: '1.4' }}>
+              {t.shareSub}
+            </p>
 
-            <div className="share-actions-column">
-              <button className="btn-ig-share" onClick={handleInstagramShare}>
-                <InstagramIcon size={20} /> Open @stdancestudio & Share Story
+            <div className="share-actions-column" style={{ width: '100%', marginTop: '14px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              <button className="btn-ig-share" onClick={handleInstagramShare} style={{ width: '100%', height: '46px', fontSize: '13px' }}>
+                <InstagramIcon size={18} color="white" /> {t.igBtn}
               </button>
 
-              <button className="btn-copy-link" onClick={handleCopyLink}>
+              <button className="btn-copy-link" onClick={handleCopyLink} style={{ width: '100%', height: '44px', fontSize: '13px' }}>
                 {copied ? <Check size={18} color="#22c55e" /> : <Copy size={18} />}
-                {copied ? 'Link Copied to Clipboard!' : 'Copy Game Promo Link'}
+                {copied ? t.copiedText : t.copyBtn}
               </button>
             </div>
 
             {shared && (
-              <div className="share-success-alert animate-in">
-                <Sparkles size={20} color="#d4a64a" />
-                <span>+1 ❤️ Bonus Life Added!</span>
+              <div className="share-success-alert animate-in" style={{ marginTop: '14px', padding: '10px 16px', background: 'rgba(34,197,94,0.15)', border: '1px solid rgba(34,197,94,0.4)', borderRadius: '12px', color: '#22c55e', fontSize: '13px', fontWeight: '800', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Sparkles size={18} color="#22c55e" />
+                <span>{t.successBonus}</span>
               </div>
             )}
           </div>

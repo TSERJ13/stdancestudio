@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useLanguage } from '../context/LanguageContext'
+import { translations } from '../data/translations'
 import { submitRegistration } from '../data/classcore'
 import { studioKnowledgeBase } from '../data/aiKnowledge'
 import { trackAnalyticsEvent } from '../utils/analytics'

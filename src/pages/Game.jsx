@@ -393,6 +393,7 @@ export default function Game() {
               onClose={() => setShowQuizModal(false)}
               hasQuizLife={livesData.hasQuizLife}
               onUnlockQuizLife={handleUnlockQuizLife}
+              lang={lang}
             />
 
             <SocialShareModal
@@ -400,6 +401,7 @@ export default function Game() {
               onClose={() => setShowShareModal(false)}
               hasShareLife={livesData.hasShareLife}
               onUnlockShareLife={handleUnlockShareLife}
+              lang={lang}
             />
 
             <LoginModal
