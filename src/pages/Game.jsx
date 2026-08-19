@@ -3,6 +3,7 @@ import { Play, Trophy, HelpCircle, Share2, Heart, Clock, Sparkles, Award, UserCh
 import { useLanguage } from '../context/LanguageContext';
 import GameBoard from '../components/game/GameBoard';
 import QuizModal from '../components/game/QuizModal';
+import { ErrorBoundary } from '../components/ErrorBoundary';
 import SocialShareModal from '../components/game/SocialShareModal';
 import Leaderboard from '../components/game/Leaderboard';
 import LoginModal from '../components/game/LoginModal';
@@ -418,12 +419,14 @@ export default function Game() {
               )}
 
               {activeTab === 'leaderboard' && (
-                <Leaderboard
-                  currentTotalScore={userProfile.totalScore || userProfile.highScore || 0}
-                  totalGames={userProfile.totalGames || 0}
-                  playerName={userProfile.studentId?.startsWith('TG-') ? userProfile.name : (userProfile.name || '')}
-                  onUpdatePlayerName={handleUpdateName}
-                />
+                <ErrorBoundary>
+                  <Leaderboard
+                    currentTotalScore={userProfile.totalScore || userProfile.highScore || 0}
+                    totalGames={userProfile.totalGames || 0}
+                    playerName={userProfile.studentId?.startsWith('TG-') ? userProfile.name : (userProfile.name || '')}
+                    onUpdatePlayerName={handleUpdateName}
+                  />
+                </ErrorBoundary>
               )}
 
               {activeTab === 'rules' && (
