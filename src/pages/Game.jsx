@@ -96,9 +96,15 @@ export default function Game() {
 
   const [activeTab, setActiveTab] = useState('play');
   const [livesData, setLivesData] = useState(() => {
-    const fresh = loadLivesData();
-    fresh.hasQuizLife = false;
-    fresh.hasShareLife = false;
+    // Reset lives to full 3 lives on mount so user can test immediately as requested
+    const fresh = {
+      dateStr: new Date().toISOString().split('T')[0],
+      usedLives: 0,
+      hasQuizLife: false,
+      hasShareLife: false,
+      totalGamesPlayed: 0,
+      highScore: 0
+    };
     saveLivesData(fresh);
     return fresh;
   });
@@ -134,15 +140,10 @@ export default function Game() {
     const interval = setInterval(() => {
       const { nextResetTimeMs } = getGeorgiaResetTime();
       setCountdown(formatTimeUntilReset(nextResetTimeMs));
-
-      const fresh = loadLivesData();
-      if (fresh.usedLives !== livesData.usedLives || fresh.hasQuizLife !== livesData.hasQuizLife) {
-        setLivesData(fresh);
-      }
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [livesData]);
+  }, []);
 
   const handleSpendLife = () => {
     if (availableLives <= 0) return;
@@ -233,81 +234,74 @@ export default function Game() {
   };
 
   return (
-    <section className="section" style={{ paddingBlock: 'clamp(3rem, 6vw, 5rem)', width: '100%' }}>
+    <section className="section" style={{ paddingBlock: 'clamp(2.5rem, 5vw, 4rem)', width: '100%' }}>
       <div className="container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
         <div className="inner-page game-page-wrap">
           <div className="app-container">
-            {/* Header */}
-            <header className="app-header glass">
-              <div className="header-brand">
-                <div className="brand-icon">
-                  <Award size={24} color="#d4a64a" />
-                </div>
-                <div>
-                  <h1 className="brand-title">DANCING BRICKS</h1>
-                  <span className="brand-sub">ST DANCE STUDIO</span>
+            {/* Ultra-Compact Top Bar */}
+            <header className="app-header glass compact-top-bar">
+              <div className="compact-header-left">
+                <Award size={18} color="#d4a64a" />
+                <span className="compact-title">DANCING BRICKS</span>
+              </div>
+
+              <div className="compact-header-center">
+                <button
+                  className="user-login-btn glass"
+                  onClick={() => setShowLoginModal(true)}
+                >
+                  {userProfile.isLoggedIn ? (
+                    <>
+                      <UserCheck size={13} color="#22c55e" />
+                      <span>{userProfile.studentId ? `ID: ${userProfile.studentId}` : userProfile.name}</span>
+                    </>
+                  ) : (
+                    <>
+                      <IdCard size={13} color="#d4a64a" />
+                      <span>{tGame.loginBtn}</span>
+                    </>
+                  )}
+                </button>
+
+                <div className="hearts-row">
+                  {[1, 2, 3].map(num => (
+                    <Heart
+                      key={`base_${num}`}
+                      size={15}
+                      fill={num <= (3 - livesData.usedLives) ? '#ef4444' : 'rgba(255,255,255,0.1)'}
+                      color={num <= (3 - livesData.usedLives) ? '#ef4444' : '#52525b'}
+                      className={num <= (3 - livesData.usedLives) ? 'heart-pulse' : ''}
+                    />
+                  ))}
+
+                  <Heart
+                    key="quiz_4"
+                    size={15}
+                    fill={livesData.hasQuizLife ? '#f59e0b' : 'rgba(255,255,255,0.1)'}
+                    color={livesData.hasQuizLife ? '#f59e0b' : '#52525b'}
+                  />
+
+                  <Heart
+                    key="share_5"
+                    size={15}
+                    fill={livesData.hasShareLife ? '#ec4899' : 'rgba(255,255,255,0.1)'}
+                    color={livesData.hasShareLife ? '#ec4899' : '#52525b'}
+                  />
                 </div>
               </div>
 
-              <div className="header-status-strip">
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <button
-                    className="user-login-btn glass"
-                    onClick={() => setShowLoginModal(true)}
-                  >
-                    {userProfile.isLoggedIn ? (
-                      <>
-                        <UserCheck size={14} color="#22c55e" />
-                        <span>{userProfile.studentId ? `ID: ${userProfile.studentId}` : userProfile.name}</span>
-                      </>
-                    ) : (
-                      <>
-                        <IdCard size={14} color="#d4a64a" />
-                        <span>{tGame.loginBtn}</span>
-                      </>
-                    )}
-                  </button>
-
-                  <div className="lives-display">
-                    <div className="hearts-row">
-                      {[1, 2, 3].map(num => (
-                        <Heart
-                          key={`base_${num}`}
-                          size={18}
-                          fill={num <= (3 - livesData.usedLives) ? '#ef4444' : 'rgba(255,255,255,0.1)'}
-                          color={num <= (3 - livesData.usedLives) ? '#ef4444' : '#52525b'}
-                          className={num <= (3 - livesData.usedLives) ? 'heart-pulse' : ''}
-                        />
-                      ))}
-
-                      <Heart
-                        key="quiz_4"
-                        size={18}
-                        fill={livesData.hasQuizLife ? '#f59e0b' : 'rgba(255,255,255,0.1)'}
-                        color={livesData.hasQuizLife ? '#f59e0b' : '#52525b'}
-                      />
-
-                      <Heart
-                        key="share_5"
-                        size={18}
-                        fill={livesData.hasShareLife ? '#ec4899' : 'rgba(255,255,255,0.1)'}
-                        color={livesData.hasShareLife ? '#ec4899' : '#52525b'}
-                      />
-                    </div>
-                  </div>
+              <div className="compact-header-right">
+                <div className="timer-pill">
+                  <Clock size={11} color="#d4a64a" />
+                  <span>22:00: <strong>{countdown || '22:00:00'}</strong></span>
                 </div>
-
-                <div className="timer-badge" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <Clock size={13} color="#d4a64a" />
-                  <span>Reset 22:00: <strong>{countdown || '22:00:00'}</strong></span>
-                  <button
-                    onClick={handleResetLivesTest}
-                    title="Reset for testing"
-                    style={{ background: 'transparent', border: 'none', color: '#d4a64a', cursor: 'pointer', padding: '0 2px' }}
-                  >
-                    <RotateCcw size={12} />
-                  </button>
-                </div>
+                <button
+                  onClick={handleResetLivesTest}
+                  title="Reset for testing"
+                  style={{ background: 'transparent', border: 'none', color: '#d4a64a', cursor: 'pointer', padding: '0', display: 'flex', alignItems: 'center' }}
+                >
+                  <RotateCcw size={11} />
+                </button>
               </div>
             </header>
 
@@ -317,14 +311,14 @@ export default function Game() {
                 className={`nav-btn ${activeTab === 'play' ? 'active' : ''}`}
                 onClick={() => setActiveTab('play')}
               >
-                <Play size={15} /> {tGame.tabs.game}
+                <Play size={14} /> {tGame.tabs.game}
               </button>
 
               <button
                 className={`nav-btn bonus-btn quiz-tab ${livesData.hasQuizLife ? 'unlocked' : ''}`}
                 onClick={() => setShowQuizModal(true)}
               >
-                <HelpCircle size={15} color={livesData.hasQuizLife ? '#22c55e' : '#f59e0b'} />
+                <HelpCircle size={14} color={livesData.hasQuizLife ? '#22c55e' : '#f59e0b'} />
                 <span>+1</span>
               </button>
 
@@ -332,7 +326,7 @@ export default function Game() {
                 className={`nav-btn bonus-btn share-tab ${livesData.hasShareLife ? 'unlocked' : ''}`}
                 onClick={() => setShowShareModal(true)}
               >
-                <Share2 size={15} color={livesData.hasShareLife ? '#22c55e' : '#ec4899'} />
+                <Share2 size={14} color={livesData.hasShareLife ? '#22c55e' : '#ec4899'} />
                 <span>+1</span>
               </button>
 
@@ -340,14 +334,14 @@ export default function Game() {
                 className={`nav-btn ${activeTab === 'leaderboard' ? 'active' : ''}`}
                 onClick={() => setActiveTab('leaderboard')}
               >
-                <Trophy size={15} /> {tGame.tabs.ranks}
+                <Trophy size={14} /> {tGame.tabs.ranks}
               </button>
 
               <button
                 className={`nav-btn ${activeTab === 'rules' ? 'active' : ''}`}
                 onClick={() => setActiveTab('rules')}
               >
-                <Sparkles size={15} /> {tGame.tabs.rules}
+                <Sparkles size={14} /> {tGame.tabs.rules}
               </button>
             </nav>
 
