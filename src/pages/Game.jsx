@@ -254,7 +254,7 @@ export default function Game() {
                   {userProfile.isLoggedIn ? (
                     <>
                       <UserCheck size={13} color="#22c55e" />
-                      <span>{userProfile.studentId ? `ID: ${userProfile.studentId}` : userProfile.name}</span>
+                      <span>{userProfile.studentId ? `ID: ${userProfile.studentId}` : (userProfile.name || '').split(' ')[0]}</span>
                     </>
                   ) : (
                     <>

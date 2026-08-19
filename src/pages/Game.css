@@ -3,7 +3,8 @@ body.page-game-active #ai-chat-widget,
 body.page-game-active [class*="AIChatWidget"],
 body.page-game-active [class*="LanguageSwitcher"],
 body.page-game-active .lang-switcher-fab,
-body.page-game-active .chat-fab {
+body.page-game-active .chat-fab,
+body.page-game-active .floating-lang {
   display: none !important;
   opacity: 0 !important;
   pointer-events: none !important;
@@ -56,7 +57,8 @@ body.app-fullscreen-active .canvas-wrapper,
 .game-board-container:-webkit-full-screen .canvas-wrapper {
   width: 100% !important;
   max-width: 520px !important;
-  height: calc(100vh - 75px) !important;
+  /* Leave enough room so ball at bottom is always visible */
+  height: calc(100vh - 90px) !important;
   max-height: none !important;
 }
 
@@ -631,10 +633,55 @@ body.app-fullscreen-active .canvas-wrapper,
   background: #0f0f16;
 }
 
+/* Rules Card */
+.game-page-wrap .rules-card {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 18px 16px;
+  border-radius: 18px;
+}
+
+.game-page-wrap .rules-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.game-page-wrap .rule-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.game-page-wrap .rule-item svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.game-page-wrap .rule-item strong {
+  font-size: 13px;
+  font-weight: 900;
+  color: #F0D9A8;
+  display: block;
+  margin-bottom: 2px;
+}
+
+.game-page-wrap .rule-item p {
+  font-size: 12px;
+  color: #a1a1aa;
+  line-height: 1.45;
+  margin: 0;
+}
+
 /* Mobile Responsiveness Overrides */
 @media (max-width: 640px) {
   .game-page-wrap {
-    padding: 72px 4px 16px !important;
+    padding: 72px 6px 16px !important;
   }
   .game-page-wrap .app-header {
     padding: 8px 10px;
@@ -662,5 +709,11 @@ body.app-fullscreen-active .canvas-wrapper,
   }
   .game-page-wrap .stat-val {
     font-size: 12px;
+  }
+  .game-page-wrap .rules-card {
+    padding: 14px 12px;
+  }
+  .game-page-wrap .leaderboard-container {
+    padding: 14px 12px;
   }
 }

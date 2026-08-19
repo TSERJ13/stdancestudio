@@ -261,8 +261,8 @@ export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOv
 
   const spawnBall = () => {
     const engine = engineRef.current;
-    // Speed ramps faster: +0.08 per round, no cap (gets very fast at high rounds)
-    const currentSpd = Math.min(5.0, 1.0 + (engine.round - 1) * 0.08);
+    // Speed ramps +0.064 per round (20% easier than +0.08), cap at 4.0x
+    const currentSpd = Math.min(4.0, 1.0 + (engine.round - 1) * 0.064);
     engine.speedMult = currentSpd;
     setSpeedMult(currentSpd);
 
@@ -475,8 +475,10 @@ export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOv
 
         if (b.specialType && stLogoImgRef.current) {
           ctx.save();
-          const imgW = b.w * 0.75;
-          const imgH = b.h * 0.75;
+          ctx.imageSmoothingEnabled = true;
+          ctx.imageSmoothingQuality = 'high';
+          const imgW = b.w * 0.80;
+          const imgH = b.h * 0.80;
           const imgX = b.x + (b.w - imgW) / 2;
           const imgY = b.y + (b.h - imgH) / 2;
           ctx.drawImage(stLogoImgRef.current, imgX, imgY, imgW, imgH);
@@ -544,13 +546,26 @@ export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOv
         ctx.beginPath(); ctx.arc(engine.launchX, engine.launchY, 7, 0, Math.PI * 2); ctx.fill();
         ctx.restore();
 
-        if (engine.ballCount > 1) {
-          ctx.fillStyle = GOLD_L; ctx.font = '700 11px sans-serif'; ctx.textAlign = 'center';
-          ctx.fillText('x' + engine.ballCount, engine.launchX, engine.launchY + 28);
-        }
+        // Always show ball count at launch position
+        ctx.save();
+        ctx.fillStyle = GOLD_L;
+        ctx.font = 'bold 13px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.shadowColor = GOLD_L;
+        ctx.shadowBlur = 8;
+        ctx.fillText('×' + engine.ballCount, engine.launchX, engine.launchY + 26);
+        ctx.restore();
       }
 
       if (engine.state === 'SHOOT') {
+        // Show ball count indicator during shoot at last known launch position
+        ctx.save();
+        ctx.fillStyle = 'rgba(240,217,168,0.6)';
+        ctx.font = '700 12px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('×' + engine.ballCount, engine.launchX, engine.launchY - 16);
+        ctx.restore();
         engine.shootTimer++;
         const shootInterval = Math.max(2, 6 - Math.floor(engine.round / 4));
         if (engine.ballsPending > 0 && engine.shootTimer % shootInterval === 0) {
