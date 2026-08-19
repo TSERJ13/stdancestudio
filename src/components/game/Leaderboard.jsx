@@ -36,7 +36,7 @@ export default function Leaderboard({ currentHighScore, playerName, onUpdatePlay
         code: 'ST-WIN-8942',
         prizeName: '-50% ვაუჩერი',
         prizeDesc: '-50% ფასდაკლების ვაუჩერი Danceshop.Ge-ზე',
-        prizeImg: '/images/prizes/voucher_50.jpg',
+        prizeImg: '/images/prizes/voucher_50.png',
         winnerName: playerName || 'სერგო წივწივაძე',
         date: '19/08/2026'
       }

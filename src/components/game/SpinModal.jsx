@@ -2,14 +2,14 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Gift, Sparkles, Trophy, Award, RotateCw, Ticket, Copy, Check } from 'lucide-react';
 
 export const PRIZES = [
-  { id: 'bottle', name: 'წყლის ბოთლი', desc: 'ST Dance Studio ბრენდირებული წყლის ბოთლი', img: '/images/prizes/water_bottle.jpg', color: '#F0D9A8' },
-  { id: 'umbrella', name: 'ქოლგა', desc: 'ST Dance Studio ბრენდირებული ქოლგა', img: '/images/prizes/umbrella.jpg', color: '#6FC3E0' },
-  { id: 'v50', name: '-50% ვაუჩერი', desc: '-50% ფასდაკლების ვაუჩერი Danceshop.Ge-ზე', img: '/images/prizes/voucher_50.jpg', color: '#F0D9A8' },
-  { id: 'raincoat', name: 'საწვიმარი', desc: 'ST Dance Studio ბრენდირებული საწვიმარი', img: '/images/prizes/raincoat.jpg', color: '#B87BDE' },
-  { id: 'backpack', name: 'ზურგჩანთა', desc: 'ST Dance Studio ბრენდირებული ზურგჩანთა', img: '/images/prizes/backpack.jpg', color: '#E0764A' },
-  { id: 'phone_case', name: 'ქეისი', desc: 'ST Dance Studio ბრენდირებული ქეისი', img: '/images/prizes/phone_case.jpg', color: '#6FD98F' },
-  { id: 'v30', name: '-30% ვაუჩერი', desc: '-30% ფასდაკლების ვაუჩერი Danceshop.Ge-ზე', img: '/images/prizes/voucher_30.jpg', color: '#F0D9A8' },
-  { id: 'v100', name: '-100% ვაუჩერი', desc: '100% უფასო სრული ვაუჩერი Danceshop.Ge-ზე', img: '/images/prizes/voucher_100.jpg', color: '#FF4444' }
+  { id: 'bottle', name: 'წყლის ბოთლი', desc: 'ST Dance Studio ბრენდირებული წყლის ბოთლი', img: '/images/prizes/water_bottle.png', color: '#F0D9A8' },
+  { id: 'umbrella', name: 'ქოლგა', desc: 'ST Dance Studio ბრენდირებული ქოლგა', img: '/images/prizes/umbrella.png', color: '#6FC3E0' },
+  { id: 'v50', name: '-50% ვაუჩერი', desc: '-50% ფასდაკლების ვაუჩერი Danceshop.Ge-ზე', img: '/images/prizes/voucher_50.png', color: '#F0D9A8' },
+  { id: 'raincoat', name: 'საწვიმარი', desc: 'ST Dance Studio ბრენდირებული საწვიმარი', img: '/images/prizes/raincoat.png', color: '#B87BDE' },
+  { id: 'backpack', name: 'ზურგჩანთა', desc: 'ST Dance Studio ბრენდირებული ზურგჩანთა', img: '/images/prizes/backpack.png', color: '#E0764A' },
+  { id: 'phone_case', name: 'ქეისი', desc: 'ST Dance Studio ბრენდირებული ქეისი', img: '/images/prizes/phone_case.png', color: '#6FD98F' },
+  { id: 'v30', name: '-30% ვაუჩერი', desc: '-30% ფასდაკლების ვაუჩერი Danceshop.Ge-ზე', img: '/images/prizes/voucher_30.png', color: '#F0D9A8' },
+  { id: 'v100', name: '-100% ვაუჩერი', desc: '100% უფასო სრული ვაუჩერი Danceshop.Ge-ზე', img: '/images/prizes/voucher_100.png', color: '#FF4444' }
 ];
 
 export default function SpinModal({ isOpen, onClose, winnerName = 'ჩემპიონი', onClaimPrize }) {
@@ -117,7 +117,7 @@ export default function SpinModal({ isOpen, onClose, winnerName = 'ჩემპ�
         ctx.translate(imgDist, 0);
         ctx.rotate(Math.PI / 2);
 
-        // Pure White Circular Background (No dark/checkerboard background)
+        // Pure White Circular Background
         ctx.beginPath();
         ctx.arc(0, 0, imgSize / 2, 0, Math.PI * 2);
         ctx.closePath();
