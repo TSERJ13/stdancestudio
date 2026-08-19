@@ -84,7 +84,7 @@ body.app-fullscreen-active .canvas-wrapper,
   flex-direction: column !important;
   justify-content: flex-start !important;
   align-items: center !important;
-  padding: 12px 8px 12px !important;
+  padding: 48px 8px 12px !important;
   margin: 0 auto !important;
   box-sizing: border-box !important;
 }
