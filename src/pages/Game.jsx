@@ -95,10 +95,12 @@ export default function Game() {
   const tGame = gameTranslations[lang] || gameTranslations.ka;
 
   const [activeTab, setActiveTab] = useState('play');
+
+  // Always initialize with 3 full active lives on mount
   const [livesData, setLivesData] = useState(() => {
-    // Reset lives to full 3 lives on mount so user can test immediately as requested
     const fresh = {
       dateStr: new Date().toISOString().split('T')[0],
+      baseLives: 3,
       usedLives: 0,
       hasQuizLife: false,
       hasShareLife: false,
@@ -108,6 +110,7 @@ export default function Game() {
     saveLivesData(fresh);
     return fresh;
   });
+
   const [countdown, setCountdown] = useState('');
 
   const [userProfile, setUserProfile] = useState(() => {
@@ -148,7 +151,7 @@ export default function Game() {
   const handleSpendLife = () => {
     if (availableLives <= 0) return;
     setLivesData(prev => {
-      const updated = { ...prev, usedLives: prev.usedLives + 1 };
+      const updated = { ...prev, usedLives: Math.min(prev.baseLives || 3, prev.usedLives + 1) };
       return saveLivesData(updated);
     });
   };
@@ -223,6 +226,7 @@ export default function Game() {
   const handleResetLivesTest = () => {
     const fresh = {
       dateStr: new Date().toISOString().split('T')[0],
+      baseLives: 3,
       usedLives: 0,
       hasQuizLife: false,
       hasShareLife: false,
@@ -297,7 +301,7 @@ export default function Game() {
                 </div>
                 <button
                   onClick={handleResetLivesTest}
-                  title="Reset for testing"
+                  title="Reset Lives"
                   style={{ background: 'transparent', border: 'none', color: '#d4a64a', cursor: 'pointer', padding: '0', display: 'flex', alignItems: 'center' }}
                 >
                   <RotateCcw size={11} />
