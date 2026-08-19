@@ -91,7 +91,7 @@ export default function SocialShareModal({ isOpen, onClose, onUnlockShareLife, h
             <Share2 size={18} color="#d4a64a" />
             <span style={{ fontSize: '13px', fontWeight: '800', color: '#F0D9A8' }}>{t.title}</span>
           </div>
-          <button className="btn-close" onClick={onClose} style={{ width: '32px', height: '32px', fontSize: '16px' }}>✕</button>
+          <button className="btn-close" onClick={onClose} style={{ width: '44px', height: '44px', fontSize: '20px' }}>✕</button>
         </div>
 
         {hasShareLife ? (

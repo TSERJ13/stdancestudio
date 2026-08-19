@@ -213,7 +213,8 @@ export default function Game() {
       const updated = {
         ...prev,
         totalGames: (prev.totalGames || 0) + 1,
-        highScore: Math.max(prev.highScore || 0, score)
+        highScore: Math.max(prev.highScore || 0, score),
+        totalScore: (prev.totalScore || 0) + score
       };
       localStorage.setItem('dancing_bricks_user_profile', JSON.stringify(updated));
       return updated;
@@ -411,9 +412,10 @@ export default function Game() {
 
               {activeTab === 'leaderboard' && (
                 <Leaderboard
-                  currentHighScore={userProfile.highScore || livesData.highScore}
-                  playerName={userProfile.name}
-                  onUpdatePlayerName={(name) => handleLogin({ name })}
+                  currentTotalScore={userProfile.totalScore || userProfile.highScore || 0}
+                  totalGames={userProfile.totalGames || 0}
+                  playerName={userProfile.studentId?.startsWith('TG-') ? userProfile.name : (userProfile.name || '')}
+                  onUpdatePlayerName={handleUpdateName}
                 />
               )}
 

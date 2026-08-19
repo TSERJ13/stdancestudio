@@ -251,6 +251,20 @@ body.app-fullscreen-active .canvas-wrapper,
   padding: 0 6px;
 }
 
+.btn-close {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #a1a1aa;
+  width: 38px;
+  height: 38px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 18px;
+}
+
 .game-page-wrap .nav-btn:hover {
   background: rgba(255, 255, 255, 0.08);
   color: white;

@@ -51,10 +51,18 @@ export default function QuizModal({ isOpen, onClose, onUnlockQuizLife, hasQuizLi
   const [selectedOption, setSelectedOption] = useState(null);
   const [correctCount, setCorrectCount] = useState(0);
   const [isFinished, setIsFinished] = useState(false);
+  const [randomQuestions, setRandomQuestions] = useState([]);
+
+  React.useEffect(() => {
+    if (isOpen) {
+      const shuffled = [...QUIZ_QUESTIONS].sort(() => 0.5 - Math.random());
+      setRandomQuestions(shuffled.slice(0, 3));
+    }
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
-  const currentQ = QUIZ_QUESTIONS[currentIdx] || QUIZ_QUESTIONS[0];
+  const currentQ = randomQuestions[currentIdx] || QUIZ_QUESTIONS[0];
 
   const handleSelect = (optionIdx) => {
     if (selectedOption !== null) return;
@@ -94,7 +102,7 @@ export default function QuizModal({ isOpen, onClose, onUnlockQuizLife, hasQuizLi
             <HelpCircle size={18} color="#d4a64a" />
             <span style={{ fontSize: '13px', fontWeight: '800', color: '#F0D9A8' }}>{t.title}</span>
           </div>
-          <button className="btn-close" onClick={onClose}>✕</button>
+          <button className="btn-close" onClick={onClose} style={{ width: '44px', height: '44px', fontSize: '20px' }}>✕</button>
         </div>
 
         {hasQuizLife ? (

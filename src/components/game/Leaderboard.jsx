@@ -4,12 +4,12 @@ import { useLanguage } from '../../context/LanguageContext';
 import SpinModal from './SpinModal';
 
 const TEST_LEADERBOARD = [
-  { id: '101', rank: 1, name: 'სერგო წივწივაძე (Head Coach)', score: 2480, games: 18, isStudent: true, avatarBg: '#d4a64a' },
-  { id: '102', rank: 2, name: 'მარიამი (Samba Star)', score: 1950, games: 14, isStudent: true, avatarBg: '#6fc3e0' },
-  { id: '103', rank: 3, name: 'ნიკოლოზი (Cha-Cha King)', score: 1620, games: 12, isStudent: true, avatarBg: '#b87bde' },
-  { id: '104', rank: 4, name: 'ანა (Rumba Queen)', score: 1340, games: 10, isStudent: true, avatarBg: '#e0764a' },
-  { id: '105', rank: 5, name: 'გიორგი (Jive Champ)', score: 1110, games: 8, isStudent: true, avatarBg: '#6fd98f' },
-  { id: '106', rank: 6, name: 'ელენე (Waltz Master)', score: 890, games: 6, isStudent: true, avatarBg: '#ff4444' }
+  { id: '101', rank: 1, name: 'სერგო წივწივაძე (Head Coach)', score: 3200, games: 25, isStudent: true, avatarBg: '#d4a64a' },
+  { id: '102', rank: 2, name: 'მარიამი (Samba Star)', score: 850, games: 6, isStudent: true, avatarBg: '#6fc3e0' },
+  { id: '103', rank: 3, name: 'ნიკოლოზი (Cha-Cha King)', score: 620, games: 5, isStudent: true, avatarBg: '#b87bde' },
+  { id: '104', rank: 4, name: 'ანა (Rumba Queen)', score: 440, games: 4, isStudent: true, avatarBg: '#e0764a' },
+  { id: '105', rank: 5, name: 'გიორგი (Jive Champ)', score: 210, games: 2, isStudent: true, avatarBg: '#6fd98f' },
+  { id: '106', rank: 6, name: 'ელენე (Waltz Master)', score: 90, games: 1, isStudent: true, avatarBg: '#ff4444' }
 ];
 
 const WINNERS_HISTORY = [
@@ -27,7 +27,7 @@ const lbTranslations = {
     myPrizesTab: (count) => `ვაუჩერი (${count})`,
     historyTab: 'ისტორია',
     profileLbl: 'პროფაილი:',
-    highScoreLbl: 'რეკორდი: ',
+    highScoreLbl: 'ჯამური ქულა: ',
     collectBtn: 'პრიზი',
     activeBadge: 'აქტიური',
     deliveredBadge: 'გადაცემული',
@@ -45,7 +45,7 @@ const lbTranslations = {
     myPrizesTab: (count) => `Voucher (${count})`,
     historyTab: 'History',
     profileLbl: 'Profile:',
-    highScoreLbl: 'High Score: ',
+    highScoreLbl: 'Total Score: ',
     collectBtn: 'Collect',
     activeBadge: 'ACTIVE',
     deliveredBadge: 'Delivered',
@@ -63,7 +63,7 @@ const lbTranslations = {
     myPrizesTab: (count) => `Ваучер (${count})`,
     historyTab: 'История',
     profileLbl: 'Профиль:',
-    highScoreLbl: 'Рекорд: ',
+    highScoreLbl: 'Общ. счет: ',
     collectBtn: 'Забрать',
     activeBadge: 'АКТИВЕН',
     deliveredBadge: 'Выдано',
@@ -75,9 +75,33 @@ const lbTranslations = {
   }
 };
 
-export default function Leaderboard({ currentHighScore, playerName, onUpdatePlayerName }) {
+export default function Leaderboard({ currentTotalScore, totalGames, playerName, onUpdatePlayerName }) {
   const { lang } = useLanguage();
   const t = lbTranslations[lang] || lbTranslations.ka;
+
+  // Build dynamic leaderboard list
+  const displayScore = currentTotalScore || 0;
+  const combinedList = [...TEST_LEADERBOARD];
+
+  if (playerName) {
+    const isMeMock = combinedList.findIndex(m => m.name === playerName || m.name.includes(playerName));
+    if (isMeMock !== -1) {
+      combinedList[isMeMock].score = Math.max(combinedList[isMeMock].score, displayScore);
+      combinedList[isMeMock].games = Math.max(combinedList[isMeMock].games, totalGames || 0);
+    } else {
+      combinedList.push({
+        id: 'ME',
+        name: playerName,
+        score: displayScore,
+        games: totalGames || 0,
+        avatarBg: '#22c55e'
+      });
+    }
+  }
+
+  // Sort and assign ranks
+  combinedList.sort((a, b) => b.score - a.score);
+  const rankedList = combinedList.map((item, index) => ({ ...item, rank: index + 1 }));
 
   const [activeTab, setActiveTab] = useState('ranks');
   const [editingName, setEditingName] = useState(false);
@@ -142,7 +166,7 @@ export default function Leaderboard({ currentHighScore, playerName, onUpdatePlay
         </div>
 
         <button
-          onClick={() => openSpinForWinner(TEST_LEADERBOARD[0].name)}
+          onClick={() => openSpinForWinner(rankedList[0]?.name)}
           style={{
             padding: '6px 10px',
             borderRadius: '10px',
@@ -256,12 +280,12 @@ export default function Leaderboard({ currentHighScore, playerName, onUpdatePlay
             )}
             <div className="my-score-pill">
               <span>{t.highScoreLbl}</span>
-              <strong style={{ color: '#d4a64a' }}>{(currentHighScore || 0).toLocaleString()}</strong>
+              <strong style={{ color: '#d4a64a' }}>{(currentTotalScore || 0).toLocaleString()}</strong>
             </div>
           </div>
 
           <div className="lb-list">
-            {TEST_LEADERBOARD.map((item) => {
+            {rankedList.map((item) => {
               const isWinner = item.rank === 1;
               return (
                 <div key={item.id} className={`lb-row ${item.name === playerName ? 'is-me' : ''}`}>
@@ -293,13 +317,14 @@ export default function Leaderboard({ currentHighScore, playerName, onUpdatePlay
                         display: 'flex',
                         alignItems: 'center',
                         gap: '4px',
-                        boxShadow: '0 0 12px rgba(34,197,94,0.4)'
+                        boxShadow: '0 0 12px rgba(34,197,94,0.4)',
+                        zIndex: 1
                       }}
                     >
                       <Gift size={14} /> {t.collectBtn}
                     </button>
                   ) : (
-                    <div className="lb-score-col">
+                    <div className="lb-score-col" style={{ zIndex: 1 }}>
                       <span className="lb-score">{item.score.toLocaleString()} {t.pts}</span>
                       <span className="lb-games">{item.games} {t.games}</span>
                     </div>

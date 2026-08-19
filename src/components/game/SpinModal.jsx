@@ -316,7 +316,7 @@ export default function SpinModal({ isOpen, onClose, winnerName = 'ჩემპ�
             <Gift size={18} color="#d4a64a" />
             <span style={{ fontSize: '12px', fontWeight: '800', color: '#F0D9A8' }}>{t.badgeTitle}</span>
           </div>
-          <button className="btn-close" onClick={onClose}>✕</button>
+          <button className="btn-close" onClick={onClose} style={{ width: '44px', height: '44px', fontSize: '20px' }}>✕</button>
         </div>
 
         {!wonPrize ? (

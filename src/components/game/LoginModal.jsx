@@ -116,7 +116,7 @@ export default function LoginModal({ isOpen, onClose, currentUser, onLogin, onLo
             <IdCard size={18} color="#d4a64a" />
             <span style={{ fontSize: '13px', fontWeight: '900', color: '#F0D9A8' }}>მოსწავლის ID-ით შესვლა</span>
           </div>
-          <button onClick={onClose} style={{ background: 'transparent', border: 'none', color: '#a1a1aa', cursor: 'pointer', padding: '4px', display: 'flex', alignItems: 'center' }}>
+          <button className="btn-close" onClick={onClose} style={{ width: '44px', height: '44px', fontSize: '20px', background: 'transparent', border: 'none', color: '#a1a1aa', cursor: 'pointer', padding: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <X size={18} />
           </button>
         </div>
