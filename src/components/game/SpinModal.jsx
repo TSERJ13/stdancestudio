@@ -69,10 +69,10 @@ export default function SpinModal({ isOpen, onClose, winnerName = 'ჩემპ�
 
     ctx.clearRect(0, 0, displaySize, displaySize);
 
-    // Draw Outer Gold Ring Glow
+    // Outer Gold Ring Glow
     ctx.save();
     ctx.shadowColor = '#d4a64a';
-    ctx.shadowBlur = 18;
+    ctx.shadowBlur = 16;
     ctx.strokeStyle = '#d4a64a';
     ctx.lineWidth = 7;
     ctx.beginPath();
@@ -117,41 +117,50 @@ export default function SpinModal({ isOpen, onClose, winnerName = 'ჩემპ�
       ctx.fillText(prize.name, 0, 0);
       ctx.restore();
 
-      // 2. Draw Prize Image Thumbnail on PURE WHITE BACKGROUND CIRCLE (radius * 0.48)
+      // 2. Draw Prize Image Thumbnail on PURE WHITE BACKGROUND DISK
       const img = loadedImgsRef.current[i];
       const imgDist = radius * 0.48;
-      const imgSize = 52;
+      const imgSize = 54;
+      const imgRadius = imgSize / 2;
 
       if (img) {
         ctx.save();
         ctx.translate(imgDist, 0);
         ctx.rotate(Math.PI / 2);
 
-        // Pure White Circular Background Circle
+        // A. Draw Pure White Solid Background Disk (No shadows/artifacts)
         ctx.beginPath();
-        ctx.arc(0, 0, imgSize / 2, 0, Math.PI * 2);
-        ctx.closePath();
+        ctx.arc(0, 0, imgRadius, 0, Math.PI * 2);
         ctx.fillStyle = '#ffffff';
         ctx.fill();
 
-        // Glowing Gold Ring Around White Circle
-        ctx.strokeStyle = '#d4a64a';
-        ctx.lineWidth = 2;
-        ctx.stroke();
-
+        // B. Clip Image cleanly inside White Disk
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(0, 0, imgRadius - 0.5, 0, Math.PI * 2);
         ctx.clip();
 
-        // Calculate aspect ratio contain fit so image is never stretched or blurry
+        // Aspect ratio contain fit with clean padding
+        const maxDim = imgSize * 0.78;
         const aspect = (img.naturalWidth || img.width) / (img.naturalHeight || img.height || 1);
-        let drawW = imgSize * 0.84;
-        let drawH = imgSize * 0.84;
+        let drawW = maxDim;
+        let drawH = maxDim;
         if (aspect > 1) {
-          drawH = drawW / aspect;
+          drawH = maxDim / aspect;
         } else {
-          drawW = drawH * aspect;
+          drawW = maxDim * aspect;
         }
 
         ctx.drawImage(img, -drawW / 2, -drawH / 2, drawW, drawH);
+        ctx.restore(); // Restore clip
+
+        // C. Draw Crisp Sharp Gold Border Ring ON TOP (No clipping distortion!)
+        ctx.beginPath();
+        ctx.arc(0, 0, imgRadius, 0, Math.PI * 2);
+        ctx.strokeStyle = '#D4A64A';
+        ctx.lineWidth = 2.5;
+        ctx.stroke();
+
         ctx.restore();
       }
 
