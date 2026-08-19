@@ -152,6 +152,10 @@ export default function Game() {
       const twa = window.Telegram.WebApp;
       twa.ready();
       twa.expand(); // Make TMA full screen
+      
+      if (typeof twa.disableVerticalSwipes === 'function') {
+        twa.disableVerticalSwipes(); // Prevent swipe-down-to-close in TMA
+      }
 
       const tgUser = twa.initDataUnsafe?.user;
       if (tgUser) {
