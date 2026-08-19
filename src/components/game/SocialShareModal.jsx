@@ -18,8 +18,9 @@ const shareTranslations = {
     unlockedSub: 'ინსტაგრამზე გაზიარებით შენ მიიღე დღევანდელი მე-5 ბონუს სიცოცხლე!',
     backBtn: 'თამაშში დაბრუნება',
     shareTitle: 'გააზიარე ST Dance Studio და მიიღე +1 ბონუს სიცოცხლე',
-    shareSub: 'გახსენი @stdancestudio.ge ინსტაგრამზე ან დააკოპირე თამაშის პრომო ლინკი მე-5 სიცოცხლის მისაღებად!',
-    igBtn: 'Instagram-ზე გაზიარება (+1 Life)',
+    shareSub: 'გახსენი @stdancestudio.ge ან @stdancestudio ინსტაგრამზე მე-5 სიცოცხლის მისაღებად!',
+    igBtn: 'Instagram (@stdancestudio.ge) (+1 Life)',
+    igBtn2: 'Instagram (@stdancestudio)',
     nativeShareBtn: 'მობილურით გაზიარება',
     copyBtn: 'ლინკის კოპირება',
     copiedText: '✓ ლინკი დაკოპირდა!',
@@ -31,8 +32,9 @@ const shareTranslations = {
     unlockedSub: 'You earned your 5th bonus life for today by sharing on Instagram!',
     backBtn: 'Back to Game',
     shareTitle: 'Share ST Dance Studio to get +1 Bonus Life',
-    shareSub: 'Open @stdancestudio.ge on Instagram or copy game link to unlock your 5th daily life!',
-    igBtn: 'Share on Instagram (+1 Life)',
+    shareSub: 'Open @stdancestudio.ge or @stdancestudio on Instagram to unlock your 5th daily life!',
+    igBtn: 'Instagram (@stdancestudio.ge) (+1 Life)',
+    igBtn2: 'Instagram (@stdancestudio)',
     nativeShareBtn: 'Native Mobile Share',
     copyBtn: 'Copy Link',
     copiedText: '✓ Link Copied to Clipboard!',
@@ -44,8 +46,9 @@ const shareTranslations = {
     unlockedSub: 'Вы получили 5-ю бонусную жизнь на сегодня за публикацию в Instagram!',
     backBtn: 'Вернуться в игру',
     shareTitle: 'Поделитесь ST Dance Studio и получите +1 Бонусную Жизнь',
-    shareSub: 'Откройте @stdancestudio.ge в Instagram или скопируйте ссылку на игру для получения 5-й жизни!',
-    igBtn: 'Поделиться в Instagram (+1 Life)',
+    shareSub: 'Откройте @stdancestudio.ge или @stdancestudio в Instagram для получения 5-й жизни!',
+    igBtn: 'Instagram (@stdancestudio.ge) (+1 Life)',
+    igBtn2: 'Instagram (@stdancestudio)',
     nativeShareBtn: 'Поделиться с телефона',
     copyBtn: 'Скопировать ссылку',
     copiedText: '✓ Ссылка скопирована!',
@@ -92,8 +95,13 @@ export default function SocialShareModal({ isOpen, onClose, onUnlockShareLife, h
     }
   };
 
-  const handleInstagramShare = () => {
+  const handleInstagramShare1 = () => {
     window.open('https://www.instagram.com/stdancestudio.ge', '_blank');
+    setTimeout(triggerBonus, 1500);
+  };
+
+  const handleInstagramShare2 = () => {
+    window.open('https://www.instagram.com/stdancestudio', '_blank');
     setTimeout(triggerBonus, 1500);
   };
 
@@ -164,18 +172,18 @@ export default function SocialShareModal({ isOpen, onClose, onUnlockShareLife, h
             </p>
 
             <div className="share-actions-column" style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              {/* Primary Instagram Share Button */}
+              {/* Primary Instagram Share Buttons */}
               <button
-                onClick={handleInstagramShare}
+                onClick={handleInstagramShare1}
                 style={{
                   width: '100%',
-                  height: '46px',
+                  height: '44px',
                   borderRadius: '12px',
                   background: 'linear-gradient(135deg, #833ab4, #fd1d1d, #fcb045)',
                   border: 'none',
                   color: 'white',
                   fontWeight: '900',
-                  fontSize: '13.5px',
+                  fontSize: '13px',
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
@@ -184,64 +192,78 @@ export default function SocialShareModal({ isOpen, onClose, onUnlockShareLife, h
                   boxShadow: '0 4px 15px rgba(225,48,108,0.35)'
                 }}
               >
-                <InstagramIcon size={18} color="white" /> {t.igBtn}
+                <InstagramIcon size={18} color="white" />
+                {t.igBtn}
               </button>
 
-              {/* Secondary Options Row */}
-              <div style={{ display: 'flex', gap: '8px', width: '100%' }}>
-                {navigator.share && (
-                  <button
-                    onClick={handleNativeShare}
-                    style={{
-                      flex: 1,
-                      height: '42px',
-                      borderRadius: '12px',
-                      background: 'rgba(255,255,255,0.06)',
-                      border: '1px solid rgba(255,255,255,0.12)',
-                      color: 'white',
-                      fontWeight: '800',
-                      fontSize: '12px',
-                      cursor: 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      gap: '6px'
-                    }}
-                  >
-                    <ExternalLink size={15} /> {t.nativeShareBtn}
-                  </button>
-                )}
+              <button
+                onClick={handleInstagramShare2}
+                style={{
+                  width: '100%',
+                  height: '40px',
+                  borderRadius: '12px',
+                  background: 'rgba(225,48,108,0.15)',
+                  border: '1px solid rgba(225,48,108,0.4)',
+                  color: '#f43f5e',
+                  fontWeight: '800',
+                  fontSize: '12.5px',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '6px'
+                }}
+              >
+                <InstagramIcon size={16} color="#f43f5e" />
+                {t.igBtn2}
+              </button>
 
-                <button
-                  onClick={handleCopyLink}
-                  style={{
-                    flex: 1,
-                    height: '42px',
-                    borderRadius: '12px',
-                    background: 'rgba(255,255,255,0.06)',
-                    border: '1px solid rgba(255,255,255,0.12)',
-                    color: 'white',
-                    fontWeight: '800',
-                    fontSize: '12px',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '6px'
-                  }}
-                >
-                  {copied ? <Check size={15} color="#22c55e" /> : <Copy size={15} />}
-                  {copied ? t.copiedText : t.copyBtn}
-                </button>
-              </div>
+              {/* Native Mobile Share Button */}
+              <button
+                onClick={handleNativeShare}
+                style={{
+                  width: '100%',
+                  height: '42px',
+                  borderRadius: '12px',
+                  background: 'rgba(255,255,255,0.06)',
+                  border: '1px solid rgba(255,255,255,0.12)',
+                  color: '#e4e4e7',
+                  fontWeight: '800',
+                  fontSize: '12.5px',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '6px'
+                }}
+              >
+                <Share2 size={16} color="#d4a64a" />
+                {t.nativeShareBtn}
+              </button>
+
+              {/* Copy Link Button */}
+              <button
+                onClick={handleCopyLink}
+                style={{
+                  width: '100%',
+                  height: '40px',
+                  borderRadius: '12px',
+                  background: 'transparent',
+                  border: '1px dashed rgba(212,166,74,0.4)',
+                  color: '#d4a64a',
+                  fontWeight: '800',
+                  fontSize: '12px',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '6px'
+                }}
+              >
+                {copied ? <Check size={16} color="#22c55e" /> : <Copy size={16} />}
+                {copied ? t.copiedText : t.copyBtn}
+              </button>
             </div>
-
-            {shared && (
-              <div className="share-success-alert animate-in" style={{ width: '100%', marginTop: '14px', padding: '10px 14px', background: 'rgba(34,197,94,0.15)', border: '1px solid rgba(34,197,94,0.4)', borderRadius: '12px', color: '#22c55e', fontSize: '13px', fontWeight: '900', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', boxSizing: 'border-box' }}>
-                <Sparkles size={18} color="#22c55e" />
-                <span>{t.successBonus}</span>
-              </div>
-            )}
           </div>
         )}
       </div>
