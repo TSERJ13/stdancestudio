@@ -72,7 +72,7 @@ body.app-fullscreen-active .canvas-wrapper,
   flex-direction: column !important;
   justify-content: flex-start !important;
   align-items: center !important;
-  padding: 60px 8px 20px !important;
+  padding: 12px 8px 12px !important;
   margin: 0 auto !important;
   box-sizing: border-box !important;
 }
@@ -85,6 +85,7 @@ body.app-fullscreen-active .canvas-wrapper,
   flex-direction: column !important;
   align-items: center !important;
   gap: 8px !important;
+  flex: 1 !important;
   box-sizing: border-box !important;
 }
 
@@ -283,6 +284,7 @@ body.app-fullscreen-active .canvas-wrapper,
   gap: 8px !important;
   align-items: center !important;
   width: 100% !important;
+  flex: 1 !important;
   margin: 0 auto !important;
   box-sizing: border-box !important;
 }
@@ -340,6 +342,7 @@ body.app-fullscreen-active .canvas-wrapper,
   position: relative !important;
   width: 100% !important;
   max-width: 100% !important;
+  flex: 1 !important;
   display: flex !important;
   justify-content: center !important;
   align-items: center !important;
@@ -356,6 +359,8 @@ body.app-fullscreen-active .canvas-wrapper,
 .game-page-wrap canvas {
   display: block;
   width: 100% !important;
+  height: 100% !important;
+  object-fit: contain !important;
   margin: 0 auto !important;
 }
 
@@ -681,7 +686,7 @@ body.app-fullscreen-active .canvas-wrapper,
 /* Mobile Responsiveness Overrides */
 @media (max-width: 640px) {
   .game-page-wrap {
-    padding: 72px 6px 16px !important;
+    padding: 12px 6px 12px !important;
   }
   .game-page-wrap .app-header {
     padding: 8px 10px;
