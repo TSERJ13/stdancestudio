@@ -41,7 +41,7 @@ body.app-fullscreen-active .game-page-wrap {
   padding: 0 !important;
   margin: 0 !important;
   width: 100vw !important;
-  height: 100vh !important;
+  height: 100dvh !important;
 }
 
 body.app-fullscreen-active .game-board-container,
@@ -51,7 +51,7 @@ body.app-fullscreen-active .game-board-container,
   position: fixed !important;
   inset: 0 !important;
   width: 100vw !important;
-  height: 100vh !important;
+  height: 100dvh !important;
   max-width: none !important;
   background: #05060a !important;
   padding: 8px !important;
@@ -70,7 +70,7 @@ body.app-fullscreen-active .canvas-wrapper,
   width: 100% !important;
   max-width: 520px !important;
   /* Leave enough room so ball at bottom is always visible */
-  height: calc(100vh - 90px) !important;
+  height: calc(100dvh - 120px) !important;
   max-height: none !important;
 }
 
