@@ -45,14 +45,14 @@ export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOv
 
   const engineRef = useRef({
     width: CANVAS_W,
-    height: CANVAS_H,
+    height: 600,
     cell: (CANVAS_W - 16) / 7,
     pad: 8,
     brickH: ((CANVAS_W - 16) / 7) * 0.78,
     cols: 7,
     topY: 10,
-    deathY: CANVAS_H - 52,
-    launchY: CANVAS_H - 28,
+    deathY: 600 - 52,
+    launchY: 600 - 28,
     state: 'READY',
     bricks: [],
     balls: [],
