@@ -148,10 +148,15 @@ export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOv
 
     const hp = Math.max(1, engine.round);
     const used = [];
-    const n = Math.min(6, 4 + Math.floor(Math.random() * 3));
+    // More bricks per row as rounds increase: 4-5 early, 6-7 from round 10+
+    const minBricks = engine.round >= 10 ? 5 : 4;
+    const maxBricks = engine.round >= 15 ? 7 : engine.round >= 10 ? 6 : 5;
+    const n = Math.min(engine.cols, minBricks + Math.floor(Math.random() * (maxBricks - minBricks + 1)));
 
     for (let k = 0; k < n; k++) {
-      const c = Math.floor(Math.random() * engine.cols);
+      let c;
+      let attempts = 0;
+      do { c = Math.floor(Math.random() * engine.cols); attempts++; } while (used.includes(c) && attempts < 20);
       if (used.includes(c)) continue;
       used.push(c);
       engine.bricks.push({
@@ -185,9 +190,11 @@ export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOv
       }
     }
 
+    // Ball pickups get rarer at higher rounds to limit ball accumulation
+    const pickupChance = Math.max(0.15, 0.65 - engine.round * 0.01);
     const pickupFree = [];
     for (let c = 0; c < engine.cols; c++) if (!used.includes(c)) pickupFree.push(c);
-    if (pickupFree.length > 0 && Math.random() < 0.65) {
+    if (pickupFree.length > 0 && Math.random() < pickupChance && engine.ballCount < 20) {
       const pc = pickupFree[Math.floor(Math.random() * pickupFree.length)];
       engine.pickups.push({ col: pc, row: 0, x: 0, y: 0, r: 7, taken: false });
     }
@@ -254,7 +261,8 @@ export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOv
 
   const spawnBall = () => {
     const engine = engineRef.current;
-    const currentSpd = Math.min(2.4, 1.0 + (engine.round - 1) * 0.05);
+    // Speed ramps faster: +0.08 per round, no cap (gets very fast at high rounds)
+    const currentSpd = Math.min(5.0, 1.0 + (engine.round - 1) * 0.08);
     engine.speedMult = currentSpd;
     setSpeedMult(currentSpd);
 
@@ -284,18 +292,19 @@ export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOv
 
   const handleSpecialBrickDestroyed = (b) => {
     const engine = engineRef.current;
+    const MAX_BALLS = 20;
     if (b.specialType === 'logo_gold') {
-      engine.ballCount += 1;
+      engine.ballCount = Math.min(MAX_BALLS, engine.ballCount + 1);
       setBallCount(engine.ballCount);
       showBannerOnCanvas('+1 BALL!');
       soundFx.playPowerup();
     } else if (b.specialType === 'logo_green') {
-      engine.ballCount += 2;
+      engine.ballCount = Math.min(MAX_BALLS, engine.ballCount + 2);
       setBallCount(engine.ballCount);
       showBannerOnCanvas('+2 BALLS!');
       soundFx.playPowerup();
     } else if (b.specialType === 'logo_purple') {
-      engine.ballCount += 3;
+      engine.ballCount = Math.min(MAX_BALLS, engine.ballCount + 3);
       setBallCount(engine.ballCount);
       showBannerOnCanvas('+3 BALLS!');
       soundFx.playPowerup();

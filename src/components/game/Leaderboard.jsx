@@ -20,57 +20,57 @@ const WINNERS_HISTORY = [
 
 const lbTranslations = {
   ka: {
-    title: 'სტუდიის ლიდერბორდი & პრიზები',
-    subtitle: 'თვის გამარჯვებულები და Danceshop.Ge ვაუჩერები',
-    spinBtn: 'დოლურას დატრიალება',
+    title: 'ლიდერბორდი',
+    subtitle: 'თვის გამარჯვებლები & Danceshop.Ge ვაუჩერები',
+    spinBtn: 'დოლურა',
     ranksTab: 'რანგები',
-    myPrizesTab: (count) => `ჩემი ვაუჩერები (${count})`,
-    historyTab: 'გამარჯვებულების ისტორია',
-    profileLbl: 'შენი პროფაილი:',
+    myPrizesTab: (count) => `ვაუჩერი (${count})`,
+    historyTab: 'ისტორია',
+    profileLbl: 'პროფაილი:',
     highScoreLbl: 'რეკორდი: ',
-    collectBtn: 'პრიზის მიღება',
+    collectBtn: 'პრიზი',
     activeBadge: 'აქტიური',
-    deliveredBadge: 'გადაცემულია',
-    emptyVouchers: 'ჯერ არ გაქვს მოგებული ვაუჩერი. გახდი #1 რანგის გამარჯვებული და დაატრიალე დოლურა!',
+    deliveredBadge: 'გადაცემული',
+    emptyVouchers: 'ჯერ არ გაქვს ვაუჩერი. გახდი #1!',
     copyCode: 'კოდის კოპირება',
     copiedText: 'დაკოპირდა!',
     pts: 'ქულა',
-    games: 'თამაში'
+    games: 'თამ.'
   },
   en: {
-    title: 'Studio Leaderboard & Prizes',
-    subtitle: 'Winners of the Month & Danceshop.Ge Vouchers',
-    spinBtn: 'Spin Prize Wheel',
+    title: 'Leaderboard',
+    subtitle: 'Monthly winners & Danceshop.Ge Vouchers',
+    spinBtn: 'Spin Wheel',
     ranksTab: 'Ranks',
-    myPrizesTab: (count) => `My Vouchers (${count})`,
-    historyTab: 'Winners History',
-    profileLbl: 'Your Profile:',
+    myPrizesTab: (count) => `Voucher (${count})`,
+    historyTab: 'History',
+    profileLbl: 'Profile:',
     highScoreLbl: 'High Score: ',
-    collectBtn: 'Collect Prize',
+    collectBtn: 'Collect',
     activeBadge: 'ACTIVE',
     deliveredBadge: 'Delivered',
-    emptyVouchers: 'You have no vouchers yet. Become #1 rank winner to spin the wheel!',
+    emptyVouchers: 'No vouchers yet. Become #1 rank winner!',
     copyCode: 'Copy Code',
     copiedText: 'Copied!',
     pts: 'pts',
-    games: 'games'
+    games: 'g'
   },
   ru: {
-    title: 'Лидерборд студии и призы',
+    title: 'Лидерборд',
     subtitle: 'Победители месяца и ваучеры Danceshop.Ge',
-    spinBtn: 'Крутить колесо',
+    spinBtn: 'Колесо',
     ranksTab: 'Рейтинг',
-    myPrizesTab: (count) => `Мои ваучеры (${count})`,
-    historyTab: 'История победителей',
-    profileLbl: 'Ваш профиль:',
+    myPrizesTab: (count) => `Ваучер (${count})`,
+    historyTab: 'История',
+    profileLbl: 'Профиль:',
     highScoreLbl: 'Рекорд: ',
-    collectBtn: 'Получить приз',
+    collectBtn: 'Забрать',
     activeBadge: 'АКТИВЕН',
     deliveredBadge: 'Выдано',
-    emptyVouchers: 'У вас пока нет ваучеров. Займите 1-е место, чтобы прокрутить колесо!',
+    emptyVouchers: 'Ваучеров нет. Займите 1-е место!',
     copyCode: 'Скопировать код',
     copiedText: 'Скопировано!',
-    pts: 'очков',
+    pts: 'очк.',
     games: 'игр'
   }
 };
@@ -132,33 +132,34 @@ export default function Leaderboard({ currentHighScore, playerName, onUpdatePlay
 
   return (
     <div className="leaderboard-container glass animate-in">
-      <div className="lb-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px' }}>
-        <div className="lb-title">
-          <Trophy size={24} color="#d4a64a" />
+      <div className="lb-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px', flexWrap: 'nowrap' }}>
+        <div className="lb-title" style={{ gap: '8px' }}>
+          <Trophy size={20} color="#d4a64a" />
           <div>
-            <h2>{t.title}</h2>
-            <span className="lb-subtitle">{t.subtitle}</span>
+            <h2 style={{ fontSize: '15px', margin: 0 }}>{t.title}</h2>
+            <span className="lb-subtitle" style={{ fontSize: '10px' }}>{t.subtitle}</span>
           </div>
         </div>
 
         <button
           onClick={() => openSpinForWinner(TEST_LEADERBOARD[0].name)}
           style={{
-            padding: '8px 14px',
-            borderRadius: '12px',
+            padding: '6px 10px',
+            borderRadius: '10px',
             background: 'linear-gradient(135deg, #d4a64a, #f0d9a8)',
             border: 'none',
             color: '#151100',
             fontWeight: '900',
-            fontSize: '11.5px',
+            fontSize: '11px',
             cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
-            gap: '6px',
+            gap: '4px',
+            flexShrink: 0,
             boxShadow: '0 4px 12px rgba(212,166,74,0.3)'
           }}
         >
-          <Gift size={16} /> {t.spinBtn}
+          <Gift size={14} /> {t.spinBtn}
         </button>
       </div>
 

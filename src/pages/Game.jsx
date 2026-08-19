@@ -244,12 +244,9 @@ export default function Game() {
           <div className="app-container">
             {/* Ultra-Compact Top Bar */}
             <header className="app-header glass compact-top-bar">
+              {/* Left: Logo + Login button */}
               <div className="compact-header-left">
                 <Award size={18} color="#d4a64a" />
-                <span className="compact-title">DANCING BRICKS</span>
-              </div>
-
-              <div className="compact-header-center">
                 <button
                   className="user-login-btn glass"
                   onClick={() => setShowLoginModal(true)}
@@ -266,45 +263,43 @@ export default function Game() {
                     </>
                   )}
                 </button>
+              </div>
 
+              {/* Right: Hearts + Timer + Reset */}
+              <div className="compact-header-right">
                 <div className="hearts-row">
                   {[1, 2, 3].map(num => (
                     <Heart
                       key={`base_${num}`}
-                      size={15}
+                      size={14}
                       fill={num <= (3 - livesData.usedLives) ? '#ef4444' : 'rgba(255,255,255,0.1)'}
                       color={num <= (3 - livesData.usedLives) ? '#ef4444' : '#52525b'}
                       className={num <= (3 - livesData.usedLives) ? 'heart-pulse' : ''}
                     />
                   ))}
-
                   <Heart
                     key="quiz_4"
-                    size={15}
+                    size={14}
                     fill={livesData.hasQuizLife ? '#f59e0b' : 'rgba(255,255,255,0.1)'}
                     color={livesData.hasQuizLife ? '#f59e0b' : '#52525b'}
                   />
-
                   <Heart
                     key="share_5"
-                    size={15}
+                    size={14}
                     fill={livesData.hasShareLife ? '#ec4899' : 'rgba(255,255,255,0.1)'}
                     color={livesData.hasShareLife ? '#ec4899' : '#52525b'}
                   />
                 </div>
-              </div>
-
-              <div className="compact-header-right">
                 <div className="timer-pill">
-                  <Clock size={11} color="#d4a64a" />
-                  <span>22:00: <strong>{countdown || '22:00:00'}</strong></span>
+                  <Clock size={10} color="#d4a64a" />
+                  <strong>{countdown || '22:00:00'}</strong>
                 </div>
                 <button
                   onClick={handleResetLivesTest}
                   title="Reset Lives"
-                  style={{ background: 'transparent', border: 'none', color: '#d4a64a', cursor: 'pointer', padding: '0', display: 'flex', alignItems: 'center' }}
+                  style={{ background: 'transparent', border: 'none', color: '#52525b', cursor: 'pointer', padding: '0', display: 'flex', alignItems: 'center' }}
                 >
-                  <RotateCcw size={11} />
+                  <RotateCcw size={10} />
                 </button>
               </div>
             </header>
@@ -372,40 +367,51 @@ export default function Game() {
 
               {activeTab === 'rules' && (
                 <div className="rules-card glass animate-in">
-                  <h2>How to Play Dancing Bricks</h2>
-                  <div className="rules-list">
-                    <div className="rule-item">
-                      <Heart size={24} color="#ef4444" />
-                      <div>
-                        <strong>3 Base Daily Lives</strong>
-                        <p>Every player gets 3 lives every day. Playing 1 game spends 1 life. Lives refresh automatically at 22:00 Georgia Time (UTC+4).</p>
+                  {lang === 'ru' ? (
+                    <>
+                      <h2 style={{ fontSize: '16px', marginBottom: '12px' }}>Как играть</h2>
+                      <div className="rules-list">
+                        <div className="rule-item">
+                          <Heart size={20} color="#ef4444" />
+                          <div><strong>3 жизни в день</strong><p>Каждый день даётся 3 жизни. Одна игра — одна жизнь. Обновление в 22:00.</p></div>
+                        </div>
+                        <div className="rule-item">
+                          <HelpCircle size={20} color="#f59e0b" />
+                          <div><strong>4-я жизнь (+1)</strong><p>Ответьте на 3 вопроса про танцы — получите бонусную жизнь.</p></div>
+                        </div>
+                        <div className="rule-item">
+                          <Share2 size={20} color="#ec4899" />
+                          <div><strong>5-я жизнь (+1)</strong><p>Поделитесь нашим Instagram — получите ещё одну жизнь.</p></div>
+                        </div>
+                        <div className="rule-item">
+                          <Trophy size={20} color="#d4a64a" />
+                          <div><strong>Лидерборд</strong><p>Разбивайте блоки, набирайте очки и попадите в ТОП!</p></div>
+                        </div>
                       </div>
-                    </div>
-
-                    <div className="rule-item">
-                      <HelpCircle size={24} color="#f59e0b" />
-                      <div>
-                        <strong>4th Life Unlock (+1)</strong>
-                        <p>Answer 3 dance questions correctly in the Quiz challenge to gain +1 Bonus Life.</p>
+                    </>
+                  ) : (
+                    <>
+                      <h2 style={{ fontSize: '16px', marginBottom: '12px' }}>როგორ ვითამაშოთ</h2>
+                      <div className="rules-list">
+                        <div className="rule-item">
+                          <Heart size={20} color="#ef4444" />
+                          <div><strong>3 სიცოცხლე დღეში</strong><p>ყოველდღიურად 3 სიცოცხლე. 1 თამაში = 1 სიცოცხლე. განახლება 22:00-ზე.</p></div>
+                        </div>
+                        <div className="rule-item">
+                          <HelpCircle size={20} color="#f59e0b" />
+                          <div><strong>მე-4 სიცოცხლე (+1)</strong><p>სწორად უპასუხე 3 კითხვას ქვიზში და მიიღე ბონუს სიცოცხლე.</p></div>
+                        </div>
+                        <div className="rule-item">
+                          <Share2 size={20} color="#ec4899" />
+                          <div><strong>მე-5 სიცოცხლე (+1)</strong><p>გააზიარე ჩვენი ინსტაგრამი და მიიღე +1 ბონუს სიცოცხლე.</p></div>
+                        </div>
+                        <div className="rule-item">
+                          <Trophy size={20} color="#d4a64a" />
+                          <div><strong>ლიდერბორდი</strong><p>დაამსხვრიე ოქროსფერი ST აგურები, დააგროვე ქულები და გახდი #1!</p></div>
+                        </div>
                       </div>
-                    </div>
-
-                    <div className="rule-item">
-                      <Share2 size={24} color="#ec4899" />
-                      <div>
-                        <strong>5th Life Unlock (+1)</strong>
-                        <p>Share our studio link or Instagram post to unlock your 5th Bonus Life.</p>
-                      </div>
-                    </div>
-
-                    <div className="rule-item">
-                      <Trophy size={24} color="#d4a64a" />
-                      <div>
-                        <strong>Leaderboard & High Scores</strong>
-                        <p>Break Samba, Cha-Cha, Rumba, Paso Doble, Jive & Waltz bricks to score points and top the Studio Leaderboard!</p>
-                      </div>
-                    </div>
-                  </div>
+                    </>
+                  )}
                 </div>
               )}
             </main>

@@ -321,15 +321,6 @@ export default function SpinModal({ isOpen, onClose, winnerName = 'ჩემპ�
 
         {!wonPrize ? (
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
-              <Trophy size={18} color="#d4a64a" />
-              <h3 style={{ fontSize: '15px', fontWeight: '900', color: 'white', margin: 0 }}>
-                {t.winnerTitle(winnerName)}
-              </h3>
-            </div>
-            <p style={{ fontSize: '11px', color: '#a1a1aa', margin: '0 0 10px' }}>
-              {t.subtitle}
-            </p>
 
             {/* Ultra HD Canvas Wheel Container with Top Pointer */}
             <div style={{ position: 'relative', width: '320px', height: '320px', margin: '4px 0 16px' }}>
