@@ -355,7 +355,7 @@ export default function Game() {
                 className={`nav-btn ${activeTab === 'leaderboard' ? 'active' : ''}`}
                 onClick={() => setActiveTab('leaderboard')}
               >
-                <Trophy size={14} /> {tGame.tabs.ranks}
+                <Trophy size={16} />
               </button>
 
               <button

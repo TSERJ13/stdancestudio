@@ -245,7 +245,7 @@ export default function Leaderboard({ currentHighScore, playerName, onUpdatePlay
               </div>
             ) : (
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flex: 1 }}>
-                <span style={{ fontWeight: '800', color: '#F0D9A8', fontSize: '13px' }}>{playerName}</span>
+                <span style={{ fontWeight: '800', color: '#F0D9A8', fontSize: '13px' }}>{(playerName || 'Dancer').split(' ')[0]}</span>
                 <button
                   onClick={() => setEditingName(true)}
                   style={{ background: 'transparent', border: 'none', color: '#a1a1aa', fontSize: '10px', textDecoration: 'underline', cursor: 'pointer' }}
