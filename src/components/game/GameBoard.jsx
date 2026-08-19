@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
-import { Play, RotateCcw, Volume2, VolumeX, ShieldAlert, Award, Maximize2, Minimize2 } from 'lucide-react';
+import { Play, RotateCcw, Volume2, VolumeX, ShieldAlert, Award, Maximize2, Minimize2, HelpCircle, Share2 } from 'lucide-react';
 import { soundFx } from '../../utils/soundFx';
 
 const GOLD_L = '#F0D9A8';
@@ -76,7 +76,6 @@ export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOv
   });
 
   useEffect(() => {
-    // Preload ST Dance Studio logo image
     const img = new Image();
     img.src = '/images/st_logo.png';
     img.onload = () => {
@@ -147,12 +146,10 @@ export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOv
     engine.bricks.forEach(b => b.row++);
     engine.pickups.forEach(p => p.row++);
 
-    // INFINITE ROUND BRICK HP SCALING (Round 1 = 1, Round 10 = 10, Round 25 = 25!)
     const hp = Math.max(1, engine.round);
     const used = [];
     const n = Math.min(6, 4 + Math.floor(Math.random() * 3));
 
-    // Regular Bricks
     for (let k = 0; k < n; k++) {
       const c = Math.floor(Math.random() * engine.cols);
       if (used.includes(c)) continue;
@@ -162,7 +159,6 @@ export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOv
       });
     }
 
-    // RARE SPECIAL LOGO/POWERUP BRICK (Only spawns every 4 rounds)
     if (engine.round % 4 === 0 && engine.round > 1) {
       const freeCols = [];
       for (let c = 0; c < engine.cols; c++) if (!used.includes(c)) freeCols.push(c);
@@ -170,15 +166,15 @@ export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOv
       if (freeCols.length > 0) {
         const pk = freeCols[Math.floor(Math.random() * freeCols.length)];
         const rand = Math.random();
-        let specialType = 'logo_gold'; // Gold (+1 Ball)
+        let specialType = 'logo_gold';
         let specialHp = Math.max(2, Math.floor(hp * 0.8));
 
         if (rand < 0.25) {
-          specialType = 'logo_green'; // Green (+2 Balls)
+          specialType = 'logo_green';
         } else if (rand < 0.50) {
-          specialType = 'logo_purple'; // Purple (+3 Balls)
+          specialType = 'logo_purple';
         } else if (rand < 0.75) {
-          specialType = 'super_pearl'; // Pearl/Magenta Super Ball (2 Hits to break)
+          specialType = 'super_pearl';
           specialHp = 2;
         }
 
@@ -189,7 +185,6 @@ export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOv
       }
     }
 
-    // Pickup Balls (+1)
     const pickupFree = [];
     for (let c = 0; c < engine.cols; c++) if (!used.includes(c)) pickupFree.push(c);
     if (pickupFree.length > 0 && Math.random() < 0.65) {
@@ -357,7 +352,6 @@ export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOv
     const dy = touchY - engine.launchY;
     const clampedDy = Math.min(-12, dy);
 
-    // CLAMP AIM ANGLE TO MAX 1.15 RAD (~65.8 deg) TO PREVENT PARALLEL SIDE WALL EXPLOIT!
     engine.aimAngle = Math.max(-1.15, Math.min(1.15, Math.atan2(dx, -clampedDy)));
   };
 
@@ -470,7 +464,6 @@ export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOv
         ctx.fill(); ctx.stroke();
         ctx.restore();
 
-        // If Special Logo Brick -> Draw ST Dance Studio Logo Image
         if (b.specialType && stLogoImgRef.current) {
           ctx.save();
           const imgW = b.w * 0.75;
@@ -480,7 +473,6 @@ export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOv
           ctx.drawImage(stLogoImgRef.current, imgX, imgY, imgW, imgH);
           ctx.restore();
         } else {
-          // Render HP Number
           ctx.fillStyle = style.t;
           ctx.font = '700 ' + Math.round(engine.cell * 0.3) + 'px sans-serif';
           ctx.textAlign = 'center';
@@ -513,7 +505,6 @@ export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOv
       });
       engine.particles = engine.particles.filter(pt => pt.alpha > 0);
 
-      // FAINT LAUNCHER INDICATOR & CLAMPED AIM TRAJECTORY
       if (engine.state === 'AIM') {
         ctx.save();
         ctx.shadowColor = GOLD_L;
@@ -550,7 +541,6 @@ export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOv
         }
       }
 
-      // Shooting Balls update with anti-exploit wall bounce physics
       if (engine.state === 'SHOOT') {
         engine.shootTimer++;
         const shootInterval = Math.max(2, 6 - Math.floor(engine.round / 4));
@@ -565,7 +555,6 @@ export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOv
           for (let s = 0; s < steps; s++) {
             b.x += (b.vx / 2); b.y += (b.vy / 2);
 
-            // Left / Right Wall Bounce with anti-loop deflection logic
             if (b.x < b.r) {
               b.x = b.r;
               b.vx = Math.abs(b.vx);
@@ -591,7 +580,6 @@ export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOv
               soundFx.playHit();
             }
 
-            // Bricks Collision
             engine.bricks.forEach(br => {
               if (br.hp <= 0) return;
               if (hitTest(b, br)) {
@@ -656,7 +644,6 @@ export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOv
         }
       }
 
-      // Draw Balls
       engine.balls.forEach(b => {
         if (!b.alive) return;
         ctx.save();
@@ -666,7 +653,6 @@ export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOv
         ctx.restore();
       });
 
-      // Canvas Powerup Banners
       if (engine.bannerTimer > 0) {
         engine.bannerTimer--;
         ctx.save();
@@ -764,11 +750,11 @@ export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOv
                 <ShieldAlert size={32} color="#ef4444" />
                 <p>{t.noLives}</p>
                 <div style={{ display: 'flex', gap: '8px', marginTop: '10px' }}>
-                  <button className="btn-secondary" style={{ padding: '8px 14px', fontSize: '11px' }} onClick={onOpenQuiz}>
-                    {t.quizBonus}
+                  <button className="btn-secondary" style={{ padding: '8px 14px', fontSize: '11px', display: 'flex', alignItems: 'center', gap: '4px' }} onClick={onOpenQuiz}>
+                    <HelpCircle size={14} color="#f59e0b" /> +1
                   </button>
-                  <button className="btn-secondary" style={{ padding: '8px 14px', fontSize: '11px' }} onClick={onOpenShare}>
-                    {t.shareBonus}
+                  <button className="btn-secondary" style={{ padding: '8px 14px', fontSize: '11px', display: 'flex', alignItems: 'center', gap: '4px' }} onClick={onOpenShare}>
+                    <Share2 size={14} color="#ec4899" /> +1
                   </button>
                 </div>
               </div>
@@ -793,11 +779,11 @@ export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOv
                 <ShieldAlert size={32} color="#ef4444" />
                 <p>{t.noLives}</p>
                 <div style={{ display: 'flex', gap: '8px', marginTop: '10px' }}>
-                  <button className="btn-secondary" style={{ padding: '8px 14px', fontSize: '11px' }} onClick={onOpenQuiz}>
-                    {t.quizBonus}
+                  <button className="btn-secondary" style={{ padding: '8px 14px', fontSize: '11px', display: 'flex', alignItems: 'center', gap: '4px' }} onClick={onOpenQuiz}>
+                    <HelpCircle size={14} color="#f59e0b" /> +1
                   </button>
-                  <button className="btn-secondary" style={{ padding: '8px 14px', fontSize: '11px' }} onClick={onOpenShare}>
-                    {t.shareBonus}
+                  <button className="btn-secondary" style={{ padding: '8px 14px', fontSize: '11px', display: 'flex', alignItems: 'center', gap: '4px' }} onClick={onOpenShare}>
+                    <Share2 size={14} color="#ec4899" /> +1
                   </button>
                 </div>
               </div>
