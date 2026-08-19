@@ -42,8 +42,6 @@ const AppRoutes = () => (
     <Route path="contact" element={<Contact />} />
     <Route path="register" element={<Register />} />
     <Route path="promo" element={<Promo />} />
-    <Route path="game" element={<Game />} />
-    <Route path="dancing-bricks" element={<Game />} />
     <Route path="privacy" element={<Privacy />} />
     <Route path="terms" element={<Terms />} />
     <Route path="bio" element={<Bio />} />
@@ -55,7 +53,7 @@ const AppRoutes = () => (
 
 export default function App() {
   const { pathname } = useLocation()
-  const isStandalone = pathname.startsWith('/admin') || pathname.startsWith('/portal') || pathname.includes('/bio') || pathname.includes('/link')
+  const isStandalone = pathname.startsWith('/admin') || pathname.startsWith('/portal') || pathname.includes('/bio') || pathname.includes('/link') || pathname.includes('/game') || pathname.includes('/dancing-bricks')
 
   return (
     <>
@@ -72,6 +70,8 @@ export default function App() {
           <Route path="/en/link" element={<Bio />} />
           <Route path="/ru/bio" element={<Bio />} />
           <Route path="/ru/link" element={<Bio />} />
+          <Route path="/game" element={<Game />} />
+          <Route path="/dancing-bricks" element={<Game />} />
         </Routes>
       ) : (
         <Layout>

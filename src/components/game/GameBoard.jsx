@@ -361,7 +361,7 @@ export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOv
     const dy = touchY - engine.launchY;
     const clampedDy = Math.min(-12, dy);
 
-    engine.aimAngle = Math.max(-1.15, Math.min(1.15, Math.atan2(dx, -clampedDy)));
+    engine.aimAngle = Math.max(-1.45, Math.min(1.45, Math.atan2(dx, -clampedDy)));
   };
 
   const handlePointerDown = (e) => {

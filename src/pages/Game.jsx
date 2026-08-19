@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Play, Trophy, HelpCircle, Share2, Heart, Clock, Sparkles, Award, UserCheck, IdCard, RotateCcw } from 'lucide-react';
+import { Play, Trophy, HelpCircle, Share2, Heart, Clock, Sparkles, Award, UserCheck, IdCard, RotateCcw, Globe } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import GameBoard from '../components/game/GameBoard';
 import QuizModal from '../components/game/QuizModal';
@@ -91,7 +91,7 @@ export const gameTranslations = {
 };
 
 export default function Game() {
-  const { lang } = useLanguage();
+  const { lang, setLang } = useLanguage();
   const tGame = gameTranslations[lang] || gameTranslations.ka;
 
   const [activeTab, setActiveTab] = useState('play');
@@ -238,9 +238,9 @@ export default function Game() {
   };
 
   return (
-    <section className="section" style={{ paddingBlock: 'clamp(2.5rem, 5vw, 4rem)', width: '100%' }}>
-      <div className="container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
-        <div className="inner-page game-page-wrap">
+    <section className="section" style={{ paddingBlock: 0, width: '100%', minHeight: '100dvh', display: 'flex', background: '#05060a' }}>
+      <div className="container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', padding: 0 }}>
+        <div className="inner-page game-page-wrap" style={{ flex: 1, paddingTop: 10 }}>
           <div className="app-container">
             {/* Ultra-Compact Top Bar */}
             <header className="app-header glass compact-top-bar">
@@ -295,9 +295,19 @@ export default function Game() {
                   <strong>{countdown || '22:00:00'}</strong>
                 </div>
                 <button
+                  onClick={() => {
+                    const langs = ['ka', 'en', 'ru'];
+                    setLang(langs[(langs.indexOf(lang) + 1) % langs.length]);
+                  }}
+                  title="Change Language"
+                  style={{ background: 'rgba(255, 255, 255, 0.05)', border: '1px solid rgba(255, 255, 255, 0.1)', color: '#d4a64a', cursor: 'pointer', padding: '2px 6px', display: 'flex', alignItems: 'center', gap: '4px', borderRadius: '6px', fontSize: '9px', fontWeight: 'bold' }}
+                >
+                  <Globe size={10} /> {lang.toUpperCase()}
+                </button>
+                <button
                   onClick={handleResetLivesTest}
                   title="Reset Lives"
-                  style={{ background: 'transparent', border: 'none', color: '#52525b', cursor: 'pointer', padding: '0', display: 'flex', alignItems: 'center' }}
+                  style={{ background: 'transparent', border: 'none', color: '#52525b', cursor: 'pointer', padding: '0', display: 'flex', alignItems: 'center', marginLeft: '4px' }}
                 >
                   <RotateCcw size={10} />
                 </button>
