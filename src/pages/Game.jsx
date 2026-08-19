@@ -151,6 +151,15 @@ export default function Game() {
     if (window.Telegram?.WebApp) {
       const twa = window.Telegram.WebApp;
       twa.ready();
+      twa.expand();
+      try {
+        if (twa.setHeaderColor) twa.setHeaderColor('#05060a');
+        if (twa.setBackgroundColor) twa.setBackgroundColor('#05060a');
+      } catch (e) {}
+
+      if (typeof twa.disableVerticalSwipes === 'function') {
+        twa.disableVerticalSwipes();
+      }
 
       const tgUser = twa.initDataUnsafe?.user;
       if (tgUser) {
