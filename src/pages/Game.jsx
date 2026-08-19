@@ -134,10 +134,16 @@ export default function Game() {
 
   useEffect(() => {
     document.body.classList.add('page-game-active');
+    if (activeTab === 'play') {
+      document.body.classList.add('game-tab-play');
+    } else {
+      document.body.classList.remove('game-tab-play');
+    }
     return () => {
       document.body.classList.remove('page-game-active');
+      document.body.classList.remove('game-tab-play');
     };
-  }, []);
+  }, [activeTab]);
 
   useEffect(() => {
     const interval = setInterval(() => {

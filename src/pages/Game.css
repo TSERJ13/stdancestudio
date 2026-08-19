@@ -17,6 +17,13 @@ body.app-fullscreen-active {
   overflow: hidden !important;
 }
 
+body.game-tab-play {
+  overflow: hidden !important;
+  position: fixed !important; /* Prevents Safari bounce */
+  width: 100% !important;
+  height: 100% !important;
+}
+
 body.page-game-active {
   user-select: none !important;
   -webkit-user-select: none !important;
@@ -371,7 +378,7 @@ body.app-fullscreen-active .canvas-wrapper,
   display: block;
   width: 100% !important;
   height: 100% !important;
-  object-fit: contain !important;
+  object-fit: fill !important; /* We dynamically calc height, so fill is perfect without distorting */
   margin: 0 auto !important;
 }
 

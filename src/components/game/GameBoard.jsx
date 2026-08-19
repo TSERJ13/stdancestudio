@@ -13,7 +13,7 @@ const TIERS = [
 ];
 
 const CANVAS_W = 440;
-const CANVAS_H = 600;
+// CANVAS_H is now dynamic based on wrapper aspect ratio
 
 export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOver, onScoreUpdate, onOpenQuiz, onOpenShare }) {
   const canvasRef = useRef(null);
@@ -352,7 +352,7 @@ export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOv
     const engine = engineRef.current;
 
     const scaleX = CANVAS_W / rect.width;
-    const scaleY = CANVAS_H / rect.height;
+    const scaleY = engine.height / rect.height;
 
     const touchX = (clientX - rect.left) * scaleX;
     const touchY = (clientY - rect.top) * scaleY;
@@ -409,9 +409,19 @@ export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOv
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
+    const wrapper = canvas.parentElement;
+    const rect = wrapper.getBoundingClientRect();
+    const aspect = rect.height / rect.width;
+    let dynamicH = Math.floor(CANVAS_W * aspect);
+    dynamicH = Math.max(480, Math.min(1200, dynamicH)); // safety bounds
+
+    const engine = engineRef.current;
+    engine.height = dynamicH;
+    engine.deathY = dynamicH - 52;
+    engine.launchY = dynamicH - 28;
 
     canvas.width = CANVAS_W;
-    canvas.height = CANVAS_H;
+    canvas.height = dynamicH;
     const ctx = canvas.getContext('2d');
 
     let animId;
@@ -419,7 +429,7 @@ export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOv
     const render = () => {
       const engine = engineRef.current;
       const w = CANVAS_W;
-      const h = CANVAS_H;
+      const h = engine.height;
 
       ctx.clearRect(0, 0, w, h);
 
