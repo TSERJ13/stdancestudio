@@ -403,6 +403,7 @@ export default function Game() {
               >
                 <Sparkles size={14} /> {tGame.tabs.rules}
               </button>
+              <div style={{ position: 'absolute', bottom: '-15px', right: '5px', fontSize: '9px', color: '#666' }}>v.89</div>
             </nav>
 
             <main className="main-content" style={{ width: '100%', flex: 1, display: 'flex', flexDirection: 'column' }}>
