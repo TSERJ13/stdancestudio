@@ -410,36 +410,18 @@ export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOv
     const canvas = canvasRef.current;
     if (!canvas) return;
     const wrapper = canvas.parentElement;
-    
-    const updateDimensions = () => {
-      const rect = wrapper.getBoundingClientRect();
-      if (rect.width === 0 || rect.height === 0) return;
-      const aspect = rect.height / rect.width;
-      let dynamicH = Math.floor(CANVAS_W * aspect);
-      dynamicH = Math.max(480, Math.min(1200, dynamicH)); // safety bounds
+    const rect = wrapper.getBoundingClientRect();
+    const aspect = rect.height / rect.width;
+    let dynamicH = Math.floor(CANVAS_W * aspect);
+    dynamicH = Math.max(480, Math.min(1200, dynamicH)); // safety bounds
 
-      const engine = engineRef.current;
-      engine.height = dynamicH;
-      engine.deathY = dynamicH - 72;
-      engine.launchY = dynamicH - 48;
-      
-      // If any active ball is currently below the new boundaries, bring it up
-      engine.balls.forEach(b => {
-        if (b.y > dynamicH - 10) b.y = dynamicH - 20;
-      });
+    const engine = engineRef.current;
+    engine.height = dynamicH;
+    engine.deathY = dynamicH - 72; // Moved up by 20px
+    engine.launchY = dynamicH - 48; // Moved up by 20px
 
-      if (canvas.width !== CANVAS_W) canvas.width = CANVAS_W;
-      if (canvas.height !== dynamicH) canvas.height = dynamicH;
-    };
-
-    updateDimensions();
-
-    const resizeObserver = new ResizeObserver(() => {
-      // Need a tiny delay for mobile browser transitions to settle
-      requestAnimationFrame(updateDimensions);
-    });
-    resizeObserver.observe(wrapper);
-
+    canvas.width = CANVAS_W;
+    canvas.height = dynamicH;
     const ctx = canvas.getContext('2d');
 
     let animId;
@@ -741,7 +723,6 @@ export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOv
 
     return () => {
       cancelAnimationFrame(animId);
-      resizeObserver.disconnect();
     };
   }, [isFullscreen, onGameOver, onScoreUpdate, t]);
 
