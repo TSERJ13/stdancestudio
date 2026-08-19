@@ -69,9 +69,10 @@ body.app-fullscreen-active .canvas-wrapper,
 .game-board-container:-webkit-full-screen .canvas-wrapper {
   width: 100% !important;
   max-width: 520px !important;
-  /* Leave enough room so ball at bottom is always visible */
-  height: calc(100dvh - 120px) !important;
-  max-height: none !important;
+  height: auto !important;
+  aspect-ratio: 440 / 700 !important;
+  max-height: 80vh !important;
+  margin: auto !important;
 }
 
 /* =========================================================
