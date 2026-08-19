@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Play, Trophy, HelpCircle, Share2, Heart, Clock, Sparkles, Award, UserCheck, IdCard } from 'lucide-react';
+import { Play, Trophy, HelpCircle, Share2, Heart, Clock, Sparkles, Award, UserCheck, IdCard, RotateCcw } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import GameBoard from '../components/game/GameBoard';
 import QuizModal from '../components/game/QuizModal';
@@ -26,12 +26,12 @@ export const gameTranslations = {
     loginBtn: 'ID შესვლა',
     studentIdLabel: 'მოსწავლის ID',
     noLives: 'სიცოცხლე ამოიწურა!',
-    quizBonus: 'Quiz +1',
-    shareBonus: 'Share +1',
+    quizBonus: 'Quiz (+1 გული)',
+    shareBonus: 'Share (+1 გული)',
     tabs: {
       game: 'თამაში',
-      quiz: 'Quiz +1',
-      share: 'Share +1',
+      quiz: 'Quiz (+1 გული)',
+      share: 'Share (+1 გული)',
       ranks: 'რეიტინგი',
       rules: 'წესები'
     }
@@ -52,12 +52,12 @@ export const gameTranslations = {
     loginBtn: 'ID LOGIN',
     studentIdLabel: 'Student ID',
     noLives: 'Out of lives!',
-    quizBonus: 'Quiz +1',
-    shareBonus: 'Share +1',
+    quizBonus: 'Quiz (+1 Heart)',
+    shareBonus: 'Share (+1 Heart)',
     tabs: {
       game: 'Game',
-      quiz: 'Quiz +1',
-      share: 'Share +1',
+      quiz: 'Quiz (+1 Heart)',
+      share: 'Share (+1 Heart)',
       ranks: 'Ranks',
       rules: 'Rules'
     }
@@ -78,12 +78,12 @@ export const gameTranslations = {
     loginBtn: 'ID ВХОД',
     studentIdLabel: 'ID Ученика',
     noLives: 'Жизни закончились!',
-    quizBonus: 'Quiz +1',
-    shareBonus: 'Share +1',
+    quizBonus: 'Quiz (+1 Heart)',
+    shareBonus: 'Share (+1 Heart)',
     tabs: {
       game: 'Игра',
-      quiz: 'Quiz +1',
-      share: 'Share +1',
+      quiz: 'Quiz (+1 Heart)',
+      share: 'Share (+1 Heart)',
       ranks: 'Рейтинг',
       rules: 'Правила'
     }
@@ -95,7 +95,14 @@ export default function Game() {
   const tGame = gameTranslations[lang] || gameTranslations.ka;
 
   const [activeTab, setActiveTab] = useState('play');
-  const [livesData, setLivesData] = useState(() => loadLivesData());
+  const [livesData, setLivesData] = useState(() => {
+    // Fresh reset on page mount so user can test Quiz & Share immediately as requested
+    const fresh = loadLivesData();
+    fresh.hasQuizLife = false;
+    fresh.hasShareLife = false;
+    saveLivesData(fresh);
+    return fresh;
+  });
   const [countdown, setCountdown] = useState('');
 
   const [userProfile, setUserProfile] = useState(() => {
@@ -213,6 +220,19 @@ export default function Game() {
     localStorage.setItem('dancing_bricks_user_profile', JSON.stringify(updated));
   };
 
+  const handleResetLivesTest = () => {
+    const fresh = {
+      dateStr: new Date().toISOString().split('T')[0],
+      usedLives: 0,
+      hasQuizLife: false,
+      hasShareLife: false,
+      totalGamesPlayed: 0,
+      highScore: userProfile.highScore || 0
+    };
+    saveLivesData(fresh);
+    setLivesData(fresh);
+  };
+
   return (
     <section className="section" style={{ paddingBlock: 'clamp(3rem, 6vw, 5rem)', width: '100%' }}>
       <div className="container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
@@ -278,9 +298,16 @@ export default function Game() {
                   </div>
                 </div>
 
-                <div className="timer-badge">
+                <div className="timer-badge" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                   <Clock size={13} color="#d4a64a" />
                   <span>Reset 22:00: <strong>{countdown || '22:00:00'}</strong></span>
+                  <button
+                    onClick={handleResetLivesTest}
+                    title="Reset for testing"
+                    style={{ background: 'transparent', border: 'none', color: '#d4a64a', cursor: 'pointer', padding: '0 2px' }}
+                  >
+                    <RotateCcw size={12} />
+                  </button>
                 </div>
               </div>
             </header>
@@ -299,7 +326,7 @@ export default function Game() {
                 onClick={() => setShowQuizModal(true)}
               >
                 <HelpCircle size={15} color={livesData.hasQuizLife ? '#22c55e' : '#f59e0b'} />
-                <span>Quiz +1</span>
+                <span>Quiz (+1 გული)</span>
               </button>
 
               <button
@@ -307,7 +334,7 @@ export default function Game() {
                 onClick={() => setShowShareModal(true)}
               >
                 <Share2 size={15} color={livesData.hasShareLife ? '#22c55e' : '#ec4899'} />
-                <span>Share +1</span>
+                <span>Share (+1 გული)</span>
               </button>
 
               <button
@@ -361,7 +388,7 @@ export default function Game() {
                     <div className="rule-item">
                       <HelpCircle size={24} color="#f59e0b" />
                       <div>
-                        <strong>4th Life Unlock (Quiz +1)</strong>
+                        <strong>4th Life Unlock (Quiz +1 გული)</strong>
                         <p>Answer 3 dance questions correctly in the Dance Quiz challenge to gain +1 Bonus Life.</p>
                       </div>
                     </div>
@@ -369,7 +396,7 @@ export default function Game() {
                     <div className="rule-item">
                       <Share2 size={24} color="#ec4899" />
                       <div>
-                        <strong>5th Life Unlock (Share +1)</strong>
+                        <strong>5th Life Unlock (Share +1 გული)</strong>
                         <p>Share our studio link or Instagram post to unlock your 5th Bonus Life.</p>
                       </div>
                     </div>

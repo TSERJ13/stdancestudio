@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
-import { Play, RotateCcw, Volume2, VolumeX, ShieldAlert, Award, Zap, Maximize2, Minimize2 } from 'lucide-react';
+import { Play, RotateCcw, Volume2, VolumeX, ShieldAlert, Award, Maximize2, Minimize2 } from 'lucide-react';
 import { soundFx } from '../../utils/soundFx';
 
 const GOLD_L = '#F0D9A8';
@@ -18,6 +18,7 @@ const CANVAS_H = 580;
 export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOver, onScoreUpdate, onOpenQuiz, onOpenShare }) {
   const canvasRef = useRef(null);
   const containerRef = useRef(null);
+  const stLogoImgRef = useRef(null);
 
   const t = tGame || {
     fastForward: 'FAST FORWARD',
@@ -27,11 +28,11 @@ export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOv
     speed: 'SPEED',
     balls: 'BALLS',
     score: 'SCORE',
-    startGame: 'START GAME',
-    playAgain: 'PLAY AGAIN',
-    subtitle: 'Break golden ST bricks and top the studio leaderboard!',
+    startGame: 'დაწყება',
+    playAgain: 'ხელახლა დაწყება',
+    subtitle: 'დაამსხვრიე ოქროსფერი ST აგურები და გახდი ლიდერბორდის გამარჯვებული!',
     gameOver: 'GAME OVER',
-    finalScore: 'FINAL SCORE'
+    finalScore: 'საბოლოო ქულა'
   };
 
   const [gameState, setGameState] = useState('READY');
@@ -57,7 +58,6 @@ export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOv
     balls: [],
     pickups: [],
     particles: [],
-    bumper: { x: CANVAS_W / 2 - 35, y: 220, w: 70, h: 12, vx: 1.8, active: false },
     bannerText: '',
     bannerTimer: 0,
     round: 1,
@@ -74,6 +74,15 @@ export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOv
     holdingBoost: false,
     animId: null
   });
+
+  useEffect(() => {
+    // Preload ST Dance Studio logo image
+    const img = new Image();
+    img.src = '/images/st_logo.png';
+    img.onload = () => {
+      stLogoImgRef.current = img;
+    };
+  }, []);
 
   const toggleFullscreen = () => {
     const el = containerRef.current;
@@ -138,44 +147,54 @@ export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOv
     engine.bricks.forEach(b => b.row++);
     engine.pickups.forEach(p => p.row++);
 
-    // Increased HP scaling per round for competitive balance
-    const hp = Math.min(12, 1 + Math.floor(engine.round * 0.75));
-    const logoRow = (engine.round % 4 === 1 && engine.round > 1);
+    // INFINITE ROUND BRICK HP SCALING (Round 1 = 1, Round 10 = 10, Round 25 = 25!)
+    const hp = Math.max(1, engine.round);
     const used = [];
     const n = Math.min(6, 4 + Math.floor(Math.random() * 3));
 
+    // Regular Bricks
     for (let k = 0; k < n; k++) {
       const c = Math.floor(Math.random() * engine.cols);
       if (used.includes(c)) continue;
       used.push(c);
-      const isArmored = (engine.round >= 3 && Math.random() < 0.25);
-      const brickHp = isArmored ? hp + 3 : hp;
-      engine.bricks.push({ col: c, row: 0, hp: brickHp, logo: false, armored: isArmored, x: 0, y: 0, w: 0, h: 0 });
+      engine.bricks.push({
+        col: c, row: 0, hp, specialType: null, x: 0, y: 0, w: 0, h: 0
+      });
     }
 
-    if (logoRow) {
+    // RARE SPECIAL LOGO/POWERUP BRICK (Only spawns every 4 rounds)
+    if (engine.round % 4 === 0 && engine.round > 1) {
       const freeCols = [];
       for (let c = 0; c < engine.cols; c++) if (!used.includes(c)) freeCols.push(c);
-      for (let j = 0; j < 2 && freeCols.length > 0; j++) {
-        const pk = freeCols.splice(Math.floor(Math.random() * freeCols.length), 1)[0];
-        engine.bricks.push({ col: pk, row: 0, hp: Math.max(3, hp), logo: true, armored: false, x: 0, y: 0, w: 0, h: 0 });
+
+      if (freeCols.length > 0) {
+        const pk = freeCols[Math.floor(Math.random() * freeCols.length)];
+        const rand = Math.random();
+        let specialType = 'logo_gold'; // Gold (+1 Ball)
+        let specialHp = Math.max(2, Math.floor(hp * 0.8));
+
+        if (rand < 0.25) {
+          specialType = 'logo_green'; // Green (+2 Balls)
+        } else if (rand < 0.50) {
+          specialType = 'logo_purple'; // Purple (+3 Balls)
+        } else if (rand < 0.75) {
+          specialType = 'super_pearl'; // Pearl/Magenta Super Ball (2 Hits to break)
+          specialHp = 2;
+        }
+
+        engine.bricks.push({
+          col: pk, row: 0, hp: specialHp, specialType, x: 0, y: 0, w: 0, h: 0
+        });
         used.push(pk);
       }
     }
 
+    // Pickup Balls (+1)
     const pickupFree = [];
     for (let c = 0; c < engine.cols; c++) if (!used.includes(c)) pickupFree.push(c);
-    if (pickupFree.length > 0 && Math.random() < 0.7) {
+    if (pickupFree.length > 0 && Math.random() < 0.65) {
       const pc = pickupFree[Math.floor(Math.random() * pickupFree.length)];
       engine.pickups.push({ col: pc, row: 0, x: 0, y: 0, r: 7, taken: false });
-    }
-
-    // Activate moving bumper starting round 4
-    if (engine.round >= 4) {
-      engine.bumper.active = true;
-      engine.bumper.y = 180 + (engine.round % 3) * 35;
-    } else {
-      engine.bumper.active = false;
     }
 
     layoutBricks();
@@ -215,7 +234,6 @@ export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOv
     engine.bannerText = '';
     engine.bannerTimer = 0;
     engine.holdingBoost = false;
-    engine.bumper.active = false;
     engine.state = 'AIM';
 
     setRound(1);
@@ -241,7 +259,7 @@ export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOv
 
   const spawnBall = () => {
     const engine = engineRef.current;
-    const currentSpd = Math.min(2.4, 1.0 + (engine.round - 1) * 0.06);
+    const currentSpd = Math.min(2.4, 1.0 + (engine.round - 1) * 0.05);
     engine.speedMult = currentSpd;
     setSpeedMult(currentSpd);
 
@@ -269,20 +287,27 @@ export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOv
     return dx * dx + dy * dy < b.r * b.r;
   };
 
-  const checkLogo = () => {
+  const handleSpecialBrickDestroyed = (b) => {
     const engine = engineRef.current;
-    const left = engine.bricks.some(x => x.logo && x.hp > 0);
-    if (!left) {
-      if (Math.random() < 0.5) {
-        engine.superShots = 2;
-        showBannerOnCanvas(t.superBall);
-        soundFx.playPowerup();
-      } else {
-        engine.ballCount += 3;
-        setBallCount(engine.ballCount);
-        showBannerOnCanvas(t.extraBalls);
-        soundFx.playPowerup();
-      }
+    if (b.specialType === 'logo_gold') {
+      engine.ballCount += 1;
+      setBallCount(engine.ballCount);
+      showBannerOnCanvas('+1 BALL!');
+      soundFx.playPowerup();
+    } else if (b.specialType === 'logo_green') {
+      engine.ballCount += 2;
+      setBallCount(engine.ballCount);
+      showBannerOnCanvas('+2 BALLS!');
+      soundFx.playPowerup();
+    } else if (b.specialType === 'logo_purple') {
+      engine.ballCount += 3;
+      setBallCount(engine.ballCount);
+      showBannerOnCanvas('+3 BALLS!');
+      soundFx.playPowerup();
+    } else if (b.specialType === 'super_pearl') {
+      engine.superShots = 2;
+      showBannerOnCanvas(t.superBall);
+      soundFx.playPowerup();
     }
   };
 
@@ -417,56 +442,51 @@ export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOv
       ctx.beginPath(); ctx.moveTo(0, engine.deathY); ctx.lineTo(w, engine.deathY); ctx.stroke();
       ctx.restore();
 
-      // Moving Bumper Barrier (Round 4+)
-      if (engine.bumper.active) {
-        engine.bumper.x += engine.bumper.vx;
-        if (engine.bumper.x < 15 || engine.bumper.x + engine.bumper.w > w - 15) {
-          engine.bumper.vx = -engine.bumper.vx;
+      // Render Bricks
+      engine.bricks.forEach(b => {
+        if (b.hp <= 0) return;
+
+        let style = TIERS[Math.min(b.hp - 1, TIERS.length - 1)];
+
+        if (b.specialType === 'logo_gold') {
+          style = { f: 'rgba(212,165,90,.35)', s: GOLD_L, t: '#1a1200' };
+        } else if (b.specialType === 'logo_green') {
+          style = { f: 'rgba(34,197,94,.35)', s: '#22c55e', t: '#ffffff' };
+        } else if (b.specialType === 'logo_purple') {
+          style = { f: 'rgba(168,85,247,.35)', s: '#a855f7', t: '#ffffff' };
+        } else if (b.specialType === 'super_pearl') {
+          style = { f: 'rgba(236,72,153,.4)', s: '#ec4899', t: '#ffffff' };
         }
 
         ctx.save();
-        ctx.shadowColor = '#6FC3E0';
-        ctx.shadowBlur = 12;
-        ctx.fillStyle = 'rgba(111,195,224,0.25)';
-        ctx.strokeStyle = '#6FC3E0';
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        if (ctx.roundRect) ctx.roundRect(engine.bumper.x, engine.bumper.y, engine.bumper.w, engine.bumper.h, 6);
-        else ctx.rect(engine.bumper.x, engine.bumper.y, engine.bumper.w, engine.bumper.h);
-        ctx.fill(); ctx.stroke();
-
-        ctx.fillStyle = '#BEE7F5';
-        ctx.font = 'bold 9px sans-serif';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText('SHIELD BARRIER', engine.bumper.x + engine.bumper.w / 2, engine.bumper.y + engine.bumper.h / 2);
-        ctx.restore();
-      }
-
-      // Bricks
-      engine.bricks.forEach(b => {
-        if (b.hp <= 0) return;
-        const s = b.logo ? { f: 'rgba(212,165,90,.3)', s: GOLD_L, t: '#1a1200' } :
-                  b.armored ? { f: 'rgba(160,160,175,.35)', s: '#A0A0AF', t: '#FFFFFF' } :
-                  TIERS[Math.min(b.hp - 1, TIERS.length - 1)];
-
-        ctx.save();
-        ctx.shadowColor = s.s;
-        ctx.shadowBlur = b.logo ? 16 : b.armored ? 12 : 9;
-        ctx.fillStyle = s.f;
-        ctx.strokeStyle = s.s;
-        ctx.lineWidth = b.armored ? 2.8 : 2;
+        ctx.shadowColor = style.s;
+        ctx.shadowBlur = b.specialType ? 14 : 8;
+        ctx.fillStyle = style.f;
+        ctx.strokeStyle = style.s;
+        ctx.lineWidth = b.specialType ? 2.5 : 1.8;
         ctx.beginPath();
         if (ctx.roundRect) ctx.roundRect(b.x, b.y, b.w, b.h, 6);
         else ctx.rect(b.x, b.y, b.w, b.h);
         ctx.fill(); ctx.stroke();
         ctx.restore();
 
-        ctx.fillStyle = b.logo ? GOLD_L : s.t;
-        ctx.font = '700 ' + Math.round(engine.cell * 0.3) + 'px sans-serif';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText(b.logo ? 'ST' : String(b.hp), b.x + b.w / 2, b.y + b.h / 2 + 1);
+        // If Special Logo Brick -> Draw ST Dance Studio Logo Image
+        if (b.specialType && stLogoImgRef.current) {
+          ctx.save();
+          const imgW = b.w * 0.75;
+          const imgH = b.h * 0.75;
+          const imgX = b.x + (b.w - imgW) / 2;
+          const imgY = b.y + (b.h - imgH) / 2;
+          ctx.drawImage(stLogoImgRef.current, imgX, imgY, imgW, imgH);
+          ctx.restore();
+        } else {
+          // Render HP Number
+          ctx.fillStyle = style.t;
+          ctx.font = '700 ' + Math.round(engine.cell * 0.3) + 'px sans-serif';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(String(b.hp), b.x + b.w / 2, b.y + b.h / 2 + 1);
+        }
       });
 
       // Pickups (+1 Balls)
@@ -550,7 +570,6 @@ export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOv
               b.x = b.r;
               b.vx = Math.abs(b.vx);
               b.sideBounces = (b.sideBounces || 0) + 1;
-              // If bouncing shallowly on side walls, force a slight downward vector push
               if (b.sideBounces > 6) {
                 b.vy += 0.25;
               }
@@ -572,23 +591,16 @@ export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOv
               soundFx.playHit();
             }
 
-            // Moving Bumper Hit Test (Round 4+)
-            if (engine.bumper.active && hitTest(b, engine.bumper)) {
-              b.vy = -Math.abs(b.vy);
-              createParticles(b.x, b.y, '#6FC3E0');
-              soundFx.playHit();
-            }
-
             // Bricks Collision
             engine.bricks.forEach(br => {
               if (br.hp <= 0) return;
               if (hitTest(b, br)) {
                 br.hp--;
                 if (br.hp <= 0) {
-                  engine.score += br.armored ? 5 : 2;
+                  engine.score += br.specialType ? 6 : 2;
                   setScore(engine.score);
-                  createParticles(br.x + br.w / 2, br.y + br.h / 2, br.logo ? GOLD_L : br.armored ? '#A0A0AF' : '#E0764A');
-                  if (br.logo) checkLogo();
+                  createParticles(br.x + br.w / 2, br.y + br.h / 2, br.specialType ? GOLD_L : '#E0764A');
+                  if (br.specialType) handleSpecialBrickDestroyed(br);
                   soundFx.playCombo(engine.round);
                 } else {
                   soundFx.playHit();
@@ -745,7 +757,7 @@ export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOv
 
             {availableLives > 0 ? (
               <button className="btn-play-big" onClick={startGame}>
-                <Play size={20} fill="black" /> {t.startGame} (-1 LIFE)
+                <Play size={20} fill="black" /> {t.startGame}
               </button>
             ) : (
               <div className="no-lives-box">
@@ -774,7 +786,7 @@ export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOv
             </div>
             {availableLives > 0 ? (
               <button className="btn-play-big" onClick={startGame}>
-                <RotateCcw size={18} /> {t.playAgain} (-1 LIFE)
+                <RotateCcw size={18} /> {t.playAgain}
               </button>
             ) : (
               <div className="no-lives-box">
