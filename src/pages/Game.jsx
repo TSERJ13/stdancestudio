@@ -130,7 +130,8 @@ export default function Game() {
   const [showShareModal, setShowShareModal] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
 
-  const availableLives = calculateAvailableLives(livesData);
+  const isTestAccount = userProfile?.studentId === '99999';
+  const availableLives = isTestAccount ? 999 : calculateAvailableLives(livesData);
 
   useEffect(() => {
     document.body.classList.add('page-game-active');
@@ -147,14 +148,19 @@ export default function Game() {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      const { nextResetTimeMs } = getGeorgiaResetTime();
-      setCountdown(formatTimeUntilReset(nextResetTimeMs));
+      const now = new Date();
+      const georgiaTime = new Date(now.getTime() + (now.getTimezoneOffset() * 60000) + (4 * 3600000));
+      const h = georgiaTime.getHours().toString().padStart(2, '0');
+      const m = georgiaTime.getMinutes().toString().padStart(2, '0');
+      const s = georgiaTime.getSeconds().toString().padStart(2, '0');
+      setCountdown(`${h}:${m}:${s}`);
     }, 1000);
 
     return () => clearInterval(interval);
   }, []);
 
   const handleSpendLife = () => {
+    if (userProfile?.studentId === '99999') return; // Infinite lives for test account
     if (availableLives <= 0) return;
     setLivesData(prev => {
       const updated = { ...prev, usedLives: Math.min(prev.baseLives || 3, prev.usedLives + 1) };
@@ -245,7 +251,7 @@ export default function Game() {
 
   return (
     <section className="section" style={{ paddingBlock: 0, width: '100%', minHeight: '100dvh', display: 'flex', background: '#05060a' }}>
-      <div className="container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', padding: 0 }}>
+      <div className="container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', padding: 0, flex: 1 }}>
         <div className="inner-page game-page-wrap" style={{ flex: 1, paddingTop: 10 }}>
           <div className="app-container">
             {/* Ultra-Compact Top Bar */}
@@ -296,7 +302,7 @@ export default function Game() {
                     color={livesData.hasShareLife ? '#ec4899' : '#52525b'}
                   />
                 </div>
-                <div className="timer-pill">
+                <div className="timer-pill" title="მიმდინარე დრო (თბილისი)">
                   <Clock size={10} color="#d4a64a" />
                   <strong>{countdown || '22:00:00'}</strong>
                 </div>

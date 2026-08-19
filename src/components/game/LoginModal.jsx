@@ -14,7 +14,8 @@ const STUDENT_ID_MAP = {
   '105': 'გიორგი (Jive Champ)',
   'ST-105': 'გიორგი (Jive Champ)',
   '106': 'ელენე (Waltz Master)',
-  'ST-106': 'ელენე (Waltz Master)'
+  'ST-106': 'ელენე (Waltz Master)',
+  '99999': 'TEST ADMIN (Infinite Lives)'
 };
 
 export default function LoginModal({ isOpen, onClose, currentUser, onLogin, onLogout }) {
@@ -214,7 +215,7 @@ export default function LoginModal({ isOpen, onClose, currentUser, onLogin, onLo
                 სატესტო ID კოდები (დააჭირე შესავსებად):
               </span>
               <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
-                {['101', '102', '103', '104'].map(testId => (
+                {['101', '102', '103', '104', '99999'].map(testId => (
                   <button
                     key={testId}
                     type="button"
