@@ -366,7 +366,7 @@ export default function Game() {
               </button>
             </nav>
 
-            <main className="main-content" style={{ width: '100%' }}>
+            <main className="main-content" style={{ width: '100%', flex: 1, display: 'flex', flexDirection: 'column' }}>
               {activeTab === 'play' && (
                 <GameBoard
                   tGame={tGame}
