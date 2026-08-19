@@ -417,8 +417,8 @@ export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOv
 
     const engine = engineRef.current;
     engine.height = dynamicH;
-    engine.deathY = dynamicH - 52;
-    engine.launchY = dynamicH - 28;
+    engine.deathY = dynamicH - 72; // Moved up by 20px
+    engine.launchY = dynamicH - 48; // Moved up by 20px
 
     canvas.width = CANVAS_W;
     canvas.height = dynamicH;

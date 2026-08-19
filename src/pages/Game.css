@@ -13,22 +13,16 @@ body.page-game-active .floating-lang {
 /* =========================================================
    BULLETPROOF FULLSCREEN OVERRIDES (iOS, Safari, Chrome)
    ========================================================= */
-body.app-fullscreen-active {
-  overflow: hidden !important;
-}
-
-body.game-tab-play {
+body.page-game-active,
+body.page-game-active html {
   overflow: hidden !important;
   position: fixed !important; /* Prevents Safari bounce */
   width: 100% !important;
   height: 100% !important;
-}
-
-body.page-game-active {
   user-select: none !important;
   -webkit-user-select: none !important;
   -webkit-touch-callout: none !important;
-  touch-action: pan-y !important; /* Allow vertical scroll for rules, but prevent zooming */
+  touch-action: none !important;
 }
 
 body.page-game-active .canvas-wrapper {
@@ -355,7 +349,34 @@ body.app-fullscreen-active .canvas-wrapper,
   justify-content: center;
 }
 
+body.page-game-active {
+  position: fixed !important;
+  width: 100% !important;
+  height: 100% !important;
+  overflow: hidden !important;
+}
+
 /* Canvas Wrapper & Overlay Alignment */
+.game-page-wrap .main-content {
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+.leaderboard-container, .rules-card {
+  height: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow-y: auto !important;
+  touch-action: pan-y !important; /* Re-enable scrolling specifically for these containers */
+  padding-bottom: 20px !important;
+}
+
+.lb-list {
+  flex: 1 !important;
+  overflow-y: auto !important;
+  touch-action: pan-y !important;
+}
+
 .game-page-wrap .canvas-wrapper {
   position: relative !important;
   width: 100% !important;
