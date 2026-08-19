@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Trophy, Gift, Ticket, History, Copy, Check } from 'lucide-react';
+import { useLanguage } from '../../context/LanguageContext';
 import SpinModal from './SpinModal';
 
 const TEST_LEADERBOARD = [
@@ -17,7 +18,67 @@ const WINNERS_HISTORY = [
   { month: '2025 — ნოემბერი', winner: 'ნიკოლოზი', prize: 'ST Dance Studio ზურგჩანთა', code: 'ST-WIN-5120', date: '30/11/2025' }
 ];
 
+const lbTranslations = {
+  ka: {
+    title: 'სტუდიის ლიდერბორდი & პრიზები',
+    subtitle: 'თვის გამარჯვებულები და Danceshop.Ge ვაუჩერები',
+    spinBtn: 'დოლურას დატრიალება',
+    ranksTab: 'რანგები',
+    myPrizesTab: (count) => `ჩემი ვაუჩერები (${count})`,
+    historyTab: 'გამარჯვებულების ისტორია',
+    profileLbl: 'შენი პროფაილი:',
+    highScoreLbl: 'რეკორდი: ',
+    collectBtn: 'პრიზის მიღება',
+    activeBadge: 'აქტიური',
+    deliveredBadge: 'გადაცემულია',
+    emptyVouchers: 'ჯერ არ გაქვს მოგებული ვაუჩერი. გახდი #1 რანგის გამარჯვებული და დაატრიალე დოლურა!',
+    copyCode: 'კოდის კოპირება',
+    copiedText: 'დაკოპირდა!',
+    pts: 'ქულა',
+    games: 'თამაში'
+  },
+  en: {
+    title: 'Studio Leaderboard & Prizes',
+    subtitle: 'Winners of the Month & Danceshop.Ge Vouchers',
+    spinBtn: 'Spin Prize Wheel',
+    ranksTab: 'Ranks',
+    myPrizesTab: (count) => `My Vouchers (${count})`,
+    historyTab: 'Winners History',
+    profileLbl: 'Your Profile:',
+    highScoreLbl: 'High Score: ',
+    collectBtn: 'Collect Prize',
+    activeBadge: 'ACTIVE',
+    deliveredBadge: 'Delivered',
+    emptyVouchers: 'You have no vouchers yet. Become #1 rank winner to spin the wheel!',
+    copyCode: 'Copy Code',
+    copiedText: 'Copied!',
+    pts: 'pts',
+    games: 'games'
+  },
+  ru: {
+    title: 'Лидерборд студии и призы',
+    subtitle: 'Победители месяца и ваучеры Danceshop.Ge',
+    spinBtn: 'Крутить колесо',
+    ranksTab: 'Рейтинг',
+    myPrizesTab: (count) => `Мои ваучеры (${count})`,
+    historyTab: 'История победителей',
+    profileLbl: 'Ваш профиль:',
+    highScoreLbl: 'Рекорд: ',
+    collectBtn: 'Получить приз',
+    activeBadge: 'АКТИВЕН',
+    deliveredBadge: 'Выдано',
+    emptyVouchers: 'У вас пока нет ваучеров. Займите 1-е место, чтобы прокрутить колесо!',
+    copyCode: 'Скопировать код',
+    copiedText: 'Скопировано!',
+    pts: 'очков',
+    games: 'игр'
+  }
+};
+
 export default function Leaderboard({ currentHighScore, playerName, onUpdatePlayerName }) {
+  const { lang } = useLanguage();
+  const t = lbTranslations[lang] || lbTranslations.ka;
+
   const [activeTab, setActiveTab] = useState('ranks');
   const [editingName, setEditingName] = useState(false);
   const [nameInput, setNameInput] = useState(playerName || '');
@@ -75,8 +136,8 @@ export default function Leaderboard({ currentHighScore, playerName, onUpdatePlay
         <div className="lb-title">
           <Trophy size={24} color="#d4a64a" />
           <div>
-            <h2>სტუდიის ლიდერბორდი & პრიზები</h2>
-            <span className="lb-subtitle">თვის გამარჯვებულები და Danceshop.Ge ვაუჩერები</span>
+            <h2>{t.title}</h2>
+            <span className="lb-subtitle">{t.subtitle}</span>
           </div>
         </div>
 
@@ -97,7 +158,7 @@ export default function Leaderboard({ currentHighScore, playerName, onUpdatePlay
             boxShadow: '0 4px 12px rgba(212,166,74,0.3)'
           }}
         >
-          <Gift size={16} /> დოლურას დატრიალება (SPIN PRIZE)
+          <Gift size={16} /> {t.spinBtn}
         </button>
       </div>
 
@@ -121,7 +182,7 @@ export default function Leaderboard({ currentHighScore, playerName, onUpdatePlay
             gap: '6px'
           }}
         >
-          <Trophy size={14} /> რანგები (Ranks)
+          <Trophy size={14} /> {t.ranksTab}
         </button>
 
         <button
@@ -142,7 +203,7 @@ export default function Leaderboard({ currentHighScore, playerName, onUpdatePlay
             gap: '6px'
           }}
         >
-          <Ticket size={14} /> ჩემი ვაუჩერები ({myVouchers.length})
+          <Ticket size={14} /> {t.myPrizesTab(myVouchers.length)}
         </button>
 
         <button
@@ -163,14 +224,14 @@ export default function Leaderboard({ currentHighScore, playerName, onUpdatePlay
             gap: '6px'
           }}
         >
-          <History size={14} /> გამარჯვებულების ისტორია
+          <History size={14} /> {t.historyTab}
         </button>
       </div>
 
       {activeTab === 'ranks' && (
         <>
           <div className="player-profile-bar">
-            <span className="profile-lbl">შენი პროფელი:</span>
+            <span className="profile-lbl">{t.profileLbl}</span>
             {editingName ? (
               <div style={{ display: 'flex', gap: '6px', flex: 1 }}>
                 <input
@@ -193,7 +254,7 @@ export default function Leaderboard({ currentHighScore, playerName, onUpdatePlay
               </div>
             )}
             <div className="my-score-pill">
-              <span>რეკორდი: </span>
+              <span>{t.highScoreLbl}</span>
               <strong style={{ color: '#d4a64a' }}>{(currentHighScore || 0).toLocaleString()}</strong>
             </div>
           </div>
@@ -234,12 +295,12 @@ export default function Leaderboard({ currentHighScore, playerName, onUpdatePlay
                         boxShadow: '0 0 12px rgba(34,197,94,0.4)'
                       }}
                     >
-                      <Gift size={14} /> COLLECT PRIZE
+                      <Gift size={14} /> {t.collectBtn}
                     </button>
                   ) : (
                     <div className="lb-score-col">
-                      <span className="lb-score">{item.score.toLocaleString()} ქულა</span>
-                      <span className="lb-games">{item.games} თამაში</span>
+                      <span className="lb-score">{item.score.toLocaleString()} {t.pts}</span>
+                      <span className="lb-games">{item.games} {t.games}</span>
                     </div>
                   )}
                 </div>
@@ -253,7 +314,7 @@ export default function Leaderboard({ currentHighScore, playerName, onUpdatePlay
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
           {myVouchers.length === 0 ? (
             <div style={{ padding: '30px', textAlign: 'center', color: '#a1a1aa', fontSize: '13px' }}>
-              ჯერ არ გაქვს მოგებული ვაუჩერი. გახდი #1 რანგის გამარჯვებული და დაატრიალე დოლურა!
+              {t.emptyVouchers}
             </div>
           ) : (
             myVouchers.map((v) => (
@@ -278,7 +339,7 @@ export default function Leaderboard({ currentHighScore, playerName, onUpdatePlay
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '2px' }}>
                     <h4 style={{ fontSize: '15px', fontWeight: '900', color: '#F0D9A8', margin: 0 }}>{v.prizeName}</h4>
                     <span style={{ fontSize: '9px', background: 'rgba(34,197,94,0.15)', color: '#22c55e', padding: '2px 6px', borderRadius: '6px', fontWeight: '800' }}>
-                      ACTIVE
+                      {t.activeBadge}
                     </span>
                   </div>
                   <div style={{ fontSize: '12px', color: 'white', fontWeight: '700' }}>{v.winnerName}</div>
@@ -294,7 +355,7 @@ export default function Leaderboard({ currentHighScore, playerName, onUpdatePlay
                     style={{ background: 'transparent', border: 'none', color: '#a1a1aa', fontSize: '11px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
                   >
                     {copiedCode === v.code ? <Check size={13} color="#22c55e" /> : <Copy size={13} />}
-                    {copiedCode === v.code ? 'დაკოპირდა!' : 'კოდის კოპირება'}
+                    {copiedCode === v.code ? t.copiedText : t.copyCode}
                   </button>
                 </div>
               </div>
@@ -325,7 +386,7 @@ export default function Leaderboard({ currentHighScore, playerName, onUpdatePlay
               </div>
               <div style={{ textAlign: 'right' }}>
                 <span style={{ fontSize: '11px', color: '#22c55e', fontWeight: '800', background: 'rgba(34,197,94,0.15)', padding: '2px 8px', borderRadius: '8px' }}>
-                  გადაცემულია
+                  {t.deliveredBadge}
                 </span>
                 <div style={{ fontSize: '10px', color: '#71717a', marginTop: '4px' }}>{h.code}</div>
               </div>

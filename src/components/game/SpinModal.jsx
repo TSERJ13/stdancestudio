@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Gift, Sparkles, Trophy, Award, RotateCw, Ticket, Copy, Check } from 'lucide-react';
+import { useLanguage } from '../../context/LanguageContext';
 
 export const PRIZES = [
   { id: 'bottle', name: 'წყლის ბოთლი', desc: 'ST Dance Studio ბრენდირებული წყლის ბოთლი', img: '/images/prizes/water_bottle.png', color: '#F0D9A8' },
@@ -12,7 +13,46 @@ export const PRIZES = [
   { id: 'v100', name: '-100% ვაუჩერი', desc: '100% უფასო სრული ვაუჩერი Danceshop.Ge-ზე', img: '/images/prizes/voucher_100.png', color: '#FF4444' }
 ];
 
+const modalTranslations = {
+  ka: {
+    badgeTitle: 'თვის ბოლოს გათამაშების დოლურა',
+    winnerTitle: (name) => `${name} — თვის გამარჯვებული!`,
+    subtitle: 'დაატრიალე დოლურა და მიიღე ST DANCE STUDIO & Danceshop.Ge-ს პრიზი!',
+    spinBtn: 'დოლურას დატრიალება',
+    spinningText: 'დოლურა ტრიალებს...',
+    congratsText: 'გილოცავთ! თქვენ მოიგეთ:',
+    officialVoucher: 'ოფიციალური ვაუჩერი',
+    activeBadge: 'აქტიური',
+    collectBtn: 'ვაუჩერის შენახვა'
+  },
+  en: {
+    badgeTitle: 'Month-End Prize Wheel',
+    winnerTitle: (name) => `${name} — Winner of the Month!`,
+    subtitle: 'Spin the wheel to win a prize from ST Dance Studio & Danceshop.Ge!',
+    spinBtn: 'Spin Prize Wheel',
+    spinningText: 'Spinning wheel...',
+    congratsText: 'Congratulations! You won:',
+    officialVoucher: 'Official Voucher',
+    activeBadge: 'ACTIVE',
+    collectBtn: 'Collect Voucher'
+  },
+  ru: {
+    badgeTitle: 'Колесо призов конца месяца',
+    winnerTitle: (name) => `${name} — Победитель месяца!`,
+    subtitle: 'Крутите колесо и получите приз от ST Dance Studio и Danceshop.Ge!',
+    spinBtn: 'Крутить колесо',
+    spinningText: 'Колесо крутится...',
+    congratsText: 'Поздравляем! Вы выиграли:',
+    officialVoucher: 'Официальный ваучер',
+    activeBadge: 'АКТИВЕН',
+    collectBtn: 'Сохранить ваучер'
+  }
+};
+
 export default function SpinModal({ isOpen, onClose, winnerName = 'ჩემპიონი', onClaimPrize }) {
+  const { lang } = useLanguage();
+  const t = modalTranslations[lang] || modalTranslations.ka;
+
   const canvasRef = useRef(null);
   const [spinning, setSpinning] = useState(false);
   const [wonPrize, setWonPrize] = useState(null);
@@ -47,7 +87,6 @@ export default function SpinModal({ isOpen, onClose, winnerName = 'ჩემპ�
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
 
-    // 4K Ultra High DPI Supersampling
     const displaySize = 320;
     const dpr = Math.max(2, window.devicePixelRatio || 2);
     const pixelSize = displaySize * dpr;
@@ -104,7 +143,7 @@ export default function SpinModal({ isOpen, onClose, winnerName = 'ჩემპ�
       ctx.translate(center, center);
       ctx.rotate(midA);
 
-      // 1. Draw Text Label near outer rim (radius * 0.83)
+      // 1. Draw Text Label near outer rim
       ctx.save();
       ctx.translate(radius * 0.83, 0);
       ctx.rotate(Math.PI / 2);
@@ -128,7 +167,7 @@ export default function SpinModal({ isOpen, onClose, winnerName = 'ჩემპ�
         ctx.translate(imgDist, 0);
         ctx.rotate(Math.PI / 2);
 
-        // A. Draw Pure White Solid Background Disk (No shadows/artifacts)
+        // A. Draw Pure White Solid Background Disk
         ctx.beginPath();
         ctx.arc(0, 0, imgRadius, 0, Math.PI * 2);
         ctx.fillStyle = '#ffffff';
@@ -140,7 +179,6 @@ export default function SpinModal({ isOpen, onClose, winnerName = 'ჩემპ�
         ctx.arc(0, 0, imgRadius - 0.5, 0, Math.PI * 2);
         ctx.clip();
 
-        // Aspect ratio contain fit with clean padding
         const maxDim = imgSize * 0.78;
         const aspect = (img.naturalWidth || img.width) / (img.naturalHeight || img.height || 1);
         let drawW = maxDim;
@@ -152,9 +190,9 @@ export default function SpinModal({ isOpen, onClose, winnerName = 'ჩემპ�
         }
 
         ctx.drawImage(img, -drawW / 2, -drawH / 2, drawW, drawH);
-        ctx.restore(); // Restore clip
+        ctx.restore();
 
-        // C. Draw Crisp Sharp Gold Border Ring ON TOP (No clipping distortion!)
+        // C. Draw Crisp Sharp Gold Border Ring ON TOP
         ctx.beginPath();
         ctx.arc(0, 0, imgRadius, 0, Math.PI * 2);
         ctx.strokeStyle = '#D4A64A';
@@ -167,7 +205,7 @@ export default function SpinModal({ isOpen, onClose, winnerName = 'ჩემპ�
       ctx.restore();
     }
 
-    // Center Golden Cap (NO ST TEXT)
+    // Center Golden Cap
     ctx.save();
     ctx.shadowColor = '#000000';
     ctx.shadowBlur = 14;
@@ -183,7 +221,6 @@ export default function SpinModal({ isOpen, onClose, winnerName = 'ჩემპ�
     ctx.lineWidth = 2.5;
     ctx.stroke();
 
-    // Center Gold Dot Accent
     ctx.fillStyle = '#151100';
     ctx.beginPath();
     ctx.arc(center, center, 5, 0, Math.PI * 2);
@@ -275,9 +312,9 @@ export default function SpinModal({ isOpen, onClose, winnerName = 'ჩემპ�
     <div className="modal-overlay">
       <div className="modal-content glass animate-in" style={{ maxWidth: '440px', padding: '20px' }}>
         <div className="modal-header" style={{ marginBottom: '10px' }}>
-          <div className="quiz-title-badge">
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <Gift size={18} color="#d4a64a" />
-            <span style={{ fontSize: '12px', fontWeight: '800' }}>MONTH-END PRIZE DRUM / დოლურა</span>
+            <span style={{ fontSize: '12px', fontWeight: '800', color: '#F0D9A8' }}>{t.badgeTitle}</span>
           </div>
           <button className="btn-close" onClick={onClose}>✕</button>
         </div>
@@ -287,11 +324,11 @@ export default function SpinModal({ isOpen, onClose, winnerName = 'ჩემპ�
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
               <Trophy size={18} color="#d4a64a" />
               <h3 style={{ fontSize: '15px', fontWeight: '900', color: 'white', margin: 0 }}>
-                {winnerName} — თვის გამარჯვებული!
+                {t.winnerTitle(winnerName)}
               </h3>
             </div>
             <p style={{ fontSize: '11px', color: '#a1a1aa', margin: '0 0 10px' }}>
-              დაატრიალე დოლურა და მიიღე ST DANCE STUDIO & Danceshop.Ge-ს პრიზი!
+              {t.subtitle}
             </p>
 
             {/* Ultra HD Canvas Wheel Container with Top Pointer */}
@@ -342,13 +379,13 @@ export default function SpinModal({ isOpen, onClose, winnerName = 'ჩემპ�
               }}
             >
               <RotateCw size={18} className={spinning ? 'animate-spin' : ''} />
-              {spinning ? 'დოლურა ტრიალებს...' : 'დოლურას დატრიალება (SPIN)'}
+              {spinning ? t.spinningText : t.spinBtn}
             </button>
           </div>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', padding: '6px 0' }}>
             <Sparkles size={44} color="#d4a64a" className="animate-bounce" style={{ marginBottom: '6px' }} />
-            <span style={{ fontSize: '11px', color: '#a1a1aa', fontWeight: '800' }}>გილოცავთ! თქვენ მოიგეთ:</span>
+            <span style={{ fontSize: '11px', color: '#a1a1aa', fontWeight: '800' }}>{t.congratsText}</span>
             <h3 style={{ fontSize: '18px', fontWeight: '900', color: '#F0D9A8', margin: '4px 0 10px' }}>
               {wonPrize.name}
             </h3>
@@ -391,9 +428,9 @@ export default function SpinModal({ isOpen, onClose, winnerName = 'ჩემპ�
               boxSizing: 'border-box'
             }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
-                <span style={{ fontSize: '10px', color: '#a1a1aa', fontWeight: '800' }}>ოფიციალური ვაუჩერი</span>
+                <span style={{ fontSize: '10px', color: '#a1a1aa', fontWeight: '800' }}>{t.officialVoucher}</span>
                 <span style={{ fontSize: '10px', color: '#22c55e', fontWeight: '900', background: 'rgba(34,197,94,0.15)', padding: '2px 6px', borderRadius: '8px' }}>
-                  ACTIVE
+                  {t.activeBadge}
                 </span>
               </div>
               <div style={{ fontSize: '13px', fontWeight: '900', color: 'white', marginBottom: '2px' }}>
@@ -424,7 +461,7 @@ export default function SpinModal({ isOpen, onClose, winnerName = 'ჩემპ�
                 cursor: 'pointer'
               }}
             >
-              ვაუჩერის შენახვა / COLLECT VOUCHER
+              {t.collectBtn}
             </button>
           </div>
         )}
