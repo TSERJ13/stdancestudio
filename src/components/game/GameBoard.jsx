@@ -13,7 +13,7 @@ const TIERS = [
 ];
 
 const CANVAS_W = 440;
-const CANVAS_H = 580;
+const CANVAS_H = 600;
 
 export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOver, onScoreUpdate, onOpenQuiz, onOpenShare }) {
   const canvasRef = useRef(null);

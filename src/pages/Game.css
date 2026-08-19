@@ -17,6 +17,17 @@ body.app-fullscreen-active {
   overflow: hidden !important;
 }
 
+body.page-game-active {
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  -webkit-touch-callout: none !important;
+  touch-action: pan-y !important; /* Allow vertical scroll for rules, but prevent zooming */
+}
+
+body.page-game-active .canvas-wrapper {
+  touch-action: none !important; /* Completely block touch actions on canvas area */
+}
+
 body.app-fullscreen-active header,
 body.app-fullscreen-active nav.navbar,
 body.app-fullscreen-active footer,
