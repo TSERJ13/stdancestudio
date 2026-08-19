@@ -146,6 +146,32 @@ export default function Game() {
     };
   }, [activeTab]);
 
+  // Telegram Web App Auto-Login
+  useEffect(() => {
+    if (window.Telegram?.WebApp) {
+      const twa = window.Telegram.WebApp;
+      twa.ready();
+      twa.expand(); // Make TMA full screen
+
+      const tgUser = twa.initDataUnsafe?.user;
+      if (tgUser) {
+        setUserProfile(prev => {
+          const updated = {
+            ...prev,
+            studentId: `TG-${tgUser.id}`,
+            name: tgUser.first_name || tgUser.username || 'Dancer',
+            isLoggedIn: true,
+            isTelegram: true,
+            highScore: Math.max(prev.highScore || 0, 0)
+          };
+          localStorage.setItem('dancing_bricks_user_profile', JSON.stringify(updated));
+          localStorage.setItem('dancing_bricks_player_name', updated.name);
+          return updated;
+        });
+      }
+    }
+  }, []);
+
   useEffect(() => {
     const interval = setInterval(() => {
       const now = new Date();
@@ -266,7 +292,7 @@ export default function Game() {
                   {userProfile.isLoggedIn ? (
                     <>
                       <UserCheck size={13} color="#22c55e" />
-                      <span>{userProfile.studentId ? `ID: ${userProfile.studentId}` : (userProfile.name || '').split(' ')[0]}</span>
+                      <span>{userProfile.studentId?.startsWith('TG-') ? userProfile.name : (userProfile.studentId ? `ID: ${userProfile.studentId}` : (userProfile.name || '').split(' ')[0])}</span>
                     </>
                   ) : (
                     <>
