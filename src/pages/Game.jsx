@@ -116,7 +116,10 @@ export default function Game() {
   const [userProfile, setUserProfile] = useState(() => {
     try {
       const saved = localStorage.getItem('dancing_bricks_user_profile');
-      if (saved) return JSON.parse(saved);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed && typeof parsed === 'object') return parsed;
+      }
     } catch {}
     return {
       name: localStorage.getItem('dancing_bricks_player_name') || 'Dancer',

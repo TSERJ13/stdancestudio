@@ -86,8 +86,11 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
   if (playerName) {
     const isMeMock = combinedList.findIndex(m => m.name === playerName || m.name.includes(playerName));
     if (isMeMock !== -1) {
-      combinedList[isMeMock].score = Math.max(combinedList[isMeMock].score, displayScore);
-      combinedList[isMeMock].games = Math.max(combinedList[isMeMock].games, totalGames || 0);
+      combinedList[isMeMock] = {
+        ...combinedList[isMeMock],
+        score: Math.max(combinedList[isMeMock].score, displayScore),
+        games: Math.max(combinedList[isMeMock].games, totalGames || 0)
+      };
     } else {
       combinedList.push({
         id: 'ME',
@@ -113,7 +116,10 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
   const [myVouchers, setMyVouchers] = useState(() => {
     try {
       const saved = localStorage.getItem('dancing_bricks_my_prizes');
-      if (saved) return JSON.parse(saved);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) return parsed;
+      }
     } catch {}
     return [
       {
