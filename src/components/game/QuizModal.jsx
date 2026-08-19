@@ -4,7 +4,7 @@ import { QUIZ_QUESTIONS } from '../../data/quizQuestions';
 
 const quizTranslations = {
   ka: {
-    title: '4-ე სიცოცხლის გამოწვევა — ცეკვის კვიზი',
+    title: 'ცეკვის კვიზის გამოწვევა (+1 Life)',
     unlockedTitle: '4-ე სიცოცხლე გახსნილია! (+1 Life)',
     unlockedSub: 'დღევანდელი მე-4 სიცოცხლე უკვე მოპოვებული გაქვს კვიზის გავლით!',
     backBtn: 'თამაშში დაბრუნება',
@@ -17,7 +17,7 @@ const quizTranslations = {
     retryBtn: 'თავიდან ცდა'
   },
   en: {
-    title: '4th Life Challenge — Dance Quiz',
+    title: 'Dance Quiz Challenge (+1 Life)',
     unlockedTitle: '4th Life Unlocked! (+1 Life)',
     unlockedSub: 'You already earned your 4th life for today by completing the dance quiz!',
     backBtn: 'Back to Game',
@@ -30,7 +30,7 @@ const quizTranslations = {
     retryBtn: 'Try Again'
   },
   ru: {
-    title: '4-я Жизнь — Викторина Танцев',
+    title: 'Викторина Танцев (+1 Life)',
     unlockedTitle: '4-я Жизнь Разблокирована! (+1 Life)',
     unlockedSub: 'Вы уже получили 4-ю жизнь на сегодня за прохождение викторины!',
     backBtn: 'Вернуться в игру',
@@ -88,10 +88,11 @@ export default function QuizModal({ isOpen, onClose, onUnlockQuizLife, hasQuizLi
   return (
     <div className="modal-overlay">
       <div className="modal-content glass animate-in" style={{ maxWidth: '440px', padding: '20px' }}>
-        <div className="modal-header" style={{ marginBottom: '14px' }}>
-          <div className="quiz-title-badge">
+        {/* Modal Header with Clean Horizontal Alignment */}
+        <div className="modal-header" style={{ marginBottom: '14px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <HelpCircle size={18} color="#d4a64a" />
-            <span style={{ fontSize: '12px', fontWeight: '800' }}>{t.title}</span>
+            <span style={{ fontSize: '13px', fontWeight: '800', color: '#F0D9A8' }}>{t.title}</span>
           </div>
           <button className="btn-close" onClick={onClose}>✕</button>
         </div>
@@ -139,61 +140,63 @@ export default function QuizModal({ isOpen, onClose, onUnlockQuizLife, hasQuizLi
               <div className="quiz-progress-fill" style={{ width: `${((currentIdx + 1) / 3) * 100}%`, height: '100%', background: 'linear-gradient(90deg, #d4a64a, #f0d9a8)', transition: 'width 0.3s' }} />
             </div>
 
-            <div className="quiz-meta" style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: '#d4a64a', fontWeight: '800', marginBottom: '12px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: '#a1a1aa', fontWeight: '700', marginBottom: '12px' }}>
               <span>{t.qMeta(currentIdx + 1, 3, correctCount)}</span>
             </div>
 
-            <h3 className="quiz-question-text" style={{ fontSize: '15px', fontWeight: '900', color: 'white', margin: '0 0 14px', lineHeight: '1.4' }}>
+            <h3 style={{ fontSize: '15px', fontWeight: '900', color: 'white', marginBottom: '14px', lineHeight: '1.4' }}>
               {currentQ.question}
             </h3>
 
-            <div className="quiz-options-list" style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              {currentQ.options.map((opt, i) => {
-                let statusClass = '';
+            <div className="quiz-options" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              {currentQ.options.map((opt, oIdx) => {
+                let btnStyle = {
+                  width: '100%',
+                  padding: '12px 14px',
+                  borderRadius: '12px',
+                  background: 'rgba(255,255,255,0.04)',
+                  border: '1px solid rgba(255,255,255,0.1)',
+                  color: '#e4e4e7',
+                  fontWeight: '700',
+                  fontSize: '13px',
+                  textAlign: 'left',
+                  cursor: selectedOption !== null ? 'default' : 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  transition: 'all 0.2s'
+                };
+
                 if (selectedOption !== null) {
-                  if (i === currentQ.correct) statusClass = 'correct';
-                  else if (i === selectedOption) statusClass = 'wrong';
+                  if (oIdx === currentQ.correct) {
+                    btnStyle.background = 'rgba(34,197,94,0.2)';
+                    btnStyle.border = '1px solid #22c55e';
+                    btnStyle.color = '#4ade80';
+                  } else if (oIdx === selectedOption) {
+                    btnStyle.background = 'rgba(239,68,68,0.2)';
+                    btnStyle.border = '1px solid #ef4444';
+                    btnStyle.color = '#f87171';
+                  }
                 }
+
                 return (
-                  <button
-                    key={i}
-                    onClick={() => handleSelect(i)}
-                    disabled={selectedOption !== null}
-                    style={{
-                      width: '100%',
-                      padding: '12px 14px',
-                      borderRadius: '12px',
-                      background: statusClass === 'correct' ? 'rgba(34,197,94,0.2)' : statusClass === 'wrong' ? 'rgba(239,68,68,0.2)' : 'rgba(255,255,255,0.05)',
-                      border: statusClass === 'correct' ? '1.5px solid #22c55e' : statusClass === 'wrong' ? '1.5px solid #ef4444' : '1px solid rgba(255,255,255,0.1)',
-                      color: 'white',
-                      fontWeight: '800',
-                      fontSize: '13px',
-                      textAlign: 'left',
-                      cursor: 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '10px',
-                      boxSizing: 'border-box'
-                    }}
-                  >
-                    <span style={{ width: '24px', height: '24px', borderRadius: '50%', background: 'rgba(212,166,74,0.2)', color: '#F0D9A8', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px', fontWeight: '900' }}>
-                      {String.fromCharCode(65 + i)}
-                    </span>
-                    <span style={{ flex: 1 }}>{opt}</span>
-                    {statusClass === 'correct' && <CheckCircle2 size={18} color="#22c55e" />}
-                    {statusClass === 'wrong' && <XCircle size={18} color="#ef4444" />}
+                  <button key={oIdx} style={btnStyle} onClick={() => handleSelect(oIdx)}>
+                    <span>{opt}</span>
+                    {selectedOption !== null && oIdx === currentQ.correct && <CheckCircle2 size={16} color="#22c55e" />}
+                    {selectedOption !== null && oIdx === selectedOption && oIdx !== currentQ.correct && <XCircle size={16} color="#ef4444" />}
                   </button>
                 );
               })}
             </div>
           </div>
         ) : (
-          <div className="quiz-result-state" style={{ padding: '16px 0', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <div className="quiz-finished-state" style={{ textAlign: 'center', padding: '10px 0' }}>
             {correctCount >= 3 ? (
               <>
                 <Sparkles size={48} color="#d4a64a" className="animate-bounce" style={{ marginBottom: '10px' }} />
-                <h3 style={{ fontSize: '17px', fontWeight: '900', color: '#F0D9A8', margin: '4px 0 6px' }}>{t.perfectScore}</h3>
-                <p style={{ fontSize: '12.5px', color: '#e4e4e7', margin: '0 0 16px' }}>{t.perfectSub}</p>
+                <h3 style={{ fontSize: '17px', fontWeight: '900', color: '#F0D9A8', margin: '4px 0' }}>{t.perfectScore}</h3>
+                <p style={{ fontSize: '12.5px', color: '#e4e4e7', margin: '4px 0 16px', lineHeight: '1.4' }}>{t.perfectSub}</p>
+
                 <button
                   onClick={onClose}
                   style={{
@@ -214,16 +217,17 @@ export default function QuizModal({ isOpen, onClose, onUnlockQuizLife, hasQuizLi
             ) : (
               <>
                 <XCircle size={48} color="#ef4444" style={{ marginBottom: '10px' }} />
-                <h3 style={{ fontSize: '17px', fontWeight: '900', color: '#ef4444', margin: '4px 0 6px' }}>{t.failedTitle} ({correctCount}/3)</h3>
-                <p style={{ fontSize: '12.5px', color: '#a1a1aa', margin: '0 0 16px' }}>{t.failedSub}</p>
+                <h3 style={{ fontSize: '17px', fontWeight: '900', color: '#ef4444', margin: '4px 0' }}>{t.failedTitle}</h3>
+                <p style={{ fontSize: '12.5px', color: '#a1a1aa', margin: '4px 0 16px', lineHeight: '1.4' }}>{t.failedSub}</p>
+
                 <button
                   onClick={resetQuiz}
                   style={{
                     width: '100%',
                     height: '44px',
                     borderRadius: '12px',
-                    background: 'rgba(255,255,255,0.08)',
-                    border: '1px solid rgba(255,255,255,0.15)',
+                    background: 'rgba(255,255,255,0.1)',
+                    border: '1px solid rgba(255,255,255,0.2)',
                     color: 'white',
                     fontWeight: '900',
                     fontSize: '13.5px',

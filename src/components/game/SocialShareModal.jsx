@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Share2, Check, Copy, Heart, Sparkles, ExternalLink } from 'lucide-react';
+import { Share2, Check, Copy, Heart, Sparkles, Loader2, CheckCircle2 } from 'lucide-react';
 
 function InstagramIcon({ size = 20, color = 'currentColor' }) {
   return (
@@ -13,46 +13,40 @@ function InstagramIcon({ size = 20, color = 'currentColor' }) {
 
 const shareTranslations = {
   ka: {
-    title: '5-ე სიცოცხლის გამოწვევა — ინსტაგრამზე გაზიარება',
+    title: 'გააზიარე და დაბრუნდი თამაშში',
     unlockedTitle: '5-ე სიცოცხლე გახსნილია! (+1 Life)',
     unlockedSub: 'ინსტაგრამზე გაზიარებით შენ მიიღე დღევანდელი მე-5 ბონუს სიცოცხლე!',
     backBtn: 'თამაშში დაბრუნება',
     shareTitle: 'გააზიარე ST Dance Studio და მიიღე +1 ბონუს სიცოცხლე',
-    shareSub: 'გახსენი @stdancestudio.ge ან @stdancestudio ინსტაგრამზე მე-5 სიცოცხლის მისაღებად!',
-    igBtn: 'Instagram (@stdancestudio.ge) (+1 Life)',
-    igBtn2: 'Instagram (@stdancestudio)',
-    nativeShareBtn: 'მობილურით გაზიარება',
+    shareSub: 'გადადი @stdancestudio.ge-ს ინსტაგრამზე, გააზიარე და დაბრუნდი თამაშში!',
+    igBtn: 'Instagram-ზე გაზიარება (+1 Life)',
+    verifyingText: 'მოწმდება გაზიარება...',
     copyBtn: 'ლინკის კოპირება',
-    copiedText: '✓ ლინკი დაკოპირდა!',
-    successBonus: '+1 Bonus Life Added!'
+    copiedText: '✓ ლინკი დაკოპირდა!'
   },
   en: {
-    title: '5th Life Challenge — Instagram Share',
+    title: 'Share & Return to Game',
     unlockedTitle: '5th Life Unlocked! (+1 Life)',
     unlockedSub: 'You earned your 5th bonus life for today by sharing on Instagram!',
     backBtn: 'Back to Game',
     shareTitle: 'Share ST Dance Studio to get +1 Bonus Life',
-    shareSub: 'Open @stdancestudio.ge or @stdancestudio on Instagram to unlock your 5th daily life!',
-    igBtn: 'Instagram (@stdancestudio.ge) (+1 Life)',
-    igBtn2: 'Instagram (@stdancestudio)',
-    nativeShareBtn: 'Native Mobile Share',
+    shareSub: 'Go to @stdancestudio.ge on Instagram, share and return to game!',
+    igBtn: 'Share on Instagram (+1 Life)',
+    verifyingText: 'Verifying share...',
     copyBtn: 'Copy Link',
-    copiedText: '✓ Link Copied to Clipboard!',
-    successBonus: '+1 Bonus Life Added!'
+    copiedText: '✓ Link Copied!'
   },
   ru: {
-    title: '5-я Жизнь — Поделиться в Instagram',
+    title: 'Поделитесь и вернитесь в игру',
     unlockedTitle: '5-я Жизнь Разблокирована! (+1 Life)',
     unlockedSub: 'Вы получили 5-ю бонусную жизнь на сегодня за публикацию в Instagram!',
     backBtn: 'Вернуться в игру',
     shareTitle: 'Поделитесь ST Dance Studio и получите +1 Бонусную Жизнь',
-    shareSub: 'Откройте @stdancestudio.ge или @stdancestudio в Instagram для получения 5-й жизни!',
-    igBtn: 'Instagram (@stdancestudio.ge) (+1 Life)',
-    igBtn2: 'Instagram (@stdancestudio)',
-    nativeShareBtn: 'Поделиться с телефона',
+    shareSub: 'Перейдите в @stdancestudio.ge в Instagram, поделитесь и вернитесь в игру!',
+    igBtn: 'Поделиться в Instagram (+1 Life)',
+    verifyingText: 'Проверка публикации...',
     copyBtn: 'Скопировать ссылку',
-    copiedText: '✓ Ссылка скопирована!',
-    successBonus: '+1 Bonus Life Added!'
+    copiedText: '✓ Ссылка скопирована!'
   }
 };
 
@@ -60,12 +54,11 @@ export default function SocialShareModal({ isOpen, onClose, onUnlockShareLife, h
   const t = shareTranslations[lang] || shareTranslations.ka;
 
   const [copied, setCopied] = useState(false);
-  const [shared, setShared] = useState(false);
+  const [verifying, setVerifying] = useState(false);
 
   if (!isOpen) return null;
 
   const triggerBonus = () => {
-    setShared(true);
     onUnlockShareLife();
   };
 
@@ -78,40 +71,25 @@ export default function SocialShareModal({ isOpen, onClose, onUnlockShareLife, h
     }, 1200);
   };
 
-  const handleNativeShare = async () => {
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: 'ST Dance Studio — Dancing Bricks',
-          text: 'ითამაშე Dancing Bricks და მოიგე Danceshop.Ge-ს ვაუჩერები!',
-          url: 'https://stdance.ge/game'
-        });
-        triggerBonus();
-      } catch (err) {
-        /* User cancelled or not supported */
-      }
-    } else {
-      handleCopyLink();
-    }
-  };
-
-  const handleInstagramShare1 = () => {
+  const handleInstagramShare = () => {
+    if (verifying) return;
+    setVerifying(true);
     window.open('https://www.instagram.com/stdancestudio.ge', '_blank');
-    setTimeout(triggerBonus, 1500);
-  };
 
-  const handleInstagramShare2 = () => {
-    window.open('https://www.instagram.com/stdancestudio', '_blank');
-    setTimeout(triggerBonus, 1500);
+    setTimeout(() => {
+      setVerifying(false);
+      triggerBonus();
+    }, 2200);
   };
 
   return (
     <div className="modal-overlay">
       <div className="modal-content glass animate-in" style={{ maxWidth: '440px', padding: '20px' }}>
-        <div className="modal-header" style={{ marginBottom: '14px' }}>
-          <div className="quiz-title-badge">
+        {/* Modal Header with Clean Horizontal Alignment */}
+        <div className="modal-header" style={{ marginBottom: '14px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <Share2 size={18} color="#d4a64a" />
-            <span style={{ fontSize: '12px', fontWeight: '800' }}>{t.title}</span>
+            <span style={{ fontSize: '13px', fontWeight: '800', color: '#F0D9A8' }}>{t.title}</span>
           </div>
           <button className="btn-close" onClick={onClose}>✕</button>
         </div>
@@ -172,73 +150,39 @@ export default function SocialShareModal({ isOpen, onClose, onUnlockShareLife, h
             </p>
 
             <div className="share-actions-column" style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              {/* Primary Instagram Share Buttons */}
+              {/* Single Main Instagram Share Button with Verification Loader */}
               <button
-                onClick={handleInstagramShare1}
+                onClick={handleInstagramShare}
+                disabled={verifying}
                 style={{
                   width: '100%',
-                  height: '44px',
+                  height: '46px',
                   borderRadius: '12px',
                   background: 'linear-gradient(135deg, #833ab4, #fd1d1d, #fcb045)',
                   border: 'none',
                   color: 'white',
                   fontWeight: '900',
-                  fontSize: '13px',
+                  fontSize: '13.5px',
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   gap: '8px',
-                  boxShadow: '0 4px 15px rgba(225,48,108,0.35)'
+                  boxShadow: '0 4px 15px rgba(225,48,108,0.35)',
+                  opacity: verifying ? 0.8 : 1
                 }}
               >
-                <InstagramIcon size={18} color="white" />
-                {t.igBtn}
-              </button>
-
-              <button
-                onClick={handleInstagramShare2}
-                style={{
-                  width: '100%',
-                  height: '40px',
-                  borderRadius: '12px',
-                  background: 'rgba(225,48,108,0.15)',
-                  border: '1px solid rgba(225,48,108,0.4)',
-                  color: '#f43f5e',
-                  fontWeight: '800',
-                  fontSize: '12.5px',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '6px'
-                }}
-              >
-                <InstagramIcon size={16} color="#f43f5e" />
-                {t.igBtn2}
-              </button>
-
-              {/* Native Mobile Share Button */}
-              <button
-                onClick={handleNativeShare}
-                style={{
-                  width: '100%',
-                  height: '42px',
-                  borderRadius: '12px',
-                  background: 'rgba(255,255,255,0.06)',
-                  border: '1px solid rgba(255,255,255,0.12)',
-                  color: '#e4e4e7',
-                  fontWeight: '800',
-                  fontSize: '12.5px',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '6px'
-                }}
-              >
-                <Share2 size={16} color="#d4a64a" />
-                {t.nativeShareBtn}
+                {verifying ? (
+                  <>
+                    <Loader2 size={18} className="animate-spin" />
+                    <span>{t.verifyingText}</span>
+                  </>
+                ) : (
+                  <>
+                    <InstagramIcon size={18} color="white" />
+                    <span>{t.igBtn}</span>
+                  </>
+                )}
               </button>
 
               {/* Copy Link Button */}
