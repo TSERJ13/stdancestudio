@@ -13,12 +13,12 @@ function InstagramIcon({ size = 20, color = 'currentColor' }) {
 
 const shareTranslations = {
   ka: {
-    title: 'გააზიარე და დაბრუნდი თამაშში',
+    title: 'გააზიარე და გააგრძელე თამაში !',
     unlockedTitle: '5-ე სიცოცხლე გახსნილია! (+1 Life)',
     unlockedSub: 'ინსტაგრამზე გაზიარებით შენ მიიღე დღევანდელი მე-5 ბონუს სიცოცხლე!',
     backBtn: 'თამაშში დაბრუნება',
     shareTitle: 'გააზიარე ST Dance Studio და მიიღე +1 ბონუს სიცოცხლე',
-    shareSub: 'გადადი @stdancestudio.ge-ს ინსტაგრამზე, გააზიარე და დაბრუნდი თამაშში!',
+    shareSub: 'გააზიარე ჩვენი ბოლო რილსი და გააგრძელე თამაში!',
     igBtn: 'Instagram-ზე გაზიარება (+1 Life)',
     verifyingText: 'მოწმდება გაზიარება...',
     copyBtn: 'ლინკის კოპირება',
@@ -74,7 +74,7 @@ export default function SocialShareModal({ isOpen, onClose, onUnlockShareLife, h
   const handleInstagramShare = () => {
     if (verifying) return;
     setVerifying(true);
-    window.open('https://www.instagram.com/stdancestudio.ge', '_blank');
+    window.open('https://www.instagram.com/stdancestudio', '_blank');
 
     setTimeout(() => {
       setVerifying(false);
@@ -91,7 +91,7 @@ export default function SocialShareModal({ isOpen, onClose, onUnlockShareLife, h
             <Share2 size={18} color="#d4a64a" />
             <span style={{ fontSize: '13px', fontWeight: '800', color: '#F0D9A8' }}>{t.title}</span>
           </div>
-          <button className="btn-close" onClick={onClose}>✕</button>
+          <button className="btn-close" onClick={onClose} style={{ width: '32px', height: '32px', fontSize: '16px' }}>✕</button>
         </div>
 
         {hasShareLife ? (
