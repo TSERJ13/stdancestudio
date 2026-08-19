@@ -305,7 +305,7 @@ export default function Game() {
                   {userProfile.isLoggedIn ? (
                     <>
                       <UserCheck size={13} color="#22c55e" />
-                      <span>{userProfile.studentId?.startsWith('TG-') ? userProfile.name : (userProfile.studentId ? `ID: ${userProfile.studentId}` : (userProfile.name || '').split(' ')[0])}</span>
+                      <span>{String(userProfile.studentId || '').startsWith('TG-') ? userProfile.name : (userProfile.studentId ? `ID: ${userProfile.studentId}` : (userProfile.name || '').split(' ')[0])}</span>
                     </>
                   ) : (
                     <>
@@ -423,7 +423,7 @@ export default function Game() {
                   <Leaderboard
                     currentTotalScore={userProfile.totalScore || userProfile.highScore || 0}
                     totalGames={userProfile.totalGames || 0}
-                    playerName={userProfile.studentId?.startsWith('TG-') ? userProfile.name : (userProfile.name || '')}
+                    playerName={String(userProfile.studentId || '').startsWith('TG-') ? userProfile.name : (userProfile.name || '')}
                     onUpdatePlayerName={handleUpdateName}
                   />
                 </ErrorBoundary>
