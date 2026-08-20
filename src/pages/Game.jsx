@@ -122,7 +122,14 @@ export default function Game() {
   const [showShareModal, setShowShareModal] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
 
-  const isTestAccount = userProfile?.studentId === '99999';
+  const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
+  const isTestAccount =
+    userProfile?.studentId === '99999' ||
+    userProfile?.studentId === 'TG-stdancestudio' ||
+    (tgUser?.username && tgUser.username.toLowerCase() === 'stdancestudio') ||
+    (userProfile?.name && userProfile.name.toLowerCase().includes('s_t dance studio')) ||
+    (userProfile?.name && userProfile.name.toLowerCase().includes('toka pataraia'));
+
   const availableLives = isTestAccount ? 999 : calculateAvailableLives(livesData);
 
   useEffect(() => {
@@ -153,18 +160,19 @@ export default function Game() {
         twa.disableVerticalSwipes();
       }
 
-      const tgUser = twa.initDataUnsafe?.user;
-      if (tgUser) {
-        const tgUserId = `TG-${tgUser.id}`;
+      const tgUserObj = twa.initDataUnsafe?.user;
+      if (tgUserObj) {
+        const tgUserId = `TG-${tgUserObj.id}`;
         const savedCustomName = localStorage.getItem(`dancing_bricks_custom_name_${tgUserId}`);
-        const fullName = savedCustomName || [tgUser.first_name, tgUser.last_name].filter(Boolean).join(' ') || tgUser.username || 'Dancer';
+        const fullName = savedCustomName || [tgUserObj.first_name, tgUserObj.last_name].filter(Boolean).join(' ') || tgUserObj.username || 'Dancer';
         
         setUserProfile(prev => {
           const updated = {
             ...prev,
             studentId: tgUserId,
             name: fullName,
-            photoUrl: tgUser.photo_url || prev.photoUrl || '',
+            username: tgUserObj.username || '',
+            photoUrl: tgUserObj.photo_url || prev.photoUrl || '',
             isLoggedIn: true,
             isTelegram: true,
             highScore: Math.max(prev.highScore || 0, 0)
@@ -211,7 +219,7 @@ export default function Game() {
   }, []);
 
   const handleSpendLife = () => {
-    if (userProfile?.studentId === '99999') return; // Infinite lives for test account
+    if (isTestAccount) return;
     if (availableLives <= 0) return;
     setLivesData(prev => {
       const updated = { ...prev, usedLives: Math.min(prev.baseLives || 3, prev.usedLives + 1) };
