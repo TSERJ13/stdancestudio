@@ -379,15 +379,23 @@ body.page-game-active {
 /* Canvas Wrapper & Overlay Alignment */
 .game-page-wrap .main-content {
   position: relative !important;
-  overflow: hidden !important;
+  overflow: visible !important;
+  flex: 1 !important;
+  display: flex !important;
+  flex-direction: column !important;
 }
 
 .leaderboard-container {
-  height: 100% !important;
   display: flex !important;
   flex-direction: column !important;
   overflow: hidden !important;
   box-sizing: border-box !important;
+  /* Height must be constrained so lb-list can scroll inside */
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
 }
 
 .rules-card {

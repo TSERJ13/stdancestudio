@@ -100,8 +100,10 @@ export default function Game() {
 
   const [activeTab, setActiveTab] = useState('play');
 
-  // Always initialize with 3 full active lives on mount
+  // Load lives from localStorage on mount (don't reset on every render)
   const [livesData, setLivesData] = useState(() => {
+    const saved = loadLivesData();
+    if (saved) return saved;
     const fresh = {
       dateStr: new Date().toISOString().split('T')[0],
       baseLives: 3,
@@ -417,7 +419,7 @@ export default function Game() {
               </button>
             </nav>
 
-            <main className="main-content" style={{ width: '100%', flex: 1, display: 'flex', flexDirection: 'column' }}>
+            <main className="main-content" style={{ width: '100%', flex: 1, display: 'flex', flexDirection: 'column', position: 'relative', minHeight: 0 }}>
               {activeTab === 'play' && (
                 <GameBoard
                   tGame={tGame}
