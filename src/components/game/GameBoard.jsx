@@ -19,6 +19,16 @@ const TIERS = [
 const CANVAS_W = 440;
 // CANVAS_H is now dynamic based on wrapper aspect ratio
 
+const MARQUEE_PRIZES = [
+  { name: 'წყლის ბოთლი', img: '/images/prizes/water_bottle.png' },
+  { name: 'ქოლგა', img: '/images/prizes/umbrella.png' },
+  { name: 'ზურგჩანთა', img: '/images/prizes/backpack.png' },
+  { name: '100% ვაუჩერი', img: '/images/prizes/voucher_100.png' },
+  { name: 'საწვიმარი', img: '/images/prizes/raincoat.png' },
+  { name: 'ქეისი', img: '/images/prizes/phone_case.png' },
+  { name: '-50% ვაუჩერი', img: '/images/prizes/voucher_50.png' }
+];
+
 export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOver, onScoreUpdate, onOpenQuiz, onOpenShare }) {
   const canvasRef = useRef(null);
   const containerRef = useRef(null);
@@ -850,34 +860,50 @@ export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOv
 
         {gameState === 'READY' && (
           <div className="overlay-screen glass">
-            <div className="game-logo" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', margin: '0 auto', transform: 'translateY(-68px)' }}>
+            <div className="game-logo" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', margin: '0 auto', transform: 'translateY(-24px)' }}>
               <img
                 src="/images/dancing_bricks_logo.png"
                 alt="Dancing Bricks"
                 style={{
-                  width: '160px',
+                  width: '145px',
                   height: 'auto',
-                  maxHeight: '160px',
+                  maxHeight: '145px',
                   objectFit: 'contain',
-                  marginBottom: '4px',
+                  marginBottom: '2px',
                   display: 'block',
-                  animation: 'slowPureScalePulse 4s ease-in-out infinite'
+                  animation: 'slowPureScalePulse 4s ease-in-out infinite',
+                  willChange: 'transform, opacity'
                 }}
               />
               <h2 style={{
-                fontSize: '23px',
+                fontSize: '22px',
                 fontWeight: '900',
                 letterSpacing: '2.5px',
                 textTransform: 'uppercase',
                 color: '#F0D9A8',
                 animation: 'slowPureScalePulse 3.5s ease-in-out infinite',
-                margin: '4px 0 6px'
+                willChange: 'transform, opacity',
+                margin: '2px 0 4px'
               }}>
                 DANCING BRICKS
               </h2>
-              <p style={{ fontSize: '12px', color: '#cbd5e1', margin: '0 0 8px', maxWidth: '290px', lineHeight: '1.45', fontWeight: '500' }}>
+              <p style={{ fontSize: '12px', color: '#cbd5e1', margin: '0 0 6px', maxWidth: '290px', lineHeight: '1.4', fontWeight: '500' }}>
                 {t.subtitle}
               </p>
+
+              {/* Horizontal Prize Marquee Slider between subtitle and Play Button */}
+              <div className="prize-marquee-container">
+                <div className="prize-marquee-track">
+                  {[...MARQUEE_PRIZES, ...MARQUEE_PRIZES].map((pz, pIdx) => (
+                    <div key={pIdx} className="prize-badge-item">
+                      <div className="prize-badge-disk">
+                        <img src={pz.img} alt={pz.name} />
+                      </div>
+                      <span className="prize-badge-title">{pz.name}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
 
             {availableLives > 0 ? (
