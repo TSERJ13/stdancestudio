@@ -123,15 +123,7 @@ export const gameTranslations = {
 };
 
 export default function Game() {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const { lang: contextLang, setLang } = useLanguage();
-  const langParam = searchParams.get('lang');
-
-  const [localLang, setLocalLang] = useState(() => {
-    return ['ka', 'en', 'ru'].includes(langParam) ? langParam : (contextLang || 'ka');
-  });
-
-  const lang = localLang;
+  const { lang, setLang } = useLanguage();
   const tGame = gameTranslations[lang] || gameTranslations.ka;
 
   const [activeTab, setActiveTab] = useState('play');
@@ -434,10 +426,10 @@ export default function Game() {
                   src="/images/dancing_bricks_logo.png"
                   alt="Dancing Bricks"
                   style={{
-                    height: '32px',
-                    width: 'auto',
-                    maxHeight: '32px',
-                    maxWidth: '85px',
+                    width: '36px',
+                    height: '36px',
+                    minWidth: '36px',
+                    minHeight: '36px',
                     objectFit: 'contain',
                     display: 'block',
                     margin: 0,
@@ -495,9 +487,7 @@ export default function Game() {
                   onClick={() => {
                     const langs = ['ka', 'en', 'ru'];
                     const nextLang = langs[(langs.indexOf(lang) + 1) % langs.length];
-                    setLocalLang(nextLang);
-                    if (typeof setLang === 'function') setLang(nextLang);
-                    setSearchParams({ lang: nextLang });
+                    if (setLang) setLang(nextLang);
                   }}
                   title="Change Language"
                   style={{ background: 'rgba(255, 255, 255, 0.05)', border: '1px solid rgba(255, 255, 255, 0.1)', color: '#d4a64a', cursor: 'pointer', padding: '2px 6px', display: 'flex', alignItems: 'center', gap: '4px', borderRadius: '6px', fontSize: '9px', fontWeight: 'bold' }}
