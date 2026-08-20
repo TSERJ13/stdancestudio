@@ -123,10 +123,15 @@ export const gameTranslations = {
 };
 
 export default function Game() {
-  const [searchParams] = useSearchParams();
-  const { lang: contextLang } = useLanguage();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const { lang: contextLang, setLang } = useLanguage();
   const langParam = searchParams.get('lang');
-  const lang = ['ka', 'en', 'ru'].includes(langParam) ? langParam : (contextLang || 'ka');
+
+  const [localLang, setLocalLang] = useState(() => {
+    return ['ka', 'en', 'ru'].includes(langParam) ? langParam : (contextLang || 'ka');
+  });
+
+  const lang = localLang;
   const tGame = gameTranslations[lang] || gameTranslations.ka;
 
   const [activeTab, setActiveTab] = useState('play');
@@ -203,11 +208,15 @@ export default function Game() {
       const tgUserObj = twa.initDataUnsafe?.user;
       if (tgUserObj) {
         const tgUserId = `TG-${tgUserObj.id}`;
-        const savedCustomName = localStorage.getItem(`dancing_bricks_custom_name_${tgUserId}`);
-        const fullName = savedCustomName || [tgUserObj.first_name, tgUserObj.last_name].filter(Boolean).join(' ') || tgUserObj.username || 'Dancer';
-        
+        const savedCustomName = localStorage.getItem(`dancing_bricks_custom_name_${tgUserId}`) || localStorage.getItem('dancing_bricks_player_name');
+        const fallbackTgName = [tgUserObj.first_name, tgUserObj.last_name].filter(Boolean).join(' ') || tgUserObj.username || 'Dancer';
+        const fullName = (savedCustomName && savedCustomName !== 'Dancer') ? savedCustomName : fallbackTgName;
+
         setUserProfile(prev => {
           const freshSaved = loadSavedUserProfile();
+          const customName = localStorage.getItem(`dancing_bricks_custom_name_${tgUserId}`) || localStorage.getItem('dancing_bricks_player_name') || freshSaved.name;
+          const finalName = (customName && customName !== 'Dancer') ? customName : fullName;
+
           const updated = sanitizeSeasonalProfile({
             ...freshSaved,
             ...prev,
@@ -350,18 +359,23 @@ export default function Game() {
   };
 
   const handleUpdateName = (newName) => {
-    const userId = userProfile.studentId || `USER_${newName}`;
-    localStorage.setItem(`dancing_bricks_custom_name_${userId}`, newName);
-    localStorage.setItem('dancing_bricks_player_name', newName);
+    if (!newName || !newName.trim()) return;
+    const cleanName = newName.trim();
+    const userId = userProfile.studentId || (window.Telegram?.WebApp?.initDataUnsafe?.user?.id ? `TG-${window.Telegram.WebApp.initDataUnsafe.user.id}` : `USER_${cleanName}`);
+
+    localStorage.setItem(`dancing_bricks_custom_name_${userId}`, cleanName);
+    localStorage.setItem('dancing_bricks_player_name', cleanName);
 
     setUserProfile(prev => {
-      const updated = { ...prev, name: newName };
+      const updated = sanitizeSeasonalProfile({ ...prev, name: cleanName });
+      localStorage.setItem('dancing_bricks_user_profile', JSON.stringify(updated));
+
       syncCloudScore({
         id: userId,
-        name: newName,
+        name: cleanName,
         photoUrl: prev.photoUrl || '',
-        score: prev.totalScore || prev.highScore || 0,
-        games: prev.totalGames || 0
+        score: prev.monthlyTotalScore || prev.totalScore || prev.highScore || 0,
+        games: prev.monthlyGames || prev.totalGames || 0
       });
       return updated;
     });
@@ -417,18 +431,17 @@ export default function Game() {
               {/* Left: Logo + Login button */}
               <div className="compact-header-left">
                 <img
-                  src="/images/logo-transparent.png"
-                  alt="ST Dance Studio"
+                  src="/images/dancing_bricks_logo.png"
+                  alt="Dancing Bricks"
                   style={{
-                    width: '32px',
                     height: '32px',
-                    minWidth: '32px',
-                    minHeight: '32px',
+                    width: 'auto',
+                    maxHeight: '32px',
+                    maxWidth: '85px',
                     objectFit: 'contain',
                     display: 'block',
                     margin: 0,
-                    padding: 0,
-                    filter: 'drop-shadow(0 2px 6px rgba(212, 165, 90, 0.45))'
+                    padding: 0
                   }}
                 />
                 <button
@@ -481,7 +494,10 @@ export default function Game() {
                 <button
                   onClick={() => {
                     const langs = ['ka', 'en', 'ru'];
-                    setLang(langs[(langs.indexOf(lang) + 1) % langs.length]);
+                    const nextLang = langs[(langs.indexOf(lang) + 1) % langs.length];
+                    setLocalLang(nextLang);
+                    if (typeof setLang === 'function') setLang(nextLang);
+                    setSearchParams({ lang: nextLang });
                   }}
                   title="Change Language"
                   style={{ background: 'rgba(255, 255, 255, 0.05)', border: '1px solid rgba(255, 255, 255, 0.1)', color: '#d4a64a', cursor: 'pointer', padding: '2px 6px', display: 'flex', alignItems: 'center', gap: '4px', borderRadius: '6px', fontSize: '9px', fontWeight: 'bold' }}

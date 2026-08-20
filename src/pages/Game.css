@@ -130,15 +130,14 @@ body.app-fullscreen-active .canvas-wrapper,
 }
 
 .compact-header-left img {
-  width: 32px !important;
   height: 32px !important;
-  min-width: 32px !important;
-  min-height: 32px !important;
+  width: auto !important;
+  max-height: 32px !important;
+  max-width: 85px !important;
   object-fit: contain !important;
   margin: 0 !important;
   padding: 0 !important;
   display: block !important;
-  filter: drop-shadow(0 2px 6px rgba(212, 165, 90, 0.45)) !important;
 }
 
 .compact-title {
