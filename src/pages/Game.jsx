@@ -123,8 +123,23 @@ export const gameTranslations = {
 };
 
 export default function Game() {
-  const { lang, setLang } = useLanguage();
+  const { lang: contextLang, setLang: setContextLang } = useLanguage();
+  const [currentLang, setCurrentLang] = useState(() => {
+    return localStorage.getItem('dancing_bricks_lang') || contextLang || 'ka';
+  });
+
+  const lang = currentLang;
   const tGame = gameTranslations[lang] || gameTranslations.ka;
+
+  const handleToggleLang = () => {
+    const langs = ['ka', 'en', 'ru'];
+    const nextLang = langs[(langs.indexOf(currentLang) + 1) % langs.length];
+    setCurrentLang(nextLang);
+    localStorage.setItem('dancing_bricks_lang', nextLang);
+    if (typeof setContextLang === 'function') {
+      try { setContextLang(nextLang); } catch (e) {}
+    }
+  };
 
   const [activeTab, setActiveTab] = useState('play');
 
@@ -426,10 +441,10 @@ export default function Game() {
                   src="/images/dancing_bricks_logo.png"
                   alt="Dancing Bricks"
                   style={{
-                    width: '36px',
-                    height: '36px',
-                    minWidth: '36px',
-                    minHeight: '36px',
+                    width: '68px',
+                    height: '28px',
+                    minWidth: '68px',
+                    maxHeight: '28px',
                     objectFit: 'contain',
                     display: 'block',
                     margin: 0,
@@ -484,15 +499,25 @@ export default function Game() {
                   <strong>{countdown || '22:00:00'}</strong>
                 </div>
                 <button
-                  onClick={() => {
-                    const langs = ['ka', 'en', 'ru'];
-                    const nextLang = langs[(langs.indexOf(lang) + 1) % langs.length];
-                    if (setLang) setLang(nextLang);
-                  }}
+                  type="button"
+                  onClick={handleToggleLang}
                   title="Change Language"
-                  style={{ background: 'rgba(255, 255, 255, 0.05)', border: '1px solid rgba(255, 255, 255, 0.1)', color: '#d4a64a', cursor: 'pointer', padding: '2px 6px', display: 'flex', alignItems: 'center', gap: '4px', borderRadius: '6px', fontSize: '9px', fontWeight: 'bold' }}
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.08)',
+                    border: '1px solid rgba(212, 166, 74, 0.4)',
+                    color: '#F0D9A8',
+                    cursor: 'pointer',
+                    padding: '3px 8px',
+                    display: 'flex',
+                    align-items: 'center',
+                    gap: '4px',
+                    borderRadius: '8px',
+                    fontSize: '10.5px',
+                    fontWeight: '900',
+                    boxShadow: '0 2px 6px rgba(0,0,0,0.3)'
+                  }}
                 >
-                  <Globe size={10} /> {lang === 'ka' ? 'GE' : lang.toUpperCase()}
+                  <Globe size={12} color="#d4a64a" /> {lang === 'ka' ? 'GE' : lang.toUpperCase()}
                 </button>
               </div>
             </header>
