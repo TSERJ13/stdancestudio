@@ -290,20 +290,27 @@ export async function syncNewsToCloud(news) {
   }
 }
 
-/* ── Global Cloud Leaderboard Sync & Daily 22:00 Reset ── */
-export function getLastGeorgia22ResetMs() {
+/* ── Global Cloud Leaderboard Sync & Monthly 20th 22:00 Reset ── */
+export function getLastMonthly20thResetMs() {
   const now = new Date();
   const utcMs = now.getTime() + (now.getTimezoneOffset() * 60000);
   const georgiaNow = new Date(utcMs + (4 * 3600000));
 
-  const resetTarget = new Date(georgiaNow);
-  resetTarget.setHours(22, 0, 0, 0);
+  let yr = georgiaNow.getFullYear();
+  let mo = georgiaNow.getMonth();
 
-  if (georgiaNow.getTime() < resetTarget.getTime()) {
-    resetTarget.setDate(resetTarget.getDate() - 1);
+  const thisMonth20th = new Date(yr, mo, 20, 22, 0, 0);
+
+  if (georgiaNow.getTime() < thisMonth20th.getTime()) {
+    mo--;
+    if (mo < 0) {
+      mo = 11;
+      yr--;
+    }
   }
 
-  return resetTarget.getTime();
+  const lastMonthlyResetDate = new Date(yr, mo, 20, 22, 0, 0);
+  return lastMonthlyResetDate.getTime();
 }
 
 export async function fetchCloudLeaderboard() {
@@ -322,7 +329,7 @@ export async function fetchCloudLeaderboard() {
     const staffData = settings.staff_data || {};
     let cloudList = staffData.game_leaderboard || [];
 
-    const lastReset = getLastGeorgia22ResetMs();
+    const lastReset = getLastMonthly20thResetMs();
     if (!staffData.last_score_reset_ms || staffData.last_score_reset_ms < lastReset) {
       cloudList = cloudList.map(item => ({ ...item, score: 0, games: 0 }));
       const updatedStaffData = { ...staffData, game_leaderboard: cloudList, last_score_reset_ms: lastReset };
@@ -361,7 +368,7 @@ export async function syncCloudScore(userEntry) {
     const currentStaffData = settings.staff_data || {};
     let cloudList = currentStaffData.game_leaderboard || [];
 
-    const lastReset = getLastGeorgia22ResetMs();
+    const lastReset = getLastMonthly20thResetMs();
     if (!currentStaffData.last_score_reset_ms || currentStaffData.last_score_reset_ms < lastReset) {
       cloudList = cloudList.map(item => ({ ...item, score: 0, games: 0 }));
     }
@@ -379,8 +386,8 @@ export async function syncCloudScore(userEntry) {
         id: userId,
         name: userEntry.name,
         photoUrl: userEntry.photoUrl || cloudList[existingIdx].photoUrl || '',
-        score: userEntry.score || 0,
-        games: userEntry.games || 0,
+        score: Math.max(cloudList[existingIdx].score || 0, userEntry.score || 0),
+        games: Math.max(cloudList[existingIdx].games || 0, userEntry.games || 0),
         avatarBg: userEntry.avatarBg || cloudList[existingIdx].avatarBg || randomColor,
         updatedAt: new Date().toISOString()
       };
