@@ -850,7 +850,7 @@ export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOv
 
         {gameState === 'READY' && (
           <div className="overlay-screen glass">
-            <div className="game-logo" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', margin: '0 auto', transform: 'translateY(-34px)' }}>
+            <div className="game-logo" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', margin: '0 auto', transform: 'translateY(-48px)' }}>
               <img
                 src="/images/dancing_bricks_logo.png"
                 alt="Dancing Bricks"
@@ -861,7 +861,7 @@ export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOv
                   objectFit: 'contain',
                   marginBottom: '4px',
                   display: 'block',
-                  animation: 'slowLogoShimmer 4s ease-in-out infinite'
+                  animation: 'slowPureScalePulse 4s ease-in-out infinite'
                 }}
               />
               <h2 style={{
@@ -869,10 +869,8 @@ export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOv
                 fontWeight: '900',
                 letterSpacing: '2.5px',
                 textTransform: 'uppercase',
-                background: 'linear-gradient(135deg, #FFF6D6 0%, #F0D9A8 45%, #D4A55A 80%, #A3762B 100%)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                animation: 'slowGoldGlowPulse 3.5s ease-in-out infinite',
+                color: '#F0D9A8',
+                animation: 'slowPureScalePulse 3.5s ease-in-out infinite',
                 margin: '4px 0 6px'
               }}>
                 DANCING BRICKS

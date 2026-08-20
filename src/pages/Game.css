@@ -478,25 +478,14 @@ body.page-game-active {
   color: #F0D9A8;
 }
 
-@keyframes slowGoldGlowPulse {
+@keyframes slowPureScalePulse {
   0%, 100% {
-    filter: drop-shadow(0 2px 8px rgba(212, 165, 90, 0.4)) drop-shadow(0 0 14px rgba(212, 165, 90, 0.25));
-    opacity: 0.95;
-  }
-  50% {
-    filter: drop-shadow(0 4px 18px rgba(240, 217, 168, 0.85)) drop-shadow(0 0 28px rgba(240, 217, 168, 0.6));
-    opacity: 1;
-  }
-}
-
-@keyframes slowLogoShimmer {
-  0%, 100% {
-    filter: drop-shadow(0 6px 14px rgba(0,0,0,0.6)) drop-shadow(0 0 10px rgba(212,165,90,0.2));
     transform: scale(1);
+    opacity: 0.94;
   }
   50% {
-    filter: drop-shadow(0 8px 22px rgba(0,0,0,0.7)) drop-shadow(0 0 24px rgba(212,165,90,0.65));
-    transform: scale(1.03);
+    transform: scale(1.035);
+    opacity: 1;
   }
 }
 
