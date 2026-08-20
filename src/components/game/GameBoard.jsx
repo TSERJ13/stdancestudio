@@ -473,10 +473,10 @@ export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOv
 
         ctx.save();
         ctx.shadowColor = style.s;
-        ctx.shadowBlur = b.specialType ? 14 : 8;
+        ctx.shadowBlur = b.specialType ? 18 : 8;
         ctx.fillStyle = style.f;
         ctx.strokeStyle = style.s;
-        ctx.lineWidth = b.specialType ? 2.5 : 1.8;
+        ctx.lineWidth = b.specialType ? 2.8 : 1.8;
         ctx.beginPath();
         if (ctx.roundRect) ctx.roundRect(b.x, b.y, b.w, b.h, 6);
         else ctx.rect(b.x, b.y, b.w, b.h);
@@ -485,12 +485,28 @@ export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOv
 
         if (b.specialType && stLogoImgRef.current) {
           ctx.save();
+          // Crisp white/dark backing badge for ST logo
+          const badgeMargin = 4;
+          const badgeW = b.w - badgeMargin * 2;
+          const badgeH = b.h - badgeMargin * 2;
+          const badgeX = b.x + badgeMargin;
+          const badgeY = b.y + badgeMargin;
+
+          ctx.fillStyle = b.specialType === 'logo_gold' ? 'rgba(21,17,0,0.85)' : 'rgba(10,21,13,0.85)';
+          ctx.strokeStyle = style.s;
+          ctx.lineWidth = 1.2;
+          ctx.beginPath();
+          if (ctx.roundRect) ctx.roundRect(badgeX, badgeY, badgeW, badgeH, 5);
+          else ctx.rect(badgeX, badgeY, badgeW, badgeH);
+          ctx.fill();
+          ctx.stroke();
+
           ctx.imageSmoothingEnabled = true;
           ctx.imageSmoothingQuality = 'high';
-          const imgW = b.w * 0.80;
-          const imgH = b.h * 0.80;
-          const imgX = b.x + (b.w - imgW) / 2;
-          const imgY = b.y + (b.h - imgH) / 2;
+          const imgW = badgeW * 0.78;
+          const imgH = badgeH * 0.78;
+          const imgX = badgeX + (badgeW - imgW) / 2;
+          const imgY = badgeY + (badgeH - imgH) / 2;
           ctx.drawImage(stLogoImgRef.current, imgX, imgY, imgW, imgH);
           ctx.restore();
         } else {
@@ -539,14 +555,72 @@ export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOv
         ctx.stroke();
         ctx.restore();
 
+        // Calculate Wall-Bounce Aim Trajectory Line
         ctx.save();
         ctx.setLineDash([4, 6]);
-        ctx.strokeStyle = engine.superShots > 0 ? GOLD_L : 'rgba(240,217,168,.65)';
+        ctx.strokeStyle = engine.superShots > 0 ? GOLD_L : 'rgba(240,217,168,.75)';
         ctx.lineWidth = 2.2;
+
+        const startX = engine.launchX;
+        const startY = engine.launchY;
+        const dirX = Math.sin(engine.aimAngle);
+        const dirY = -Math.cos(engine.aimAngle);
+
+        let tWall = 10000;
+        let hitSide = null;
+
+        if (dirX < -0.0001) {
+          const tLeft = (8 - startX) / dirX;
+          if (tLeft > 0 && tLeft < tWall) { tWall = tLeft; hitSide = 'left'; }
+        } else if (dirX > 0.0001) {
+          const tRight = ((w - 8) - startX) / dirX;
+          if (tRight > 0 && tRight < tWall) { tWall = tRight; hitSide = 'right'; }
+        }
+
+        const tTop = (8 - startY) / dirY;
+        if (tTop > 0 && tTop < tWall) {
+          tWall = tTop;
+          hitSide = 'top';
+        }
+
+        const bounceX = startX + dirX * tWall;
+        const bounceY = startY + dirY * tWall;
+
         ctx.beginPath();
-        ctx.moveTo(engine.launchX, engine.launchY);
-        ctx.lineTo(engine.launchX + Math.sin(engine.aimAngle) * h * 1.5, engine.launchY - Math.cos(engine.aimAngle) * h * 1.5);
+        ctx.moveTo(startX, startY);
+        ctx.lineTo(bounceX, bounceY);
         ctx.stroke();
+
+        if (hitSide === 'left' || hitSide === 'right') {
+          const dirX2 = -dirX;
+          const dirY2 = dirY;
+          let len2 = 280;
+
+          if (dirY2 < 0) {
+            const tTop2 = (8 - bounceY) / dirY2;
+            if (tTop2 > 0 && tTop2 < len2) {
+              len2 = tTop2;
+            }
+          }
+
+          const endX = bounceX + dirX2 * len2;
+          const endY = bounceY + dirY2 * len2;
+
+          ctx.beginPath();
+          ctx.moveTo(bounceX, bounceY);
+          ctx.lineTo(endX, endY);
+          ctx.stroke();
+
+          // Reflection Dot on Wall
+          ctx.restore();
+          ctx.save();
+          ctx.fillStyle = GOLD_L;
+          ctx.shadowColor = GOLD_L;
+          ctx.shadowBlur = 12;
+          ctx.beginPath();
+          ctx.arc(bounceX, bounceY, 4.5, 0, Math.PI * 2);
+          ctx.fill();
+        }
         ctx.restore();
 
         ctx.save();
@@ -628,9 +702,24 @@ export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOv
                   soundFx.playHit();
                 }
                 if (!b.sup) {
-                  const ox = Math.min(Math.abs(b.x - br.x), Math.abs(b.x - (br.x + br.w)));
-                  const oy = Math.min(Math.abs(b.y - br.y), Math.abs(b.y - (br.y + br.h)));
-                  if (oy < ox) b.vy = -b.vy; else b.vx = -b.vx;
+                  const brickCenterX = br.x + br.w / 2;
+                  const brickCenterY = br.y + br.h / 2;
+                  const diffX = b.x - brickCenterX;
+                  const diffY = b.y - brickCenterY;
+
+                  const minDistX = br.w / 2 + b.r;
+                  const minDistY = br.h / 2 + b.r;
+
+                  const overlapX = minDistX - Math.abs(diffX);
+                  const overlapY = minDistY - Math.abs(diffY);
+
+                  if (overlapX < overlapY) {
+                    b.vx = diffX > 0 ? Math.abs(b.vx) : -Math.abs(b.vx);
+                    b.x += diffX > 0 ? overlapX : -overlapX;
+                  } else {
+                    b.vy = diffY > 0 ? Math.abs(b.vy) : -Math.abs(b.vy);
+                    b.y += diffY > 0 ? overlapY : -overlapY;
+                  }
                 }
               }
             });

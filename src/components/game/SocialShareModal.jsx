@@ -55,6 +55,22 @@ export default function SocialShareModal({ isOpen, onClose, onUnlockShareLife, h
 
   const [copied, setCopied] = useState(false);
   const [verifying, setVerifying] = useState(false);
+  const [timerSeconds, setTimerSeconds] = useState(60);
+
+  useEffect(() => {
+    let interval = null;
+    if (verifying && timerSeconds > 0) {
+      interval = setInterval(() => {
+        setTimerSeconds(prev => prev - 1);
+      }, 1000);
+    } else if (verifying && timerSeconds === 0) {
+      setVerifying(false);
+      onUnlockShareLife();
+    }
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [verifying, timerSeconds, onUnlockShareLife]);
 
   if (!isOpen) return null;
 
@@ -74,12 +90,8 @@ export default function SocialShareModal({ isOpen, onClose, onUnlockShareLife, h
   const handleInstagramShare = () => {
     if (verifying) return;
     setVerifying(true);
+    setTimerSeconds(60);
     window.open('https://www.instagram.com/stdancestudio', '_blank');
-
-    setTimeout(() => {
-      setVerifying(false);
-      triggerBonus();
-    }, 2200);
   };
 
   return (
@@ -177,7 +189,7 @@ export default function SocialShareModal({ isOpen, onClose, onUnlockShareLife, h
                 {verifying ? (
                   <>
                     <Loader2 size={18} className="animate-spin" />
-                    <span>{t.verifyingText}</span>
+                    <span>{t.verifyingText} ({timerSeconds}წმ)</span>
                   </>
                 ) : (
                   <>
