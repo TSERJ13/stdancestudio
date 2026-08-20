@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { Gift, Sparkles, Trophy, Award, RotateCw, Ticket, Copy, Check } from 'lucide-react';
 import { useLanguage } from '../../context/LanguageContext';
 
@@ -308,7 +309,7 @@ export default function SpinModal({ isOpen, onClose, winnerName = 'ჩემპ�
     setTimeout(() => setCopied(false), 2000);
   };
 
-  return (
+  return createPortal(
     <div className="modal-overlay">
       <div className="modal-content glass animate-in" style={{ maxWidth: '440px', padding: '20px' }}>
         <div className="modal-header" style={{ marginBottom: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -457,6 +458,7 @@ export default function SpinModal({ isOpen, onClose, winnerName = 'ჩემპ�
           </div>
         )}
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

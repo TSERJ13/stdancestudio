@@ -383,19 +383,29 @@ body.page-game-active {
   overflow: hidden !important;
 }
 
-.leaderboard-container, .rules-card {
+.leaderboard-container {
+  height: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+}
+
+.rules-card {
   height: 100% !important;
   display: flex !important;
   flex-direction: column !important;
   overflow-y: auto !important;
-  touch-action: pan-y !important; /* Re-enable scrolling specifically for these containers */
-  padding-bottom: 20px !important;
+  touch-action: pan-y !important;
+  box-sizing: border-box !important;
+  padding-bottom: 80px !important; /* Safe area for mobile edge */
 }
 
 .lb-list {
   flex: 1 !important;
   overflow-y: auto !important;
   touch-action: pan-y !important;
+  padding-bottom: 80px !important; /* Safe area for mobile edge */
 }
 
 .game-page-wrap .canvas-wrapper {

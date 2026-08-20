@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { Trophy, Gift, Ticket, History, Copy, Check } from 'lucide-react';
 import { useLanguage } from '../../context/LanguageContext';
 import SpinModal from './SpinModal';
@@ -224,6 +225,20 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
             <span className="lb-subtitle" style={{ fontSize: '10px' }}>{t.subtitle}</span>
           </div>
         </div>
+      </div>
+
+      {/* Timer Bar */}
+      <div style={{
+        background: 'rgba(212,166,74,0.1)', border: '1px solid rgba(212,166,74,0.2)',
+        borderRadius: '10px', padding: '10px 14px', display: 'flex', justifyContent: 'space-between',
+        alignItems: 'center', marginBottom: '4px', marginTop: '12px'
+      }}>
+        <span style={{ fontSize: '11px', color: '#F0D9A8', fontWeight: '800' }}>
+          {lang === 'ka' ? `გათამაშებამდე (${countdownState.monthName}):` : 'Time until draw:'}
+        </span>
+        <span style={{ fontSize: '13px', color: 'white', fontWeight: '900', letterSpacing: '0.5px' }}>
+          {countdownState.timeLeftText || '00:00:00'}
+        </span>
       </div>
 
       {/* Sub Navigation Bar */}
@@ -466,7 +481,7 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
         onClaimPrize={handleClaimPrize}
       />
 
-      {showCountdownModal && (
+      {showCountdownModal && createPortal(
         <div className="modal-overlay" style={{ zIndex: 9999 }}>
           <div className="modal-content glass animate-in" style={{ maxWidth: '340px', padding: '24px', textAlign: 'center' }}>
             <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px' }}>
@@ -502,7 +517,8 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
               {lang === 'ka' ? 'გასაგებია' : 'Got it'}
             </button>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
     </div>
