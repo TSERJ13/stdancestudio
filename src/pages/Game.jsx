@@ -125,19 +125,27 @@ export const gameTranslations = {
 export default function Game() {
   const { lang: contextLang, setLang: setContextLang } = useLanguage();
   const [currentLang, setCurrentLang] = useState(() => {
-    return localStorage.getItem('dancing_bricks_lang') || contextLang || 'ka';
+    return localStorage.getItem('dancing_bricks_lang') || localStorage.getItem('lang') || contextLang || 'ka';
   });
 
   const lang = currentLang;
   const tGame = gameTranslations[lang] || gameTranslations.ka;
 
-  const handleToggleLang = () => {
+  const handleToggleLang = (e) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
     const langs = ['ka', 'en', 'ru'];
-    const nextLang = langs[(langs.indexOf(currentLang) + 1) % langs.length];
+    const nextIndex = (langs.indexOf(currentLang) + 1) % langs.length;
+    const nextLang = langs[nextIndex];
+
     setCurrentLang(nextLang);
     localStorage.setItem('dancing_bricks_lang', nextLang);
+    localStorage.setItem('lang', nextLang);
+
     if (typeof setContextLang === 'function') {
-      try { setContextLang(nextLang); } catch (e) {}
+      try { setContextLang(nextLang); } catch (err) {}
     }
   };
 
@@ -197,7 +205,7 @@ export default function Game() {
     };
   }, [activeTab]);
 
-  // Telegram Web App Auto-Login
+  // Telegram Web App Auto-Login & Cross-Device Cloud Sync
   useEffect(() => {
     if (window.Telegram?.WebApp) {
       const twa = window.Telegram.WebApp;
@@ -228,7 +236,7 @@ export default function Game() {
             ...freshSaved,
             ...prev,
             studentId: tgUserId,
-            name: fullName,
+            name: finalName,
             username: tgUserObj.username || '',
             photoUrl: tgUserObj.photo_url || prev.photoUrl || freshSaved.photoUrl || '',
             isLoggedIn: true,
@@ -245,14 +253,21 @@ export default function Game() {
           return updated;
         });
 
-        // Sync with cloud leaderboard to pull user's cloud score if present
+        // Fetch user profile from Supabase Cloud to sync custom name across all devices
         fetchCloudLeaderboard().then(cloudData => {
           if (cloudData && cloudData.length > 0) {
             const found = cloudData.find(item => item.id === tgUserId);
             if (found) {
+              const cloudSavedName = found.name;
+              if (cloudSavedName && cloudSavedName !== 'Dancer') {
+                localStorage.setItem(`dancing_bricks_custom_name_${tgUserId}`, cloudSavedName);
+                localStorage.setItem('dancing_bricks_player_name', cloudSavedName);
+              }
+
               setUserProfile(curr => {
                 const merged = sanitizeSeasonalProfile({
                   ...curr,
+                  name: (cloudSavedName && cloudSavedName !== 'Dancer') ? cloudSavedName : curr.name,
                   highScore: Math.max(curr.highScore || 0, found.high_score || found.score || 0),
                   totalScore: Math.max(curr.totalScore || 0, found.total_score || found.score || 0),
                   totalGames: Math.max(curr.totalGames || 0, found.total_games || found.games || 0),
