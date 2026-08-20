@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Share2, Check, Copy, Heart, Sparkles, Loader2, CheckCircle2 } from 'lucide-react';
 
 function InstagramIcon({ size = 20, color = 'currentColor' }) {
