@@ -850,7 +850,7 @@ export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOv
 
         {gameState === 'READY' && (
           <div className="overlay-screen glass">
-            <div className="game-logo" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', margin: '0 auto', transform: 'translateY(-48px)' }}>
+            <div className="game-logo" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', margin: '0 auto', transform: 'translateY(-68px)' }}>
               <img
                 src="/images/dancing_bricks_logo.png"
                 alt="Dancing Bricks"
