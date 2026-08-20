@@ -123,31 +123,8 @@ export const gameTranslations = {
 };
 
 export default function Game() {
-  const { lang: contextLang, setLang: setContextLang } = useLanguage();
-  const [currentLang, setCurrentLang] = useState(() => {
-    return localStorage.getItem('dancing_bricks_lang') || localStorage.getItem('lang') || contextLang || 'ka';
-  });
-
-  const lang = currentLang;
+  const { lang, setLang } = useLanguage();
   const tGame = gameTranslations[lang] || gameTranslations.ka;
-
-  const handleToggleLang = (e) => {
-    if (e) {
-      e.preventDefault();
-      e.stopPropagation();
-    }
-    const langs = ['ka', 'en', 'ru'];
-    const nextIndex = (langs.indexOf(currentLang) + 1) % langs.length;
-    const nextLang = langs[nextIndex];
-
-    setCurrentLang(nextLang);
-    localStorage.setItem('dancing_bricks_lang', nextLang);
-    localStorage.setItem('lang', nextLang);
-
-    if (typeof setContextLang === 'function') {
-      try { setContextLang(nextLang); } catch (err) {}
-    }
-  };
 
   const [activeTab, setActiveTab] = useState('play');
 
@@ -515,24 +492,15 @@ export default function Game() {
                 </div>
                 <button
                   type="button"
-                  onClick={handleToggleLang}
-                  title="Change Language"
-                  style={{
-                    background: 'rgba(255, 255, 255, 0.08)',
-                    border: '1px solid rgba(212, 166, 74, 0.4)',
-                    color: '#F0D9A8',
-                    cursor: 'pointer',
-                    padding: '3px 8px',
-                    display: 'flex',
-                    align-items: 'center',
-                    gap: '4px',
-                    borderRadius: '8px',
-                    fontSize: '10.5px',
-                    fontWeight: '900',
-                    boxShadow: '0 2px 6px rgba(0,0,0,0.3)'
+                  onClick={() => {
+                    const langs = ['ka', 'en', 'ru'];
+                    const nextIndex = (langs.indexOf(lang || 'ka') + 1) % langs.length;
+                    if (setLang) setLang(langs[nextIndex]);
                   }}
+                  title="Change Language"
+                  style={{ background: 'rgba(255, 255, 255, 0.05)', border: '1px solid rgba(255, 255, 255, 0.1)', color: '#d4a64a', cursor: 'pointer', padding: '2px 6px', display: 'flex', alignItems: 'center', gap: '4px', borderRadius: '6px', fontSize: '9px', fontWeight: 'bold' }}
                 >
-                  <Globe size={12} color="#d4a64a" /> {lang === 'ka' ? 'GE' : lang.toUpperCase()}
+                  <Globe size={10} /> {lang === 'ka' ? 'GE' : String(lang || 'ka').toUpperCase()}
                 </button>
               </div>
             </header>
