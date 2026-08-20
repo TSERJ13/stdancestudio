@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Play, Trophy, HelpCircle, Share2, Heart, Clock, Sparkles, Award, UserCheck, IdCard, Globe, Gift, FileText } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import GameBoard from '../components/game/GameBoard';
@@ -97,8 +98,9 @@ export const gameTranslations = {
 
 export default function Game() {
   const [searchParams] = useSearchParams();
+  const { lang: contextLang } = useLanguage();
   const langParam = searchParams.get('lang');
-  const lang = ['ka', 'en', 'ru'].includes(langParam) ? langParam : 'ka';
+  const lang = ['ka', 'en', 'ru'].includes(langParam) ? langParam : (contextLang || 'ka');
   const tGame = gameTranslations[lang] || gameTranslations.ka;
 
   const [activeTab, setActiveTab] = useState('play');
