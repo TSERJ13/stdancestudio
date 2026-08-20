@@ -60,9 +60,9 @@ export default function QuizModal({ isOpen, onClose, onUnlockQuizLife, hasQuizLi
     }
   }, [isOpen]);
 
-  if (!isOpen) return null;
-
   const currentQ = randomQuestions[currentIdx] || QUIZ_QUESTIONS[0];
+  const qText = (lang === 'en' ? currentQ.questionEn : (lang === 'ru' ? currentQ.questionRu : currentQ.question)) || currentQ.question;
+  const qOpts = (lang === 'en' ? currentQ.optionsEn : (lang === 'ru' ? currentQ.optionsRu : currentQ.options)) || currentQ.options;
 
   const handleSelect = (optionIdx) => {
     if (selectedOption !== null) return;
@@ -155,11 +155,11 @@ export default function QuizModal({ isOpen, onClose, onUnlockQuizLife, hasQuizLi
             </div>
 
             <h3 style={{ fontSize: '15px', fontWeight: '900', color: 'white', marginBottom: '14px', lineHeight: '1.4' }}>
-              {currentQ.question}
+              {qText}
             </h3>
 
             <div className="quiz-options" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              {currentQ.options.map((opt, oIdx) => {
+              {qOpts.map((opt, oIdx) => {
                 let btnStyle = {
                   width: '100%',
                   padding: '12px 14px',
