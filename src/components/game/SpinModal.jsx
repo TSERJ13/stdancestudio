@@ -311,7 +311,7 @@ export default function SpinModal({ isOpen, onClose, winnerName = 'ჩემპ�
   return (
     <div className="modal-overlay">
       <div className="modal-content glass animate-in" style={{ maxWidth: '440px', padding: '20px' }}>
-        <div className="modal-header" style={{ marginBottom: '10px' }}>
+        <div className="modal-header" style={{ marginBottom: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <Gift size={18} color="#d4a64a" />
             <span style={{ fontSize: '12px', fontWeight: '800', color: '#F0D9A8' }}>{t.badgeTitle}</span>
