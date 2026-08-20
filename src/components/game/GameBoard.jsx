@@ -882,9 +882,7 @@ export default function GameBoard({ tGame, lang = 'ka', availableLives, onSpendL
                   maxHeight: '145px',
                   objectFit: 'contain',
                   marginBottom: '2px',
-                  display: 'block',
-                  animation: 'slowPureScalePulse 4s ease-in-out infinite',
-                  willChange: 'transform, opacity'
+                  display: 'block'
                 }}
               />
               <h2 style={{
@@ -893,8 +891,6 @@ export default function GameBoard({ tGame, lang = 'ka', availableLives, onSpendL
                 letterSpacing: '2.5px',
                 textTransform: 'uppercase',
                 color: '#F0D9A8',
-                animation: 'slowPureScalePulse 3.5s ease-in-out infinite',
-                willChange: 'transform, opacity',
                 margin: '2px 0 4px'
               }}>
                 DANCING BRICKS

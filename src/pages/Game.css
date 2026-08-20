@@ -493,21 +493,15 @@ body.page-game-active {
 
 @keyframes slowPureScalePulse {
   0%, 100% {
-    transform: scale(1) translateZ(0);
-    opacity: 0.94;
-  }
-  50% {
-    transform: scale(1.03) translateZ(0);
+    transform: none;
     opacity: 1;
   }
 }
 
 .game-logo img,
 .game-logo h2 {
-  will-change: transform, opacity;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
-  transform-style: preserve-3d;
 }
 
 /* Horizontal Prize Marquee Slider */

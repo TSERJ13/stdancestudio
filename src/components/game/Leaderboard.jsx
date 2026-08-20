@@ -475,8 +475,8 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
                           boxShadow: '0 3px 10px rgba(34, 197, 94, 0.45)'
                         }}
                       >
-                        <Trophy size={12} color="#05060a" />
-                        🎰 {lang === 'ka' ? 'დაატრიალე (Spin)' : 'Spin Wheel'}
+                        <Trophy size={13} color="#05060a" />
+                        {lang === 'ka' ? 'დაატრიალე' : 'Spin Wheel'}
                       </button>
                     ) : (
                       <span className="lb-games">{item.games} {t.games}</span>
@@ -517,7 +517,8 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
                   boxShadow: '0 4px 14px rgba(34, 197, 94, 0.4)'
                 }}
               >
-                🎰 {lang === 'ka' ? 'დაატრიალე პრიზი (Spin)' : 'Spin Wheel Now'}
+                <Trophy size={16} color="#05060a" />
+                {lang === 'ka' ? 'დაატრიალე პრიზი' : 'Spin Wheel Now'}
               </button>
             </div>
           ) : (
@@ -525,44 +526,70 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
               <div
                 key={v.id}
                 style={{
-                  background: 'rgba(212,166,74,0.1)',
-                  border: '1.5px dashed rgba(212,166,74,0.4)',
+                  background: 'linear-gradient(145deg, rgba(212,166,74,0.14) 0%, rgba(20,20,25,0.92) 100%)',
+                  border: '1.5px solid rgba(212,166,74,0.4)',
                   borderRadius: '16px',
                   padding: '14px',
                   display: 'flex',
-                  alignItems: 'center',
-                  gap: '14px',
-                  flexWrap: 'wrap'
+                  flexDirection: 'column',
+                  gap: '12px',
+                  boxShadow: '0 8px 24px rgba(0,0,0,0.35)',
+                  boxSizing: 'border-box',
+                  width: '100%'
                 }}
               >
-                <div style={{ width: '84px', height: '64px', borderRadius: '10px', overflow: 'hidden', background: '#ffffff', flexShrink: 0, border: '1.5px solid #d4a64a', padding: '2px' }}>
-                  <img src={v.prizeImg} alt={v.prizeName} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                {/* Top Title & Status Badge Row */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px', borderBottom: '1px solid rgba(255,255,255,0.08)', paddingBottom: '8px' }}>
+                  <h4 style={{ fontSize: '14px', fontWeight: '900', color: '#F0D9A8', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {v.prizeName}
+                  </h4>
+                  {claimedPrizesMap[userId] || claimedPrizesMap[playerName] || claimedPrizesMap[v.winnerName] || claimedPrizesMap[v.id] ? (
+                    <span style={{ fontSize: '10px', background: 'rgba(34,197,94,0.22)', color: '#4ADE80', border: '1px solid #22c55e', padding: '3px 8px', borderRadius: '8px', fontWeight: '900', whiteSpace: 'nowrap', flexShrink: 0 }}>
+                      ✅ {lang === 'ka' ? 'გაცემულია' : 'Delivered'}
+                    </span>
+                  ) : (
+                    <span style={{ fontSize: '10px', background: 'rgba(212,166,74,0.18)', color: '#F0D9A8', border: '1px solid rgba(212,166,74,0.4)', padding: '3px 8px', borderRadius: '8px', fontWeight: '800', whiteSpace: 'nowrap', flexShrink: 0 }}>
+                      🎁 {t.activeBadge}
+                    </span>
+                  )}
                 </div>
 
-                <div style={{ flex: 1, minWidth: '160px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '2px' }}>
-                    <h4 style={{ fontSize: '15px', fontWeight: '900', color: '#F0D9A8', margin: 0 }}>{v.prizeName}</h4>
-                    {claimedPrizesMap[userId] || claimedPrizesMap[playerName] || claimedPrizesMap[v.winnerName] || claimedPrizesMap[v.id] ? (
-                      <span style={{ fontSize: '9px', background: 'rgba(34,197,94,0.22)', color: '#4ADE80', border: '1px solid #22c55e', padding: '2px 7px', borderRadius: '6px', fontWeight: '900' }}>
-                        ✅ {lang === 'ka' ? 'საჩუქარი გაცემულია' : 'Prize Claimed & Delivered'}
-                      </span>
-                    ) : (
-                      <span style={{ fontSize: '9px', background: 'rgba(212,166,74,0.15)', color: '#F0D9A8', padding: '2px 6px', borderRadius: '6px', fontWeight: '800' }}>
-                        🎁 {t.activeBadge}
-                      </span>
-                    )}
+                {/* Middle Info Row */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <div style={{ width: '70px', height: '54px', borderRadius: '10px', overflow: 'hidden', background: '#ffffff', flexShrink: 0, border: '1.5px solid #d4a64a', padding: '2px' }}>
+                    <img src={v.prizeImg} alt={v.prizeName} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
                   </div>
-                  <div style={{ fontSize: '12px', color: 'white', fontWeight: '700' }}>{v.winnerName}</div>
-                  <div style={{ fontSize: '11px', color: '#a1a1aa' }}>თარიღი: {v.date}</div>
+
+                  <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                    <div style={{ fontSize: '13px', color: 'white', fontWeight: '800', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      👤 {v.winnerName}
+                    </div>
+                    <div style={{ fontSize: '11px', color: '#a1a1aa' }}>
+                      📅 {lang === 'ka' ? 'თარიღი:' : 'Date:'} {v.date}
+                    </div>
+                  </div>
                 </div>
 
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '6px' }}>
-                  <div style={{ fontSize: '13px', fontWeight: '900', color: '#d4a64a', letterSpacing: '1px', background: 'rgba(0,0,0,0.5)', padding: '6px 12px', borderRadius: '8px', border: '1px solid rgba(212,166,74,0.3)', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <Ticket size={14} /> {v.code}
+                {/* Bottom Code & Copy Button Row */}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', background: 'rgba(0,0,0,0.4)', padding: '8px 12px', borderRadius: '10px', border: '1px solid rgba(212,166,74,0.25)' }}>
+                  <div style={{ fontSize: '13px', fontWeight: '900', color: '#d4a64a', letterSpacing: '1px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <Ticket size={15} color="#d4a64a" /> {v.code}
                   </div>
                   <button
                     onClick={() => copyVoucherCode(v.code)}
-                    style={{ background: 'transparent', border: 'none', color: '#a1a1aa', fontSize: '11px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
+                    style={{
+                      background: copiedCode === v.code ? 'rgba(34,197,94,0.2)' : 'rgba(255,255,255,0.08)',
+                      border: copiedCode === v.code ? '1px solid #22c55e' : '1px solid rgba(255,255,255,0.15)',
+                      color: copiedCode === v.code ? '#4ADE80' : '#e4e4e7',
+                      fontSize: '11px',
+                      fontWeight: '800',
+                      padding: '5px 10px',
+                      borderRadius: '8px',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '4px'
+                    }}
                   >
                     {copiedCode === v.code ? <Check size={13} color="#22c55e" /> : <Copy size={13} />}
                     {copiedCode === v.code ? t.copiedText : t.copyCode}
