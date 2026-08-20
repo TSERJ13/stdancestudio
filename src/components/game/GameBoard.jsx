@@ -4,12 +4,14 @@ import { soundFx } from '../../utils/soundFx';
 
 const GOLD_L = '#F0D9A8';
 const TIERS = [
-  { f: 'rgba(212,165,90,.16)', s: '#D4A55A', t: '#F0D9A8' },
-  { f: 'rgba(120,190,220,.16)', s: '#6FC3E0', t: '#BEE7F5' },
-  { f: 'rgba(190,120,220,.16)', s: '#B87BDE', t: '#E3C6F5' },
-  { f: 'rgba(230,120,90,.16)', s: '#E0764A', t: '#F5C7B0' },
-  { f: 'rgba(120,220,150,.16)', s: '#6FD98F', t: '#C3F0D2' },
-  { f: 'rgba(255,68,68,.25)', s: '#FF4444', t: '#FFB3B3' }
+  { f: 'rgba(212,165,90,.22)', s: '#D4A55A', t: '#F0D9A8' },
+  { f: 'rgba(120,190,220,.22)', s: '#6FC3E0', t: '#BEE7F5' },
+  { f: 'rgba(190,120,220,.22)', s: '#B87BDE', t: '#E3C6F5' },
+  { f: 'rgba(230,120,90,.22)', s: '#E0764A', t: '#F5C7B0' },
+  { f: 'rgba(120,220,150,.22)', s: '#6FD98F', t: '#C3F0D2' },
+  { f: 'rgba(255,68,68,.28)', s: '#FF4444', t: '#FFB3B3' },
+  { f: 'rgba(244,114,182,.22)', s: '#F472B6', t: '#FCE7F3' },
+  { f: 'rgba(251,191,36,.22)', s: '#FBBF24', t: '#FEF3C7' }
 ];
 
 const CANVAS_W = 440;
@@ -459,16 +461,16 @@ export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOv
       engine.bricks.forEach(b => {
         if (b.hp <= 0) return;
 
-        let style = TIERS[Math.min(b.hp - 1, TIERS.length - 1)];
+        let style = TIERS[(b.hp - 1 + (b.col || 0)) % TIERS.length];
 
         if (b.specialType === 'logo_gold') {
-          style = { f: 'rgba(212,165,90,.35)', s: GOLD_L, t: '#1a1200' };
+          style = { f: 'rgba(212,165,90,.38)', s: GOLD_L, t: '#1a1200' };
         } else if (b.specialType === 'logo_green') {
-          style = { f: 'rgba(34,197,94,.35)', s: '#22c55e', t: '#ffffff' };
+          style = { f: 'rgba(34,197,94,.38)', s: '#22c55e', t: '#ffffff' };
         } else if (b.specialType === 'logo_purple') {
-          style = { f: 'rgba(168,85,247,.35)', s: '#a855f7', t: '#ffffff' };
+          style = { f: 'rgba(168,85,247,.38)', s: '#a855f7', t: '#ffffff' };
         } else if (b.specialType === 'super_pearl') {
-          style = { f: 'rgba(236,72,153,.4)', s: '#ec4899', t: '#ffffff' };
+          style = { f: 'rgba(236,72,153,.45)', s: '#ec4899', t: '#ffffff' };
         }
 
         ctx.save();
@@ -485,16 +487,16 @@ export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOv
 
         if (b.specialType && stLogoImgRef.current) {
           ctx.save();
-          // Crisp white/dark backing badge for ST logo
-          const badgeMargin = 4;
+          // High-contrast, crisp dark backing badge for ST logo
+          const badgeMargin = 2;
           const badgeW = b.w - badgeMargin * 2;
           const badgeH = b.h - badgeMargin * 2;
           const badgeX = b.x + badgeMargin;
           const badgeY = b.y + badgeMargin;
 
-          ctx.fillStyle = b.specialType === 'logo_gold' ? 'rgba(21,17,0,0.85)' : 'rgba(10,21,13,0.85)';
+          ctx.fillStyle = 'rgba(10, 8, 16, 0.92)';
           ctx.strokeStyle = style.s;
-          ctx.lineWidth = 1.2;
+          ctx.lineWidth = 1.6;
           ctx.beginPath();
           if (ctx.roundRect) ctx.roundRect(badgeX, badgeY, badgeW, badgeH, 5);
           else ctx.rect(badgeX, badgeY, badgeW, badgeH);
@@ -503,8 +505,8 @@ export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOv
 
           ctx.imageSmoothingEnabled = true;
           ctx.imageSmoothingQuality = 'high';
-          const imgW = badgeW * 0.78;
-          const imgH = badgeH * 0.78;
+          const imgW = badgeW * 0.90;
+          const imgH = badgeH * 0.90;
           const imgX = badgeX + (badgeW - imgW) / 2;
           const imgY = badgeY + (badgeH - imgH) / 2;
           ctx.drawImage(stLogoImgRef.current, imgX, imgY, imgW, imgH);
