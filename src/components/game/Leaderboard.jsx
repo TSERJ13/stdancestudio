@@ -391,7 +391,7 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
             gap: '6px'
           }}
         >
-          <Ticket size={14} /> {t.myPrizesTab(myVouchers.length)}
+          <Ticket size={14} /> {t.myPrizesTab(myVouchers.filter(v => !(claimedPrizesMap[userId] || claimedPrizesMap[playerName] || claimedPrizesMap[v.winnerName] || claimedPrizesMap[v.id] || v.isClaimed)).length)}
         </button>
 
         <button
