@@ -79,12 +79,14 @@ export default function SocialShareModal({ isOpen, onClose, onUnlockShareLife, h
   };
 
   const handleCopyLink = () => {
+    if (verifying) return;
     navigator.clipboard.writeText('https://stdance.ge/game');
     setCopied(true);
+    setVerifying(true);
+    setTimerSeconds(60);
     setTimeout(() => {
       setCopied(false);
-      triggerBonus();
-    }, 1200);
+    }, 2200);
   };
 
   const handleInstagramShare = () => {
@@ -202,6 +204,7 @@ export default function SocialShareModal({ isOpen, onClose, onUnlockShareLife, h
               {/* Copy Link Button */}
               <button
                 onClick={handleCopyLink}
+                disabled={verifying}
                 style={{
                   width: '100%',
                   height: '40px',
@@ -211,11 +214,12 @@ export default function SocialShareModal({ isOpen, onClose, onUnlockShareLife, h
                   color: '#d4a64a',
                   fontWeight: '800',
                   fontSize: '12px',
-                  cursor: 'pointer',
+                  cursor: verifying ? 'default' : 'pointer',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  gap: '6px'
+                  gap: '6px',
+                  opacity: verifying ? 0.6 : 1
                 }}
               >
                 {copied ? <Check size={16} color="#22c55e" /> : <Copy size={16} />}
