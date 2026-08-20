@@ -313,7 +313,7 @@ export async function fetchCloudLeaderboard() {
 
 export async function syncCloudScore(userEntry) {
   try {
-    if (!userEntry || !userEntry.name) return [];
+    if (!userEntry || !userEntry.name || userEntry.name === 'Dancer' || userEntry.id === 'USER_Dancer') return [];
     const settingsUrl = `${SUPABASE_URL}/rest/v1/studio_settings?studio_slug=eq.${STUDIO_SLUG}`;
     const getRes = await fetch(settingsUrl, {
       headers: {

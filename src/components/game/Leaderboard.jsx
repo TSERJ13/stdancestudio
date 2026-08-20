@@ -107,9 +107,9 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
 
   // Build dynamic leaderboard list
   const displayScore = currentTotalScore || 0;
-  const combinedList = cloudList.length > 0 ? [...cloudList] : [...TEST_LEADERBOARD];
+  const combinedList = cloudList.filter(item => item.name !== 'Dancer' && item.id !== 'USER_Dancer');
 
-  if (playerName) {
+  if (playerName && playerName !== 'Dancer') {
     const isMeIdx = combinedList.findIndex(m => (userId && m.id === userId) || m.name === playerName);
     if (isMeIdx !== -1) {
       combinedList[isMeIdx] = {

@@ -192,7 +192,7 @@ export default function Game() {
 
   // Automatically sync current user score & profile to Supabase Cloud on load/change
   useEffect(() => {
-    if (userProfile?.name) {
+    if (userProfile?.name && userProfile.name !== 'Dancer') {
       syncCloudScore({
         id: userProfile.studentId || `USER_${userProfile.name}`,
         name: userProfile.name,
@@ -386,55 +386,55 @@ export default function Game() {
             </header>
 
             {/* Navigation Bar */}
-            <nav className="app-nav glass" style={{ gap: '4px', padding: '4px' }}>
+            <nav className="app-nav glass" style={{ gap: '2px', padding: '3px', width: '100%', boxSizing: 'border-box', overflow: 'hidden' }}>
               <button
                 className={`nav-btn ${activeTab === 'play' ? 'active' : ''}`}
                 onClick={() => setActiveTab('play')}
-                style={{ flex: '2', gap: '4px', padding: '0 6px', fontSize: '11px' }}
+                style={{ flex: '1.4', minWidth: 0, gap: '3px', padding: '0 4px', fontSize: '10.5px' }}
               >
-                <Play size={13} /> {tGame.tabs.game}
+                <Play size={12} /> {tGame.tabs.game}
               </button>
 
               <button
                 className={`nav-btn bonus-btn quiz-tab ${livesData.hasQuizLife ? 'unlocked' : ''}`}
                 onClick={() => setShowQuizModal(true)}
-                style={{ flex: '1', padding: '0 2px', gap: '2px', fontSize: '10px' }}
+                style={{ flex: '0.9', minWidth: 0, padding: '0 2px', gap: '2px', fontSize: '9.5px' }}
               >
-                <HelpCircle size={13} color={livesData.hasQuizLife ? '#22c55e' : '#f59e0b'} />
+                <HelpCircle size={12} color={livesData.hasQuizLife ? '#22c55e' : '#f59e0b'} />
                 <span>+1</span>
               </button>
 
               <button
                 className={`nav-btn bonus-btn share-tab ${livesData.hasShareLife ? 'unlocked' : ''}`}
                 onClick={() => setShowShareModal(true)}
-                style={{ flex: '1', padding: '0 2px', gap: '2px', fontSize: '10px' }}
+                style={{ flex: '0.9', minWidth: 0, padding: '0 2px', gap: '2px', fontSize: '9.5px' }}
               >
-                <Share2 size={13} color={livesData.hasShareLife ? '#22c55e' : '#ec4899'} />
+                <Share2 size={12} color={livesData.hasShareLife ? '#22c55e' : '#ec4899'} />
                 <span>+1</span>
               </button>
 
               <button
                 className={`nav-btn ${activeTab === 'leaderboard' ? 'active' : ''}`}
                 onClick={() => setActiveTab('leaderboard')}
-                style={{ flex: '1', padding: 0 }}
+                style={{ flex: '0.9', minWidth: 0, padding: 0 }}
               >
-                <Trophy size={15} />
+                <Trophy size={14} />
               </button>
 
               <button
                 className={`nav-btn ${activeTab === 'prizes' ? 'active' : ''}`}
                 onClick={() => setActiveTab('prizes')}
-                style={{ flex: '1', padding: 0 }}
+                style={{ flex: '0.9', minWidth: 0, padding: 0 }}
               >
-                <Gift size={15} />
+                <Gift size={14} />
               </button>
 
               <button
                 className={`nav-btn ${activeTab === 'rules' ? 'active' : ''}`}
                 onClick={() => setActiveTab('rules')}
-                style={{ flex: '1', padding: 0 }}
+                style={{ flex: '0.9', minWidth: 0, padding: 0 }}
               >
-                <FileText size={15} />
+                <FileText size={14} />
               </button>
             </nav>
 
