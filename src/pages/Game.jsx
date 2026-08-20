@@ -96,27 +96,20 @@ export const gameTranslations = {
 };
 
 export default function Game() {
-  const { lang, setLang } = useLanguage();
+  const [searchParams] = useSearchParams();
+  const langParam = searchParams.get('lang');
+  const lang = ['ka', 'en', 'ru'].includes(langParam) ? langParam : 'ka';
   const tGame = gameTranslations[lang] || gameTranslations.ka;
 
   const [activeTab, setActiveTab] = useState('play');
 
-  // Load lives from localStorage on mount (don't reset on every render)
   const [livesData, setLivesData] = useState(() => {
     return loadLivesData();
   });
 
   const [countdown, setCountdown] = useState('');
 
-  const [userProfile, setUserProfile] = useState(() => {
-    return {
-      name: localStorage.getItem('dancing_bricks_player_name') || 'Dancer',
-      isLoggedIn: false,
-      highScore: 0,
-      totalScore: 0,
-      totalGames: 0
-    };
-  });
+  const [userProfile, setUserProfile] = useState(() => loadSavedUserProfile());
 
   const [showQuizModal, setShowQuizModal] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
@@ -166,12 +159,14 @@ export default function Game() {
         const fullName = savedCustomName || [tgUserObj.first_name, tgUserObj.last_name].filter(Boolean).join(' ') || tgUserObj.username || 'Dancer';
         
         setUserProfile(prev => {
-          const updated = {
+          const freshSaved = loadSavedUserProfile();
+          const updated = sanitizeSeasonalProfile({
+            ...freshSaved,
             ...prev,
             studentId: tgUserId,
             name: fullName,
             username: tgUserObj.username || '',
-            photoUrl: tgUserObj.photo_url || prev.photoUrl || '',
+            photoUrl: tgUserObj.photo_url || prev.photoUrl || freshSaved.photoUrl || '',
             isLoggedIn: true,
             isTelegram: true,
             highScore: Math.max(prev.highScore || 0, 0)
@@ -227,22 +222,29 @@ export default function Game() {
   };
 
   const handleScoreUpdate = (score) => {
-    if (score > (userProfile.highScore || 0)) {
-      setUserProfile(prev => {
-        const updated = { ...prev, highScore: score };
-        localStorage.setItem('dancing_bricks_user_profile', JSON.stringify(updated));
-        return updated;
-      });
-    }
+    setUserProfile(prev => {
+      const sanitized = sanitizeSeasonalProfile(prev);
+      const updated = {
+        ...sanitized,
+        highScore: Math.max(sanitized.highScore || 0, score),
+        monthlyHighScore: Math.max(sanitized.monthlyHighScore || 0, score)
+      };
+      localStorage.setItem('dancing_bricks_user_profile', JSON.stringify(updated));
+      return updated;
+    });
   };
 
   const handleGameOver = (score) => {
     setUserProfile(prev => {
+      const sanitized = sanitizeSeasonalProfile(prev);
       const updated = {
-        ...prev,
-        totalGames: (prev.totalGames || 0) + 1,
-        highScore: Math.max(prev.highScore || 0, score),
-        totalScore: (prev.totalScore || 0) + score
+        ...sanitized,
+        totalGames: (sanitized.totalGames || 0) + 1,
+        monthlyGames: (sanitized.monthlyGames || 0) + 1,
+        highScore: Math.max(sanitized.highScore || 0, score),
+        monthlyHighScore: Math.max(sanitized.monthlyHighScore || 0, score),
+        totalScore: (sanitized.totalScore || 0) + score,
+        monthlyTotalScore: (sanitized.monthlyTotalScore || 0) + score
       };
       localStorage.setItem('dancing_bricks_user_profile', JSON.stringify(updated));
       return updated;
@@ -291,14 +293,18 @@ export default function Game() {
   };
 
   const handleLogin = (userData) => {
-    const updated = {
-      ...userProfile,
-      ...userData,
-      isLoggedIn: true
-    };
-    setUserProfile(updated);
-    localStorage.setItem('dancing_bricks_user_profile', JSON.stringify(updated));
-    localStorage.setItem('dancing_bricks_player_name', userData.name);
+    setUserProfile(prev => {
+      const freshSaved = loadSavedUserProfile();
+      const updated = sanitizeSeasonalProfile({
+        ...freshSaved,
+        ...prev,
+        ...userData,
+        isLoggedIn: true
+      });
+      localStorage.setItem('dancing_bricks_user_profile', JSON.stringify(updated));
+      localStorage.setItem('dancing_bricks_player_name', userData.name);
+      return updated;
+    });
   };
 
   const handleLogout = () => {
