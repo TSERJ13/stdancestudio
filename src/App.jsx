@@ -1,5 +1,6 @@
 import { Routes, Route, useLocation } from 'react-router-dom'
 import { useEffect } from 'react'
+import { ErrorBoundary } from './components/ErrorBoundary'
 import Layout from './components/Layout'
 import Home from './pages/Home'
 import About from './pages/About'
@@ -59,27 +60,31 @@ export default function App() {
     <>
       <ScrollToTop />
       {isStandalone ? (
-        <Routes>
-          <Route path="/admin" element={<AdminLogin />} />
-          <Route path="/admin/dashboard" element={<AdminDashboard />} />
-          <Route path="/portal" element={<PortalLogin />} />
-          <Route path="/portal/dashboard" element={<StudentDashboard />} />
-          <Route path="/bio" element={<Bio />} />
-          <Route path="/link" element={<Bio />} />
-          <Route path="/en/bio" element={<Bio />} />
-          <Route path="/en/link" element={<Bio />} />
-          <Route path="/ru/bio" element={<Bio />} />
-          <Route path="/ru/link" element={<Bio />} />
-          <Route path="/game" element={<Game />} />
-          <Route path="/dancing-bricks" element={<Game />} />
-        </Routes>
+        <ErrorBoundary>
+          <Routes>
+            <Route path="/admin" element={<AdminLogin />} />
+            <Route path="/admin/dashboard" element={<AdminDashboard />} />
+            <Route path="/portal" element={<PortalLogin />} />
+            <Route path="/portal/dashboard" element={<StudentDashboard />} />
+            <Route path="/bio" element={<Bio />} />
+            <Route path="/link" element={<Bio />} />
+            <Route path="/en/bio" element={<Bio />} />
+            <Route path="/en/link" element={<Bio />} />
+            <Route path="/ru/bio" element={<Bio />} />
+            <Route path="/ru/link" element={<Bio />} />
+            <Route path="/game" element={<Game />} />
+            <Route path="/dancing-bricks" element={<Game />} />
+          </Routes>
+        </ErrorBoundary>
       ) : (
         <Layout>
-          <Routes>
-            <Route path="/ru/*" element={<AppRoutes />} />
-            <Route path="/en/*" element={<AppRoutes />} />
-            <Route path="/*" element={<AppRoutes />} />
-          </Routes>
+          <ErrorBoundary>
+            <Routes>
+              <Route path="/ru/*" element={<AppRoutes />} />
+              <Route path="/en/*" element={<AppRoutes />} />
+              <Route path="/*" element={<AppRoutes />} />
+            </Routes>
+          </ErrorBoundary>
         </Layout>
       )}
     </>
