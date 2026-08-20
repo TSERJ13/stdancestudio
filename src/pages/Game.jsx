@@ -397,17 +397,18 @@ export default function Game() {
               {/* Left: Logo + Login button */}
               <div className="compact-header-left">
                 <img
-                  src="/images/dancing_bricks_logo.png"
-                  alt="Dancing Bricks"
+                  src="/images/logo-transparent.png"
+                  alt="ST Dance Studio"
                   style={{
-                    width: '36px',
-                    height: '36px',
-                    minWidth: '36px',
-                    minHeight: '36px',
+                    width: '32px',
+                    height: '32px',
+                    minWidth: '32px',
+                    minHeight: '32px',
                     objectFit: 'contain',
                     display: 'block',
                     margin: 0,
-                    padding: 0
+                    padding: 0,
+                    filter: 'drop-shadow(0 2px 6px rgba(212, 165, 90, 0.45))'
                   }}
                 />
                 <button
