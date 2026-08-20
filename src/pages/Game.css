@@ -794,3 +794,11 @@ body.page-game-active {
 }
 
 .leaderboard-container { box-sizing: border-box !important; }
+
+.lb-list *, .rules-card *, .rules-list * {
+  touch-action: pan-y !important;
+}
+.lb-list, .rules-card {
+  -webkit-overflow-scrolling: touch !important;
+}
+

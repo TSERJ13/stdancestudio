@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Play, Trophy, HelpCircle, Share2, Heart, Clock, Sparkles, Award, UserCheck, IdCard, RotateCcw, Globe } from 'lucide-react';
+import { Play, Trophy, HelpCircle, Share2, Heart, Clock, Sparkles, Award, UserCheck, IdCard, Globe, Gift, FileText } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
+import { PRIZES } from '../components/game/SpinModal';
 import GameBoard from '../components/game/GameBoard';
 import QuizModal from '../components/game/QuizModal';
 import { ErrorBoundary } from '../components/ErrorBoundary';
@@ -34,6 +35,7 @@ export const gameTranslations = {
       quiz: '+1',
       share: '+1',
       ranks: 'რეიტინგი',
+      prizes: 'პრიზები',
       rules: 'წესები'
     }
   },
@@ -60,6 +62,7 @@ export const gameTranslations = {
       quiz: '+1',
       share: '+1',
       ranks: 'Ranks',
+      prizes: 'Prizes',
       rules: 'Rules'
     }
   },
@@ -364,13 +367,6 @@ export default function Game() {
                 >
                   <Globe size={10} /> {lang === 'ka' ? 'GE' : lang.toUpperCase()}
                 </button>
-                <button
-                  onClick={handleResetLivesTest}
-                  title="Reset Lives"
-                  style={{ background: 'transparent', border: 'none', color: '#52525b', cursor: 'pointer', padding: '0', display: 'flex', alignItems: 'center', marginLeft: '4px' }}
-                >
-                  <RotateCcw size={10} />
-                </button>
               </div>
             </header>
 
@@ -407,10 +403,17 @@ export default function Game() {
               </button>
 
               <button
+                className={`nav-btn ${activeTab === 'prizes' ? 'active' : ''}`}
+                onClick={() => setActiveTab('prizes')}
+              >
+                <Gift size={14} /> {tGame.tabs.prizes}
+              </button>
+
+              <button
                 className={`nav-btn ${activeTab === 'rules' ? 'active' : ''}`}
                 onClick={() => setActiveTab('rules')}
               >
-                <Sparkles size={14} /> {tGame.tabs.rules}
+                <FileText size={14} /> {tGame.tabs.rules}
               </button>
               <div style={{ position: 'absolute', bottom: '-15px', right: '5px', fontSize: '9px', color: '#666' }}>v.89</div>
             </nav>
@@ -437,6 +440,32 @@ export default function Game() {
                     onUpdatePlayerName={handleUpdateName}
                   />
                 </ErrorBoundary>
+              )}
+
+              {activeTab === 'prizes' && (
+                <div className="rules-card glass animate-in">
+                  <h2 style={{ fontSize: '16px', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <Gift size={18} color="#d4a64a" /> 
+                    {lang === 'ka' ? 'თვის მთავარი პრიზები' : 'Main Prizes of the Month'}
+                  </h2>
+                  <div className="rules-list">
+                    {PRIZES.map((prize, idx) => (
+                      <div key={idx} className="rule-item" style={{ alignItems: 'center' }}>
+                        <div style={{
+                          width: '40px', height: '40px', borderRadius: '10px', background: '#ffffff',
+                          display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '4px',
+                          border: `1.5px solid ${prize.color || '#d4a64a'}`
+                        }}>
+                          <img src={prize.img} alt={prize.name} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                        </div>
+                        <div>
+                          <strong style={{ color: prize.color || '#F0D9A8' }}>{prize.name}</strong>
+                          <p style={{ marginTop: '2px', fontSize: '11px' }}>{prize.desc}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               )}
 
               {activeTab === 'rules' && (

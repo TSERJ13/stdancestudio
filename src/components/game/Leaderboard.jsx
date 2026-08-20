@@ -144,17 +144,19 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
       const diff = targetDate.getTime() - georgiaTime.getTime();
       
       const monthNamesKa = ["იანვრამდე", "თებერვლამდე", "მარტამდე", "აპრილამდე", "მაისამდე", "ივნისამდე", "ივლისამდე", "აგვისტომდე", "სექტემბრამდე", "ოქტომბრამდე", "ნოემბრამდე", "დეკემბრამდე"];
+      const drawNamesKa = ["იანვრის", "თებერვლის", "მარტის", "აპრილის", "მაისის", "ივნისის", "ივლისის", "აგვისტოს", "სექტემბრის", "ოქტომბრის", "ნოემბრის", "დეკემბრის"];
       const monthName = monthNamesKa[targetMonth];
+      const drawName = drawNamesKa[targetMonth];
 
       if (diff <= 0) {
-        setCountdownState({ isUnlocked: true, timeLeftText: '', monthName });
+        setCountdownState({ isUnlocked: true, timeLeftText: '', monthName, drawName });
       } else {
         const d = Math.floor(diff / (1000 * 60 * 60 * 24));
         const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
         const m = Math.floor((diff / 1000 / 60) % 60);
         const s = Math.floor((diff / 1000) % 60);
         const timeStr = `${d}დ ${h}სთ ${m}წთ ${s}წმ`;
-        setCountdownState({ isUnlocked: false, timeLeftText: timeStr, monthName });
+        setCountdownState({ isUnlocked: false, timeLeftText: timeStr, monthName, drawName });
       }
     };
     
@@ -217,28 +219,20 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
 
   return (
     <div className="leaderboard-container glass animate-in">
-      <div className="lb-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px', flexWrap: 'nowrap' }}>
-        <div className="lb-title" style={{ gap: '8px' }}>
+      <div className="lb-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+        <div className="lb-title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <Trophy size={20} color="#d4a64a" />
-          <div>
-            <h2 style={{ fontSize: '15px', margin: 0 }}>{t.title}</h2>
-            <span className="lb-subtitle" style={{ fontSize: '10px' }}>{t.subtitle}</span>
-          </div>
+          <h2 style={{ fontSize: '15px', margin: 0, fontWeight: '900', color: 'white' }}>{t.title}</h2>
         </div>
-      </div>
 
-      {/* Timer Bar */}
-      <div style={{
-        background: 'rgba(212,166,74,0.1)', border: '1px solid rgba(212,166,74,0.2)',
-        borderRadius: '10px', padding: '10px 14px', display: 'flex', justifyContent: 'space-between',
-        alignItems: 'center', marginBottom: '4px', marginTop: '12px'
-      }}>
-        <span style={{ fontSize: '11px', color: '#F0D9A8', fontWeight: '800' }}>
-          {lang === 'ka' ? `გათამაშებამდე (${countdownState.monthName}):` : 'Time until draw:'}
-        </span>
-        <span style={{ fontSize: '13px', color: 'white', fontWeight: '900', letterSpacing: '0.5px' }}>
-          {countdownState.timeLeftText || '00:00:00'}
-        </span>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', background: 'rgba(212,166,74,0.1)', padding: '6px 12px', borderRadius: '10px', border: '1px solid rgba(212,166,74,0.2)' }}>
+          <span style={{ fontSize: '13px', color: '#F0D9A8', fontWeight: '900', letterSpacing: '0.5px' }}>
+            {countdownState.timeLeftText || '00:00:00'}
+          </span>
+          <span style={{ fontSize: '10px', color: '#a1a1aa', fontWeight: '800', marginTop: '2px' }}>
+            {lang === 'ka' ? `${countdownState.drawName} გათამაშება` : 'Next Draw'}
+          </span>
+        </div>
       </div>
 
       {/* Sub Navigation Bar */}
