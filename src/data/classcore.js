@@ -379,8 +379,8 @@ export async function syncCloudScore(userEntry) {
         id: userId,
         name: userEntry.name,
         photoUrl: userEntry.photoUrl || cloudList[existingIdx].photoUrl || '',
-        score: Math.max(cloudList[existingIdx].score || 0, userEntry.score || 0),
-        games: Math.max(cloudList[existingIdx].games || 0, userEntry.games || 0),
+        score: userEntry.score || 0,
+        games: userEntry.games || 0,
         avatarBg: userEntry.avatarBg || cloudList[existingIdx].avatarBg || randomColor,
         updatedAt: new Date().toISOString()
       };

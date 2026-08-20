@@ -109,22 +109,9 @@ export default function Game() {
   const [countdown, setCountdown] = useState('');
 
   const [userProfile, setUserProfile] = useState(() => {
-    if (!localStorage.getItem('dancing_bricks_reset_v4')) {
-      localStorage.setItem('dancing_bricks_reset_v4', 'true');
-      localStorage.removeItem('dancing_bricks_user_profile');
-      localStorage.removeItem('dancing_bricks_my_prizes');
-      localStorage.removeItem('dancing_bricks_lives_v1');
-    }
+    // Clear any stale local storage profile scores
+    localStorage.removeItem('dancing_bricks_user_profile');
 
-    try {
-      const saved = localStorage.getItem('dancing_bricks_user_profile');
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (parsed && typeof parsed === 'object') {
-          return { ...parsed, highScore: 0, totalScore: 0, totalGames: 0 };
-        }
-      }
-    } catch {}
     return {
       name: localStorage.getItem('dancing_bricks_player_name') || 'Dancer',
       isLoggedIn: false,
