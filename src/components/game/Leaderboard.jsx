@@ -22,11 +22,7 @@ const TEST_LEADERBOARD = [
   { id: '116', rank: 16, name: 'მარი (Latin)', score: 40, games: 1, isStudent: true, avatarBg: '#818cf8' }
 ];
 
-const WINNERS_HISTORY = [
-  { month: '2026 — იანვარი', winner: 'სერგო წივწივაძე', prize: 'ST Dance Studio წყლის ბოთლი', code: 'ST-WIN-9021', date: '31/01/2026' },
-  { month: '2025 — დეკემბერი', winner: 'მარიამი', prize: '-50% Danceshop.Ge ვაუჩერი', code: 'ST-WIN-7814', date: '31/12/2025' },
-  { month: '2025 — ნოემბერი', winner: 'ნიკოლოზი', prize: 'ST Dance Studio ზურგჩანთა', code: 'ST-WIN-5120', date: '30/11/2025' }
-];
+const WINNERS_HISTORY = [];
 
 const lbTranslations = {
   ka: {
@@ -171,20 +167,17 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
       const saved = localStorage.getItem('dancing_bricks_my_prizes');
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed)) return parsed;
+        if (Array.isArray(parsed)) {
+          // Clear mock vouchers if they exist in user's local storage
+          const filtered = parsed.filter(v => !['ST-WIN-8942', 'ST-WIN-8167'].includes(v.code));
+          if (filtered.length !== parsed.length) {
+            localStorage.setItem('dancing_bricks_my_prizes', JSON.stringify(filtered));
+          }
+          return filtered;
+        }
       }
     } catch {}
-    return [
-      {
-        id: 1,
-        code: 'ST-WIN-8942',
-        prizeName: '-50% ვაუჩერი',
-        prizeDesc: '-50% ფასდაკლების ვაუჩერი Danceshop.Ge-ზე',
-        prizeImg: '/images/prizes/voucher_50.png',
-        winnerName: playerName || 'სერგო წივწივაძე',
-        date: '19/08/2026'
-      }
-    ];
+    return [];
   });
 
   const handleSaveName = () => {

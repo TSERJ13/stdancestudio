@@ -102,7 +102,7 @@ export default function QuizModal({ isOpen, onClose, onUnlockQuizLife, hasQuizLi
             <HelpCircle size={18} color="#d4a64a" />
             <span style={{ fontSize: '13px', fontWeight: '800', color: '#F0D9A8' }}>{t.title}</span>
           </div>
-          <button className="btn-close" onClick={onClose} style={{ width: '44px', height: '44px', fontSize: '20px' }}>✕</button>
+          <button className="btn-close" onClick={onClose}>✕</button>
         </div>
 
         {hasQuizLife ? (
