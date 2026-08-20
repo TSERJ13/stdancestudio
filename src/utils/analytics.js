@@ -225,8 +225,39 @@ async function checkAndSendDailyEmailReport(analyticsData) {
 
   localStorage.setItem(LAST_EMAIL_DATE_KEY, today)
 
-  const reportText = buildGeorgianFormattedEmailReport(analyticsData)
-  const regList = analyticsData.today_registrations_list || []
+  // Fetch real registrations from Supabase Cloud DB for today
+  let dbRegistrations = []
+  try {
+    const { fetchRegistrations } = await import('../data/classcore')
+    const allRegs = await fetchRegistrations()
+    dbRegistrations = (allRegs || []).filter(r => {
+      if (!r.created_at) return false
+      const rDate = new Date(r.created_at)
+      const tbilisiRDate = new Date(rDate.getTime() + (4 * 60 + rDate.getTimezoneOffset()) * 60000).toISOString().split('T')[0]
+      return tbilisiRDate === today
+    })
+  } catch (e) {
+    console.warn('Cloud registration sync fallback for analytics report:', e)
+  }
+
+  // Combine DB registrations with local analytics registrations
+  const regList = dbRegistrations.length > 0
+    ? dbRegistrations.map(r => ({
+        student_name: r.student_name || 'მოსწავლე',
+        parent_name: r.parent_name || 'მშობელი',
+        phone: r.parent_phone || r.phone || 'ნომერი არ არის',
+        shift: r.shift || 'ჯგუფი არ არის მითითებული',
+        time: r.created_at ? new Date(r.created_at).toLocaleTimeString('ka-GE', { hour: '2-digit', minute: '2-digit' }) : '—'
+      }))
+    : (analyticsData.today_registrations_list || [])
+
+  const mergedData = {
+    ...analyticsData,
+    today_registrations_list: regList,
+    bot_registrations: Math.max(analyticsData.bot_registrations || 0, regList.length)
+  }
+
+  const reportText = buildGeorgianFormattedEmailReport(mergedData)
   const regSummary = regList.length > 0 
     ? regList.map(r => `${r.student_name} (${r.phone}) - ${r.shift}`).join('; ')
     : 'დღეს რეგისტრაციები არ არის'

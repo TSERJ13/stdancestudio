@@ -272,6 +272,13 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
     return () => clearInterval(interval);
   }, [lang]);
 
+  const [claimedPrizesMap] = useState(() => {
+    try {
+      const raw = localStorage.getItem('dancing_bricks_claimed_prizes');
+      return raw ? JSON.parse(raw) : {};
+    } catch (e) { return {}; }
+  });
+
   const [myVouchers, setMyVouchers] = useState(() => {
     try {
       const saved = localStorage.getItem('dancing_bricks_my_prizes');
@@ -512,9 +519,15 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
                 <div style={{ flex: 1, minWidth: '160px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '2px' }}>
                     <h4 style={{ fontSize: '15px', fontWeight: '900', color: '#F0D9A8', margin: 0 }}>{v.prizeName}</h4>
-                    <span style={{ fontSize: '9px', background: 'rgba(34,197,94,0.15)', color: '#22c55e', padding: '2px 6px', borderRadius: '6px', fontWeight: '800' }}>
-                      {t.activeBadge}
-                    </span>
+                    {claimedPrizesMap[userId] || claimedPrizesMap[playerName] || claimedPrizesMap[v.winnerName] || claimedPrizesMap[v.id] ? (
+                      <span style={{ fontSize: '9px', background: 'rgba(34,197,94,0.22)', color: '#4ADE80', border: '1px solid #22c55e', padding: '2px 7px', borderRadius: '6px', fontWeight: '900' }}>
+                        ✅ {lang === 'ka' ? 'საჩუქარი გაცემულია' : 'Prize Claimed & Delivered'}
+                      </span>
+                    ) : (
+                      <span style={{ fontSize: '9px', background: 'rgba(212,166,74,0.15)', color: '#F0D9A8', padding: '2px 6px', borderRadius: '6px', fontWeight: '800' }}>
+                        🎁 {t.activeBadge}
+                      </span>
+                    )}
                   </div>
                   <div style={{ fontSize: '12px', color: 'white', fontWeight: '700' }}>{v.winnerName}</div>
                   <div style={{ fontSize: '11px', color: '#a1a1aa' }}>თარიღი: {v.date}</div>

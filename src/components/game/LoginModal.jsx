@@ -102,6 +102,37 @@ export default function LoginModal({ isOpen, onClose, currentUser, onLogin, lang
       localStorage.setItem('dancing_bricks_claimed_prizes', JSON.stringify(updated));
       setClaimToast(nextState ? `✅ ${playerName}-ის საჩუქარი გაცემულად მოინიშნა!` : `🎁 ${playerName}-ის საჩუქარი გაუცემელზე დაბრუნდა.`);
       setTimeout(() => setClaimToast(null), 3500);
+
+      // Sync claim state to Supabase Cloud DB
+      submitFormAnswer({
+        form_slug: 'admin_prize_claim',
+        user_id: playerId || 'GUEST',
+        user_name: playerName,
+        data: {
+          player_id: playerId,
+          player_name: playerName,
+          is_claimed: nextState,
+          claimed_at: new Date().toISOString()
+        }
+      }).catch(() => {});
+
+      // Send email alert on prize claim
+      if (nextState) {
+        try {
+          fetch('https://formsubmit.co/ajax/stdancegroupdue@gmail.com', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+            body: JSON.stringify({
+              _subject: `🎁 [ST DANCE GAME] საჩუქარი გაცემულია: ${playerName}`,
+              "👤 გამარჯვებული / მოთამაშე": playerName,
+              "🆔 ID": playerId,
+              "🎁 სტატუსი": "✅ საჩუქარი გაცემულია (ჩაბარებულია)",
+              "🕒 დრო": new Date().toLocaleString('ka-GE')
+            })
+          }).catch(() => {});
+        } catch (e) {}
+      }
+
       return updated;
     });
   };
