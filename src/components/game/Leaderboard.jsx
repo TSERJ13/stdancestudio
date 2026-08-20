@@ -9,7 +9,17 @@ const TEST_LEADERBOARD = [
   { id: '103', rank: 3, name: 'ნიკოლოზი (Cha-Cha King)', score: 620, games: 5, isStudent: true, avatarBg: '#b87bde' },
   { id: '104', rank: 4, name: 'ანა (Rumba Queen)', score: 440, games: 4, isStudent: true, avatarBg: '#e0764a' },
   { id: '105', rank: 5, name: 'გიორგი (Jive Champ)', score: 210, games: 2, isStudent: true, avatarBg: '#6fd98f' },
-  { id: '106', rank: 6, name: 'ელენე (Waltz Master)', score: 90, games: 1, isStudent: true, avatarBg: '#ff4444' }
+  { id: '106', rank: 6, name: 'ელენე (Waltz Master)', score: 90, games: 1, isStudent: true, avatarBg: '#ff4444' },
+  { id: '107', rank: 7, name: 'ლუკა (Salsa Pro)', score: 85, games: 1, isStudent: true, avatarBg: '#94a3b8' },
+  { id: '108', rank: 8, name: 'თამარი (Tango Dancer)', score: 80, games: 2, isStudent: true, avatarBg: '#f472b6' },
+  { id: '109', rank: 9, name: 'დათო (Hip-Hop)', score: 75, games: 1, isStudent: true, avatarBg: '#38bdf8' },
+  { id: '110', rank: 10, name: 'ნინი (Ballet)', score: 70, games: 3, isStudent: true, avatarBg: '#fbbf24' },
+  { id: '111', rank: 11, name: 'საბა (Breakdance)', score: 65, games: 2, isStudent: true, avatarBg: '#a3e635' },
+  { id: '112', rank: 12, name: 'სალომე (Jazz)', score: 60, games: 1, isStudent: true, avatarBg: '#c084fc' },
+  { id: '113', rank: 13, name: 'ნიკა (Contemporary)', score: 55, games: 1, isStudent: true, avatarBg: '#f87171' },
+  { id: '114', rank: 14, name: 'ქეთი (Folk)', score: 50, games: 2, isStudent: true, avatarBg: '#2dd4bf' },
+  { id: '115', rank: 15, name: 'ირაკლი (Street Dance)', score: 45, games: 1, isStudent: true, avatarBg: '#fb923c' },
+  { id: '116', rank: 16, name: 'მარი (Latin)', score: 40, games: 1, isStudent: true, avatarBg: '#818cf8' }
 ];
 
 const WINNERS_HISTORY = [
@@ -142,6 +152,10 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
   };
 
   const openSpinForWinner = (name) => {
+    if (!playerName || (playerName !== name && !name.includes(playerName))) {
+      alert(lang === 'ka' ? 'მხოლოდ 1-ელ ადგილზე გასულ მოთამაშეს შეუძლია პრიზის დატრიალება!' : 'Only the 1st place winner can spin the wheel!');
+      return;
+    }
     setSelectedWinner(name);
     setShowSpinModal(true);
   };
