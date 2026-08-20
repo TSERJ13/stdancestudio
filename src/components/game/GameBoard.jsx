@@ -413,14 +413,14 @@ export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOv
     if (!canvas) return;
     const wrapper = canvas.parentElement;
     const rect = wrapper.getBoundingClientRect();
-    const aspect = rect.height / rect.width;
-    let dynamicH = Math.floor(CANVAS_W * aspect);
-    dynamicH = Math.max(480, Math.min(1200, dynamicH)); // safety bounds
+    const aspect = (rect.height && rect.width) ? (rect.height / rect.width) : 1.25;
+    let dynamicH = Math.floor(CANVAS_W * Math.max(1.18, Math.min(1.32, aspect)));
+    dynamicH = Math.max(520, Math.min(560, dynamicH)); // Tight ergonomic bounds for mobile
 
     const engine = engineRef.current;
     engine.height = dynamicH;
-    engine.deathY = dynamicH - 72; // Moved up by 20px
-    engine.launchY = dynamicH - 48; // Moved up by 20px
+    engine.deathY = dynamicH - 68;
+    engine.launchY = dynamicH - 38;
 
     canvas.width = CANVAS_W;
     canvas.height = dynamicH;
@@ -860,25 +860,29 @@ export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOv
 
         {gameState === 'READY' && (
           <div className="overlay-screen glass">
-            <div className="game-logo" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <div className="game-logo" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', margin: '0 auto' }}>
               <img
                 src="/images/dancing_bricks_logo.png"
                 alt="Dancing Bricks"
                 style={{
-                  width: '110px',
+                  width: '90px',
                   height: 'auto',
-                  maxHeight: '110px',
+                  maxHeight: '90px',
                   objectFit: 'contain',
-                  marginBottom: '16px',
+                  marginBottom: '10px',
                   display: 'block'
                 }}
               />
-              <h2>DANCING BRICKS</h2>
-              <p>{t.subtitle}</p>
+              <h2 style={{ fontSize: '20px', fontWeight: '900', color: '#F0D9A8', margin: '2px 0 4px', letterSpacing: '1px' }}>
+                DANCING BRICKS
+              </h2>
+              <p style={{ fontSize: '12px', color: '#a1a1aa', margin: '0 0 12px', maxWidth: '280px', lineHeight: '1.4' }}>
+                {t.subtitle}
+              </p>
             </div>
 
             {availableLives > 0 ? (
-              <button className="btn-play-big" onClick={startGame}>
+              <button className="btn-play-big" onClick={startGame} style={{ margin: '0 auto' }}>
                 <Play size={20} fill="black" /> {t.startGame}
               </button>
             ) : (

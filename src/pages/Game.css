@@ -450,8 +450,9 @@ body.page-game-active {
   flex-direction: column !important;
   align-items: center !important;
   justify-content: center !important;
-  gap: 16px !important;
-  padding: 24px !important;
+  gap: 12px !important;
+  padding: 20px !important;
+  padding-bottom: 40px !important;
   text-align: center !important;
   background: rgba(5, 6, 10, 0.95) !important;
   box-sizing: border-box !important;
