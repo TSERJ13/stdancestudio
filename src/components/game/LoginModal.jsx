@@ -224,7 +224,7 @@ export default function LoginModal({ isOpen, onClose, currentUser, onLogin, lang
                   <Trophy size={16} color="#d4a64a" style={{ marginBottom: '4px' }} />
                   <span style={{ fontSize: '9.5px', color: '#a1a1aa', fontWeight: '700' }}>{t.highScore}</span>
                   <b style={{ color: '#F0D9A8', fontSize: '15px', fontWeight: '900', marginTop: '2px' }}>
-                    {(currentUser.monthlyHighScore ?? currentUser.highScore ?? 0).toLocaleString()}
+                    {(currentUser.monthlyHighScore || currentUser.highScore || 0).toLocaleString()}
                   </b>
                 </div>
 
@@ -233,7 +233,7 @@ export default function LoginModal({ isOpen, onClose, currentUser, onLogin, lang
                   <Flame size={16} color="#38BDF8" style={{ marginBottom: '4px' }} />
                   <span style={{ fontSize: '9.5px', color: '#a1a1aa', fontWeight: '700' }}>{t.totalScore}</span>
                   <b style={{ color: '#BAE6FD', fontSize: '15px', fontWeight: '900', marginTop: '2px' }}>
-                    {(currentUser.monthlyTotalScore ?? currentUser.totalScore ?? 0).toLocaleString()}
+                    {(currentUser.monthlyTotalScore || currentUser.totalScore || 0).toLocaleString()}
                   </b>
                 </div>
 
@@ -242,7 +242,7 @@ export default function LoginModal({ isOpen, onClose, currentUser, onLogin, lang
                   <PlayCircle size={16} color="#4ADE80" style={{ marginBottom: '4px' }} />
                   <span style={{ fontSize: '9.5px', color: '#a1a1aa', fontWeight: '700' }}>{t.totalGames}</span>
                   <b style={{ color: '#DCFCE7', fontSize: '15px', fontWeight: '900', marginTop: '2px' }}>
-                    {currentUser.monthlyGames ?? currentUser.totalGames ?? 0}
+                    {currentUser.monthlyGames || currentUser.totalGames || 0}
                   </b>
                 </div>
               </div>

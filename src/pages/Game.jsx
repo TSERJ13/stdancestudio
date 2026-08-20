@@ -169,12 +169,39 @@ export default function Game() {
             photoUrl: tgUserObj.photo_url || prev.photoUrl || freshSaved.photoUrl || '',
             isLoggedIn: true,
             isTelegram: true,
-            highScore: Math.max(prev.highScore || 0, 0)
-          };
+            highScore: Math.max(freshSaved.highScore || 0, prev.highScore || 0, 0),
+            totalScore: Math.max(freshSaved.totalScore || 0, prev.totalScore || 0, 0),
+            totalGames: Math.max(freshSaved.totalGames || 0, prev.totalGames || 0, 0),
+            monthlyHighScore: Math.max(freshSaved.monthlyHighScore || 0, prev.monthlyHighScore || 0, 0),
+            monthlyTotalScore: Math.max(freshSaved.monthlyTotalScore || 0, prev.monthlyTotalScore || 0, 0),
+            monthlyGames: Math.max(freshSaved.monthlyGames || 0, prev.monthlyGames || 0, 0)
+          });
           localStorage.setItem('dancing_bricks_user_profile', JSON.stringify(updated));
           localStorage.setItem('dancing_bricks_player_name', updated.name);
           return updated;
         });
+
+        // Sync with cloud leaderboard to pull user's cloud score if present
+        fetchCloudLeaderboard().then(cloudData => {
+          if (cloudData && cloudData.length > 0) {
+            const found = cloudData.find(item => item.id === tgUserId);
+            if (found) {
+              setUserProfile(curr => {
+                const merged = sanitizeSeasonalProfile({
+                  ...curr,
+                  highScore: Math.max(curr.highScore || 0, found.high_score || found.score || 0),
+                  totalScore: Math.max(curr.totalScore || 0, found.total_score || found.score || 0),
+                  totalGames: Math.max(curr.totalGames || 0, found.total_games || found.games || 0),
+                  monthlyHighScore: Math.max(curr.monthlyHighScore || 0, found.score || 0),
+                  monthlyTotalScore: Math.max(curr.monthlyTotalScore || 0, found.score || 0),
+                  monthlyGames: Math.max(curr.monthlyGames || 0, found.games || 0)
+                });
+                localStorage.setItem('dancing_bricks_user_profile', JSON.stringify(merged));
+                return merged;
+              });
+            }
+          }
+        }).catch(() => {});
       }
     }
   }, []);
@@ -345,18 +372,14 @@ export default function Game() {
                   src="/images/dancing_bricks_logo.png"
                   alt="Dancing Bricks"
                   style={{
-                    width: '38px',
-                    height: '38px',
-                    minWidth: '38px',
-                    minHeight: '38px',
-                    borderRadius: '8px',
+                    width: '36px',
+                    height: '36px',
+                    minWidth: '36px',
+                    minHeight: '36px',
                     objectFit: 'contain',
-                    marginTop: '-5px',
-                    marginBottom: '-5px',
-                    marginLeft: '-2px',
-                    position: 'relative',
-                    top: '-1px',
-                    zIndex: 2
+                    display: 'block',
+                    margin: 0,
+                    padding: 0
                   }}
                 />
                 <button
