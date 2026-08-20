@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { Trophy, Gift, Ticket, History, Copy, Check } from 'lucide-react';
+import { Trophy, Gift, Ticket, History, Copy, Check, Clock } from 'lucide-react';
 import { useLanguage } from '../../context/LanguageContext';
 import SpinModal from './SpinModal';
 
@@ -225,11 +225,12 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
           <h2 style={{ fontSize: '15px', margin: 0, fontWeight: '900', color: 'white' }}>{t.title}</h2>
         </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', background: 'rgba(212,166,74,0.1)', padding: '6px 12px', borderRadius: '10px', border: '1px solid rgba(212,166,74,0.2)' }}>
-          <span style={{ fontSize: '13px', color: '#F0D9A8', fontWeight: '900', letterSpacing: '0.5px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+          <span style={{ fontSize: '12px', color: '#F0D9A8', fontWeight: '900', letterSpacing: '0.5px' }}>
+            <Clock size={10} style={{ display: 'inline', marginRight: '4px', verticalAlign: 'middle', color: '#d4a64a', marginTop: '-2px' }} />
             {countdownState.timeLeftText || '00:00:00'}
           </span>
-          <span style={{ fontSize: '10px', color: '#a1a1aa', fontWeight: '800', marginTop: '2px' }}>
+          <span style={{ fontSize: '9px', color: '#a1a1aa', fontWeight: '600', marginTop: '2px' }}>
             {lang === 'ka' ? `${countdownState.drawName} გათამაშება` : 'Next Draw'}
           </span>
         </div>
@@ -306,14 +307,27 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
           <div className="player-profile-bar">
             <span className="profile-lbl">{t.profileLbl}</span>
             {editingName ? (
-              <div style={{ display: 'flex', gap: '6px', flex: 1 }}>
+              <div style={{ display: 'flex', gap: '6px', flex: 1, alignItems: 'center' }}>
                 <input
                   type="text"
                   value={nameInput}
                   onChange={e => setNameInput(e.target.value)}
-                  placeholder="შეიყვანე სახელი..."
+                  placeholder="სახელი..."
+                  style={{
+                    background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)',
+                    color: 'white', padding: '4px 8px', borderRadius: '6px', fontSize: '12px', outline: 'none', width: '100px', height: '24px', boxSizing: 'border-box'
+                  }}
+                  autoFocus
                 />
-                <button className="btn-save-name" onClick={handleSaveName}>შენახვა</button>
+                <button
+                  onClick={handleSaveName}
+                  style={{
+                    background: '#d4a64a', color: '#151100', border: 'none', padding: '0 10px', height: '24px',
+                    borderRadius: '6px', fontSize: '11px', fontWeight: '800', cursor: 'pointer', boxSizing: 'border-box'
+                  }}
+                >
+                  შენახვა
+                </button>
               </div>
             ) : (
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flex: 1 }}>

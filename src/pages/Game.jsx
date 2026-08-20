@@ -406,16 +406,15 @@ export default function Game() {
                 className={`nav-btn ${activeTab === 'prizes' ? 'active' : ''}`}
                 onClick={() => setActiveTab('prizes')}
               >
-                <Gift size={14} /> {tGame.tabs.prizes}
+                <Gift size={16} />
               </button>
 
               <button
                 className={`nav-btn ${activeTab === 'rules' ? 'active' : ''}`}
                 onClick={() => setActiveTab('rules')}
               >
-                <FileText size={14} /> {tGame.tabs.rules}
+                <FileText size={16} />
               </button>
-              <div style={{ position: 'absolute', bottom: '-15px', right: '5px', fontSize: '9px', color: '#666' }}>v.89</div>
             </nav>
 
             <main className="main-content" style={{ width: '100%', flex: 1, display: 'flex', flexDirection: 'column' }}>
