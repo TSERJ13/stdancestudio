@@ -578,7 +578,7 @@ export default function Game() {
             </nav>
 
             <main className="main-content" style={{ width: '100%', flex: 1, display: 'flex', flexDirection: 'column', position: 'relative', minHeight: 0 }}>
-              {activeTab === 'play' && (
+              <div style={{ display: activeTab === 'play' ? 'flex' : 'none', width: '100%', flex: 1, flexDirection: 'column' }}>
                 <GameBoard
                   tGame={tGame}
                   lang={lang}
@@ -589,9 +589,9 @@ export default function Game() {
                   onOpenQuiz={() => setShowQuizModal(true)}
                   onOpenShare={() => setShowShareModal(true)}
                 />
-              )}
+              </div>
 
-              {activeTab === 'leaderboard' && (
+              <div style={{ display: activeTab === 'leaderboard' ? 'flex' : 'none', width: '100%', flex: 1, flexDirection: 'column' }}>
                 <ErrorBoundary>
                   <Leaderboard
                     currentTotalScore={userProfile.totalScore || userProfile.highScore || 0}
@@ -602,14 +602,14 @@ export default function Game() {
                     onUpdatePlayerName={handleUpdateName}
                   />
                 </ErrorBoundary>
-              )}
+              </div>
 
-              {activeTab === 'prizes' && (
+              <div style={{ display: activeTab === 'prizes' ? 'flex' : 'none', width: '100%', flex: 1, flexDirection: 'column' }}>
                 <PrizesPage />
-              )}
+              </div>
 
-              {activeTab === 'rules' && (
-                <div className="rules-card glass animate-in">
+              <div style={{ display: activeTab === 'rules' ? 'flex' : 'none', width: '100%', flex: 1, flexDirection: 'column' }}>
+                <div className="rules-card glass">
                   {lang === 'ru' ? (
                     <>
                       <h2 style={{ fontSize: '16px', marginBottom: '12px' }}>Как играть</h2>
@@ -656,7 +656,7 @@ export default function Game() {
                     </>
                   )}
                 </div>
-              )}
+              </div>
             </main>
 
             <QuizModal
