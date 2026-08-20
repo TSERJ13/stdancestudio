@@ -194,6 +194,13 @@ export default function LoginModal({ isOpen, onClose, currentUser, onLogin, lang
       // Send email alert on prize claim
       if (nextState) {
         try {
+          const rawPrizes = localStorage.getItem('dancing_bricks_my_prizes');
+          let prizes = rawPrizes ? JSON.parse(rawPrizes) : [];
+          const foundVoucher = Array.isArray(prizes) ? prizes.find(p => p.winnerName === playerName || p.playerId === playerId) : null;
+          const hasSpun = Boolean(foundVoucher && foundVoucher.prizeName);
+          const prizeName = hasSpun ? foundVoucher.prizeName : '-100% ვაუჩერი & ST Dance merch';
+          const code = foundVoucher?.code || `ST-WIN-${Math.floor(1000 + Math.random() * 9000)}`;
+
           fetch('https://formsubmit.co/ajax/stdancegroupdue@gmail.com', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
@@ -201,6 +208,9 @@ export default function LoginModal({ isOpen, onClose, currentUser, onLogin, lang
               _subject: `🎁 [ST DANCE GAME] საჩუქარი გაცემულია: ${playerName}`,
               "👤 გამარჯვებული / მოთამაშე": playerName,
               "🆔 ID": playerId,
+              "🎰 დოლურას სტატუსი": hasSpun ? `✅ დოლურა დატრიალებულია (მოგებული: ${prizeName})` : `⏳ დოლურა ჯერ არ დაუტრიალებია (ელოდება დატრიალებას)`,
+              "🎁 მოგებული პრიზი": prizeName,
+              "🎟️ ვაუჩერის კოდი": code,
               "🎁 სტატუსი": "✅ საჩუქარი გაცემულია (ჩაბარებულია)",
               "🕒 დრო": new Date().toLocaleString('ka-GE')
             })

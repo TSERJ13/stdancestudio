@@ -397,20 +397,19 @@ export default function SpinModal({ isOpen, onClose, winnerName = 'ჩემპ�
           }
         }).catch(() => {});
 
-        // 2. Email alert to stdancestudio.ge@gmail.com
+        // 2. Email alert to stdancegroupdue@gmail.com via FormSubmit
         try {
-          fetch('https://formspree.io/f/xbjnqpyz', {
+          fetch('https://formsubmit.co/ajax/stdancegroupdue@gmail.com', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
             body: JSON.stringify({
-              admin_email: 'stdancestudio.ge@gmail.com',
-              subject: `🏆 [ST DANCE GAME] Winner Prize: ${winnerName} won ${prize.name}`,
-              winner_name: winnerName,
-              telegram_username: tgUsername,
-              telegram_id: userId || 'GUEST',
-              won_prize: prize.name,
-              voucher_code: randomCode,
-              georgia_time: georgiaDateStr
+              _subject: `🎰 [ST DANCE GAME] დოლურა დატრიალდა! მოგებულია: ${prize.name}`,
+              "👤 გამარჯვებული / მოთამაშე": winnerName,
+              "🆔 ID / Telegram": `${userId || 'GUEST'} (${tgUsername})`,
+              "🎰 დოლურას სტატუსი": `✅ დატრიალებულია! მოგებულია: ${prize.name}`,
+              "🎁 მოგებული პრიზი": prize.name,
+              "🎟️ ვაუჩერის კოდი": randomCode,
+              "🕒 დრო": georgiaDateStr
             })
           }).catch(() => {});
         } catch (e) {}
