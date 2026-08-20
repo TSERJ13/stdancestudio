@@ -22,7 +22,6 @@ body.page-game-active html {
   user-select: none !important;
   -webkit-user-select: none !important;
   -webkit-touch-callout: none !important;
-  touch-action: none !important;
 }
 
 body.page-game-active .canvas-wrapper {
@@ -565,6 +564,8 @@ body.page-game-active {
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.08);
+  min-height: 48px;
+  box-sizing: border-box;
 }
 
 .game-page-wrap .profile-lbl {
