@@ -350,8 +350,12 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
                     #{item.rank}
                   </div>
 
-                  <div className="lb-avatar" style={{ background: item.avatarBg }}>
-                    {item.name.charAt(0)}
+                  <div className="lb-avatar" style={{ background: item.avatarBg, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    {item.photoUrl ? (
+                      <img src={item.photoUrl} alt={item.name} style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} />
+                    ) : (
+                      item.name.charAt(0)
+                    )}
                   </div>
 
                   <div className="lb-user-info">
@@ -359,32 +363,34 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
                     <span className="lb-badge">ID: {item.id}</span>
                   </div>
 
-                  {isWinner ? (
-                    <button
-                      onClick={() => openSpinForWinner(item.name)}
-                      style={{
-                        padding: '6px 12px',
-                        borderRadius: '10px',
-                        background: 'linear-gradient(135deg, #22c55e, #16a34a)',
-                        border: 'none',
-                        color: 'white',
-                        fontWeight: '900',
-                        fontSize: '11px',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '6px',
-                        boxShadow: '0 4px 12px rgba(34, 197, 94, 0.3)'
-                      }}
-                    >
-                      <Gift size={14} /> {lang === 'ka' ? 'პრიზი' : 'Prize'}
-                    </button>
-                  ) : (
-                    <div className="lb-score-col" style={{ zIndex: 1 }}>
-                      <span className="lb-score">{item.score.toLocaleString()} {t.pts}</span>
+                  <div className="lb-score-col" style={{ zIndex: 1, display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '4px' }}>
+                    <span className="lb-score" style={{ color: isWinner ? '#d4a64a' : 'white', fontWeight: '900' }}>
+                      {item.score.toLocaleString()} {t.pts}
+                    </span>
+                    {isWinner ? (
+                      <button
+                        onClick={() => openSpinForWinner(item.name)}
+                        style={{
+                          padding: '3px 8px',
+                          borderRadius: '8px',
+                          background: 'linear-gradient(135deg, #22c55e, #16a34a)',
+                          border: 'none',
+                          color: 'white',
+                          fontWeight: '900',
+                          fontSize: '10px',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '4px',
+                          boxShadow: '0 2px 8px rgba(34, 197, 94, 0.4)'
+                        }}
+                      >
+                        <Gift size={12} /> {lang === 'ka' ? 'პრიზი' : 'Prize'}
+                      </button>
+                    ) : (
                       <span className="lb-games">{item.games} {t.games}</span>
-                    </div>
-                  )}
+                    )}
+                  </div>
                 </div>
               );
             })}

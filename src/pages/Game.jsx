@@ -178,6 +178,7 @@ export default function Game() {
             ...prev,
             studentId: `TG-${tgUser.id}`,
             name: tgUser.first_name || tgUser.username || 'Dancer',
+            photoUrl: tgUser.photo_url || prev.photoUrl || '',
             isLoggedIn: true,
             isTelegram: true,
             highScore: Math.max(prev.highScore || 0, 0)
@@ -196,11 +197,12 @@ export default function Game() {
       syncCloudScore({
         id: userProfile.studentId || `USER_${userProfile.name}`,
         name: userProfile.name,
+        photoUrl: userProfile.photoUrl || '',
         score: userProfile.totalScore || userProfile.highScore || 0,
         games: userProfile.totalGames || 0
       }).catch(() => {});
     }
-  }, [userProfile.studentId, userProfile.name, userProfile.highScore, userProfile.totalGames, userProfile.totalScore]);
+  }, [userProfile.studentId, userProfile.name, userProfile.photoUrl, userProfile.highScore, userProfile.totalGames, userProfile.totalScore]);
 
   useEffect(() => {
     const interval = setInterval(() => {

@@ -340,6 +340,7 @@ export async function syncCloudScore(userEntry) {
         ...cloudList[existingIdx],
         id: userId,
         name: userEntry.name,
+        photoUrl: userEntry.photoUrl || cloudList[existingIdx].photoUrl || '',
         score: Math.max(cloudList[existingIdx].score || 0, userEntry.score || 0),
         games: Math.max(cloudList[existingIdx].games || 0, userEntry.games || 0),
         avatarBg: userEntry.avatarBg || cloudList[existingIdx].avatarBg || randomColor,
@@ -349,6 +350,7 @@ export async function syncCloudScore(userEntry) {
       cloudList.push({
         id: userId,
         name: userEntry.name,
+        photoUrl: userEntry.photoUrl || '',
         score: userEntry.score || 0,
         games: userEntry.games || 0,
         avatarBg: userEntry.avatarBg || randomColor,

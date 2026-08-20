@@ -708,11 +708,14 @@ body.page-game-active {
   backdrop-filter: blur(12px) !important;
   -webkit-backdrop-filter: blur(12px) !important;
   display: flex !important;
-  align-items: center !important;
+  align-items: flex-start !important;
   justify-content: center !important;
+  padding-top: max(12vh, 60px) !important;
   z-index: 99999 !important;
-  padding: 16px !important;
+  padding-left: 16px !important;
+  padding-right: 16px !important;
   box-sizing: border-box !important;
+  overflow-y: auto !important;
 }
 
 .modal-content {
