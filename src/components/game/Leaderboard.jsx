@@ -505,6 +505,52 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
         document.body
       )}
 
+      {/* Name Edit Modal */}
+      {showNameModal && createPortal(
+        <div className="modal-overlay" style={{ zIndex: 9999 }} onClick={() => setShowNameModal(false)}>
+          <div
+            className="modal-content glass animate-in"
+            style={{ maxWidth: '320px', padding: '28px', textAlign: 'center', position: 'relative' }}
+            onClick={e => e.stopPropagation()}
+          >
+            <button
+              className="btn-close"
+              onClick={() => setShowNameModal(false)}
+              style={{ position: 'absolute', top: '12px', right: '12px' }}
+            >✕</button>
+            <h3 style={{ color: '#F0D9A8', fontSize: '16px', fontWeight: '900', margin: '0 0 18px' }}>
+              {lang === 'ka' ? '✏️ სახელის შეცვლა' : '✏️ Change Name'}
+            </h3>
+            <input
+              type="text"
+              value={nameInput}
+              onChange={e => setNameInput(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && handleSaveName()}
+              placeholder={lang === 'ka' ? 'შეიყვანე სახელი...' : 'Enter your name...'}
+              autoFocus
+              style={{
+                width: '100%', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(212,166,74,0.4)',
+                color: 'white', padding: '12px 14px', borderRadius: '12px', fontSize: '15px',
+                outline: 'none', boxSizing: 'border-box', marginBottom: '16px',
+                fontFamily: 'inherit'
+              }}
+            />
+            <button
+              onClick={handleSaveName}
+              style={{
+                width: '100%', padding: '13px', borderRadius: '12px',
+                background: 'linear-gradient(135deg, #d4a64a, #f0d9a8)',
+                border: 'none', color: '#151100', fontWeight: '900',
+                fontSize: '15px', cursor: 'pointer'
+              }}
+            >
+              {lang === 'ka' ? 'შენახვა' : 'Save'}
+            </button>
+          </div>
+        </div>,
+        document.body
+      )}
+
     </div>
   );
 }
