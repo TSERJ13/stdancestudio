@@ -710,7 +710,7 @@ body.page-game-active {
   display: flex !important;
   align-items: flex-start !important;
   justify-content: center !important;
-  padding-top: max(12vh, 60px) !important;
+  padding-top: 30px !important;
   z-index: 99999 !important;
   padding-left: 16px !important;
   padding-right: 16px !important;
@@ -728,7 +728,7 @@ body.page-game-active {
   border: 1px solid rgba(212, 166, 74, 0.35) !important;
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9) !important;
   box-sizing: border-box !important;
-  margin: auto !important;
+  margin-top: 10px !important;
 }
 
 /* Rules Card */
