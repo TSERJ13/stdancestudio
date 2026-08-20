@@ -9,9 +9,35 @@ import SocialShareModal from '../components/game/SocialShareModal';
 import Leaderboard from '../components/game/Leaderboard';
 import PrizesPage from '../components/game/PrizesPage';
 import LoginModal from '../components/game/LoginModal';
-import { syncCloudScore } from '../data/classcore';
+import { syncCloudScore, fetchCloudLeaderboard, sanitizeSeasonalProfile } from '../data/classcore';
 import { loadLivesData, saveLivesData, calculateAvailableLives, formatTimeUntilReset, getGeorgiaResetTime } from '../utils/livesManager';
 import './Game.css';
+
+export function loadSavedUserProfile() {
+  let saved = null;
+  try {
+    const raw = localStorage.getItem('dancing_bricks_user_profile');
+    if (raw) saved = JSON.parse(raw);
+  } catch (e) {
+    console.warn('Failed to parse user profile:', e);
+  }
+
+  const base = {
+    name: saved?.name || localStorage.getItem('dancing_bricks_player_name') || 'Dancer',
+    studentId: saved?.studentId || localStorage.getItem('dancing_bricks_saved_id') || '',
+    isLoggedIn: saved?.isLoggedIn ?? !!localStorage.getItem('dancing_bricks_saved_id'),
+    highScore: saved?.highScore || 0,
+    totalScore: saved?.totalScore || saved?.highScore || 0,
+    totalGames: saved?.totalGames || 0,
+    monthlyHighScore: saved?.monthlyHighScore || saved?.highScore || 0,
+    monthlyTotalScore: saved?.monthlyTotalScore || saved?.totalScore || saved?.highScore || 0,
+    monthlyGames: saved?.monthlyGames || saved?.totalGames || 0
+  };
+
+  const sanitized = sanitizeSeasonalProfile(base);
+  localStorage.setItem('dancing_bricks_user_profile', JSON.stringify(sanitized));
+  return sanitized;
+}
 
 export const gameTranslations = {
   ka: {
