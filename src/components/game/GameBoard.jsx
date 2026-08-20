@@ -859,7 +859,18 @@ export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOv
         {gameState === 'READY' && (
           <div className="overlay-screen glass">
             <div className="game-logo">
-              <Award size={48} className="text-gold animate-pulse" />
+              <img
+                src="/images/dancing_bricks_logo.png"
+                alt="Dancing Bricks"
+                style={{
+                  width: '80px',
+                  height: '80px',
+                  borderRadius: '16px',
+                  objectFit: 'contain',
+                  marginBottom: '12px',
+                  filter: 'drop-shadow(0 0 18px rgba(212,166,74,0.8))'
+                }}
+              />
               <h2>DANCING BRICKS</h2>
               <p>{t.subtitle}</p>
             </div>
