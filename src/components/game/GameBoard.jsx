@@ -858,57 +858,25 @@ export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOv
 
         {gameState === 'READY' && (
           <div className="overlay-screen glass">
-            {/* Radiant Golden Glow Rays Aura */}
-            <div style={{
-              position: 'absolute',
-              top: '40%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
-              width: '260px',
-              height: '260px',
-              borderRadius: '50%',
-              background: 'radial-gradient(circle, rgba(212,166,74,0.35) 0%, rgba(240,217,168,0.15) 50%, transparent 70%)',
-              filter: 'blur(30px)',
-              pointerEvents: 'none'
-            }} />
-
-            <div className="game-logo" style={{ position: 'relative', zIndex: 2, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-              <div style={{
-                position: 'relative',
-                padding: '12px',
-                borderRadius: '24px',
-                background: 'radial-gradient(circle, rgba(212,166,74,0.2) 0%, transparent 70%)',
-                boxShadow: '0 0 40px rgba(212,166,74,0.4)',
-                marginBottom: '12px'
-              }}>
-                <img
-                  src="/images/dancing_bricks_logo.png"
-                  alt="Dancing Bricks"
-                  style={{
-                    width: '95px',
-                    height: '95px',
-                    borderRadius: '20px',
-                    objectFit: 'contain',
-                    filter: 'drop-shadow(0 0 25px rgba(212,166,74,0.95))',
-                    display: 'block'
-                  }}
-                />
-              </div>
+            <div className="game-logo" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <img
+                src="/images/dancing_bricks_logo.png"
+                alt="Dancing Bricks"
+                style={{
+                  width: '110px',
+                  height: 'auto',
+                  maxHeight: '110px',
+                  objectFit: 'contain',
+                  marginBottom: '16px',
+                  display: 'block'
+                }}
+              />
               <h2>DANCING BRICKS</h2>
               <p>{t.subtitle}</p>
             </div>
 
             {availableLives > 0 ? (
-              <button
-                className="btn-play-big"
-                onClick={startGame}
-                style={{
-                  position: 'relative',
-                  zIndex: 2,
-                  marginTop: '10px',
-                  boxShadow: '0 0 25px rgba(34, 197, 94, 0.5), 0 0 50px rgba(212, 166, 74, 0.3)'
-                }}
-              >
+              <button className="btn-play-big" onClick={startGame}>
                 <Play size={20} fill="black" /> {t.startGame}
               </button>
             ) : (

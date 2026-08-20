@@ -453,10 +453,7 @@ body.page-game-active {
   gap: 16px !important;
   padding: 24px !important;
   text-align: center !important;
-  background:
-    radial-gradient(circle at 50% 40%, rgba(212, 166, 74, 0.38) 0%, rgba(240, 217, 168, 0.12) 45%, rgba(5, 6, 10, 0.96) 80%),
-    radial-gradient(circle at 50% 100%, rgba(212, 166, 74, 0.2) 0%, transparent 60%),
-    linear-gradient(180deg, rgba(12, 10, 20, 0.95) 0%, rgba(5, 6, 10, 0.98) 100%) !important;
+  background: rgba(5, 6, 10, 0.95) !important;
   box-sizing: border-box !important;
   z-index: 10;
   overflow: hidden;
@@ -468,16 +465,14 @@ body.page-game-active {
   margin-top: 4px;
   letter-spacing: 1.5px;
   color: #F0D9A8;
-  text-shadow: 0 0 16px rgba(212, 166, 74, 0.7);
 }
 
 .game-page-wrap .game-logo p {
   font-size: 13px;
-  color: #d4cebe;
+  color: #a1a1aa;
   margin-top: 6px;
   max-width: 300px;
   line-height: 1.5;
-  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
 }
 
 .game-page-wrap .btn-play-big {
