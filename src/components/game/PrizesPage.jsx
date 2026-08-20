@@ -3,13 +3,18 @@ import { createPortal } from 'react-dom';
 import { PRIZES, getPrizeName, getPrizeDesc } from './SpinModal';
 import { useLanguage } from '../../context/LanguageContext';
 
+// Global Instant Image Preloader — cached in browser RAM before mount
+const PRELOADED_PRIZE_IMAGES = PRIZES.map(p => {
+  const img = new Image();
+  img.src = p.img;
+  return img;
+});
+
 export default function PrizesPage() {
   const { lang } = useLanguage();
   const canvasRef = useRef(null);
   const angleRef = useRef(0);
-  const rafRef = useRef(null);
-  const loadedImgsRef = useRef([]);
-  const [imagesReady, setImagesReady] = useState(false);
+  const loadedImgsRef = useRef(PRELOADED_PRIZE_IMAGES);
   const [selectedPrize, setSelectedPrize] = useState(null);
   const [countdown, setCountdown] = useState('');
   const [drawInfo, setDrawInfo] = useState({ titleText: '20 სექტემბრის გათამაშება', monthName: 'სექტემბრამდე' });
@@ -72,30 +77,13 @@ export default function PrizesPage() {
     return () => clearInterval(iv);
   }, [lang]);
 
-  // Load images & draw wheel immediately on mount
+  // Draw wheel immediately on mount using preloaded RAM images
   useEffect(() => {
-    const loaded = [];
-    let count = 0;
-    PRIZES.forEach((p, idx) => {
-      const img = new Image();
-      img.src = p.img;
-      img.onload = () => {
-        count++;
-        loaded[idx] = img;
-        if (canvasRef.current) drawWheel(angleRef.current);
-      };
-      img.onerror = () => {
-        count++;
-        loaded[idx] = null;
-        if (canvasRef.current) drawWheel(angleRef.current);
-      };
-    });
-    loadedImgsRef.current = loaded;
-
-    // Draw immediately on mount
-    setTimeout(() => {
+    if (canvasRef.current) drawWheel(angleRef.current);
+    const t1 = setTimeout(() => {
       if (canvasRef.current) drawWheel(angleRef.current);
-    }, 20);
+    }, 10);
+    return () => clearTimeout(t1);
   }, []);
 
   // Draw wheel — exact same as SpinModal
