@@ -152,6 +152,26 @@ export default function Game() {
 
   const availableLives = isTestAccount ? 999 : calculateAvailableLives(livesData);
 
+  // Preload critical assets once on mount to ensure 0-lag tab switching
+  useEffect(() => {
+    const assetsToPreload = [
+      '/images/dancing_bricks_logo.png',
+      '/images/logo-transparent.png',
+      '/images/prizes/water_bottle.png',
+      '/images/prizes/umbrella.png',
+      '/images/prizes/backpack.png',
+      '/images/prizes/raincoat.png',
+      '/images/prizes/phone_case.png',
+      '/images/prizes/voucher_100.png',
+      '/images/prizes/voucher_50.png',
+      '/images/prizes/voucher_30.png'
+    ];
+    assetsToPreload.forEach(src => {
+      const img = new Image();
+      img.src = src;
+    });
+  }, []);
+
   useEffect(() => {
     document.body.classList.add('page-game-active');
     if (activeTab === 'play') {

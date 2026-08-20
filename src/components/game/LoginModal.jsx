@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { User, ShieldCheck, CheckCircle2, IdCard, LogIn, KeyRound, Loader2, Sparkles, X, Trophy, Flame, PlayCircle } from 'lucide-react';
-import { fetchStudioData, getStudentName } from '../../data/classcore';
+import { createPortal } from 'react-dom';
+import { User, ShieldCheck, CheckCircle2, IdCard, LogIn, KeyRound, Loader2, Sparkles, X, Trophy, Flame, PlayCircle, Crown, Users, Radio, RefreshCw, BarChart2 } from 'lucide-react';
+import { fetchStudioData, getStudentName, fetchCloudLeaderboard } from '../../data/classcore';
 
 const STUDENT_ID_MAP = {
   '101': 'სერგო წივწივაძე (Head Coach)',
@@ -48,21 +49,21 @@ const loginTranslations = {
     totalScore: 'Total Score',
     totalGames: 'Games Played',
     verified: 'ClassCore Verified',
-    enterIdSub: 'Enter your ClassCore Student ID code to automatically sync your scores!',
+    enterIdSub: 'Enter your ClassCore Student ID to automatically save your high scores!',
     idLabel: 'Student ID Code:',
     idPlaceholder: 'e.g. 101, ST-101 or phone number',
-    nameLabel: 'Student Full Name (Optional):',
-    namePlaceholder: 'e.g. Sergo Tsivtsivadze',
-    testIdsLabel: 'Test ID Codes (tap to fill):',
-    checking: 'Verifying...',
-    submitBtn: 'Login with Student ID'
+    nameLabel: 'Student Name / Surname (Optional):',
+    namePlaceholder: 'e.g. Sergi Tsivtsivadze',
+    testIdsLabel: 'Test IDs (Click to fill):',
+    checking: 'Checking...',
+    submitBtn: 'Login with ID'
   },
   ru: {
     modalTitle: 'Профиль игрока и статистика',
-    inputTitle: 'Вход по ID студента',
+    inputTitle: 'Вход по ID ученика',
     successTitle: 'Успешный вход!',
-    student: 'Студент:',
-    statsHeader: 'Игровая статистика',
+    student: 'Ученик:',
+    statsHeader: 'Статистика игры',
     highScore: 'Рекорд',
     totalScore: 'Всего очков',
     totalGames: 'Сыграно игр',
@@ -247,6 +248,34 @@ export default function LoginModal({ isOpen, onClose, currentUser, onLogin, lang
                 </div>
               </div>
             </div>
+
+            {/* Exclusive Admin Dashboard Button (Only for @stdancestudio) */}
+            {isAdmin && (
+              <button
+                type="button"
+                onClick={() => setShowAdminDashboard(true)}
+                style={{
+                  width: '100%',
+                  padding: '11px 14px',
+                  borderRadius: '12px',
+                  background: 'linear-gradient(135deg, #d4a64a 0%, #a3762b 100%)',
+                  color: '#05060a',
+                  fontWeight: '900',
+                  fontSize: '13px',
+                  border: 'none',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  align-items: 'center',
+                  justify-content: 'center',
+                  gap: '8px',
+                  marginTop: '10px',
+                  boxShadow: '0 4px 14px rgba(212,166,74,0.45)'
+                }}
+              >
+                <Crown size={17} color="#05060a" />
+                👑 S_T Dance Studio — ადმინ პანელი & ანალიტიკა
+              </button>
+            )}
           </div>
         ) : (
           <form className="login-form-body" onSubmit={handleIdSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
@@ -345,6 +374,91 @@ export default function LoginModal({ isOpen, onClose, currentUser, onLogin, lang
           </form>
         )}
       </div>
+
+      {/* Exclusive Admin Dashboard Overlay Modal */}
+      {showAdminDashboard && createPortal(
+        <div className="modal-overlay" style={{ zIndex: 99999 }}>
+          <div className="modal-content glass animate-in" style={{ maxWidth: '450px', width: '94%', maxHeight: '85vh', overflowY: 'auto', padding: '20px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px', borderBottom: '1px solid rgba(212,166,74,0.3)', paddingBottom: '10px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Crown size={22} color="#d4a64a" />
+                <div style={{ textAlign: 'left' }}>
+                  <h3 style={{ fontSize: '15px', fontWeight: '900', color: '#F0D9A8', margin: 0 }}>👑 S_T Dance Studio — ადმინ პანელი</h3>
+                  <span style={{ fontSize: '10.5px', color: '#4ADE80', fontWeight: '700' }}>● რეალური დროის ცოცხალი ანალიტიკა</span>
+                </div>
+              </div>
+              <button className="btn-close" onClick={() => setShowAdminDashboard(false)}>
+                <X size={18} />
+              </button>
+            </div>
+
+            {adminLoading ? (
+              <div style={{ padding: '30px', textAlign: 'center', color: '#F0D9A8' }}>
+                <Loader2 size={32} className="animate-spin" style={{ margin: '0 auto 10px' }} />
+                <p style={{ fontSize: '12px' }}>მონაცემები იტვირთება Cloud-იდან...</p>
+              </div>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                {/* Top Stats Grid */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '10px' }}>
+                  <div style={{ background: 'rgba(212,166,74,0.12)', border: '1px solid rgba(212,166,74,0.3)', padding: '10px', borderRadius: '12px', textAlign: 'center' }}>
+                    <Users size={18} color="#d4a64a" style={{ margin: '0 auto 4px' }} />
+                    <div style={{ fontSize: '10px', color: '#a1a1aa', fontWeight: '700' }}>სულ რეგისტრირებული</div>
+                    <b style={{ fontSize: '17px', color: '#F0D9A8', fontWeight: '900' }}>{adminStats.totalPlayersCount} მოთამაშე</b>
+                  </div>
+
+                  <div style={{ background: 'rgba(34,197,94,0.12)', border: '1px solid rgba(34,197,94,0.3)', padding: '10px', borderRadius: '12px', textAlign: 'center' }}>
+                    <Radio size={18} color="#22c55e" style={{ margin: '0 auto 4px' }} />
+                    <div style={{ fontSize: '10px', color: '#a1a1aa', fontWeight: '700' }}>ახლა ონლაინში / თამაშობს</div>
+                    <b style={{ fontSize: '17px', color: '#4ADE80', fontWeight: '900' }}>{adminStats.activeLiveCount} 🟢 LIVE</b>
+                  </div>
+
+                  <div style={{ background: 'rgba(56,189,248,0.12)', border: '1px solid rgba(56,189,248,0.3)', padding: '10px', borderRadius: '12px', textAlign: 'center' }}>
+                    <PlayCircle size={18} color="#38BDF8" style={{ margin: '0 auto 4px' }} />
+                    <div style={{ fontSize: '10px', color: '#a1a1aa', fontWeight: '700' }}>სულ ნათამაშები თამაშები</div>
+                    <b style={{ fontSize: '17px', color: '#BAE6FD', fontWeight: '900' }}>{adminStats.totalGamesCount}</b>
+                  </div>
+
+                  <div style={{ background: 'rgba(244,63,94,0.12)', border: '1px solid rgba(244,63,94,0.3)', padding: '10px', borderRadius: '12px', textAlign: 'center' }}>
+                    <Trophy size={18} color="#f43f5e" style={{ margin: '0 auto 4px' }} />
+                    <div style={{ fontSize: '10px', color: '#a1a1aa', fontWeight: '700' }}>#1 მიმდინარე ლიდერი</div>
+                    <b style={{ fontSize: '12px', color: '#FECDD3', fontWeight: '900', display: 'block', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{adminStats.topLeaderName}</b>
+                  </div>
+                </div>
+
+                {/* Scrollable Player List Table */}
+                <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '14px', padding: '12px' }}>
+                  <div style={{ fontSize: '11.5px', fontWeight: '900', color: '#F0D9A8', marginBottom: '8px', textTransform: 'uppercase', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span>🎮 მოთამაშეების სრული სია & აქტივობა</span>
+                    <button onClick={loadAdminAnalytics} style={{ background: 'transparent', border: 'none', color: '#22c55e', cursor: 'pointer', fontSize: '11px', fontWeight: '700', display: 'flex', alignItems: 'center', gap: '3px' }}>
+                      <RefreshCw size={12} /> განახლება
+                    </button>
+                  </div>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', maxHeight: '260px', overflowY: 'auto' }}>
+                    {adminStats.players.map((pl, idx) => (
+                      <div key={idx} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 10px', background: idx === 0 ? 'rgba(212,166,74,0.15)' : 'rgba(255,255,255,0.02)', borderRadius: '10px', border: idx === 0 ? '1px solid rgba(212,166,74,0.4)' : '1px solid rgba(255,255,255,0.04)' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <span style={{ fontSize: '11px', fontWeight: '900', color: idx === 0 ? '#FFD700' : '#a1a1aa', width: '20px' }}>#{idx + 1}</span>
+                          <div style={{ textAlign: 'left' }}>
+                            <div style={{ fontSize: '12px', fontWeight: '800', color: 'white' }}>{pl.name}</div>
+                            <span style={{ fontSize: '9.5px', color: '#a1a1aa' }}>ID: {pl.id}</span>
+                          </div>
+                        </div>
+                        <div style={{ textAlign: 'right' }}>
+                          <div style={{ fontSize: '12px', fontWeight: '900', color: '#F0D9A8' }}>{(pl.score || pl.high_score || 0).toLocaleString()} ქ</div>
+                          <span style={{ fontSize: '9.5px', color: '#4ADE80' }}>{pl.games || pl.total_games || 1} თამაში</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>,
+        document.body
+      )}
     </div>
   );
 }

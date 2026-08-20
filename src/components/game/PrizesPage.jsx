@@ -72,17 +72,30 @@ export default function PrizesPage() {
     return () => clearInterval(iv);
   }, [lang]);
 
-  // Load images
+  // Load images & draw wheel immediately on mount
   useEffect(() => {
     const loaded = [];
     let count = 0;
     PRIZES.forEach((p, idx) => {
       const img = new Image();
       img.src = p.img;
-      img.onload = () => { count++; loaded[idx] = img; if (count === PRIZES.length) setImagesReady(true); };
-      img.onerror = () => { count++; loaded[idx] = null; if (count === PRIZES.length) setImagesReady(true); };
+      img.onload = () => {
+        count++;
+        loaded[idx] = img;
+        if (canvasRef.current) drawWheel(angleRef.current);
+      };
+      img.onerror = () => {
+        count++;
+        loaded[idx] = null;
+        if (canvasRef.current) drawWheel(angleRef.current);
+      };
     });
     loadedImgsRef.current = loaded;
+
+    // Draw immediately on mount
+    setTimeout(() => {
+      if (canvasRef.current) drawWheel(angleRef.current);
+    }, 20);
   }, []);
 
   // Draw wheel — exact same as SpinModal
