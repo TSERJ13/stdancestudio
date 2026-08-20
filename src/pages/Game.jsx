@@ -433,14 +433,15 @@ export default function Game() {
                   src="/images/dancing_bricks_logo.png"
                   alt="Dancing Bricks"
                   style={{
-                    width: '68px',
-                    height: '28px',
-                    minWidth: '68px',
-                    maxHeight: '28px',
+                    height: '36px',
+                    width: 'auto',
+                    maxHeight: '36px',
+                    maxWidth: '100px',
                     objectFit: 'contain',
                     display: 'block',
                     margin: 0,
-                    padding: 0
+                    padding: 0,
+                    filter: 'drop-shadow(0 2px 6px rgba(212,166,74,0.4))'
                   }}
                 />
                 <button
@@ -562,6 +563,7 @@ export default function Game() {
               {activeTab === 'play' && (
                 <GameBoard
                   tGame={tGame}
+                  lang={lang}
                   availableLives={availableLives}
                   onSpendLife={handleSpendLife}
                   onGameOver={handleGameOver}

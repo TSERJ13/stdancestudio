@@ -81,6 +81,10 @@ const loginTranslations = {
 
 export default function LoginModal({ isOpen, onClose, currentUser, onLogin, lang = 'ka' }) {
   const t = loginTranslations[lang] || loginTranslations.ka;
+  const isAdmin = currentUser?.studentId === '99999' ||
+    currentUser?.studentId === 'TG-stdancestudio' ||
+    currentUser?.username?.toLowerCase() === 'stdancestudio' ||
+    String(currentUser?.studentId || '').toLowerCase() === 'tg-stdancestudio';
 
   const [idInput, setIdInput] = useState(() => {
     return localStorage.getItem('dancing_bricks_saved_id') || currentUser?.studentId || '';

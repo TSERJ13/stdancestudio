@@ -29,7 +29,20 @@ const MARQUEE_PRIZES = [
   { name: '-50% ვაუჩერი', img: '/images/prizes/voucher_50.png' }
 ];
 
-export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOver, onScoreUpdate, onOpenQuiz, onOpenShare }) {
+const getPrizeName = (prize, lang) => {
+  const translations = {
+    'წყლის ბოთლი': { ka: 'წყლის ბოთლი', en: 'Water Bottle', ru: 'Бутылка' },
+    'ქოლგა': { ka: 'ქოლგა', en: 'Umbrella', ru: 'Зонт' },
+    'ზურგჩანთა': { ka: 'ზურგჩანთა', en: 'Backpack', ru: 'Рюкзак' },
+    '100% ვაუჩერი': { ka: '100% ვაუჩერი', en: '100% Voucher', ru: '100% Ваучер' },
+    'საწვიმარი': { ka: 'საწვიმარი', en: 'Raincoat', ru: 'Дождевик' },
+    'ქეისი': { ka: 'ქეისი', en: 'Phone Case', ru: 'Чехол' },
+    '-50% ვაუჩერი': { ka: '-50% ვაუჩერი', en: '50% Voucher', ru: '50% Ваучер' }
+  };
+  return translations[prize.name]?.[lang] || prize.name;
+};
+
+export default function GameBoard({ tGame, lang = 'ka', availableLives, onSpendLife, onGameOver, onScoreUpdate, onOpenQuiz, onOpenShare }) {
   const canvasRef = useRef(null);
   const containerRef = useRef(null);
   const stLogoImgRef = useRef(null);
@@ -899,7 +912,7 @@ export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOv
                       <div className="prize-badge-disk">
                         <img src={pz.img} alt={pz.name} />
                       </div>
-                      <span className="prize-badge-title">{pz.name}</span>
+                      <span className="prize-badge-title">{getPrizeName(pz, lang)}</span>
                     </div>
                   ))}
                 </div>

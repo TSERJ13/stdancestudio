@@ -130,10 +130,10 @@ body.app-fullscreen-active .canvas-wrapper,
 }
 
 .compact-header-left img {
-  width: 68px !important;
-  height: 28px !important;
-  min-width: 68px !important;
-  max-height: 28px !important;
+  height: 36px !important;
+  width: auto !important;
+  max-height: 36px !important;
+  max-width: 100px !important;
   object-fit: contain !important;
   margin: 0 !important;
   padding: 0 !important;
