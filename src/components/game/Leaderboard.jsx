@@ -108,10 +108,24 @@ function AvatarImage({ src, alt, fallbackChar }) {
   );
 }
 
+let LEADERBOARD_MEMORY_CACHE = null;
+
 export default function Leaderboard({ currentTotalScore, totalGames, playerName, userId, photoUrl, onUpdatePlayerName }) {
   const { lang } = useLanguage();
   const t = lbTranslations[lang] || lbTranslations.ka;
-  const [cloudList, setCloudList] = useState([]);
+  const [cloudList, setCloudList] = useState(() => {
+    if (Array.isArray(LEADERBOARD_MEMORY_CACHE) && LEADERBOARD_MEMORY_CACHE.length > 0) {
+      return LEADERBOARD_MEMORY_CACHE;
+    }
+    try {
+      const raw = localStorage.getItem('dancing_bricks_lb_cache');
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch (e) {}
+    return [];
+  });
 
   useEffect(() => {
     let isMounted = true;
@@ -119,10 +133,9 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
     async function refreshCloudData() {
       const fetched = await fetchCloudLeaderboard();
       if (isMounted && Array.isArray(fetched) && fetched.length > 0) {
-        setCloudList(prev => {
-          // Merge to preserve data stability without flashing
-          return fetched;
-        });
+        LEADERBOARD_MEMORY_CACHE = fetched;
+        try { localStorage.setItem('dancing_bricks_lb_cache', JSON.stringify(fetched)); } catch (e) {}
+        setCloudList(fetched);
       }
     }
 
@@ -137,6 +150,8 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
           games: Math.max(1, totalGames || 1)
         });
         if (isMounted && Array.isArray(synced) && synced.length > 0) {
+          LEADERBOARD_MEMORY_CACHE = synced;
+          try { localStorage.setItem('dancing_bricks_lb_cache', JSON.stringify(synced)); } catch (e) {}
           setCloudList(synced);
         }
       }
