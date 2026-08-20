@@ -23,7 +23,7 @@ const MARQUEE_PRIZES = [
   { name: 'წყლის ბოთლი', img: '/images/prizes/water_bottle.png' },
   { name: 'ქოლგა', img: '/images/prizes/umbrella.png' },
   { name: 'ზურგჩანთა', img: '/images/prizes/backpack.png' },
-  { name: '100% ვაუჩერი', img: '/images/prizes/voucher_100.png' },
+  { name: '-100% ვაუჩერი', img: '/images/prizes/voucher_100.png' },
   { name: 'საწვიმარი', img: '/images/prizes/raincoat.png' },
   { name: 'ქეისი', img: '/images/prizes/phone_case.png' },
   { name: '-50% ვაუჩერი', img: '/images/prizes/voucher_50.png' }
@@ -34,7 +34,7 @@ const getPrizeName = (prize, lang) => {
     'წყლის ბოთლი': { ka: 'წყლის ბოთლი', en: 'Water Bottle', ru: 'Бутылка' },
     'ქოლგა': { ka: 'ქოლგა', en: 'Umbrella', ru: 'Зонт' },
     'ზურგჩანთა': { ka: 'ზურგჩანთა', en: 'Backpack', ru: 'Рюкзак' },
-    '100% ვაუჩერი': { ka: '100% ვაუჩერი', en: '100% Voucher', ru: '100% Ваучер' },
+    '-100% ვაუჩერი': { ka: '-100% ვაუჩერი', en: '-100% Voucher', ru: 'Ваучер -100%' },
     'საწვიმარი': { ka: 'საწვიმარი', en: 'Raincoat', ru: 'Дождевик' },
     'ქეისი': { ka: 'ქეისი', en: 'Phone Case', ru: 'Чехол' },
     '-50% ვაუჩერი': { ka: '-50% ვაუჩერი', en: '50% Voucher', ru: '50% Ваучер' }

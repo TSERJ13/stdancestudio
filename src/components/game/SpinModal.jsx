@@ -50,8 +50,8 @@ export const PRIZES = [
   },
   {
     id: 'v100',
-    name: '100% ვაუჩერი (უფასო)', nameEn: '100% Free Voucher', nameRu: '100% Бесплатный ваучер',
-    desc: '100% უფასო სრული ვაუჩერი Danceshop.Ge-ზე (20 დეკემბერი!)', descEn: '100% free full voucher on Danceshop.Ge (Dec 20th Grand Draw!)', descRu: '100% бесплатный ваучер на Danceshop.Ge (Гранд-розыгрыш 20 Декабря!)',
+    name: '-100% ვაუჩერი', nameEn: '-100% Voucher', nameRu: 'Ваучер -100%',
+    desc: '-100% სრული ვაუჩერი Danceshop.Ge-ზე', descEn: '-100% full voucher on Danceshop.Ge', descRu: 'Ваучер -100% на Danceshop.Ge',
     img: '/images/prizes/voucher_100.png', color: '#FF4444'
   }
 ];
