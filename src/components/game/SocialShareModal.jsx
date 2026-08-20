@@ -17,8 +17,8 @@ const shareTranslations = {
     unlockedTitle: '5-ე სიცოცხლე გახსნილია! (+1 Life)',
     unlockedSub: 'ინსტაგრამზე გაზიარებით შენ მიიღე დღევანდელი მე-5 ბონუს სიცოცხლე!',
     backBtn: 'თამაშში დაბრუნება',
-    shareTitle: 'გააზიარე ST Dance Studio და მიიღე +1 ბონუს სიცოცხლე',
-    shareSub: 'გააზიარე ჩვენი ბოლო რილსი და გააგრძელე თამაში!',
+    shareTitle: 'გააზიარე ჩვენი ბოლო რილსი და გააგრძელე თამაში!',
+    shareSub: '',
     igBtn: 'Instagram-ზე გაზიარება (+1 Life)',
     verifyingText: 'მოწმდება გაზიარება...',
     copyBtn: 'ლინკის კოპირება',
@@ -142,12 +142,14 @@ export default function SocialShareModal({ isOpen, onClose, onUnlockShareLife, h
               </div>
             </div>
 
-            <h3 style={{ fontSize: '16px', fontWeight: '900', color: 'white', margin: '4px 0 6px' }}>
+            <h3 style={{ fontSize: '16px', fontWeight: '900', color: 'white', margin: '4px 0 16px', lineHeight: '1.4', padding: '0 10px' }}>
               {t.shareTitle}
             </h3>
-            <p style={{ fontSize: '12px', color: '#a1a1aa', margin: '0 0 16px', lineHeight: '1.4' }}>
-              {t.shareSub}
-            </p>
+            {t.shareSub && (
+              <p style={{ fontSize: '12px', color: '#a1a1aa', margin: '0 0 16px', lineHeight: '1.4' }}>
+                {t.shareSub}
+              </p>
+            )}
 
             <div className="share-actions-column" style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '10px' }}>
               {/* Single Main Instagram Share Button with Verification Loader */}
