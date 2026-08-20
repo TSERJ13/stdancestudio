@@ -37,7 +37,16 @@ const loginTranslations = {
     namePlaceholder: 'მაგ: სერგო წივწივაძე',
     testIdsLabel: 'სატესტო ID კოდები (დააჭირე შესავსებად):',
     checking: 'გადამოწმება...',
-    submitBtn: 'ID კოდით შესვლა'
+    submitBtn: 'ID კოდით შესვლა',
+    adminTitle: '👑 ადმინ პანელი',
+    adminSubTitle: '● რეალური დროის ცოცხალი ანალიტიკა & პრიზები',
+    adminBtnText: '👑 ST Dance Studio — ადმინ პანელი & ანალიტიკა',
+    totalPlayers: 'სულ რეგისტრირებული',
+    activeOnline: 'ახლა ონლაინში / თამაშობს',
+    totalGamesPlayed: 'სულ ნათამაშები თამაშები',
+    topLeader: '#1 მიმდინარე ლიდერი',
+    playersListHeader: '🎮 მოთამაშეები & საჩუქრის გაცემის სტატუსი',
+    refreshBtn: 'განახლება'
   },
   en: {
     modalTitle: 'Player Profile & Live Stats',
@@ -56,7 +65,16 @@ const loginTranslations = {
     namePlaceholder: 'e.g. Sergi Tsivtsivadze',
     testIdsLabel: 'Test IDs (Click to fill):',
     checking: 'Checking...',
-    submitBtn: 'Login with ID'
+    submitBtn: 'Login with ID',
+    adminTitle: '👑 Admin Panel',
+    adminSubTitle: '● Real-Time Live Analytics & Prizes',
+    adminBtnText: '👑 ST Dance Studio — Admin Panel & Analytics',
+    totalPlayers: 'Total Registered Players',
+    activeOnline: 'Active Online / Playing Now',
+    totalGamesPlayed: 'Total Games Played',
+    topLeader: '#1 Current Leader',
+    playersListHeader: '🎮 Players & Prize Delivery Status',
+    refreshBtn: 'Refresh'
   },
   ru: {
     modalTitle: 'Профиль игрока и статистика',
@@ -75,7 +93,16 @@ const loginTranslations = {
     namePlaceholder: 'напр. Серго Цивцивадзе',
     testIdsLabel: 'Тестовые ID коды (нажмите для выбора):',
     checking: 'Проверка...',
-    submitBtn: 'Войти по ID коду'
+    submitBtn: 'Войти по ID коду',
+    adminTitle: '👑 Панель Администратора',
+    adminSubTitle: '● Живая аналитика в реальном времени и призы',
+    adminBtnText: '👑 ST Dance Studio — Панель и аналитика',
+    totalPlayers: 'Всего зарегистрировано',
+    activeOnline: 'Онлайн / Играют сейчас',
+    totalGamesPlayed: 'Всего сыграно игр',
+    topLeader: '#1 Текущий лидер',
+    playersListHeader: '🎮 Игроки и статус выдачи призов',
+    refreshBtn: 'Обновить'
   }
 };
 
@@ -428,7 +455,7 @@ export default function LoginModal({ isOpen, onClose, currentUser, onLogin, lang
                 }}
               >
                 <Crown size={17} color="#05060a" />
-                👑 S_T Dance Studio — ადმინ პანელი & ანალიტიკა
+                {t.adminBtnText}
               </button>
             )}
           </div>
@@ -538,8 +565,8 @@ export default function LoginModal({ isOpen, onClose, currentUser, onLogin, lang
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <Crown size={22} color="#d4a64a" />
                 <div style={{ textAlign: 'left' }}>
-                  <h3 style={{ fontSize: '16px', fontWeight: '900', color: '#F0D9A8', margin: 0 }}>👑 ადმინ პანელი</h3>
-                  <span style={{ fontSize: '10.5px', color: '#4ADE80', fontWeight: '700' }}>● რეალური დროის ცოცხალი ანალიტიკა & პრიზები</span>
+                  <h3 style={{ fontSize: '16px', fontWeight: '900', color: '#F0D9A8', margin: 0 }}>{t.adminTitle}</h3>
+                  <span style={{ fontSize: '10.5px', color: '#4ADE80', fontWeight: '700' }}>{t.adminSubTitle}</span>
                 </div>
               </div>
               <button className="btn-close" onClick={() => setShowAdminDashboard(false)}>
@@ -558,25 +585,25 @@ export default function LoginModal({ isOpen, onClose, currentUser, onLogin, lang
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '10px' }}>
                   <div style={{ background: 'rgba(212,166,74,0.12)', border: '1px solid rgba(212,166,74,0.3)', padding: '10px', borderRadius: '12px', textAlign: 'center' }}>
                     <Users size={18} color="#d4a64a" style={{ margin: '0 auto 4px' }} />
-                    <div style={{ fontSize: '10px', color: '#a1a1aa', fontWeight: '700' }}>სულ რეგისტრირებული</div>
-                    <b style={{ fontSize: '17px', color: '#F0D9A8', fontWeight: '900' }}>{adminStats.totalPlayersCount} მოთამაშე</b>
+                    <div style={{ fontSize: '10px', color: '#a1a1aa', fontWeight: '700' }}>{t.totalPlayers}</div>
+                    <b style={{ fontSize: '17px', color: '#F0D9A8', fontWeight: '900' }}>{adminStats.totalPlayersCount}</b>
                   </div>
 
                   <div style={{ background: 'rgba(34,197,94,0.12)', border: '1px solid rgba(34,197,94,0.3)', padding: '10px', borderRadius: '12px', textAlign: 'center' }}>
                     <Radio size={18} color="#22c55e" style={{ margin: '0 auto 4px' }} />
-                    <div style={{ fontSize: '10px', color: '#a1a1aa', fontWeight: '700' }}>ახლა ონლაინში / თამაშობს</div>
+                    <div style={{ fontSize: '10px', color: '#a1a1aa', fontWeight: '700' }}>{t.activeOnline}</div>
                     <b style={{ fontSize: '17px', color: '#4ADE80', fontWeight: '900' }}>{adminStats.activeLiveCount} 🟢 LIVE</b>
                   </div>
 
                   <div style={{ background: 'rgba(56,189,248,0.12)', border: '1px solid rgba(56,189,248,0.3)', padding: '10px', borderRadius: '12px', textAlign: 'center' }}>
                     <PlayCircle size={18} color="#38BDF8" style={{ margin: '0 auto 4px' }} />
-                    <div style={{ fontSize: '10px', color: '#a1a1aa', fontWeight: '700' }}>სულ ნათამაშები თამაშები</div>
+                    <div style={{ fontSize: '10px', color: '#a1a1aa', fontWeight: '700' }}>{t.totalGamesPlayed}</div>
                     <b style={{ fontSize: '17px', color: '#BAE6FD', fontWeight: '900' }}>{adminStats.totalGamesCount}</b>
                   </div>
 
                   <div style={{ background: 'rgba(244,63,94,0.12)', border: '1px solid rgba(244,63,94,0.3)', padding: '10px', borderRadius: '12px', textAlign: 'center' }}>
                     <Trophy size={18} color="#f43f5e" style={{ margin: '0 auto 4px' }} />
-                    <div style={{ fontSize: '10px', color: '#a1a1aa', fontWeight: '700' }}>#1 მიმდინარე ლიდერი</div>
+                    <div style={{ fontSize: '10px', color: '#a1a1aa', fontWeight: '700' }}>{t.topLeader}</div>
                     <b style={{ fontSize: '12px', color: '#FECDD3', fontWeight: '900', display: 'block', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{adminStats.topLeaderName}</b>
                   </div>
                 </div>
@@ -584,9 +611,9 @@ export default function LoginModal({ isOpen, onClose, currentUser, onLogin, lang
                 {/* Scrollable Player List Table with Prize Claim Toggle */}
                 <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '14px', padding: '12px' }}>
                   <div style={{ fontSize: '11.5px', fontWeight: '900', color: '#F0D9A8', marginBottom: '8px', textTransform: 'uppercase', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span>🎮 მოთამაშეები & საჩუქრის გაცემის სტატუსი</span>
+                    <span>{t.playersListHeader}</span>
                     <button onClick={loadAdminAnalytics} style={{ background: 'transparent', border: 'none', color: '#22c55e', cursor: 'pointer', fontSize: '11px', fontWeight: '700', display: 'flex', alignItems: 'center', gap: '3px' }}>
-                      <RefreshCw size={12} /> განახლება
+                      <RefreshCw size={12} /> {t.refreshBtn}
                     </button>
                   </div>
 
