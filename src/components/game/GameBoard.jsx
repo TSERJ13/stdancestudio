@@ -4,14 +4,16 @@ import { soundFx } from '../../utils/soundFx';
 
 const GOLD_L = '#F0D9A8';
 const TIERS = [
-  { f: 'rgba(212,165,90,.22)', s: '#D4A55A', t: '#F0D9A8' },
-  { f: 'rgba(120,190,220,.22)', s: '#6FC3E0', t: '#BEE7F5' },
-  { f: 'rgba(190,120,220,.22)', s: '#B87BDE', t: '#E3C6F5' },
-  { f: 'rgba(230,120,90,.22)', s: '#E0764A', t: '#F5C7B0' },
-  { f: 'rgba(120,220,150,.22)', s: '#6FD98F', t: '#C3F0D2' },
-  { f: 'rgba(255,68,68,.28)', s: '#FF4444', t: '#FFB3B3' },
-  { f: 'rgba(244,114,182,.22)', s: '#F472B6', t: '#FCE7F3' },
-  { f: 'rgba(251,191,36,.22)', s: '#FBBF24', t: '#FEF3C7' }
+  { f: 'rgba(212,165,90,.22)', s: '#D4A55A', t: '#F0D9A8' }, // 1 - Gold / Yellow
+  { f: 'rgba(56,189,248,.22)', s: '#38BDF8', t: '#BAE6FD' }, // 2 - Bright Cyan / Blue
+  { f: 'rgba(192,132,252,.22)', s: '#C084FC', t: '#F3E8FF' }, // 3 - Neon Purple
+  { f: 'rgba(251,146,60,.22)', s: '#FB923C', t: '#FFEDD5' }, // 4 - Vivid Orange
+  { f: 'rgba(74,222,128,.22)', s: '#4ADE80', t: '#DCFCE7' }, // 5 - Emerald Green
+  { f: 'rgba(248,113,113,.26)', s: '#F87171', t: '#FEE2E2' }, // 6 - Electric Crimson Red
+  { f: 'rgba(244,114,182,.22)', s: '#F472B6', t: '#FCE7F3' }, // 7 - Neon Magenta Pink
+  { f: 'rgba(251,191,36,.22)', s: '#FBBF24', t: '#FEF3C7' }, // 8 - Amber Sun
+  { f: 'rgba(45,212,191,.22)', s: '#2DD4BF', t: '#CCFBF1' }, // 9 - Bright Teal
+  { f: 'rgba(129,140,248,.22)', s: '#818CF8', t: '#E0E7FF' }  // 10 - Royal Indigo
 ];
 
 const CANVAS_W = 440;
@@ -174,7 +176,7 @@ export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOv
         const pk = freeCols[Math.floor(Math.random() * freeCols.length)];
         const rand = Math.random();
         let specialType = 'logo_gold';
-        let specialHp = Math.max(2, Math.floor(hp * 0.8));
+        let specialHp = 1; // Special bonus logo bricks break in 1 single hit!
 
         if (rand < 0.25) {
           specialType = 'logo_green';
@@ -182,7 +184,7 @@ export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOv
           specialType = 'logo_purple';
         } else if (rand < 0.75) {
           specialType = 'super_pearl';
-          specialHp = 2;
+          specialHp = 1;
         }
 
         engine.bricks.push({
@@ -461,7 +463,8 @@ export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOv
       engine.bricks.forEach(b => {
         if (b.hp <= 0) return;
 
-        let style = TIERS[(b.hp - 1 + (b.col || 0)) % TIERS.length];
+        // Every HP number has its own fixed distinct color!
+        let style = TIERS[(b.hp - 1) % TIERS.length];
 
         if (b.specialType === 'logo_gold') {
           style = { f: 'rgba(212,165,90,.38)', s: GOLD_L, t: '#1a1200' };
@@ -487,29 +490,40 @@ export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOv
 
         if (b.specialType && stLogoImgRef.current) {
           ctx.save();
-          // High-contrast, crisp dark backing badge for ST logo
-          const badgeMargin = 2;
-          const badgeW = b.w - badgeMargin * 2;
-          const badgeH = b.h - badgeMargin * 2;
-          const badgeX = b.x + badgeMargin;
-          const badgeY = b.y + badgeMargin;
+          // Render a crisp solid white disk in center for maximum logo quality
+          const diskR = Math.min(b.w, b.h) * 0.40;
+          const diskX = b.x + b.w / 2;
+          const diskY = b.y + b.h / 2;
 
-          ctx.fillStyle = 'rgba(10, 8, 16, 0.92)';
-          ctx.strokeStyle = style.s;
-          ctx.lineWidth = 1.6;
           ctx.beginPath();
-          if (ctx.roundRect) ctx.roundRect(badgeX, badgeY, badgeW, badgeH, 5);
-          else ctx.rect(badgeX, badgeY, badgeW, badgeH);
+          ctx.arc(diskX, diskY, diskR, 0, Math.PI * 2);
+          ctx.fillStyle = '#ffffff';
+          ctx.shadowColor = style.s;
+          ctx.shadowBlur = 10;
           ctx.fill();
-          ctx.stroke();
+
+          ctx.save();
+          ctx.beginPath();
+          ctx.arc(diskX, diskY, diskR - 0.5, 0, Math.PI * 2);
+          ctx.clip();
+
+          const img = stLogoImgRef.current;
+          const maxDim = diskR * 1.65;
+          const aspect = (img.naturalWidth || img.width) / (img.naturalHeight || img.height || 1);
+          let drawW = maxDim, drawH = maxDim;
+          if (aspect > 1) drawH = maxDim / aspect; else drawW = maxDim * aspect;
 
           ctx.imageSmoothingEnabled = true;
           ctx.imageSmoothingQuality = 'high';
-          const imgW = badgeW * 0.90;
-          const imgH = badgeH * 0.90;
-          const imgX = badgeX + (badgeW - imgW) / 2;
-          const imgY = badgeY + (badgeH - imgH) / 2;
-          ctx.drawImage(stLogoImgRef.current, imgX, imgY, imgW, imgH);
+          ctx.drawImage(img, diskX - drawW / 2, diskY - drawH / 2, drawW, drawH);
+          ctx.restore();
+
+          // Gold/Neon border ring on top of white disk
+          ctx.beginPath();
+          ctx.arc(diskX, diskY, diskR, 0, Math.PI * 2);
+          ctx.strokeStyle = style.s;
+          ctx.lineWidth = 2.2;
+          ctx.stroke();
           ctx.restore();
         } else {
           ctx.fillStyle = style.t;
@@ -916,7 +930,7 @@ export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOv
               </button>
             ) : (
               <div className="no-lives-box">
-                <ShieldAlert size={32} color="#ef4444" />
+                <Heart size={28} color="#ef4444" strokeWidth={2.2} />
                 <p>{t.noLives}</p>
                 <div style={{ display: 'flex', gap: '8px', marginTop: '10px' }}>
                   <button className="btn-secondary" style={{ padding: '8px 14px', fontSize: '11px', display: 'flex', alignItems: 'center', gap: '4px' }} onClick={onOpenQuiz}>
