@@ -54,6 +54,11 @@ export default function PrizesPage() {
         setCountdown('');
         return;
       }
+      const d = Math.floor(diff / 86400000);
+      const h = Math.floor((diff / 3600000) % 24);
+      const m = Math.floor((diff / 60000) % 60);
+      const s = Math.floor((diff / 1000) % 60);
+
       let timeStr = `${d}დ ${h}სთ ${m}წთ ${s}წმ`;
       if (lang === 'en') {
         timeStr = `${d}d ${h}h ${m}m ${s}s`;

@@ -490,40 +490,16 @@ export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOv
 
         if (b.specialType && stLogoImgRef.current) {
           ctx.save();
-          // Render a crisp solid white disk in center for maximum logo quality
-          const diskR = Math.min(b.w, b.h) * 0.40;
-          const diskX = b.x + b.w / 2;
-          const diskY = b.y + b.h / 2;
-
-          ctx.beginPath();
-          ctx.arc(diskX, diskY, diskR, 0, Math.PI * 2);
-          ctx.fillStyle = '#ffffff';
-          ctx.shadowColor = style.s;
-          ctx.shadowBlur = 10;
-          ctx.fill();
-
-          ctx.save();
-          ctx.beginPath();
-          ctx.arc(diskX, diskY, diskR - 0.5, 0, Math.PI * 2);
-          ctx.clip();
-
-          const img = stLogoImgRef.current;
-          const maxDim = diskR * 1.65;
-          const aspect = (img.naturalWidth || img.width) / (img.naturalHeight || img.height || 1);
-          let drawW = maxDim, drawH = maxDim;
-          if (aspect > 1) drawH = maxDim / aspect; else drawW = maxDim * aspect;
-
           ctx.imageSmoothingEnabled = true;
           ctx.imageSmoothingQuality = 'high';
-          ctx.drawImage(img, diskX - drawW / 2, diskY - drawH / 2, drawW, drawH);
-          ctx.restore();
 
-          // Gold/Neon border ring on top of white disk
-          ctx.beginPath();
-          ctx.arc(diskX, diskY, diskR, 0, Math.PI * 2);
-          ctx.strokeStyle = style.s;
-          ctx.lineWidth = 2.2;
-          ctx.stroke();
+          const img = stLogoImgRef.current;
+          const imgW = b.w * 0.85;
+          const imgH = b.h * 0.85;
+          const imgX = b.x + (b.w - imgW) / 2;
+          const imgY = b.y + (b.h - imgH) / 2;
+
+          ctx.drawImage(img, imgX, imgY, imgW, imgH);
           ctx.restore();
         } else {
           ctx.fillStyle = style.t;
