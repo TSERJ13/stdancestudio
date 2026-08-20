@@ -329,7 +329,7 @@ export default function Game() {
   return (
     <section className="section" style={{ paddingBlock: 0, width: '100%', minHeight: '100dvh', display: 'flex', background: '#05060a' }}>
       <div className="container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', padding: 0, flex: 1 }}>
-        <div className="inner-page game-page-wrap" style={{ flex: 1, paddingTop: 2 }}>
+        <div className="inner-page game-page-wrap" style={{ flex: 1, paddingTop: 0 }}>
           <div className="app-container">
             {/* Ultra-Compact Top Bar */}
             <header className="app-header glass compact-top-bar">
@@ -339,14 +339,18 @@ export default function Game() {
                   src="/images/dancing_bricks_logo.png"
                   alt="Dancing Bricks"
                   style={{
-                    width: '34px',
-                    height: '34px',
-                    borderRadius: '6px',
+                    width: '44px',
+                    height: '44px',
+                    minWidth: '44px',
+                    minHeight: '44px',
+                    borderRadius: '8px',
                     objectFit: 'contain',
-                    marginTop: '-4px',
-                    marginBottom: '-4px',
+                    marginTop: '-8px',
+                    marginBottom: '-8px',
+                    marginLeft: '-2px',
                     position: 'relative',
-                    top: '-1px'
+                    top: '-2px',
+                    zIndex: 2
                   }}
                 />
                 <button

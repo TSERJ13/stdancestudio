@@ -129,6 +129,16 @@ body.app-fullscreen-active .canvas-wrapper,
   flex-shrink: 0;
 }
 
+.compact-header-left img {
+  width: 44px !important;
+  height: 44px !important;
+  min-width: 44px !important;
+  min-height: 44px !important;
+  object-fit: contain !important;
+  margin-top: -8px !important;
+  margin-bottom: -8px !important;
+}
+
 .compact-title {
   font-size: 12.5px;
   font-weight: 900;

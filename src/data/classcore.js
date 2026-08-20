@@ -873,3 +873,49 @@ export async function fetchFormSubmissions(slug) {
   }
 }
 
+/* ── Monthly Season Helpers (Resets on 20th at 22:00 Georgia Time) ── */
+export function getCurrentSeasonKey() {
+  const now = new Date();
+  const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+  const georgiaTime = new Date(utc + (3600000 * 4));
+
+  let year = georgiaTime.getFullYear();
+  let month = georgiaTime.getMonth(); // 0 - 11
+
+  // Draw cutoff is 20th of the month at 22:00:00 Georgia Time
+  const cutoffThisMonth = new Date(year, month, 20, 22, 0, 0);
+  if (georgiaTime >= cutoffThisMonth) {
+    month++;
+    if (month > 11) {
+      month = 0;
+      year++;
+    }
+  }
+
+  return `season_${year}_${month}`;
+}
+
+export function sanitizeSeasonalProfile(prevProfile) {
+  const currentKey = getCurrentSeasonKey();
+  if (!prevProfile) {
+    return {
+      seasonKey: currentKey,
+      monthlyHighScore: 0,
+      monthlyTotalScore: 0,
+      monthlyGames: 0
+    };
+  }
+
+  if (prevProfile.seasonKey !== currentKey) {
+    return {
+      ...prevProfile,
+      seasonKey: currentKey,
+      monthlyHighScore: 0,
+      monthlyTotalScore: 0,
+      monthlyGames: 0
+    };
+  }
+
+  return prevProfile;
+}
+
