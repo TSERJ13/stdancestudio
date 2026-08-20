@@ -850,23 +850,34 @@ export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOv
 
         {gameState === 'READY' && (
           <div className="overlay-screen glass">
-            <div className="game-logo" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', margin: '0 auto' }}>
+            <div className="game-logo" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', margin: '0 auto', transform: 'translateY(-14px)' }}>
               <img
                 src="/images/dancing_bricks_logo.png"
                 alt="Dancing Bricks"
                 style={{
-                  width: '180px',
+                  width: '165px',
                   height: 'auto',
-                  maxHeight: '180px',
+                  maxHeight: '165px',
                   objectFit: 'contain',
-                  marginBottom: '10px',
-                  display: 'block'
+                  marginBottom: '6px',
+                  display: 'block',
+                  filter: 'drop-shadow(0 6px 16px rgba(0,0,0,0.6))'
                 }}
               />
-              <h2 style={{ fontSize: '20px', fontWeight: '900', color: '#F0D9A8', margin: '2px 0 4px', letterSpacing: '1px' }}>
+              <h2 style={{
+                fontSize: '23px',
+                fontWeight: '900',
+                letterSpacing: '2.5px',
+                textTransform: 'uppercase',
+                background: 'linear-gradient(135deg, #FFF6D6 0%, #F0D9A8 45%, #D4A55A 80%, #A3762B 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                filter: 'drop-shadow(0 2px 10px rgba(212,165,90,0.55))',
+                margin: '4px 0 6px'
+              }}>
                 DANCING BRICKS
               </h2>
-              <p style={{ fontSize: '12px', color: '#a1a1aa', margin: '0 0 12px', maxWidth: '280px', lineHeight: '1.4' }}>
+              <p style={{ fontSize: '12px', color: '#cbd5e1', margin: '0 0 10px', maxWidth: '290px', lineHeight: '1.45', fontWeight: '500' }}>
                 {t.subtitle}
               </p>
             </div>
