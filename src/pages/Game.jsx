@@ -433,30 +433,41 @@ export default function Game() {
                   src="/images/dancing_bricks_logo.png"
                   alt="Dancing Bricks"
                   style={{
-                    height: '36px',
+                    height: '40px',
                     width: 'auto',
-                    maxHeight: '36px',
-                    maxWidth: '100px',
+                    maxHeight: '40px',
+                    maxWidth: '105px',
                     objectFit: 'contain',
                     display: 'block',
                     margin: 0,
                     padding: 0,
-                    filter: 'drop-shadow(0 2px 6px rgba(212,166,74,0.4))'
+                    filter: 'none'
                   }}
                 />
                 <button
                   className="user-login-btn glass"
                   onClick={() => setShowLoginModal(true)}
+                  style={{
+                    maxWidth: '90px',
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '4px'
+                  }}
                 >
                   {userProfile.isLoggedIn ? (
                     <>
-                      <UserCheck size={13} color="#22c55e" />
-                      <span>{String(userProfile.studentId || '').startsWith('TG-') ? userProfile.name : (userProfile.studentId ? `ID: ${userProfile.studentId}` : (userProfile.name || '').split(' ')[0])}</span>
+                      <UserCheck size={13} color="#22c55e" style={{ flexShrink: 0 }} />
+                      <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        {String(userProfile.studentId || '').startsWith('TG-') ? userProfile.name : (userProfile.studentId ? `ID: ${userProfile.studentId}` : (userProfile.name || '').split(' ')[0])}
+                      </span>
                     </>
                   ) : (
                     <>
-                      <IdCard size={13} color="#d4a64a" />
-                      <span>{tGame.loginBtn}</span>
+                      <IdCard size={13} color="#d4a64a" style={{ flexShrink: 0 }} />
+                      <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{tGame.loginBtn}</span>
                     </>
                   )}
                 </button>

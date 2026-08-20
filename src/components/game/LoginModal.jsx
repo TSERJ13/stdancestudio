@@ -86,7 +86,20 @@ export default function LoginModal({ isOpen, onClose, currentUser, onLogin, lang
     currentUser?.username?.toLowerCase() === 'stdancestudio' ||
     String(currentUser?.studentId || '').toLowerCase() === 'tg-stdancestudio';
 
-  const [showAdminDashboard, setShowAdminDashboard] = useState(false);
+  const [claimedPrizes, setClaimedPrizes] = useState(() => {
+    try {
+      const raw = localStorage.getItem('dancing_bricks_claimed_prizes');
+      return raw ? JSON.parse(raw) : {};
+    } catch (e) { return {}; }
+  });
+
+  const handleTogglePrizeClaim = (playerId) => {
+    setClaimedPrizes(prev => {
+      const updated = { ...prev, [playerId]: !prev[playerId] };
+      localStorage.setItem('dancing_bricks_claimed_prizes', JSON.stringify(updated));
+      return updated;
+    });
+  };
   const [adminLoading, setAdminLoading] = useState(false);
   const [adminStats, setAdminStats] = useState({
     totalPlayersCount: 0,
@@ -440,8 +453,8 @@ export default function LoginModal({ isOpen, onClose, currentUser, onLogin, lang
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <Crown size={22} color="#d4a64a" />
                 <div style={{ textAlign: 'left' }}>
-                  <h3 style={{ fontSize: '15px', fontWeight: '900', color: '#F0D9A8', margin: 0 }}>👑 S_T Dance Studio — ადმინ პანელი</h3>
-                  <span style={{ fontSize: '10.5px', color: '#4ADE80', fontWeight: '700' }}>● რეალური დროის ცოცხალი ანალიტიკა</span>
+                  <h3 style={{ fontSize: '16px', fontWeight: '900', color: '#F0D9A8', margin: 0 }}>👑 ადმინ პანელი</h3>
+                  <span style={{ fontSize: '10.5px', color: '#4ADE80', fontWeight: '700' }}>● რეალური დროის ცოცხალი ანალიტიკა & პრიზები</span>
                 </div>
               </div>
               <button className="btn-close" onClick={() => setShowAdminDashboard(false)}>
@@ -483,31 +496,57 @@ export default function LoginModal({ isOpen, onClose, currentUser, onLogin, lang
                   </div>
                 </div>
 
-                {/* Scrollable Player List Table */}
+                {/* Scrollable Player List Table with Prize Claim Toggle */}
                 <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '14px', padding: '12px' }}>
                   <div style={{ fontSize: '11.5px', fontWeight: '900', color: '#F0D9A8', marginBottom: '8px', textTransform: 'uppercase', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span>🎮 მოთამაშეების სრული სია & აქტივობა</span>
+                    <span>🎮 მოთამაშეები & საჩუქრის გაცემის სტატუსი</span>
                     <button onClick={loadAdminAnalytics} style={{ background: 'transparent', border: 'none', color: '#22c55e', cursor: 'pointer', fontSize: '11px', fontWeight: '700', display: 'flex', alignItems: 'center', gap: '3px' }}>
                       <RefreshCw size={12} /> განახლება
                     </button>
                   </div>
 
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', maxHeight: '260px', overflowY: 'auto' }}>
-                    {adminStats.players.map((pl, idx) => (
-                      <div key={idx} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 10px', background: idx === 0 ? 'rgba(212,166,74,0.15)' : 'rgba(255,255,255,0.02)', borderRadius: '10px', border: idx === 0 ? '1px solid rgba(212,166,74,0.4)' : '1px solid rgba(255,255,255,0.04)' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                          <span style={{ fontSize: '11px', fontWeight: '900', color: idx === 0 ? '#FFD700' : '#a1a1aa', width: '20px' }}>#{idx + 1}</span>
-                          <div style={{ textAlign: 'left' }}>
-                            <div style={{ fontSize: '12px', fontWeight: '800', color: 'white' }}>{pl.name}</div>
-                            <span style={{ fontSize: '9.5px', color: '#a1a1aa' }}>ID: {pl.id}</span>
+                    {adminStats.players.map((pl, idx) => {
+                      const pKey = pl.id || pl.name;
+                      const isClaimed = !!claimedPrizes[pKey];
+                      return (
+                        <div key={idx} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 10px', background: idx === 0 ? 'rgba(212,166,74,0.15)' : 'rgba(255,255,255,0.02)', borderRadius: '10px', border: idx === 0 ? '1px solid rgba(212,166,74,0.4)' : '1px solid rgba(255,255,255,0.04)', gap: '6px' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0, flex: 1 }}>
+                            <span style={{ fontSize: '11px', fontWeight: '900', color: idx === 0 ? '#FFD700' : '#a1a1aa', width: '18px', flexShrink: 0 }}>#{idx + 1}</span>
+                            <div style={{ textAlign: 'left', minWidth: 0 }}>
+                              <div style={{ fontSize: '12px', fontWeight: '800', color: 'white', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{pl.name}</div>
+                              <span style={{ fontSize: '9.5px', color: '#a1a1aa' }}>ID: {pl.id}</span>
+                            </div>
+                          </div>
+                          
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
+                            <div style={{ textAlign: 'right' }}>
+                              <div style={{ fontSize: '12px', fontWeight: '900', color: '#F0D9A8' }}>{(pl.score || pl.high_score || 0).toLocaleString()} ქ</div>
+                              <span style={{ fontSize: '9.5px', color: '#4ADE80' }}>{pl.games || pl.total_games || 1} თამაში</span>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => handleTogglePrizeClaim(pKey)}
+                              style={{
+                                background: isClaimed ? 'rgba(34,197,94,0.18)' : 'rgba(239,68,68,0.18)',
+                                border: isClaimed ? '1px solid #22c55e' : '1px solid #ef4444',
+                                color: isClaimed ? '#4ADE80' : '#f87171',
+                                borderRadius: '8px',
+                                padding: '4px 8px',
+                                fontSize: '9.5px',
+                                fontWeight: '800',
+                                cursor: 'pointer',
+                                flexShrink: 0,
+                                transition: 'all 0.2s ease'
+                              }}
+                              title="საჩუქრის გაცემის სტატუსი"
+                            >
+                              {isClaimed ? '✅ გაცემულია' : '🎁 გაუცემელი'}
+                            </button>
                           </div>
                         </div>
-                        <div style={{ textAlign: 'right' }}>
-                          <div style={{ fontSize: '12px', fontWeight: '900', color: '#F0D9A8' }}>{(pl.score || pl.high_score || 0).toLocaleString()} ქ</div>
-                          <span style={{ fontSize: '9.5px', color: '#4ADE80' }}>{pl.games || pl.total_games || 1} თამაში</span>
-                        </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 </div>
               </div>
