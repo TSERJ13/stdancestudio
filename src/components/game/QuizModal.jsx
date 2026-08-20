@@ -60,6 +60,8 @@ export default function QuizModal({ isOpen, onClose, onUnlockQuizLife, hasQuizLi
     }
   }, [isOpen]);
 
+  if (!isOpen) return null;
+
   const currentQ = randomQuestions[currentIdx] || QUIZ_QUESTIONS[0];
   const qText = (lang === 'en' ? currentQ.questionEn : (lang === 'ru' ? currentQ.questionRu : currentQ.question)) || currentQ.question;
   const qOpts = (lang === 'en' ? currentQ.optionsEn : (lang === 'ru' ? currentQ.optionsRu : currentQ.options)) || currentQ.options;

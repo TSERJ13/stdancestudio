@@ -244,7 +244,6 @@ export default function GameBoard({ tGame, lang = 'ka', availableLives, onSpendL
   };
 
   const startGame = () => {
-    if (availableLives <= 0) return;
     soundFx.init();
     onSpendLife();
 
@@ -919,24 +918,17 @@ export default function GameBoard({ tGame, lang = 'ka', availableLives, onSpendL
               </div>
             </div>
 
-            {availableLives > 0 ? (
-              <button className="btn-play-big" onClick={startGame} style={{ margin: '0 auto' }}>
-                <Play size={20} fill="black" /> {t.startGame}
+            <button className="btn-play-big" onClick={startGame} style={{ margin: '0 auto' }}>
+              <Play size={20} fill="black" /> {t.startGame}
+            </button>
+            <div style={{ display: 'flex', gap: '8px', marginTop: '12px', justifyContent: 'center' }}>
+              <button className="btn-secondary" style={{ padding: '6px 12px', fontSize: '10.5px', display: 'flex', alignItems: 'center', gap: '4px' }} onClick={onOpenQuiz}>
+                <HelpCircle size={13} color="#f59e0b" /> +1 Quiz
               </button>
-            ) : (
-              <div className="no-lives-box">
-                <Heart size={28} color="#ef4444" strokeWidth={2.2} />
-                <p>{t.noLives}</p>
-                <div style={{ display: 'flex', gap: '8px', marginTop: '10px' }}>
-                  <button className="btn-secondary" style={{ padding: '8px 14px', fontSize: '11px', display: 'flex', alignItems: 'center', gap: '4px' }} onClick={onOpenQuiz}>
-                    <HelpCircle size={14} color="#f59e0b" /> +1
-                  </button>
-                  <button className="btn-secondary" style={{ padding: '8px 14px', fontSize: '11px', display: 'flex', alignItems: 'center', gap: '4px' }} onClick={onOpenShare}>
-                    <Share2 size={14} color="#ec4899" /> +1
-                  </button>
-                </div>
-              </div>
-            )}
+              <button className="btn-secondary" style={{ padding: '6px 12px', fontSize: '10.5px', display: 'flex', alignItems: 'center', gap: '4px' }} onClick={onOpenShare}>
+                <Share2 size={13} color="#ec4899" /> +1 Share
+              </button>
+            </div>
           </div>
         )}
 
@@ -948,24 +940,17 @@ export default function GameBoard({ tGame, lang = 'ka', availableLives, onSpendL
               <strong>{score.toLocaleString()}</strong>
               <span style={{ fontSize: '11px', color: '#a1a1aa', marginTop: '4px' }}>{t.round}: #{round}</span>
             </div>
-            {availableLives > 0 ? (
-              <button className="btn-play-big" onClick={startGame}>
-                <RotateCcw size={18} /> {t.playAgain}
+            <button className="btn-play-big" onClick={startGame}>
+              <RotateCcw size={18} /> {t.playAgain}
+            </button>
+            <div style={{ display: 'flex', gap: '8px', marginTop: '12px', justifyContent: 'center' }}>
+              <button className="btn-secondary" style={{ padding: '6px 12px', fontSize: '10.5px', display: 'flex', alignItems: 'center', gap: '4px' }} onClick={onOpenQuiz}>
+                <HelpCircle size={13} color="#f59e0b" /> +1 Quiz
               </button>
-            ) : (
-              <div className="no-lives-box">
-                <Heart size={28} color="#ef4444" strokeWidth={2.2} />
-                <p>{t.noLives}</p>
-                <div style={{ display: 'flex', gap: '8px', marginTop: '10px' }}>
-                  <button className="btn-secondary" style={{ padding: '8px 14px', fontSize: '11px', display: 'flex', alignItems: 'center', gap: '4px' }} onClick={onOpenQuiz}>
-                    <HelpCircle size={14} color="#f59e0b" /> +1
-                  </button>
-                  <button className="btn-secondary" style={{ padding: '8px 14px', fontSize: '11px', display: 'flex', alignItems: 'center', gap: '4px' }} onClick={onOpenShare}>
-                    <Share2 size={14} color="#ec4899" /> +1
-                  </button>
-                </div>
-              </div>
-            )}
+              <button className="btn-secondary" style={{ padding: '6px 12px', fontSize: '10.5px', display: 'flex', alignItems: 'center', gap: '4px' }} onClick={onOpenShare}>
+                <Share2 size={13} color="#ec4899" /> +1 Share
+              </button>
+            </div>
           </div>
         )}
       </div>
