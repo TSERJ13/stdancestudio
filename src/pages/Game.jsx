@@ -109,9 +109,6 @@ export default function Game() {
   const [countdown, setCountdown] = useState('');
 
   const [userProfile, setUserProfile] = useState(() => {
-    // Clear any stale local storage profile scores
-    localStorage.removeItem('dancing_bricks_user_profile');
-
     return {
       name: localStorage.getItem('dancing_bricks_player_name') || 'Dancer',
       isLoggedIn: false,
@@ -158,11 +155,15 @@ export default function Game() {
 
       const tgUser = twa.initDataUnsafe?.user;
       if (tgUser) {
+        const tgUserId = `TG-${tgUser.id}`;
+        const savedCustomName = localStorage.getItem(`dancing_bricks_custom_name_${tgUserId}`);
+        const fullName = savedCustomName || [tgUser.first_name, tgUser.last_name].filter(Boolean).join(' ') || tgUser.username || 'Dancer';
+        
         setUserProfile(prev => {
           const updated = {
             ...prev,
-            studentId: `TG-${tgUser.id}`,
-            name: tgUser.first_name || tgUser.username || 'Dancer',
+            studentId: tgUserId,
+            name: fullName,
             photoUrl: tgUser.photo_url || prev.photoUrl || '',
             isLoggedIn: true,
             isTelegram: true,
@@ -265,12 +266,21 @@ export default function Game() {
   };
 
   const handleUpdateName = (newName) => {
+    const userId = userProfile.studentId || `USER_${newName}`;
+    localStorage.setItem(`dancing_bricks_custom_name_${userId}`, newName);
+    localStorage.setItem('dancing_bricks_player_name', newName);
+
     setUserProfile(prev => {
       const updated = { ...prev, name: newName };
-      localStorage.setItem('dancing_bricks_user_profile', JSON.stringify(updated));
+      syncCloudScore({
+        id: userId,
+        name: newName,
+        photoUrl: prev.photoUrl || '',
+        score: prev.totalScore || prev.highScore || 0,
+        games: prev.totalGames || 0
+      });
       return updated;
     });
-    localStorage.setItem('dancing_bricks_player_name', newName);
   };
 
   const handleLogin = (userData) => {

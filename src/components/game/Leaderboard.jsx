@@ -75,18 +75,34 @@ function formatAvatarUrl(url) {
 }
 
 function AvatarImage({ src, alt, fallbackChar }) {
-  const [error, setError] = useState(false);
-  const formattedSrc = formatAvatarUrl(src);
+  const [useProxy, setUseProxy] = useState(true);
+  const [failed, setFailed] = useState(false);
 
-  if (!formattedSrc || error) {
+  useEffect(() => {
+    setUseProxy(true);
+    setFailed(false);
+  }, [src]);
+
+  if (!src || failed) {
     return <span style={{ fontWeight: '900', fontSize: '15px', color: 'white' }}>{fallbackChar}</span>;
   }
+
+  const imgSrc = (useProxy && src.startsWith('https://t.me/i/userpic/'))
+    ? formatAvatarUrl(src)
+    : src;
+
   return (
     <img
-      src={formattedSrc}
+      src={imgSrc}
       alt={alt}
       referrerPolicy="no-referrer"
-      onError={() => setError(true)}
+      onError={() => {
+        if (useProxy && src.startsWith('https://t.me/i/userpic/')) {
+          setUseProxy(false);
+        } else {
+          setFailed(true);
+        }
+      }}
       style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover', display: 'block' }}
     />
   );
