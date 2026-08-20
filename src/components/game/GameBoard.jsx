@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
-import { Play, RotateCcw, Volume2, VolumeX, ShieldAlert, Award, Maximize2, Minimize2, HelpCircle, Share2 } from 'lucide-react';
+import { Play, RotateCcw, Volume2, VolumeX, Heart, Award, Maximize2, Minimize2, HelpCircle, Share2 } from 'lucide-react';
 import { soundFx } from '../../utils/soundFx';
 
 const GOLD_L = '#F0D9A8';
@@ -883,7 +883,7 @@ export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOv
               </button>
             ) : (
               <div className="no-lives-box">
-                <ShieldAlert size={32} color="#ef4444" />
+                <Heart size={28} color="#ef4444" strokeWidth={2.2} />
                 <p>{t.noLives}</p>
                 <div style={{ display: 'flex', gap: '8px', marginTop: '10px' }}>
                   <button className="btn-secondary" style={{ padding: '8px 14px', fontSize: '11px', display: 'flex', alignItems: 'center', gap: '4px' }} onClick={onOpenQuiz}>

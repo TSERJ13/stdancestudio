@@ -54,11 +54,13 @@ export default function PrizesPage() {
         setCountdown('');
         return;
       }
-      const d = Math.floor(diff / 86400000);
-      const h = Math.floor((diff / 3600000) % 24);
-      const m = Math.floor((diff / 60000) % 60);
-      const s = Math.floor((diff / 1000) % 60);
-      setCountdown(`${d}დ ${h}სთ ${m}წთ ${s}წმ`);
+      let timeStr = `${d}დ ${h}სთ ${m}წთ ${s}წმ`;
+      if (lang === 'en') {
+        timeStr = `${d}d ${h}h ${m}m ${s}s`;
+      } else if (lang === 'ru') {
+        timeStr = `${d}д ${h}ч ${m}мин ${s}сек`;
+      }
+      setCountdown(timeStr);
     };
     tick();
     const iv = setInterval(tick, 1000);

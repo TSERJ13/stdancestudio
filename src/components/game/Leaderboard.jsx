@@ -212,9 +212,23 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
       const diff = targetDate.getTime() - georgiaTime.getTime();
       
       const monthNamesKa = ["იანვრამდე", "თებერვლამდე", "მარტამდე", "აპრილამდე", "მაისამდე", "ივნისამდე", "ივლისამდე", "აგვისტომდე", "სექტემბრამდე", "ოქტომბრამდე", "ნოემბრამდე", "დეკემბრამდე"];
-      const drawNamesKa = ["იანვრის", "თებერვლის", "მარტის", "აპრილის", "მაისის", "ივნისის", "ივლისის", "აგვისტოს", "სექტემბრის", "ოქტომბრის", "ნოემბრის", "დეკემბრის"];
-      const monthName = monthNamesKa[targetMonth];
-      const drawName = drawNamesKa[targetMonth];
+      const monthNamesEn = ["Until Jan", "Until Feb", "Until Mar", "Until Apr", "Until May", "Until Jun", "Until Jul", "Until Aug", "Until Sept", "Until Oct", "Until Nov", "Until Dec"];
+      const monthNamesRu = ["До Января", "До Февраля", "До Марта", "До Апреля", "До Мая", "До Июня", "До Июля", "До Августа", "До Сентября", "До Октября", "До Ноября", "До Декабря"];
+
+      const drawNamesKa = ["20 იანვრის", "20 თებერვლის", "20 მარტის", "20 აპრილის", "20 მაისის", "20 ივნისის", "20 ივლისის", "20 აგვისტოს", "20 სექტემბრის", "20 ოქტომბრის", "20 ნოემბრის", "20 დეკემბრის"];
+      const drawNamesEn = ["Jan 20th", "Feb 20th", "Mar 20th", "Apr 20th", "May 20th", "Jun 20th", "Jul 20th", "Aug 20th", "Sept 20th", "Oct 20th", "Nov 20th", "Dec 20th"];
+      const drawNamesRu = ["20 Января", "20 Февраля", "20 Марта", "20 Апреля", "20 Мая", "20 Июня", "20 Июля", "20 Августа", "20 Сентября", "20 Октября", "20 Ноября", "20 Декабря"];
+
+      let monthName = monthNamesKa[targetMonth];
+      let drawName = drawNamesKa[targetMonth];
+
+      if (lang === 'en') {
+        monthName = monthNamesEn[targetMonth];
+        drawName = drawNamesEn[targetMonth];
+      } else if (lang === 'ru') {
+        monthName = monthNamesRu[targetMonth];
+        drawName = drawNamesRu[targetMonth];
+      }
 
       if (diff <= 0) {
         setCountdownState({ isUnlocked: true, timeLeftText: '', monthName, drawName });
@@ -223,7 +237,14 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
         const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
         const m = Math.floor((diff / 1000 / 60) % 60);
         const s = Math.floor((diff / 1000) % 60);
-        const timeStr = `${d}დ ${h}სთ ${m}წთ ${s}წმ`;
+
+        let timeStr = `${d}დ ${h}სთ ${m}წთ ${s}წმ`;
+        if (lang === 'en') {
+          timeStr = `${d}d ${h}h ${m}m ${s}s`;
+        } else if (lang === 'ru') {
+          timeStr = `${d}д ${h}ч ${m}мин ${s}сек`;
+        }
+
         setCountdownState({ isUnlocked: false, timeLeftText: timeStr, monthName, drawName });
       }
     };
@@ -231,7 +252,7 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
     updateCountdown();
     const interval = setInterval(updateCountdown, 1000);
     return () => clearInterval(interval);
-  }, []);
+  }, [lang]);
 
   const [myVouchers, setMyVouchers] = useState(() => {
     try {
@@ -299,7 +320,7 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
             {countdownState.timeLeftText || '00:00:00'}
           </span>
           <span style={{ fontSize: '9px', color: '#a1a1aa', fontWeight: '600', marginTop: '2px' }}>
-            {lang === 'ka' ? `${countdownState.drawName} გათამაშება` : 'Next Draw'}
+            {lang === 'ka' ? `${countdownState.drawName} გათამაშება` : lang === 'ru' ? `Розыгрыш ${countdownState.drawName}` : `${countdownState.drawName} Draw`}
           </span>
         </div>
       </div>

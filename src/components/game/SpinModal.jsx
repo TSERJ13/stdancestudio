@@ -137,6 +137,12 @@ export default function SpinModal({ isOpen, onClose, winnerName = 'ჩემპ�
     loadedImgsRef.current = loaded;
   }, []);
 
+  useEffect(() => {
+    if (isOpen && canvasRef.current) {
+      drawWheel(angleRef.current);
+    }
+  }, [isOpen, lang]);
+
   const drawWheel = (currentAngle) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -208,7 +214,7 @@ export default function SpinModal({ isOpen, onClose, winnerName = 'ჩემპ�
       ctx.textBaseline = 'middle';
       ctx.shadowColor = '#000000';
       ctx.shadowBlur = 6;
-      ctx.fillText(prize.name, 0, 0);
+      ctx.fillText(getPrizeName(prize, lang), 0, 0);
       ctx.restore();
 
       // 2. Draw Prize Image Thumbnail on PURE WHITE BACKGROUND DISK
