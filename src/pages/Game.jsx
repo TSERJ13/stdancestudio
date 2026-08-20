@@ -455,7 +455,7 @@ export default function Game() {
                         </div>
                         <div className="rule-item">
                           <Share2 size={20} color="#ec4899" />
-                          <div><strong>5-я жизнь (+1)</strong><p>Поделитесь нашим Instagram — получите ещё одну жизнь.</p></div>
+                          <div><strong>5-я жизнь (+1)</strong><p>Поделитесь нашим последним рилсом в Instagram — получите ещё одну жизнь.</p></div>
                         </div>
                         <div className="rule-item">
                           <Trophy size={20} color="#d4a64a" />
@@ -477,7 +477,7 @@ export default function Game() {
                         </div>
                         <div className="rule-item">
                           <Share2 size={20} color="#ec4899" />
-                          <div><strong>მე-5 სიცოცხლე (+1)</strong><p>გააზიარე ჩვენი ინსტაგრამი და მიიღე +1 ბონუს სიცოცხლე.</p></div>
+                          <div><strong>მე-5 სიცოცხლე (+1)</strong><p>გააზიარე ჩვენი ბოლო რილსი ინსტაგრამზე და მიიღე +1 ბონუს სიცოცხლე.</p></div>
                         </div>
                         <div className="rule-item">
                           <Trophy size={20} color="#d4a64a" />
