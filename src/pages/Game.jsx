@@ -299,7 +299,14 @@ export default function Game() {
     if (isTestAccount) return;
     if (availableLives <= 0) return;
     setLivesData(prev => {
-      const updated = { ...prev, usedLives: Math.min(prev.baseLives || 3, prev.usedLives + 1) };
+      let updated = { ...prev };
+      if (updated.hasQuizLife) {
+        updated.hasQuizLife = false;
+      } else if (updated.hasShareLife) {
+        updated.hasShareLife = false;
+      } else {
+        updated.usedLives = Math.min(updated.baseLives || 3, (updated.usedLives || 0) + 1);
+      }
       return saveLivesData(updated, userProfile?.studentId);
     });
   };
