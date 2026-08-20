@@ -15,10 +15,6 @@ export function LanguageProvider({ children }) {
     } else if (path.startsWith('/en/') || path === '/en') {
       setLang('en')
     } else if (path.startsWith('/ka/') || path === '/ka') {
-      // Actually default is ka without prefix, but let's allow it just in case
-      setLang('ka')
-    } else if (!path.startsWith('/admin') && !path.startsWith('/portal') && !path.startsWith('/game') && !path.startsWith('/dancing-bricks')) {
-      // Default to Georgian for root and other paths
       setLang('ka')
     }
   }, [location.pathname])
