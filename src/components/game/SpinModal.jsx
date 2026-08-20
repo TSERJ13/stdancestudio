@@ -3,6 +3,8 @@ import { createPortal } from 'react-dom';
 import { Gift, Sparkles, Trophy, Award, RotateCw, Ticket, Copy, Check } from 'lucide-react';
 import { useLanguage } from '../../context/LanguageContext';
 
+import { submitFormAnswer } from '../../data/classcore';
+
 export const PRIZES = [
   {
     id: 'bottle',
@@ -48,11 +50,51 @@ export const PRIZES = [
   },
   {
     id: 'v100',
-    name: '-100% ვაუჩერი', nameEn: '-100% Voucher', nameRu: 'Ваучер 100%',
-    desc: '100% უფასო სრული ვაუჩერი Danceshop.Ge-ზე', descEn: '100% free full voucher on Danceshop.Ge', descRu: '100% бесплатный ваучер на Danceshop.Ge',
+    name: '100% ვაუჩერი (უფასო)', nameEn: '100% Free Voucher', nameRu: '100% Бесплатный ваучер',
+    desc: '100% უფასო სრული ვაუჩერი Danceshop.Ge-ზე (20 დეკემბერი!)', descEn: '100% free full voucher on Danceshop.Ge (Dec 20th Grand Draw!)', descRu: '100% бесплатный ваучер на Danceshop.Ge (Гранд-розыгрыш 20 Декабря!)',
     img: '/images/prizes/voucher_100.png', color: '#FF4444'
   }
 ];
+
+export function getScheduledPrizeIndexForCurrentMonth() {
+  const now = new Date();
+  const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+  const georgiaTime = new Date(utc + (3600000 * 4));
+
+  let year = georgiaTime.getFullYear();
+  let month = georgiaTime.getMonth(); // 0 = Jan, 8 = Sept, 11 = Dec
+
+  // Cutoff is 20th of month at 22:00
+  const cutoffThisMonth = new Date(year, month, 20, 22, 0, 0);
+  if (georgiaTime >= cutoffThisMonth) {
+    month++;
+    if (month > 11) month = 0;
+  }
+
+  // Monthly prize schedule mapping:
+  // Sept (8) -> bottle (idx 0)
+  // Oct (9) -> umbrella (idx 1)
+  // Nov (10) -> backpack (idx 4)
+  // Dec (11) -> v100 100% free voucher (idx 7) -- 20 Dec Grand Draw!
+  // Jan (0) -> raincoat (idx 3)
+  // Feb (1) -> bottle (idx 0)
+  // Mar (2) -> raincoat (idx 3)
+  // Apr (3) -> backpack (idx 4)
+  const scheduleMap = {
+    8: 'bottle',     // სექტემბერი: წყლის ბოთლი
+    9: 'umbrella',   // ოქტომბერი: ქოლგა
+    10: 'backpack',  // ნოემბერი: ზურგჩანთა
+    11: 'v100',      // დეკემბერი: 100% ვაუჩერი
+    0: 'raincoat',   // იანვარი: საწვიმარი
+    1: 'bottle',     // თებერვალი: წყლის ბოთლი
+    2: 'raincoat',   // მარტი: საწვიმარი
+    3: 'backpack'    // აპრილი: ზურგჩანთა
+  };
+
+  const targetPrizeId = scheduleMap[month] || 'bottle';
+  const foundIdx = PRIZES.findIndex(p => p.id === targetPrizeId);
+  return foundIdx !== -1 ? foundIdx : 0;
+}
 
 export function getPrizeName(prize, lang = 'ka') {
   if (!prize) return '';
@@ -104,7 +146,7 @@ const modalTranslations = {
   }
 };
 
-export default function SpinModal({ isOpen, onClose, winnerName = 'ჩემპიონი', onClaimPrize }) {
+export default function SpinModal({ isOpen, onClose, winnerName = 'ჩემპიონი', onClaimPrize, userId }) {
   const { lang } = useLanguage();
   const t = modalTranslations[lang] || modalTranslations.ka;
 
@@ -218,50 +260,28 @@ export default function SpinModal({ isOpen, onClose, winnerName = 'ჩემპ�
       ctx.restore();
 
       // 2. Draw Prize Image Thumbnail on PURE WHITE BACKGROUND DISK
-      const img = loadedImgsRef.current[i];
-      const imgDist = radius * 0.48;
-      const imgSize = 54;
-      const imgRadius = imgSize / 2;
+      const imgRadius = radius * 0.52;
+      const diskRadius = 17;
+      ctx.save();
+      ctx.translate(imgRadius, 0);
 
-      if (img) {
+      ctx.beginPath();
+      ctx.arc(0, 0, diskRadius, 0, Math.PI * 2);
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fill();
+      ctx.strokeStyle = '#d4a64a';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+
+      const loadedImg = loadedImgsRef.current[i];
+      if (loadedImg) {
         ctx.save();
-        ctx.translate(imgDist, 0);
         ctx.rotate(Math.PI / 2);
-
-        // A. Draw Pure White Solid Background Disk
-        ctx.beginPath();
-        ctx.arc(0, 0, imgRadius, 0, Math.PI * 2);
-        ctx.fillStyle = '#ffffff';
-        ctx.fill();
-
-        // B. Clip Image cleanly inside White Disk
-        ctx.save();
-        ctx.beginPath();
-        ctx.arc(0, 0, imgRadius - 0.5, 0, Math.PI * 2);
-        ctx.clip();
-
-        const maxDim = imgSize * 0.78;
-        const aspect = (img.naturalWidth || img.width) / (img.naturalHeight || img.height || 1);
-        let drawW = maxDim;
-        let drawH = maxDim;
-        if (aspect > 1) {
-          drawH = maxDim / aspect;
-        } else {
-          drawW = maxDim * aspect;
-        }
-
-        ctx.drawImage(img, -drawW / 2, -drawH / 2, drawW, drawH);
-        ctx.restore();
-
-        // C. Draw Crisp Sharp Gold Border Ring ON TOP
-        ctx.beginPath();
-        ctx.arc(0, 0, imgRadius, 0, Math.PI * 2);
-        ctx.strokeStyle = '#D4A64A';
-        ctx.lineWidth = 2.5;
-        ctx.stroke();
-
+        const iconSize = 24;
+        ctx.drawImage(loadedImg, -iconSize / 2, -iconSize / 2, iconSize, iconSize);
         ctx.restore();
       }
+      ctx.restore();
 
       ctx.restore();
     }
@@ -305,7 +325,7 @@ export default function SpinModal({ isOpen, onClose, winnerName = 'ჩემპ�
     setSpinning(true);
     setWonPrize(null);
 
-    const prizeIdx = Math.floor(Math.random() * PRIZES.length);
+    const prizeIdx = getScheduledPrizeIndexForCurrentMonth();
     const sliceAngle = (Math.PI * 2) / PRIZES.length;
     const targetSliceAngle = (PRIZES.length - prizeIdx) * sliceAngle - sliceAngle / 2 - Math.PI / 2;
     const totalRotation = Math.PI * 2 * 6 + targetSliceAngle;
@@ -332,6 +352,17 @@ export default function SpinModal({ isOpen, onClose, winnerName = 'ჩემპ�
         setWonPrize(prize);
         setVoucherCode(randomCode);
 
+        let tgUsername = 'N/A';
+        try {
+          const profileRaw = localStorage.getItem('dancing_bricks_user_profile');
+          if (profileRaw) {
+            const parsed = JSON.parse(profileRaw);
+            if (parsed.username) tgUsername = `@${parsed.username.replace('@', '')}`;
+          }
+        } catch (e) {}
+
+        const georgiaDateStr = new Date(Date.now() + 4 * 3600000).toLocaleString('ka-GE');
+
         const newVoucher = {
           id: Date.now(),
           code: randomCode,
@@ -344,19 +375,41 @@ export default function SpinModal({ isOpen, onClose, winnerName = 'ჩემპ�
 
         if (onClaimPrize) onClaimPrize(newVoucher);
 
+        // 1. Log to Supabase Cloud audit table
+        submitFormAnswer({
+          form_slug: 'winner_prize_claim',
+          user_id: userId || 'GUEST',
+          user_name: winnerName,
+          data: {
+            admin_email: 'stdancestudio.ge@gmail.com',
+            winner_name: winnerName,
+            telegram_username: tgUsername,
+            telegram_id: userId || 'GUEST',
+            prize_id: prize.id,
+            prize_name: prize.name,
+            voucher_code: randomCode,
+            claimed_at: new Date().toISOString(),
+            georgia_time: georgiaDateStr
+          }
+        }).catch(() => {});
+
+        // 2. Email alert to stdancestudio.ge@gmail.com
         try {
-          fetch('https://formspree.io/f/sergitsivtsivadze@gmail.com', {
+          fetch('https://formspree.io/f/xbjnqpyz', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              subject: `ST DANCE GAME WINNER: ${winnerName}`,
-              winner: winnerName,
-              prize: prize.name,
-              code: randomCode,
-              date: new Date().toISOString()
+              admin_email: 'stdancestudio.ge@gmail.com',
+              subject: `🏆 [ST DANCE GAME] Winner Prize: ${winnerName} won ${prize.name}`,
+              winner_name: winnerName,
+              telegram_username: tgUsername,
+              telegram_id: userId || 'GUEST',
+              won_prize: prize.name,
+              voucher_code: randomCode,
+              georgia_time: georgiaDateStr
             })
           }).catch(() => {});
-        } catch {}
+        } catch (e) {}
       }
     };
 

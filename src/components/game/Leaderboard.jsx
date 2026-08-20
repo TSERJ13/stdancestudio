@@ -556,6 +556,7 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
         onClose={() => setShowSpinModal(false)}
         winnerName={selectedWinner}
         onClaimPrize={handleClaimPrize}
+        userId={currentUserProfile?.studentId || 'GUEST'}
       />
 
       {showCountdownModal && createPortal(
