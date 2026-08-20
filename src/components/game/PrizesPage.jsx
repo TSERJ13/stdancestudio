@@ -195,16 +195,26 @@ export default function PrizesPage() {
 
   // Tap handler — find which slice was tapped
   const handleTap = (e) => {
-    e.preventDefault();
     const canvas = canvasRef.current;
     if (!canvas) return;
     const rect = canvas.getBoundingClientRect();
-    const clientX = e.clientX ?? e.changedTouches?.[0]?.clientX;
-    const clientY = e.clientY ?? e.changedTouches?.[0]?.clientY;
-    if (clientX == null) return;
+    let clientX = e.clientX;
+    let clientY = e.clientY;
 
-    const x = (clientX - rect.left) * (canvas.width / rect.width / (Math.max(2, window.devicePixelRatio || 2))) - 160;
-    const y = (clientY - rect.top) * (canvas.height / rect.height / (Math.max(2, window.devicePixelRatio || 2))) - 160;
+    if (e.changedTouches && e.changedTouches.length > 0) {
+      clientX = e.changedTouches[0].clientX;
+      clientY = e.changedTouches[0].clientY;
+    } else if (e.touches && e.touches.length > 0) {
+      clientX = e.touches[0].clientX;
+      clientY = e.touches[0].clientY;
+    }
+
+    if (clientX == null || clientY == null) return;
+
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    const x = clientX - centerX;
+    const y = clientY - centerY;
 
     let clickAngle = Math.atan2(y, x) - angleRef.current;
     clickAngle = ((clickAngle % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
@@ -216,19 +226,21 @@ export default function PrizesPage() {
   return (
     <div className="rules-card glass animate-in" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px', overflowY: 'auto', paddingBottom: '80px' }}>
 
-      <div style={{ alignSelf: 'stretch', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div style={{ alignSelf: 'stretch', display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', gap: '8px', flexWrap: 'wrap' }}>
         <h2 style={{ fontSize: '15px', fontWeight: '900', color: '#F0D9A8', margin: 0 }}>
-          🎁 {lang === 'ka' ? '20 რიცხვის გათამაშება' : 'Monthly Prize Draw'}
+          🎁 {lang === 'ka' ? '20 სექტემბრის გათამაშება' : 'Sept 20th Prize Draw'}
         </h2>
         {countdown ? (
-          <span style={{ fontSize: '12px', color: '#d4a64a', fontWeight: '900' }}>⏱ {countdown}</span>
+          <span style={{ fontSize: '12px', color: '#d4a64a', fontWeight: '900', background: 'rgba(212,166,74,0.1)', padding: '4px 10px', borderRadius: '8px', border: '1px solid rgba(212,166,74,0.3)', whiteSpace: 'nowrap' }}>
+            ⏱ {countdown}
+          </span>
         ) : null}
       </div>
 
       <p style={{ fontSize: '12px', color: '#a1a1aa', margin: 0, textAlign: 'center', lineHeight: '1.5' }}>
         {lang === 'ka'
-          ? 'იყავი #1 ლიდერბორდზე 20 რიცხვამდე. სექტორზე შეეხე, პრიზი ნახე!'
-          : 'Be #1 on leaderboard until the 20th. Tap a sector to preview the prize!'}
+          ? 'იყავი #1 ლიდერბორდზე 20 სექტემბრამდე. სექტორზე შეეხე, პრიზი ნახე!'
+          : 'Be #1 on leaderboard until Sept 20th. Tap a sector to preview the prize!'}
       </p>
 
       {/* Wheel */}
@@ -244,7 +256,7 @@ export default function PrizesPage() {
           ref={canvasRef}
           onClick={handleTap}
           onTouchEnd={handleTap}
-          style={{ display: 'block', width: '100%', height: 'auto', borderRadius: '50%', cursor: 'pointer', touchAction: 'none' }}
+          style={{ display: 'block', width: '100%', height: 'auto', borderRadius: '50%', cursor: 'pointer' }}
         />
       </div>
 

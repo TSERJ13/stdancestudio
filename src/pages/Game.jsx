@@ -373,49 +373,55 @@ export default function Game() {
             </header>
 
             {/* Navigation Bar */}
-            <nav className="app-nav glass">
+            <nav className="app-nav glass" style={{ gap: '4px', padding: '4px' }}>
               <button
                 className={`nav-btn ${activeTab === 'play' ? 'active' : ''}`}
                 onClick={() => setActiveTab('play')}
+                style={{ flex: '2', gap: '4px', padding: '0 6px', fontSize: '11px' }}
               >
-                <Play size={14} /> {tGame.tabs.game}
+                <Play size={13} /> {tGame.tabs.game}
               </button>
 
               <button
                 className={`nav-btn bonus-btn quiz-tab ${livesData.hasQuizLife ? 'unlocked' : ''}`}
                 onClick={() => setShowQuizModal(true)}
+                style={{ flex: '1', padding: '0 2px', gap: '2px', fontSize: '10px' }}
               >
-                <HelpCircle size={14} color={livesData.hasQuizLife ? '#22c55e' : '#f59e0b'} />
+                <HelpCircle size={13} color={livesData.hasQuizLife ? '#22c55e' : '#f59e0b'} />
                 <span>+1</span>
               </button>
 
               <button
                 className={`nav-btn bonus-btn share-tab ${livesData.hasShareLife ? 'unlocked' : ''}`}
                 onClick={() => setShowShareModal(true)}
+                style={{ flex: '1', padding: '0 2px', gap: '2px', fontSize: '10px' }}
               >
-                <Share2 size={14} color={livesData.hasShareLife ? '#22c55e' : '#ec4899'} />
+                <Share2 size={13} color={livesData.hasShareLife ? '#22c55e' : '#ec4899'} />
                 <span>+1</span>
               </button>
 
               <button
                 className={`nav-btn ${activeTab === 'leaderboard' ? 'active' : ''}`}
                 onClick={() => setActiveTab('leaderboard')}
+                style={{ flex: '1', padding: 0 }}
               >
-                <Trophy size={16} />
+                <Trophy size={15} />
               </button>
 
               <button
                 className={`nav-btn ${activeTab === 'prizes' ? 'active' : ''}`}
                 onClick={() => setActiveTab('prizes')}
+                style={{ flex: '1', padding: 0 }}
               >
-                <Gift size={16} />
+                <Gift size={15} />
               </button>
 
               <button
                 className={`nav-btn ${activeTab === 'rules' ? 'active' : ''}`}
                 onClick={() => setActiveTab('rules')}
+                style={{ flex: '1', padding: 0 }}
               >
-                <FileText size={16} />
+                <FileText size={15} />
               </button>
             </nav>
 
