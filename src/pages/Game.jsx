@@ -252,6 +252,15 @@ export default function Game() {
     });
   };
 
+  const handleUpdateName = (newName) => {
+    setUserProfile(prev => {
+      const updated = { ...prev, name: newName };
+      localStorage.setItem('dancing_bricks_user_profile', JSON.stringify(updated));
+      return updated;
+    });
+    localStorage.setItem('dancing_bricks_player_name', newName);
+  };
+
   const handleLogin = (userData) => {
     const updated = {
       ...userProfile,
