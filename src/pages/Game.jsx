@@ -499,8 +499,8 @@ export default function Game() {
                   />
                 </div>
                 <div className="timer-pill" title="მიმდინარე დრო (თბილისი)">
-                  <Clock size={10} color="#d4a64a" />
-                  <strong>{countdown || '22:00:00'}</strong>
+                  <Clock size={10} color="#d4a64a" style={{ flexShrink: 0 }} />
+                  <strong style={{ minWidth: '48px', display: 'inline-block', textAlign: 'center', fontVariantNumeric: 'tabular-nums' }}>{countdown || '22:00:00'}</strong>
                 </div>
                 <button
                   type="button"

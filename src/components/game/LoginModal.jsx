@@ -100,6 +100,7 @@ export default function LoginModal({ isOpen, onClose, currentUser, onLogin, lang
       return updated;
     });
   };
+  const [showAdminDashboard, setShowAdminDashboard] = useState(false);
   const [adminLoading, setAdminLoading] = useState(false);
   const [adminStats, setAdminStats] = useState({
     totalPlayersCount: 0,

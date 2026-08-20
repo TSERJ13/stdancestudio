@@ -177,6 +177,17 @@ body.app-fullscreen-active .canvas-wrapper,
   border: 1px solid rgba(255, 255, 255, 0.06);
   white-space: nowrap;
   font-weight: 800;
+  font-variant-numeric: tabular-nums !important;
+  font-feature-settings: "tnum" 1 !important;
+  flex-shrink: 0 !important;
+}
+
+.timer-pill strong {
+  min-width: 48px !important;
+  display: inline-block !important;
+  text-align: center !important;
+  font-variant-numeric: tabular-nums !important;
+  font-feature-settings: "tnum" 1 !important;
 }
 
 .game-page-wrap .user-login-btn {
