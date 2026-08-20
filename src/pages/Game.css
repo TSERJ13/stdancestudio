@@ -130,13 +130,13 @@ body.app-fullscreen-active .canvas-wrapper,
 }
 
 .compact-header-left img {
-  width: 44px !important;
-  height: 44px !important;
-  min-width: 44px !important;
-  min-height: 44px !important;
+  width: 38px !important;
+  height: 38px !important;
+  min-width: 38px !important;
+  min-height: 38px !important;
   object-fit: contain !important;
-  margin-top: -8px !important;
-  margin-bottom: -8px !important;
+  margin-top: -5px !important;
+  margin-bottom: -5px !important;
 }
 
 .compact-title {

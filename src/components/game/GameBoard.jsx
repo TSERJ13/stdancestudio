@@ -855,9 +855,9 @@ export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOv
                 src="/images/dancing_bricks_logo.png"
                 alt="Dancing Bricks"
                 style={{
-                  width: '90px',
+                  width: '180px',
                   height: 'auto',
-                  maxHeight: '90px',
+                  maxHeight: '180px',
                   objectFit: 'contain',
                   marginBottom: '10px',
                   display: 'block'

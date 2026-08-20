@@ -339,17 +339,17 @@ export default function Game() {
                   src="/images/dancing_bricks_logo.png"
                   alt="Dancing Bricks"
                   style={{
-                    width: '44px',
-                    height: '44px',
-                    minWidth: '44px',
-                    minHeight: '44px',
+                    width: '38px',
+                    height: '38px',
+                    minWidth: '38px',
+                    minHeight: '38px',
                     borderRadius: '8px',
                     objectFit: 'contain',
-                    marginTop: '-8px',
-                    marginBottom: '-8px',
+                    marginTop: '-5px',
+                    marginBottom: '-5px',
                     marginLeft: '-2px',
                     position: 'relative',
-                    top: '-2px',
+                    top: '-1px',
                     zIndex: 2
                   }}
                 />
