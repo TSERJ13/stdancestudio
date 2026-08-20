@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { PRIZES } from './SpinModal';
+import { PRIZES, getPrizeName, getPrizeDesc } from './SpinModal';
 import { useLanguage } from '../../context/LanguageContext';
 
 export default function PrizesPage() {
@@ -12,17 +12,48 @@ export default function PrizesPage() {
   const [imagesReady, setImagesReady] = useState(false);
   const [selectedPrize, setSelectedPrize] = useState(null);
   const [countdown, setCountdown] = useState('');
+  const [drawInfo, setDrawInfo] = useState({ titleText: '20 სექტემბრის გათამაშება', monthName: 'სექტემბრამდე' });
 
-  // Countdown
+  // Countdown & Dynamic Draw Month
   useEffect(() => {
     const tick = () => {
       const now = new Date();
-      const geo = new Date(now.getTime() + now.getTimezoneOffset() * 60000 + 4 * 3600000);
-      let yr = geo.getFullYear(), mo = geo.getMonth();
-      if (geo.getDate() > 25) { mo++; if (mo > 11) { mo = 0; yr++; } }
-      const target = new Date(yr, mo, 20, 22, 0, 0);
-      const diff = target - geo;
-      if (diff <= 0) { setCountdown(''); return; }
+      const geo = new Date(now.getTime() + (now.getTimezoneOffset() * 60000) + (4 * 3600000));
+      let yr = geo.getFullYear();
+      let mo = geo.getMonth();
+
+      const thisMonthTarget = new Date(yr, mo, 20, 22, 0, 0);
+      if (geo.getTime() >= thisMonthTarget.getTime()) {
+        mo++;
+        if (mo > 11) {
+          mo = 0;
+          yr++;
+        }
+      }
+
+      const targetDate = new Date(yr, mo, 20, 22, 0, 0);
+      const diff = targetDate.getTime() - geo.getTime();
+
+      const monthGenitiveKa = ["იანვრის", "თებერვლის", "მარტის", "აპრილის", "მაისის", "ივნისის", "ივლისის", "აგვისტოს", "სექტემბრის", "ოქტომბრის", "ნოემბრის", "დეკემბრის"];
+      const monthGenitiveEn = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"];
+      const monthGenitiveRu = ["Января", "Февраля", "Марта", "Апреля", "Мая", "Июня", "Июля", "Августа", "Сентября", "Октября", "Ноября", "Декабря"];
+
+      let mName = monthGenitiveKa[mo];
+      let tTitle = `20 ${mName} გათამაშება`;
+      if (lang === 'en') {
+        mName = monthGenitiveEn[mo];
+        tTitle = `${mName} 20th Prize Draw`;
+      } else if (lang === 'ru') {
+        mName = monthGenitiveRu[mo];
+        tTitle = `Розыгрыш 20 ${mName}`;
+      }
+
+      setDrawInfo({ titleText: tTitle, monthName: mName });
+
+      if (diff <= 0) {
+        setCountdown('');
+        return;
+      }
       const d = Math.floor(diff / 86400000);
       const h = Math.floor((diff / 3600000) % 24);
       const m = Math.floor((diff / 60000) % 60);
@@ -32,7 +63,7 @@ export default function PrizesPage() {
     tick();
     const iv = setInterval(tick, 1000);
     return () => clearInterval(iv);
-  }, []);
+  }, [lang]);
 
   // Load images
   useEffect(() => {
@@ -116,7 +147,7 @@ export default function PrizesPage() {
       ctx.textBaseline = 'middle';
       ctx.shadowColor = '#000000';
       ctx.shadowBlur = 6;
-      ctx.fillText(prize.name, 0, 0);
+      ctx.fillText(getPrizeName(prize, lang), 0, 0);
       ctx.restore();
 
       // Prize image disk
@@ -224,14 +255,14 @@ export default function PrizesPage() {
   };
 
   return (
-    <div className="rules-card glass animate-in" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px', overflowY: 'auto', paddingBottom: '80px' }}>
+    <div className="rules-card glass animate-in" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '14px', overflowY: 'auto', paddingBottom: '80px' }}>
 
-      <div style={{ alignSelf: 'stretch', display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', gap: '8px', flexWrap: 'wrap' }}>
-        <h2 style={{ fontSize: '15px', fontWeight: '900', color: '#F0D9A8', margin: 0 }}>
-          🎁 {lang === 'ka' ? '20 სექტემბრის გათამაშება' : 'Sept 20th Prize Draw'}
+      <div style={{ alignSelf: 'stretch', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', width: '100%' }}>
+        <h2 style={{ fontSize: '17px', fontWeight: '900', color: '#F0D9A8', margin: 0, textAlign: 'center' }}>
+          🎁 {drawInfo.titleText}
         </h2>
         {countdown ? (
-          <span style={{ fontSize: '12px', color: '#d4a64a', fontWeight: '900', background: 'rgba(212,166,74,0.1)', padding: '4px 10px', borderRadius: '8px', border: '1px solid rgba(212,166,74,0.3)', whiteSpace: 'nowrap' }}>
+          <span style={{ fontSize: '13px', color: '#d4a64a', fontWeight: '900', background: 'rgba(212,166,74,0.12)', padding: '5px 14px', borderRadius: '10px', border: '1px solid rgba(212,166,74,0.3)', whiteSpace: 'nowrap' }}>
             ⏱ {countdown}
           </span>
         ) : null}
@@ -239,8 +270,10 @@ export default function PrizesPage() {
 
       <p style={{ fontSize: '12px', color: '#a1a1aa', margin: 0, textAlign: 'center', lineHeight: '1.5' }}>
         {lang === 'ka'
-          ? 'იყავი #1 ლიდერბორდზე 20 სექტემბრამდე. სექტორზე შეეხე, პრიზი ნახე!'
-          : 'Be #1 on leaderboard until Sept 20th. Tap a sector to preview the prize!'}
+          ? `იყავი #1 ლიდერბორდზე 20 ${drawInfo.monthName} გათამაშებამდე. სექტორზე შეეხე, პრიზი ნახე!`
+          : lang === 'ru'
+          ? `Будьте #1 в лидерборде до розыгрыша 20 ${drawInfo.monthName}. Нажмите на сектор для просмотра!`
+          : `Be #1 on the leaderboard until the ${drawInfo.monthName} 20th draw. Tap a sector to preview!`}
       </p>
 
       {/* Wheel */}
@@ -289,15 +322,15 @@ export default function PrizesPage() {
               padding: '10px', border: `2.5px solid ${selectedPrize.color || '#d4a64a'}`,
               boxShadow: `0 8px 30px ${selectedPrize.color || '#d4a64a'}55`
             }}>
-              <img src={selectedPrize.img} alt={selectedPrize.name}
+              <img src={selectedPrize.img} alt={getPrizeName(selectedPrize, lang)}
                 style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
             </div>
 
             <h3 style={{ color: selectedPrize.color || '#F0D9A8', fontSize: '20px', fontWeight: '900', margin: '0 0 6px' }}>
-              {selectedPrize.name}
+              {getPrizeName(selectedPrize, lang)}
             </h3>
             <p style={{ color: '#a1a1aa', fontSize: '12px', lineHeight: '1.5', margin: '0 0 16px' }}>
-              {selectedPrize.desc}
+              {getPrizeDesc(selectedPrize, lang)}
             </p>
 
             <div style={{
@@ -306,8 +339,10 @@ export default function PrizesPage() {
               fontWeight: '800', lineHeight: '1.6', marginBottom: '8px'
             }}>
               🏆 {lang === 'ka'
-                ? 'შეინარჩუნე ლიდერობა 20 სექტემბრამდე და მიიღე ST Dance-ის მერჩის საჩუქრები!'
-                : 'Stay #1 until the 20th and win exclusive ST Dance merch!'}
+                ? `შეინარჩუნე ლიდერობა 20 ${drawInfo.monthName} გათამაშებამდე და მიიღე ST Dance-ის მერჩის საჩუქრები!`
+                : lang === 'ru'
+                ? `Удерживайте лидерство до 20 ${drawInfo.monthName} и получите мерч ST Dance!`
+                : `Keep 1st place lead until the 20th of ${drawInfo.monthName} and win exclusive ST Dance merch!`}
             </div>
 
             {countdown ? (

@@ -290,7 +290,22 @@ export async function syncNewsToCloud(news) {
   }
 }
 
-/* ── Global Cloud Leaderboard Sync ── */
+/* ── Global Cloud Leaderboard Sync & Daily 22:00 Reset ── */
+export function getLastGeorgia22ResetMs() {
+  const now = new Date();
+  const utcMs = now.getTime() + (now.getTimezoneOffset() * 60000);
+  const georgiaNow = new Date(utcMs + (4 * 3600000));
+
+  const resetTarget = new Date(georgiaNow);
+  resetTarget.setHours(22, 0, 0, 0);
+
+  if (georgiaNow.getTime() < resetTarget.getTime()) {
+    resetTarget.setDate(resetTarget.getDate() - 1);
+  }
+
+  return resetTarget.getTime();
+}
+
 export async function fetchCloudLeaderboard() {
   try {
     const settingsUrl = `${SUPABASE_URL}/rest/v1/studio_settings?studio_slug=eq.${STUDIO_SLUG}`;
@@ -303,8 +318,26 @@ export async function fetchCloudLeaderboard() {
     if (!getRes.ok) return [];
     const settingsList = await getRes.json();
     if (!settingsList || settingsList.length === 0) return [];
-    const staffData = settingsList[0].staff_data || {};
-    return staffData.game_leaderboard || [];
+    const settings = settingsList[0];
+    const staffData = settings.staff_data || {};
+    let cloudList = staffData.game_leaderboard || [];
+
+    const lastReset = getLastGeorgia22ResetMs();
+    if (!staffData.last_score_reset_ms || staffData.last_score_reset_ms < lastReset) {
+      cloudList = cloudList.map(item => ({ ...item, score: 0, games: 0 }));
+      const updatedStaffData = { ...staffData, game_leaderboard: cloudList, last_score_reset_ms: lastReset };
+      await fetch(`${SUPABASE_URL}/rest/v1/studio_settings?studio_slug=eq.${STUDIO_SLUG}`, {
+        method: 'PATCH',
+        headers: {
+          'apikey': ANON_KEY,
+          'Authorization': `Bearer ${ANON_KEY}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ staff_data: updatedStaffData })
+      });
+    }
+
+    return cloudList;
   } catch (err) {
     console.error('❌ Error fetching cloud leaderboard:', err);
     return [];
@@ -327,6 +360,11 @@ export async function syncCloudScore(userEntry) {
     const settings = settingsList[0];
     const currentStaffData = settings.staff_data || {};
     let cloudList = currentStaffData.game_leaderboard || [];
+
+    const lastReset = getLastGeorgia22ResetMs();
+    if (!currentStaffData.last_score_reset_ms || currentStaffData.last_score_reset_ms < lastReset) {
+      cloudList = cloudList.map(item => ({ ...item, score: 0, games: 0 }));
+    }
 
     const userId = userEntry.id || `USER_${userEntry.name}`;
     // Strictly match by ID first, fallback to exact name ONLY if item has no ID
@@ -360,7 +398,8 @@ export async function syncCloudScore(userEntry) {
 
     const updatedStaffData = {
       ...currentStaffData,
-      game_leaderboard: cloudList
+      game_leaderboard: cloudList,
+      last_score_reset_ms: lastReset
     };
 
     await fetch(`${SUPABASE_URL}/rest/v1/studio_settings?studio_slug=eq.${STUDIO_SLUG}`, {

@@ -4,15 +4,69 @@ import { Gift, Sparkles, Trophy, Award, RotateCw, Ticket, Copy, Check } from 'lu
 import { useLanguage } from '../../context/LanguageContext';
 
 export const PRIZES = [
-  { id: 'bottle', name: 'წყლის ბოთლი', desc: 'ST Dance Studio ბრენდირებული წყლის ბოთლი', img: '/images/prizes/water_bottle.png', color: '#F0D9A8' },
-  { id: 'umbrella', name: 'ქოლგა', desc: 'ST Dance Studio ბრენდირებული ქოლგა', img: '/images/prizes/umbrella.png', color: '#6FC3E0' },
-  { id: 'v50', name: '-50% ვაუჩერი', desc: '-50% ფასდაკლების ვაუჩერი Danceshop.Ge-ზე', img: '/images/prizes/voucher_50.png', color: '#F0D9A8' },
-  { id: 'raincoat', name: 'საწვიმარი', desc: 'ST Dance Studio ბრენდირებული საწვიმარი', img: '/images/prizes/raincoat.png', color: '#B87BDE' },
-  { id: 'backpack', name: 'ზურგჩანთა', desc: 'ST Dance Studio ბრენდირებული ზურგჩანთა', img: '/images/prizes/backpack.png', color: '#E0764A' },
-  { id: 'phone_case', name: 'ქეისი', desc: 'ST Dance Studio ბრენდირებული ქეისი', img: '/images/prizes/phone_case.png', color: '#6FD98F' },
-  { id: 'v30', name: '-30% ვაუჩერი', desc: '-30% ფასდაკლების ვაუჩერი Danceshop.Ge-ზე', img: '/images/prizes/voucher_30.png', color: '#F0D9A8' },
-  { id: 'v100', name: '-100% ვაუჩერი', desc: '100% უფასო სრული ვაუჩერი Danceshop.Ge-ზე', img: '/images/prizes/voucher_100.png', color: '#FF4444' }
+  {
+    id: 'bottle',
+    name: 'წყლის ბოთლი', nameEn: 'Water Bottle', nameRu: 'Бутылка воды',
+    desc: 'ST Dance Studio ბრენდირებული წყლის ბოთლი', descEn: 'ST Dance Studio Branded Water Bottle', descRu: 'Фирменная бутылка для воды ST Dance Studio',
+    img: '/images/prizes/water_bottle.png', color: '#F0D9A8'
+  },
+  {
+    id: 'umbrella',
+    name: 'ქოლგა', nameEn: 'Umbrella', nameRu: 'Зонт',
+    desc: 'ST Dance Studio ბრენდირებული ქოლგა', descEn: 'ST Dance Studio Branded Umbrella', descRu: 'Фирменный зонт ST Dance Studio',
+    img: '/images/prizes/umbrella.png', color: '#6FC3E0'
+  },
+  {
+    id: 'v50',
+    name: '-50% ვაუჩერი', nameEn: '-50% Voucher', nameRu: 'Ваучер -50%',
+    desc: '-50% ფასდაკლების ვაუჩერი Danceshop.Ge-ზე', descEn: '-50% discount voucher on Danceshop.Ge', descRu: 'Ваучер на скидку -50% на Danceshop.Ge',
+    img: '/images/prizes/voucher_50.png', color: '#F0D9A8'
+  },
+  {
+    id: 'raincoat',
+    name: 'საწვიმარი', nameEn: 'Raincoat', nameRu: 'Дождевик',
+    desc: 'ST Dance Studio ბრენდირებული საწვიმარი', descEn: 'ST Dance Studio Branded Raincoat', descRu: 'Фирменный дождевик ST Dance Studio',
+    img: '/images/prizes/raincoat.png', color: '#B87BDE'
+  },
+  {
+    id: 'backpack',
+    name: 'ზურგჩანთა', nameEn: 'Backpack', nameRu: 'Рюкзак',
+    desc: 'ST Dance Studio ბრენდირებული ზურგჩანთა', descEn: 'ST Dance Studio Branded Backpack', descRu: 'Фирменный рюкзак ST Dance Studio',
+    img: '/images/prizes/backpack.png', color: '#E0764A'
+  },
+  {
+    id: 'phone_case',
+    name: 'ქეისი', nameEn: 'Phone Case', nameRu: 'Чехол',
+    desc: 'ST Dance Studio ბრენდირებული ქეისი', descEn: 'ST Dance Studio Branded Phone Case', descRu: 'Фирменный чехол ST Dance Studio',
+    img: '/images/prizes/phone_case.png', color: '#6FD98F'
+  },
+  {
+    id: 'v30',
+    name: '-30% ვაუჩერი', nameEn: '-30% Voucher', nameRu: 'Ваучер -30%',
+    desc: '-30% ფასდაკლების ვაუჩერი Danceshop.Ge-ზე', descEn: '-30% discount voucher on Danceshop.Ge', descRu: 'Ваучер на скидку -30% на Danceshop.Ge',
+    img: '/images/prizes/voucher_30.png', color: '#F0D9A8'
+  },
+  {
+    id: 'v100',
+    name: '-100% ვაუჩერი', nameEn: '-100% Voucher', nameRu: 'Ваучер 100%',
+    desc: '100% უფასო სრული ვაუჩერი Danceshop.Ge-ზე', descEn: '100% free full voucher on Danceshop.Ge', descRu: '100% бесплатный ваучер на Danceshop.Ge',
+    img: '/images/prizes/voucher_100.png', color: '#FF4444'
+  }
 ];
+
+export function getPrizeName(prize, lang = 'ka') {
+  if (!prize) return '';
+  if (lang === 'en') return prize.nameEn || prize.name;
+  if (lang === 'ru') return prize.nameRu || prize.name;
+  return prize.name;
+}
+
+export function getPrizeDesc(prize, lang = 'ka') {
+  if (!prize) return '';
+  if (lang === 'en') return prize.descEn || prize.desc;
+  if (lang === 'ru') return prize.descRu || prize.desc;
+  return prize.desc;
+}
 
 const modalTranslations = {
   ka: {
