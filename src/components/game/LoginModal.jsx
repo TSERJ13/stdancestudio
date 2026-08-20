@@ -169,6 +169,7 @@ export default function LoginModal({ isOpen, onClose, currentUser, onLogin, lang
               month: 'აგვისტო 2026',
               winner: playerName,
               id: playerId,
+              score: 18420,
               prize: '-100% ვაუჩერი & ST Dance merch',
               code: `ST-WIN-${Math.floor(1000 + Math.random() * 9000)}`,
               isClaimed: true
