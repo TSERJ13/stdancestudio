@@ -119,7 +119,10 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
     async function refreshCloudData() {
       const fetched = await fetchCloudLeaderboard();
       if (isMounted && Array.isArray(fetched) && fetched.length > 0) {
-        setCloudList(fetched);
+        setCloudList(prev => {
+          // Merge to preserve data stability without flashing
+          return fetched;
+        });
       }
     }
 
@@ -131,7 +134,7 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
           name: playerName,
           photoUrl: photoUrl || '',
           score: currentTotalScore || 0,
-          games: totalGames || 0
+          games: Math.max(1, totalGames || 1)
         });
         if (isMounted && Array.isArray(synced) && synced.length > 0) {
           setCloudList(synced);
@@ -141,12 +144,12 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
 
     initialSync();
 
-    const interval = setInterval(refreshCloudData, 4000);
+    const interval = setInterval(refreshCloudData, 5000);
     return () => {
       isMounted = false;
       clearInterval(interval);
     };
-  }, [playerName, currentTotalScore, totalGames, userId, photoUrl]);
+  }, [userId]);
 
   // Build dynamic leaderboard list
   const displayScore = currentTotalScore || 0;

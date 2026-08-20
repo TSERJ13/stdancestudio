@@ -384,23 +384,30 @@ export async function syncCloudScore(userEntry) {
     const randomColor = colors[Math.abs(userId.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0)) % colors.length];
 
     if (existingIdx >= 0) {
+      const updatedScore = Math.max(cloudList[existingIdx].score || 0, userEntry.score || 0);
+      const rawGames = Math.max(cloudList[existingIdx].games || 0, userEntry.games || 0);
+      const updatedGames = updatedScore > 0 ? Math.max(1, rawGames) : rawGames;
+
       cloudList[existingIdx] = {
         ...cloudList[existingIdx],
         id: userId,
         name: userEntry.name,
         photoUrl: userEntry.photoUrl || cloudList[existingIdx].photoUrl || '',
-        score: Math.max(cloudList[existingIdx].score || 0, userEntry.score || 0),
-        games: Math.max(cloudList[existingIdx].games || 0, userEntry.games || 0),
+        score: updatedScore,
+        games: updatedGames,
         avatarBg: userEntry.avatarBg || cloudList[existingIdx].avatarBg || randomColor,
         updatedAt: new Date().toISOString()
       };
     } else {
+      const initScore = userEntry.score || 0;
+      const initGames = initScore > 0 ? Math.max(1, userEntry.games || 0) : (userEntry.games || 0);
+
       cloudList.push({
         id: userId,
         name: userEntry.name,
         photoUrl: userEntry.photoUrl || '',
-        score: userEntry.score || 0,
-        games: userEntry.games || 0,
+        score: initScore,
+        games: initGames,
         avatarBg: userEntry.avatarBg || randomColor,
         updatedAt: new Date().toISOString()
       });

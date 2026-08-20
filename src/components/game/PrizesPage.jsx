@@ -232,17 +232,17 @@ export default function PrizesPage() {
     ctx.restore();
   };
 
-  // Auto-spin loop
+  // Auto-spin wheel animation loop
   useEffect(() => {
-    if (!imagesReady) return;
+    let animId;
     const animate = () => {
-      angleRef.current += 0.006;
-      drawWheel(angleRef.current);
-      rafRef.current = requestAnimationFrame(animate);
+      angleRef.current += 0.005;
+      if (canvasRef.current) drawWheel(angleRef.current);
+      animId = requestAnimationFrame(animate);
     };
-    rafRef.current = requestAnimationFrame(animate);
-    return () => cancelAnimationFrame(rafRef.current);
-  }, [imagesReady]);
+    animId = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(animId);
+  }, []);
 
   // Tap handler — find which slice was tapped
   const handleTap = (e) => {

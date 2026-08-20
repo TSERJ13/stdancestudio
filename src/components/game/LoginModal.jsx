@@ -93,10 +93,15 @@ export default function LoginModal({ isOpen, onClose, currentUser, onLogin, lang
     } catch (e) { return {}; }
   });
 
-  const handleTogglePrizeClaim = (playerId) => {
+  const [claimToast, setClaimToast] = useState(null);
+
+  const handleTogglePrizeClaim = (playerId, playerName) => {
     setClaimedPrizes(prev => {
-      const updated = { ...prev, [playerId]: !prev[playerId] };
+      const nextState = !prev[playerId];
+      const updated = { ...prev, [playerId]: nextState };
       localStorage.setItem('dancing_bricks_claimed_prizes', JSON.stringify(updated));
+      setClaimToast(nextState ? `✅ ${playerName}-ის საჩუქარი გაცემულად მოინიშნა!` : `🎁 ${playerName}-ის საჩუქარი გაუცემელზე დაბრუნდა.`);
+      setTimeout(() => setClaimToast(null), 3500);
       return updated;
     });
   };
@@ -506,44 +511,60 @@ export default function LoginModal({ isOpen, onClose, currentUser, onLogin, lang
                     </button>
                   </div>
 
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', maxHeight: '260px', overflowY: 'auto' }}>
+                  {claimToast && (
+                    <div style={{ background: 'rgba(34,197,94,0.18)', border: '1px solid #22c55e', color: '#4ADE80', padding: '7px 10px', borderRadius: '10px', fontSize: '11px', fontWeight: '800', textAlign: 'center', marginBottom: '8px' }}>
+                      {claimToast}
+                    </div>
+                  )}
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', maxHeight: '270px', overflowY: 'auto' }}>
                     {adminStats.players.map((pl, idx) => {
                       const pKey = pl.id || pl.name;
                       const isClaimed = !!claimedPrizes[pKey];
+                      const isWinner = idx === 0;
+                      const prizeText = isWinner ? '🏆 #1 გამარჯვებული (100% ვაუჩერი & ST Dance merch — 20 სექტემბერი)' : `#${idx + 1} პრეტენდენტი`;
+
                       return (
-                        <div key={idx} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 10px', background: idx === 0 ? 'rgba(212,166,74,0.15)' : 'rgba(255,255,255,0.02)', borderRadius: '10px', border: idx === 0 ? '1px solid rgba(212,166,74,0.4)' : '1px solid rgba(255,255,255,0.04)', gap: '6px' }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0, flex: 1 }}>
-                            <span style={{ fontSize: '11px', fontWeight: '900', color: idx === 0 ? '#FFD700' : '#a1a1aa', width: '18px', flexShrink: 0 }}>#{idx + 1}</span>
-                            <div style={{ textAlign: 'left', minWidth: 0 }}>
-                              <div style={{ fontSize: '12px', fontWeight: '800', color: 'white', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{pl.name}</div>
-                              <span style={{ fontSize: '9.5px', color: '#a1a1aa' }}>ID: {pl.id}</span>
+                        <div key={idx} style={{ display: 'flex', flexDirection: 'column', gap: '4px', padding: '10px 11px', background: isWinner ? 'rgba(212,166,74,0.15)' : 'rgba(255,255,255,0.02)', borderRadius: '12px', border: isWinner ? '1px solid rgba(212,166,74,0.4)' : '1px solid rgba(255,255,255,0.05)' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', gap: '6px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0, flex: 1 }}>
+                              <span style={{ fontSize: '12px', fontWeight: '900', color: isWinner ? '#FFD700' : '#a1a1aa', width: '20px', flexShrink: 0 }}>#{idx + 1}</span>
+                              <div style={{ textAlign: 'left', minWidth: 0 }}>
+                                <div style={{ fontSize: '13px', fontWeight: '800', color: 'white', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{pl.name}</div>
+                                <span style={{ fontSize: '9.5px', color: '#a1a1aa' }}>ID: {pl.id}</span>
+                              </div>
+                            </div>
+                            
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
+                              <div style={{ textAlign: 'right' }}>
+                                <div style={{ fontSize: '12px', fontWeight: '900', color: '#F0D9A8' }}>{(pl.score || pl.high_score || 0).toLocaleString()} ქ</div>
+                                <span style={{ fontSize: '9.5px', color: '#4ADE80' }}>{Math.max(1, pl.games || pl.total_games || 1)} თამაში</span>
+                              </div>
+                              <button
+                                type="button"
+                                onClick={() => handleTogglePrizeClaim(pKey, pl.name)}
+                                style={{
+                                  background: isClaimed ? 'linear-gradient(135deg, #16a34a, #22c55e)' : 'rgba(239,68,68,0.18)',
+                                  border: isClaimed ? '1px solid #22c55e' : '1px solid rgba(239,68,68,0.5)',
+                                  color: isClaimed ? '#ffffff' : '#f87171',
+                                  borderRadius: '8px',
+                                  padding: '5px 9px',
+                                  fontSize: '10px',
+                                  fontWeight: '900',
+                                  cursor: 'pointer',
+                                  flexShrink: 0,
+                                  boxShadow: isClaimed ? '0 2px 8px rgba(34,197,94,0.3)' : 'none',
+                                  transition: 'all 0.2s ease'
+                                }}
+                                title="საჩუქრის გაცემის სტატუსი"
+                              >
+                                {isClaimed ? '✅ გაცემულია' : '🎁 გაცემა'}
+                              </button>
                             </div>
                           </div>
-                          
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
-                            <div style={{ textAlign: 'right' }}>
-                              <div style={{ fontSize: '12px', fontWeight: '900', color: '#F0D9A8' }}>{(pl.score || pl.high_score || 0).toLocaleString()} ქ</div>
-                              <span style={{ fontSize: '9.5px', color: '#4ADE80' }}>{pl.games || pl.total_games || 1} თამაში</span>
-                            </div>
-                            <button
-                              type="button"
-                              onClick={() => handleTogglePrizeClaim(pKey)}
-                              style={{
-                                background: isClaimed ? 'rgba(34,197,94,0.18)' : 'rgba(239,68,68,0.18)',
-                                border: isClaimed ? '1px solid #22c55e' : '1px solid #ef4444',
-                                color: isClaimed ? '#4ADE80' : '#f87171',
-                                borderRadius: '8px',
-                                padding: '4px 8px',
-                                fontSize: '9.5px',
-                                fontWeight: '800',
-                                cursor: 'pointer',
-                                flexShrink: 0,
-                                transition: 'all 0.2s ease'
-                              }}
-                              title="საჩუქრის გაცემის სტატუსი"
-                            >
-                              {isClaimed ? '✅ გაცემულია' : '🎁 გაუცემელი'}
-                            </button>
+
+                          <div style={{ fontSize: '9.5px', color: isWinner ? '#F0D9A8' : '#818cf8', fontWeight: '700', background: isWinner ? 'rgba(212,166,74,0.2)' : 'rgba(99,102,241,0.1)', padding: '2px 8px', borderRadius: '6px', width: 'fit-content', marginTop: '2px' }}>
+                            {prizeText}
                           </div>
                         </div>
                       );
