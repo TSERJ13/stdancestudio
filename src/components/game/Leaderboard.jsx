@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import { Trophy, Gift, Ticket, History, Copy, Check, Clock } from 'lucide-react';
 import { useLanguage } from '../../context/LanguageContext';
 import SpinModal from './SpinModal';
+import { fetchCloudLeaderboard, syncCloudScore } from '../../data/classcore';
 
 const TEST_LEADERBOARD = [];
 
@@ -65,25 +66,49 @@ const lbTranslations = {
   }
 };
 
-export default function Leaderboard({ currentTotalScore, totalGames, playerName, onUpdatePlayerName }) {
+export default function Leaderboard({ currentTotalScore, totalGames, playerName, userId, onUpdatePlayerName }) {
   const { lang } = useLanguage();
   const t = lbTranslations[lang] || lbTranslations.ka;
+  const [cloudList, setCloudList] = useState([]);
+
+  useEffect(() => {
+    let isMounted = true;
+    async function loadCloudData() {
+      const fetched = await fetchCloudLeaderboard();
+      if (isMounted && Array.isArray(fetched) && fetched.length > 0) {
+        setCloudList(fetched);
+      }
+      if (playerName) {
+        const synced = await syncCloudScore({
+          id: userId || `USER_${playerName}`,
+          name: playerName,
+          score: currentTotalScore || 0,
+          games: totalGames || 0
+        });
+        if (isMounted && Array.isArray(synced) && synced.length > 0) {
+          setCloudList(synced);
+        }
+      }
+    }
+    loadCloudData();
+    return () => { isMounted = false; };
+  }, [playerName, currentTotalScore, totalGames, userId]);
 
   // Build dynamic leaderboard list
   const displayScore = currentTotalScore || 0;
-  const combinedList = [...TEST_LEADERBOARD];
+  const combinedList = cloudList.length > 0 ? [...cloudList] : [...TEST_LEADERBOARD];
 
   if (playerName) {
-    const isMeMock = combinedList.findIndex(m => m.name === playerName || m.name.includes(playerName));
-    if (isMeMock !== -1) {
-      combinedList[isMeMock] = {
-        ...combinedList[isMeMock],
-        score: Math.max(combinedList[isMeMock].score, displayScore),
-        games: Math.max(combinedList[isMeMock].games, totalGames || 0)
+    const isMeIdx = combinedList.findIndex(m => (userId && m.id === userId) || m.name === playerName);
+    if (isMeIdx !== -1) {
+      combinedList[isMeIdx] = {
+        ...combinedList[isMeIdx],
+        score: Math.max(combinedList[isMeIdx].score || 0, displayScore),
+        games: Math.max(combinedList[isMeIdx].games || 0, totalGames || 0)
       };
     } else {
       combinedList.push({
-        id: 'ME',
+        id: userId || `USER_${playerName}`,
         name: playerName,
         score: displayScore,
         games: totalGames || 0,

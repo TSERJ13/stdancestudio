@@ -290,6 +290,93 @@ export async function syncNewsToCloud(news) {
   }
 }
 
+/* ── Global Cloud Leaderboard Sync ── */
+export async function fetchCloudLeaderboard() {
+  try {
+    const settingsUrl = `${SUPABASE_URL}/rest/v1/studio_settings?studio_slug=eq.${STUDIO_SLUG}`;
+    const getRes = await fetch(settingsUrl, {
+      headers: {
+        'apikey': ANON_KEY,
+        'Authorization': `Bearer ${ANON_KEY}`
+      }
+    });
+    if (!getRes.ok) return [];
+    const settingsList = await getRes.json();
+    if (!settingsList || settingsList.length === 0) return [];
+    const staffData = settingsList[0].staff_data || {};
+    return staffData.game_leaderboard || [];
+  } catch (err) {
+    console.error('❌ Error fetching cloud leaderboard:', err);
+    return [];
+  }
+}
+
+export async function syncCloudScore(userEntry) {
+  try {
+    if (!userEntry || !userEntry.name) return [];
+    const settingsUrl = `${SUPABASE_URL}/rest/v1/studio_settings?studio_slug=eq.${STUDIO_SLUG}`;
+    const getRes = await fetch(settingsUrl, {
+      headers: {
+        'apikey': ANON_KEY,
+        'Authorization': `Bearer ${ANON_KEY}`
+      }
+    });
+    if (!getRes.ok) return [];
+    const settingsList = await getRes.json();
+    if (!settingsList || settingsList.length === 0) return [];
+    const settings = settingsList[0];
+    const currentStaffData = settings.staff_data || {};
+    let cloudList = currentStaffData.game_leaderboard || [];
+
+    const userId = userEntry.id || `USER_${userEntry.name}`;
+    const existingIdx = cloudList.findIndex(item => item.id === userId || item.name === userEntry.name);
+
+    const colors = ['#d4a64a', '#6fc3e0', '#b87bde', '#e0764a', '#6fd98f', '#ff4444', '#f472b6', '#fbbf24'];
+    const randomColor = colors[Math.abs(userId.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0)) % colors.length];
+
+    if (existingIdx >= 0) {
+      cloudList[existingIdx] = {
+        ...cloudList[existingIdx],
+        id: userId,
+        name: userEntry.name,
+        score: Math.max(cloudList[existingIdx].score || 0, userEntry.score || 0),
+        games: Math.max(cloudList[existingIdx].games || 0, userEntry.games || 0),
+        avatarBg: userEntry.avatarBg || cloudList[existingIdx].avatarBg || randomColor,
+        updatedAt: new Date().toISOString()
+      };
+    } else {
+      cloudList.push({
+        id: userId,
+        name: userEntry.name,
+        score: userEntry.score || 0,
+        games: userEntry.games || 0,
+        avatarBg: userEntry.avatarBg || randomColor,
+        updatedAt: new Date().toISOString()
+      });
+    }
+
+    const updatedStaffData = {
+      ...currentStaffData,
+      game_leaderboard: cloudList
+    };
+
+    await fetch(`${SUPABASE_URL}/rest/v1/studio_settings?studio_slug=eq.${STUDIO_SLUG}`, {
+      method: 'PATCH',
+      headers: {
+        'apikey': ANON_KEY,
+        'Authorization': `Bearer ${ANON_KEY}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ staff_data: updatedStaffData })
+    });
+
+    return cloudList;
+  } catch (err) {
+    console.error('❌ Error syncing score to cloud:', err);
+    return [];
+  }
+}
+
 /* ── Student helpers ────────────────────────────── */
 
 /**

@@ -8,6 +8,7 @@ import SocialShareModal from '../components/game/SocialShareModal';
 import Leaderboard from '../components/game/Leaderboard';
 import PrizesPage from '../components/game/PrizesPage';
 import LoginModal from '../components/game/LoginModal';
+import { syncCloudScore } from '../data/classcore';
 import { loadLivesData, saveLivesData, calculateAvailableLives, formatTimeUntilReset, getGeorgiaResetTime } from '../utils/livesManager';
 import './Game.css';
 
@@ -443,7 +444,8 @@ export default function Game() {
                   <Leaderboard
                     currentTotalScore={userProfile.totalScore || userProfile.highScore || 0}
                     totalGames={userProfile.totalGames || 0}
-                    playerName={String(userProfile.studentId || '').startsWith('TG-') ? userProfile.name : (userProfile.name || '')}
+                    playerName={userProfile.name || 'Dancer'}
+                    userId={userProfile.studentId}
                     onUpdatePlayerName={handleUpdateName}
                   />
                 </ErrorBoundary>
