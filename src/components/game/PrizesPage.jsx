@@ -330,43 +330,61 @@ export default function PrizesPage() {
         {lang === 'ka' ? '☝️ სექტორზე შეეხე პრიზის სანახავად' : '☝️ Tap a sector to see the prize'}
       </p>
 
-      {/* Winners & Won Prizes Section */}
-      <div style={{ width: '100%', maxWidth: '340px', marginTop: '12px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+      {/* Winners History Section (გამარჯვებულების ისტორია) */}
+      <div style={{ width: '100%', maxWidth: '340px', marginTop: '14px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
         <div style={{ fontSize: '13px', fontWeight: '900', color: '#F0D9A8', display: 'flex', alignItems: 'center', gap: '6px', borderBottom: '1px solid rgba(212,166,74,0.3)', paddingBottom: '6px' }}>
-          🏆 {lang === 'ka' ? 'ვინ გაიმარჯვა და რა მოიგო' : 'Winners & Prizes Won'}
+          🏆 {lang === 'ka' ? 'გამარჯვებულების ისტორია' : 'Winners History'}
         </div>
-
-        {/* Current #1 Leader Card */}
-        {topWinner && (
-          <div style={{ background: 'linear-gradient(135deg, rgba(212,166,74,0.18) 0%, rgba(34,197,94,0.12) 100%)', border: '1.5px solid rgba(212,166,74,0.45)', borderRadius: '14px', padding: '12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px', boxShadow: '0 4px 14px rgba(0,0,0,0.3)' }}>
-            <div style={{ textAlign: 'left', minWidth: 0 }}>
-              <div style={{ fontSize: '10px', color: '#FFD700', fontWeight: '900', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                👑 {lang === 'ka' ? 'მიმდინარე #1 ლიდერი' : 'Current #1 Leader'}
-              </div>
-              <div style={{ fontSize: '14px', fontWeight: '900', color: 'white', marginTop: '2px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                {topWinner.name}
-              </div>
-              <div style={{ fontSize: '11px', color: '#d4a64a', fontWeight: '800', marginTop: '2px' }}>
-                🎁 {lang === 'ka' ? '-100% ვაუჩერი & ST Dance merch' : '-100% Voucher & Merch'}
-              </div>
-            </div>
-            <span style={{ fontSize: '10px', background: 'rgba(34,197,94,0.22)', color: '#4ADE80', border: '1px solid #22c55e', padding: '3px 8px', borderRadius: '8px', fontWeight: '900', whiteSpace: 'nowrap', flexShrink: 0 }}>
-              🏆 #1 {lang === 'ka' ? 'ადგილი' : 'Rank'}
-            </span>
-          </div>
-        )}
 
         {/* Winners History Cards */}
         {recentWinners.map((w, idx) => (
-          <div key={idx} style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '12px', padding: '10px 12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px' }}>
-            <div style={{ textAlign: 'left', minWidth: 0 }}>
-              <div style={{ fontSize: '10px', color: '#a1a1aa', fontWeight: '700' }}>{w.month || 'გათამაშება'}</div>
-              <div style={{ fontSize: '13px', fontWeight: '800', color: 'white', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{w.winner}</div>
-              <div style={{ fontSize: '11px', color: '#d4a64a', fontWeight: '700' }}>🎁 {w.prize}</div>
+          <div
+            key={idx}
+            style={{
+              background: 'linear-gradient(135deg, rgba(212,166,74,0.1) 0%, rgba(20,20,25,0.88) 100%)',
+              border: '1.5px solid rgba(212,166,74,0.35)',
+              borderRadius: '14px',
+              padding: '10px 12px',
+              display: 'flex',
+              alignItems: 'center',
+              justify: 'space-between',
+              gap: '10px',
+              boxShadow: '0 4px 14px rgba(0,0,0,0.35)',
+              width: '100%',
+              boxSizing: 'border-box'
+            }}
+          >
+            {/* Left info: Month, Winner, Score */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', textAlign: 'left', minWidth: 0 }}>
+              <div style={{ fontSize: '10px', color: '#d4a64a', fontWeight: '800' }}>
+                📅 {w.month || 'გათამაშება'}
+              </div>
+              <div style={{ fontSize: '13px', fontWeight: '900', color: 'white', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                👤 {w.winner}
+              </div>
+              <div style={{ fontSize: '11px', color: '#22c55e', fontWeight: '800' }}>
+                ⭐ {w.score ? `${w.score.toLocaleString()} ქულა` : (w.scoreStr || '18,420 ქულა')}
+              </div>
             </div>
-            <span style={{ fontSize: '10px', color: '#22c55e', background: 'rgba(34,197,94,0.15)', border: '1px solid rgba(34,197,94,0.3)', padding: '3px 8px', borderRadius: '6px', fontWeight: '800', whiteSpace: 'nowrap', flexShrink: 0 }}>
-              ✅ {lang === 'ka' ? 'გაცემულია' : 'Delivered'}
-            </span>
+
+            {/* Right info: Small Prize Thumbnail + Name */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0, background: 'rgba(0,0,0,0.4)', padding: '5px 8px', borderRadius: '10px', border: '1px solid rgba(212,166,74,0.25)' }}>
+              <div style={{ width: '34px', height: '34px', borderRadius: '8px', background: '#ffffff', overflow: 'hidden', border: '1px solid #d4a64a', padding: '1px', flexShrink: 0 }}>
+                <img
+                  src={w.prizeImg || (w.prize?.includes('50%') ? '/images/prizes/voucher_50.png' : '/images/prizes/voucher_100.png')}
+                  alt={w.prize || 'Prize'}
+                  style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                />
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                <span style={{ fontSize: '10px', color: '#F0D9A8', fontWeight: '900', whiteSpace: 'nowrap' }}>
+                  {w.prize || '-100% ვაუჩერი'}
+                </span>
+                <span style={{ fontSize: '9px', color: '#4ADE80', fontWeight: '800' }}>
+                  ✅ გაცემულია
+                </span>
+              </div>
+            </div>
           </div>
         ))}
       </div>

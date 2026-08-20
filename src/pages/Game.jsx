@@ -604,7 +604,7 @@ export default function Game() {
                 </ErrorBoundary>
               </div>
 
-              <div style={{ display: activeTab === 'prizes' ? 'flex' : 'none', width: '100%', flex: 1, flexDirection: 'column' }}>
+              <div style={{ display: activeTab === 'prizes' ? 'flex' : 'none', width: '100%', height: '100%', position: 'absolute', inset: 0, flexDirection: 'column', overflowY: 'auto', WebkitOverflowScrolling: 'touch' }}>
                 <PrizesPage />
               </div>
 
