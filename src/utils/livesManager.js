@@ -24,8 +24,14 @@ export function getGeorgiaResetTime() {
   };
 }
 
-export function loadLivesData() {
-  const saved = localStorage.getItem(LIVES_STORAGE_KEY);
+export function getStorageKey(userId = '') {
+  if (userId) return `dancing_bricks_lives_v2_${userId}`;
+  return 'dancing_bricks_lives_v2_guest';
+}
+
+export function loadLivesData(userId = '') {
+  const key = getStorageKey(userId);
+  const saved = localStorage.getItem(key);
   const { nextResetTimeMs } = getGeorgiaResetTime();
   const now = Date.now();
 
@@ -34,25 +40,25 @@ export function loadLivesData() {
     usedLives: 0,
     hasQuizLife: false,
     hasShareLife: false,
-    lastResetMs: now,
+    nextResetMs: nextResetTimeMs,
     highScore: 0,
     totalGamesPlayed: 0
   };
 
   if (!saved) {
-    localStorage.setItem(LIVES_STORAGE_KEY, JSON.stringify(defaultData));
+    localStorage.setItem(key, JSON.stringify(defaultData));
     return defaultData;
   }
 
   try {
     const parsed = JSON.parse(saved);
-    if (now >= parsed.nextResetMs || (parsed.lastResetMs && (now - parsed.lastResetMs > 86400000))) {
+    if (!parsed.nextResetMs || now >= parsed.nextResetMs) {
+      parsed.baseLives = 3;
       parsed.usedLives = 0;
       parsed.hasQuizLife = false;
       parsed.hasShareLife = false;
-      parsed.lastResetMs = now;
       parsed.nextResetMs = nextResetTimeMs;
-      localStorage.setItem(LIVES_STORAGE_KEY, JSON.stringify(parsed));
+      localStorage.setItem(key, JSON.stringify(parsed));
     }
     return parsed;
   } catch {
@@ -60,10 +66,11 @@ export function loadLivesData() {
   }
 }
 
-export function saveLivesData(data) {
+export function saveLivesData(data, userId = '') {
+  const key = getStorageKey(userId);
   const { nextResetTimeMs } = getGeorgiaResetTime();
-  const updated = { ...data, nextResetMs: nextResetTimeMs };
-  localStorage.setItem(LIVES_STORAGE_KEY, JSON.stringify(updated));
+  const updated = { ...data, nextResetMs: data.nextResetMs || nextResetTimeMs };
+  localStorage.setItem(key, JSON.stringify(updated));
   return updated;
 }
 

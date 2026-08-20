@@ -103,19 +103,7 @@ export default function Game() {
 
   // Load lives from localStorage on mount (don't reset on every render)
   const [livesData, setLivesData] = useState(() => {
-    const saved = loadLivesData();
-    if (saved) return saved;
-    const fresh = {
-      dateStr: new Date().toISOString().split('T')[0],
-      baseLives: 3,
-      usedLives: 0,
-      hasQuizLife: false,
-      hasShareLife: false,
-      totalGamesPlayed: 0,
-      highScore: 0
-    };
-    saveLivesData(fresh);
-    return fresh;
+    return loadLivesData();
   });
 
   const [countdown, setCountdown] = useState('');
@@ -191,6 +179,13 @@ export default function Game() {
     }
   }, []);
 
+  // Reload user-scoped lives when studentId becomes available
+  useEffect(() => {
+    if (userProfile?.studentId) {
+      setLivesData(loadLivesData(userProfile.studentId));
+    }
+  }, [userProfile.studentId]);
+
   // Automatically sync current user score & profile to Supabase Cloud on load/change
   useEffect(() => {
     if (userProfile?.name && userProfile.name !== 'Dancer') {
@@ -222,7 +217,7 @@ export default function Game() {
     if (availableLives <= 0) return;
     setLivesData(prev => {
       const updated = { ...prev, usedLives: Math.min(prev.baseLives || 3, prev.usedLives + 1) };
-      return saveLivesData(updated);
+      return saveLivesData(updated, userProfile?.studentId);
     });
   };
 
@@ -254,21 +249,21 @@ export default function Game() {
         totalGamesPlayed: (prev.totalGamesPlayed || 0) + 1,
         highScore: Math.max(prev.highScore || 0, score)
       };
-      return saveLivesData(updated);
+      return saveLivesData(updated, userProfile?.studentId);
     });
   };
 
   const handleUnlockQuizLife = () => {
     setLivesData(prev => {
       const updated = { ...prev, hasQuizLife: true };
-      return saveLivesData(updated);
+      return saveLivesData(updated, userProfile?.studentId);
     });
   };
 
   const handleUnlockShareLife = () => {
     setLivesData(prev => {
       const updated = { ...prev, hasShareLife: true };
-      return saveLivesData(updated);
+      return saveLivesData(updated, userProfile?.studentId);
     });
   };
 
