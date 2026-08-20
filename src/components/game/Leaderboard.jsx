@@ -199,8 +199,8 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
       let targetYear = georgiaTime.getFullYear();
       let targetMonth = georgiaTime.getMonth();
       
-      // If we are past the 25th, aim for next month
-      if (georgiaTime.getDate() > 25) {
+      const thisMonthTarget = new Date(targetYear, targetMonth, 20, 22, 0, 0);
+      if (georgiaTime.getTime() >= thisMonthTarget.getTime()) {
         targetMonth++;
         if (targetMonth > 11) {
           targetMonth = 0;
