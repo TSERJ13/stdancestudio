@@ -387,19 +387,22 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
                         style={{
                           padding: '3px 8px',
                           borderRadius: '8px',
-                          background: 'linear-gradient(135deg, #22c55e, #16a34a)',
-                          border: 'none',
-                          color: 'white',
+                          background: countdownState.isUnlocked ? 'linear-gradient(135deg, #22c55e, #16a34a)' : 'rgba(212,166,74,0.15)',
+                          border: countdownState.isUnlocked ? 'none' : '1px solid rgba(212,166,74,0.4)',
+                          color: countdownState.isUnlocked ? 'white' : '#F0D9A8',
                           fontWeight: '900',
                           fontSize: '10px',
                           cursor: 'pointer',
                           display: 'flex',
                           alignItems: 'center',
                           gap: '4px',
-                          boxShadow: '0 2px 8px rgba(34, 197, 94, 0.4)'
+                          boxShadow: countdownState.isUnlocked ? '0 2px 8px rgba(34, 197, 94, 0.4)' : 'none'
                         }}
                       >
-                        <Gift size={12} /> {lang === 'ka' ? 'პრიზი' : 'Prize'}
+                        <Trophy size={11} color={countdownState.isUnlocked ? '#ffffff' : '#d4a64a'} />
+                        {countdownState.isUnlocked
+                          ? (lang === 'ka' ? 'პრიზი' : 'Prize')
+                          : (lang === 'ka' ? '#1 ლიდერი' : '#1 Lead')}
                       </button>
                     ) : (
                       <span className="lb-games">{item.games} {t.games}</span>
