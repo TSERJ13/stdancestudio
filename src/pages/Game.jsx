@@ -343,8 +343,7 @@ export default function Game() {
                     height: '28px',
                     borderRadius: '6px',
                     objectFit: 'contain',
-                    marginTop: '-2px',
-                    filter: 'drop-shadow(0 0 8px rgba(212,166,74,0.7))'
+                    marginTop: '-2px'
                   }}
                 />
                 <button
@@ -563,6 +562,7 @@ export default function Game() {
               currentUser={userProfile}
               onLogin={handleLogin}
               onLogout={handleLogout}
+              lang={lang}
             />
           </div>
         </div>
