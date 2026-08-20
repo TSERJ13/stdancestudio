@@ -186,9 +186,9 @@ export default function Game() {
 
   // Automatically sync current user score & profile to Supabase Cloud on load/change
   useEffect(() => {
-    if (userProfile?.name && userProfile.name !== 'Dancer') {
+    if (userProfile?.studentId && (userProfile.studentId.startsWith('TG-') || userProfile.studentId.startsWith('ST-'))) {
       syncCloudScore({
-        id: userProfile.studentId || `USER_${userProfile.name}`,
+        id: userProfile.studentId,
         name: userProfile.name,
         photoUrl: userProfile.photoUrl || '',
         score: userProfile.totalScore || userProfile.highScore || 0,

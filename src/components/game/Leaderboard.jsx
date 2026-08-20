@@ -125,10 +125,11 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
 
     async function initialSync() {
       await refreshCloudData();
-      if (playerName) {
+      if (playerName && userId && (String(userId).startsWith('TG-') || String(userId).startsWith('ST-'))) {
         const synced = await syncCloudScore({
-          id: userId || `USER_${playerName}`,
+          id: userId,
           name: playerName,
+          photoUrl: photoUrl || '',
           score: currentTotalScore || 0,
           games: totalGames || 0
         });
@@ -145,11 +146,11 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
       isMounted = false;
       clearInterval(interval);
     };
-  }, [playerName, currentTotalScore, totalGames, userId]);
+  }, [playerName, currentTotalScore, totalGames, userId, photoUrl]);
 
   // Build dynamic leaderboard list
   const displayScore = currentTotalScore || 0;
-  const combinedList = cloudList.filter(item => item.name !== 'Dancer' && !String(item.id).startsWith('USER_Dancer'));
+  const combinedList = cloudList.filter(item => item.name !== 'Dancer' && !String(item.id).startsWith('USER_'));
 
   if (playerName && playerName !== 'Dancer') {
     const isMeIdx = combinedList.findIndex(m =>
