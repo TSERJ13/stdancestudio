@@ -87,6 +87,8 @@ export default function QuizModal({ isOpen, onClose, onUnlockQuizLife, hasQuizLi
   };
 
   const resetQuiz = () => {
+    const shuffled = [...QUIZ_QUESTIONS].sort(() => 0.5 - Math.random());
+    setRandomQuestions(shuffled.slice(0, 3));
     setCurrentIdx(0);
     setSelectedOption(null);
     setCorrectCount(0);

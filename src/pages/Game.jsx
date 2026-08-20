@@ -473,7 +473,7 @@ export default function Game() {
                         </div>
                         <div className="rule-item">
                           <HelpCircle size={20} color="#f59e0b" />
-                          <div><strong>მე-4 სიცოცხლე (+1)</strong><p>სწორად უპასუხე 3 კითხვას ქვიზში და მიიღე ბონუს სიცოცხლე.</p></div>
+                          <div><strong>მე-4 სიცოცხლე (+1)</strong><p>სწორედ უპასუხე 3 კითხვას და მიიღე + 1 ბონუს სიცოცხლე.</p></div>
                         </div>
                         <div className="rule-item">
                           <Share2 size={20} color="#ec4899" />
