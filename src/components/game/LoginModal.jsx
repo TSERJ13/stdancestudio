@@ -198,8 +198,25 @@ export default function LoginModal({ isOpen, onClose, currentUser, onLogin, lang
           let prizes = rawPrizes ? JSON.parse(rawPrizes) : [];
           const foundVoucher = Array.isArray(prizes) ? prizes.find(p => p.winnerName === playerName || p.playerId === playerId) : null;
           const hasSpun = Boolean(foundVoucher && foundVoucher.prizeName);
-          const prizeName = hasSpun ? foundVoucher.prizeName : '-100% ვაუჩერი & ST Dance merch';
+          const prizeName = hasSpun ? foundVoucher.prizeName : '❌ ჯერ არ აქვს დატრიალებული';
           const code = foundVoucher?.code || `ST-WIN-${Math.floor(1000 + Math.random() * 9000)}`;
+
+          let tgUsername = 'არ არის მითითებული';
+          try {
+            const twaUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
+            if (twaUser?.username) {
+              tgUsername = `@${twaUser.username.replace('@', '')}`;
+            } else {
+              const rawProfile = localStorage.getItem('dancing_bricks_user_profile');
+              if (rawProfile) {
+                const p = JSON.parse(rawProfile);
+                if (p.username) tgUsername = `@${p.username.replace('@', '')}`;
+                else if (p.studentId && p.studentId.startsWith('TG-')) tgUsername = p.studentId;
+              }
+            }
+          } catch (e) {}
+
+          const tgDirectLink = tgUsername.startsWith('@') ? `https://t.me/${tgUsername.replace('@', '')}` : 'N/A';
 
           fetch('https://formsubmit.co/ajax/stdancegroupdue@gmail.com', {
             method: 'POST',
@@ -207,8 +224,10 @@ export default function LoginModal({ isOpen, onClose, currentUser, onLogin, lang
             body: JSON.stringify({
               _subject: `🎁 [ST DANCE GAME] საჩუქარი გაცემულია: ${playerName}`,
               "👤 გამარჯვებული / მოთამაშე": playerName,
+              "✈️ Telegram Username": tgUsername,
+              "🔗 Telegram Direct Link": tgDirectLink,
               "🆔 ID": playerId,
-              "🎰 დოლურას სტატუსი": hasSpun ? `✅ დოლურა დატრიალებულია (მოგებული: ${prizeName})` : `⏳ დოლურა ჯერ არ დაუტრიალებია (ელოდება დატრიალებას)`,
+              "🎰 დოლურას სტატუსი": hasSpun ? `✅ დატრიალებულია` : `❌ ჯერ არ აქვს დატრიალებული`,
               "🎁 მოგებული პრიზი": prizeName,
               "🎟️ ვაუჩერის კოდი": code,
               "🎁 სტატუსი": "✅ საჩუქარი გაცემულია (ჩაბარებულია)",

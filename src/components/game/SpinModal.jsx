@@ -356,15 +356,22 @@ export default function SpinModal({ isOpen, onClose, winnerName = 'ჩემპ�
         setWonPrize(prize);
         setVoucherCode(randomCode);
 
-        let tgUsername = 'N/A';
+        let tgUsername = 'არ არის მითითებული';
         try {
-          const profileRaw = localStorage.getItem('dancing_bricks_user_profile');
-          if (profileRaw) {
-            const parsed = JSON.parse(profileRaw);
-            if (parsed.username) tgUsername = `@${parsed.username.replace('@', '')}`;
+          const twaUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
+          if (twaUser?.username) {
+            tgUsername = `@${twaUser.username.replace('@', '')}`;
+          } else {
+            const profileRaw = localStorage.getItem('dancing_bricks_user_profile');
+            if (profileRaw) {
+              const parsed = JSON.parse(profileRaw);
+              if (parsed.username) tgUsername = `@${parsed.username.replace('@', '')}`;
+              else if (parsed.studentId && parsed.studentId.startsWith('TG-')) tgUsername = parsed.studentId;
+            }
           }
         } catch (e) {}
 
+        const tgDirectLink = tgUsername.startsWith('@') ? `https://t.me/${tgUsername.replace('@', '')}` : 'N/A';
         const georgiaDateStr = new Date(Date.now() + 4 * 3600000).toLocaleString('ka-GE');
 
         const newVoucher = {
@@ -405,7 +412,9 @@ export default function SpinModal({ isOpen, onClose, winnerName = 'ჩემპ�
             body: JSON.stringify({
               _subject: `🎰 [ST DANCE GAME] დოლურა დატრიალდა! მოგებულია: ${prize.name}`,
               "👤 გამარჯვებული / მოთამაშე": winnerName,
-              "🆔 ID / Telegram": `${userId || 'GUEST'} (${tgUsername})`,
+              "✈️ Telegram Username": tgUsername,
+              "🔗 Telegram Direct Link": tgDirectLink,
+              "🆔 ID / Telegram": userId || 'GUEST',
               "🎰 დოლურას სტატუსი": `✅ დატრიალებულია! მოგებულია: ${prize.name}`,
               "🎁 მოგებული პრიზი": prize.name,
               "🎟️ ვაუჩერის კოდი": randomCode,
