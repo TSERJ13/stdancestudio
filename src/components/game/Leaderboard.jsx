@@ -272,7 +272,7 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
     return () => clearInterval(interval);
   }, [lang]);
 
-  const [claimedPrizesMap] = useState(() => {
+  const [claimedPrizesMap, setClaimedPrizesMap] = useState(() => {
     try {
       const raw = localStorage.getItem('dancing_bricks_claimed_prizes');
       return raw ? JSON.parse(raw) : {};
@@ -285,7 +285,6 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
       if (saved) {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed)) {
-          // Clear mock vouchers if they exist in user's local storage
           const filtered = parsed.filter(v => !['ST-WIN-8942', 'ST-WIN-8167'].includes(v.code));
           if (filtered.length !== parsed.length) {
             localStorage.setItem('dancing_bricks_my_prizes', JSON.stringify(filtered));
@@ -296,6 +295,28 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
     } catch {}
     return [];
   });
+
+  // Real-time synchronization when Admin toggles prize claim
+  useEffect(() => {
+    const handleSyncClaimedPrizes = () => {
+      try {
+        const raw = localStorage.getItem('dancing_bricks_claimed_prizes');
+        if (raw) setClaimedPrizesMap(JSON.parse(raw));
+      } catch (e) {}
+
+      try {
+        const saved = localStorage.getItem('dancing_bricks_my_prizes');
+        if (saved) setMyVouchers(JSON.parse(saved));
+      } catch (e) {}
+    };
+
+    window.addEventListener('storage', handleSyncClaimedPrizes);
+    window.addEventListener('dancing_bricks_claim_updated', handleSyncClaimedPrizes);
+    return () => {
+      window.removeEventListener('storage', handleSyncClaimedPrizes);
+      window.removeEventListener('dancing_bricks_claim_updated', handleSyncClaimedPrizes);
+    };
+  }, []);
 
   const handleSaveName = () => {
     if (nameInput.trim()) {

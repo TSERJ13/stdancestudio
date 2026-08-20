@@ -237,6 +237,11 @@ export default function LoginModal({ isOpen, onClose, currentUser, onLogin, lang
         } catch (e) {}
       }
 
+      // Notify Leaderboard components in real-time
+      try {
+        window.dispatchEvent(new Event('dancing_bricks_claim_updated'));
+      } catch (e) {}
+
       return updated;
     });
   };
