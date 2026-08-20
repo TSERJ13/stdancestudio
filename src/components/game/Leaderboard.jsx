@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Trophy, Gift, Ticket, History, Copy, Check } from 'lucide-react';
 import { useLanguage } from '../../context/LanguageContext';
 import SpinModal from './SpinModal';
@@ -122,6 +122,49 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
   const [showSpinModal, setShowSpinModal] = useState(false);
   const [selectedWinner, setSelectedWinner] = useState('სერგო წივწივაძე');
   const [copiedCode, setCopiedCode] = useState(null);
+  
+  const [showCountdownModal, setShowCountdownModal] = useState(false);
+  const [countdownState, setCountdownState] = useState({ isUnlocked: false, timeLeftText: '', monthName: '' });
+
+  useEffect(() => {
+    const updateCountdown = () => {
+      const now = new Date();
+      const georgiaTime = new Date(now.getTime() + (now.getTimezoneOffset() * 60000) + (4 * 3600000));
+      
+      let targetYear = georgiaTime.getFullYear();
+      let targetMonth = georgiaTime.getMonth();
+      
+      // If we are past the 25th, aim for next month
+      if (georgiaTime.getDate() > 25) {
+        targetMonth++;
+        if (targetMonth > 11) {
+          targetMonth = 0;
+          targetYear++;
+        }
+      }
+      
+      const targetDate = new Date(targetYear, targetMonth, 20, 22, 0, 0);
+      const diff = targetDate.getTime() - georgiaTime.getTime();
+      
+      const monthNamesKa = ["იანვრამდე", "თებერვლამდე", "მარტამდე", "აპრილამდე", "მაისამდე", "ივნისამდე", "ივლისამდე", "აგვისტომდე", "სექტემბრამდე", "ოქტომბრამდე", "ნოემბრამდე", "დეკემბრამდე"];
+      const monthName = monthNamesKa[targetMonth];
+
+      if (diff <= 0) {
+        setCountdownState({ isUnlocked: true, timeLeftText: '', monthName });
+      } else {
+        const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
+        const m = Math.floor((diff / 1000 / 60) % 60);
+        const s = Math.floor((diff / 1000) % 60);
+        const timeStr = `${d}დ ${h}სთ ${m}წთ ${s}წმ`;
+        setCountdownState({ isUnlocked: false, timeLeftText: timeStr, monthName });
+      }
+    };
+    
+    updateCountdown();
+    const interval = setInterval(updateCountdown, 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   const [myVouchers, setMyVouchers] = useState(() => {
     try {
@@ -152,12 +195,16 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
   };
 
   const openSpinForWinner = (name) => {
-    if (!playerName || (playerName !== name && !name.includes(playerName))) {
-      alert(lang === 'ka' ? 'მხოლოდ 1-ელ ადგილზე გასულ მოთამაშეს შეუძლია პრიზის დატრიალება!' : 'Only the 1st place winner can spin the wheel!');
-      return;
+    if (countdownState.isUnlocked) {
+      if (!playerName || (playerName !== name && !name.includes(playerName))) {
+        alert(lang === 'ka' ? 'მხოლოდ 1-ელ ადგილზე გასულ მოთამაშეს შეუძლია პრიზის დატრიალება!' : 'Only the 1st place winner can spin the wheel!');
+        return;
+      }
+      setSelectedWinner(name);
+      setShowSpinModal(true);
+    } else {
+      setShowCountdownModal(true);
     }
-    setSelectedWinner(name);
-    setShowSpinModal(true);
   };
 
   const handleClaimPrize = (newVoucher) => {
@@ -184,27 +231,6 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
             <span className="lb-subtitle" style={{ fontSize: '10px' }}>{t.subtitle}</span>
           </div>
         </div>
-
-        <button
-          onClick={() => openSpinForWinner(rankedList[0]?.name)}
-          style={{
-            padding: '6px 10px',
-            borderRadius: '10px',
-            background: 'linear-gradient(135deg, #d4a64a, #f0d9a8)',
-            border: 'none',
-            color: '#151100',
-            fontWeight: '900',
-            fontSize: '11px',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '4px',
-            flexShrink: 0,
-            boxShadow: '0 4px 12px rgba(212,166,74,0.3)'
-          }}
-        >
-          <Gift size={14} /> {t.spinBtn}
-        </button>
       </div>
 
       {/* Sub Navigation Bar */}
@@ -336,12 +362,11 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
                         cursor: 'pointer',
                         display: 'flex',
                         alignItems: 'center',
-                        gap: '4px',
-                        boxShadow: '0 0 12px rgba(34,197,94,0.4)',
-                        zIndex: 1
+                        gap: '6px',
+                        boxShadow: '0 4px 12px rgba(34, 197, 94, 0.3)'
                       }}
                     >
-                      <Gift size={14} /> {t.collectBtn}
+                      <Gift size={14} /> {lang === 'ka' ? 'პრიზი' : 'Prize'}
                     </button>
                   ) : (
                     <div className="lb-score-col" style={{ zIndex: 1 }}>
@@ -447,6 +472,46 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
         winnerName={selectedWinner}
         onClaimPrize={handleClaimPrize}
       />
+
+      {showCountdownModal && (
+        <div className="modal-overlay" style={{ zIndex: 9999 }}>
+          <div className="modal-content glass animate-in" style={{ maxWidth: '340px', padding: '24px', textAlign: 'center' }}>
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px' }}>
+              <Gift size={48} color="#d4a64a" />
+            </div>
+            <h3 style={{ color: '#F0D9A8', fontSize: '18px', fontWeight: '900', margin: '0 0 12px' }}>
+              {lang === 'ka' ? 'თვის მთავარი პრიზი!' : 'Monthly Grand Prize!'}
+            </h3>
+            <p style={{ color: '#e2e8f0', fontSize: '14px', lineHeight: '1.5', margin: '0 0 20px' }}>
+              {lang === 'ka' ? 
+                `შეინარჩუნე ლიდერობა 20 ${countdownState.monthName} და მიიღე ST Dance-ის მერჩის საჩუქრები!` : 
+                'Keep your 1st place lead until the 20th and win exclusive ST Dance merch!'}
+            </p>
+            
+            <div style={{ background: 'rgba(212,166,74,0.1)', padding: '12px', borderRadius: '12px', border: '1px solid rgba(212,166,74,0.3)', marginBottom: '20px' }}>
+              <div style={{ fontSize: '11px', color: '#a1a1aa', marginBottom: '6px' }}>
+                {lang === 'ka' ? 'გათამაშებამდე დარჩენილია:' : 'Time remaining:'}
+              </div>
+              <div style={{ fontSize: '18px', fontWeight: '900', color: 'white', letterSpacing: '1px' }}>
+                {countdownState.timeLeftText}
+              </div>
+            </div>
+
+            <button
+              onClick={() => setShowCountdownModal(false)}
+              style={{
+                width: '100%', padding: '12px', borderRadius: '12px',
+                background: 'linear-gradient(135deg, #d4a64a, #f0d9a8)',
+                border: 'none', color: '#151100', fontWeight: '900',
+                fontSize: '14px', cursor: 'pointer'
+              }}
+            >
+              {lang === 'ka' ? 'გასაგებია' : 'Got it'}
+            </button>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }

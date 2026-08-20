@@ -776,3 +776,5 @@ body.page-game-active {
     padding: 14px 12px;
   }
 }
+
+.leaderboard-container { box-sizing: border-box !important; }
