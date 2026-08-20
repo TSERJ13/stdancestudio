@@ -98,10 +98,58 @@ export default function LoginModal({ isOpen, onClose, currentUser, onLogin, lang
   const handleTogglePrizeClaim = (playerId, playerName) => {
     setClaimedPrizes(prev => {
       const nextState = !prev[playerId];
-      const updated = { ...prev, [playerId]: nextState };
+      const updated = {
+        ...prev,
+        [playerId]: nextState,
+        [playerName]: nextState,
+        [playerName.toLowerCase()]: nextState
+      };
       localStorage.setItem('dancing_bricks_claimed_prizes', JSON.stringify(updated));
       setClaimToast(nextState ? `✅ ${playerName}-ის საჩუქარი გაცემულად მოინიშნა!` : `🎁 ${playerName}-ის საჩუქარი გაუცემელზე დაბრუნდა.`);
       setTimeout(() => setClaimToast(null), 3500);
+
+      // Auto-generate voucher in user prizes list if claimed
+      if (nextState) {
+        try {
+          const rawPrizes = localStorage.getItem('dancing_bricks_my_prizes');
+          let prizes = rawPrizes ? JSON.parse(rawPrizes) : [];
+          if (!Array.isArray(prizes)) prizes = [];
+          const existingIdx = prizes.findIndex(p => p.winnerName === playerName || p.playerId === playerId);
+          if (existingIdx !== -1) {
+            prizes[existingIdx].isClaimed = true;
+          } else {
+            prizes.unshift({
+              id: `voucher_claimed_${playerId}`,
+              code: `ST-WIN-${Math.floor(1000 + Math.random() * 9000)}`,
+              prizeName: '-100% ვაუჩერი & ST Dance merch',
+              prizeImg: '/images/prizes/voucher_100.png',
+              winnerName: playerName,
+              playerId: playerId,
+              date: new Date().toLocaleDateString('ka-GE'),
+              isClaimed: true
+            });
+          }
+          localStorage.setItem('dancing_bricks_my_prizes', JSON.stringify(prizes));
+        } catch (e) {}
+
+        // Add to winners history list
+        try {
+          const rawHistory = localStorage.getItem('dancing_bricks_winners_history');
+          let histList = rawHistory ? JSON.parse(rawHistory) : [];
+          if (!Array.isArray(histList)) histList = [];
+          if (!histList.some(h => h.winner === playerName || h.id === playerId)) {
+            histList.unshift({
+              month: 'აგვისტო 2026',
+              winner: playerName,
+              id: playerId,
+              prize: '-100% ვაუჩერი & ST Dance merch',
+              code: `ST-WIN-${Math.floor(1000 + Math.random() * 9000)}`,
+              isClaimed: true
+            });
+            localStorage.setItem('dancing_bricks_winners_history', JSON.stringify(histList));
+          }
+        } catch (e) {}
+      }
 
       // Sync claim state to Supabase Cloud DB
       submitFormAnswer({

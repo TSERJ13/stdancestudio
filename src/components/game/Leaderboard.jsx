@@ -551,36 +551,47 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
         </div>
       )}
 
-      {activeTab === 'history' && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-          {WINNERS_HISTORY.map((h, idx) => (
-            <div
-              key={idx}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                padding: '12px 16px',
-                background: 'rgba(255,255,255,0.03)',
-                borderRadius: '12px',
-                border: '1px solid rgba(255,255,255,0.06)'
-              }}
-            >
-              <div>
-                <div style={{ fontSize: '11px', color: '#a1a1aa', fontWeight: '700' }}>{h.month}</div>
-                <div style={{ fontSize: '14px', fontWeight: '900', color: 'white' }}>{h.winner}</div>
-                <div style={{ fontSize: '12px', color: '#d4a64a', fontWeight: '800' }}>პრიზი: {h.prize}</div>
+      {activeTab === 'history' && (() => {
+        let historyList = WINNERS_HISTORY;
+        try {
+          const raw = localStorage.getItem('dancing_bricks_winners_history');
+          const customHist = raw ? JSON.parse(raw) : [];
+          if (Array.isArray(customHist) && customHist.length > 0) {
+            historyList = [...customHist, ...WINNERS_HISTORY];
+          }
+        } catch (e) {}
+
+        return (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            {historyList.map((h, idx) => (
+              <div
+                key={idx}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '12px 16px',
+                  background: 'rgba(255,255,255,0.03)',
+                  borderRadius: '12px',
+                  border: '1px solid rgba(255,255,255,0.06)'
+                }}
+              >
+                <div>
+                  <div style={{ fontSize: '11px', color: '#a1a1aa', fontWeight: '700' }}>{h.month}</div>
+                  <div style={{ fontSize: '14px', fontWeight: '900', color: 'white' }}>{h.winner}</div>
+                  <div style={{ fontSize: '12px', color: '#d4a64a', fontWeight: '800' }}>პრიზი: {h.prize}</div>
+                </div>
+                <div style={{ textAlign: 'right' }}>
+                  <span style={{ fontSize: '11px', color: '#22c55e', fontWeight: '800', background: 'rgba(34,197,94,0.15)', padding: '2px 8px', borderRadius: '8px' }}>
+                    ✅ {t.deliveredBadge}
+                  </span>
+                  <div style={{ fontSize: '10px', color: '#71717a', marginTop: '4px' }}>{h.code}</div>
+                </div>
               </div>
-              <div style={{ textAlign: 'right' }}>
-                <span style={{ fontSize: '11px', color: '#22c55e', fontWeight: '800', background: 'rgba(34,197,94,0.15)', padding: '2px 8px', borderRadius: '8px' }}>
-                  {t.deliveredBadge}
-                </span>
-                <div style={{ fontSize: '10px', color: '#71717a', marginTop: '4px' }}>{h.code}</div>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
+            ))}
+          </div>
+        );
+      })()}
 
       <SpinModal
         isOpen={showSpinModal}
