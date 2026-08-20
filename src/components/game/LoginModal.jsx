@@ -86,6 +86,48 @@ export default function LoginModal({ isOpen, onClose, currentUser, onLogin, lang
     currentUser?.username?.toLowerCase() === 'stdancestudio' ||
     String(currentUser?.studentId || '').toLowerCase() === 'tg-stdancestudio';
 
+  const [showAdminDashboard, setShowAdminDashboard] = useState(false);
+  const [adminLoading, setAdminLoading] = useState(false);
+  const [adminStats, setAdminStats] = useState({
+    totalPlayersCount: 0,
+    activeLiveCount: 0,
+    totalGamesCount: 0,
+    topLeaderName: '—',
+    players: []
+  });
+
+  const loadAdminAnalytics = async () => {
+    setAdminLoading(true);
+    try {
+      const list = await fetchCloudLeaderboard();
+      const playersList = Array.isArray(list) ? list : [];
+      const totalPlayersCount = playersList.length;
+      const totalGamesCount = playersList.reduce((sum, p) => sum + (p.games || p.total_games || 0), 0);
+      const topLeaderName = playersList[0]?.name || '—';
+
+      const tenMinsAgo = Date.now() - (10 * 60 * 1000);
+      const activeLiveCount = playersList.filter(p => p.updatedAt && new Date(p.updatedAt).getTime() > tenMinsAgo).length || 1;
+
+      setAdminStats({
+        totalPlayersCount,
+        activeLiveCount,
+        totalGamesCount,
+        topLeaderName,
+        players: playersList
+      });
+    } catch (e) {
+      console.warn('Admin analytics fetch failed:', e);
+    } finally {
+      setAdminLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (showAdminDashboard) {
+      loadAdminAnalytics();
+    }
+  }, [showAdminDashboard]);
+
   const [idInput, setIdInput] = useState(() => {
     return localStorage.getItem('dancing_bricks_saved_id') || currentUser?.studentId || '';
   });
