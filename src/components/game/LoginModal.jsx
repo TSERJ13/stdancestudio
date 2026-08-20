@@ -265,8 +265,8 @@ export default function LoginModal({ isOpen, onClose, currentUser, onLogin, lang
                   border: 'none',
                   cursor: 'pointer',
                   display: 'flex',
-                  align-items: 'center',
-                  justify-content: 'center',
+                  alignItems: 'center',
+                  justifyContent: 'center',
                   gap: '8px',
                   marginTop: '10px',
                   boxShadow: '0 4px 14px rgba(212,166,74,0.45)'
