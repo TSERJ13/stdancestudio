@@ -100,9 +100,20 @@ export default function LoginModal({ isOpen, onClose, currentUser, onLogin, lang
     setAdminLoading(true);
     try {
       const list = await fetchCloudLeaderboard();
-      const playersList = Array.isArray(list) ? list : [];
+      let playersList = Array.isArray(list) ? [...list] : [];
+
+      // Sort strictly by score descending (highest score first)
+      playersList.sort((a, b) => {
+        const scoreA = Number(a.score ?? a.high_score ?? a.total_score ?? 0);
+        const scoreB = Number(b.score ?? b.high_score ?? b.total_score ?? 0);
+        if (scoreB !== scoreA) return scoreB - scoreA;
+        const gamesA = Number(a.games ?? a.total_games ?? 0);
+        const gamesB = Number(b.games ?? b.total_games ?? 0);
+        return gamesB - gamesA;
+      });
+
       const totalPlayersCount = playersList.length;
-      const totalGamesCount = playersList.reduce((sum, p) => sum + (p.games || p.total_games || 0), 0);
+      const totalGamesCount = playersList.reduce((sum, p) => sum + Number(p.games ?? p.total_games ?? 0), 0);
       const topLeaderName = playersList[0]?.name || '—';
 
       const tenMinsAgo = Date.now() - (10 * 60 * 1000);
@@ -424,7 +435,7 @@ export default function LoginModal({ isOpen, onClose, currentUser, onLogin, lang
       {/* Exclusive Admin Dashboard Overlay Modal */}
       {showAdminDashboard && createPortal(
         <div className="modal-overlay" style={{ zIndex: 99999 }}>
-          <div className="modal-content glass animate-in" style={{ maxWidth: '450px', width: '94%', maxHeight: '85vh', overflowY: 'auto', padding: '20px' }}>
+          <div className="modal-content glass animate-in" style={{ maxWidth: '450px', width: '94%', maxHeight: '88vh', overflowY: 'auto', padding: '16px', borderRadius: '20px', boxSizing: 'border-box' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px', borderBottom: '1px solid rgba(212,166,74,0.3)', paddingBottom: '10px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <Crown size={22} color="#d4a64a" />
