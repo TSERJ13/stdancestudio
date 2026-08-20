@@ -66,7 +66,23 @@ const lbTranslations = {
   }
 };
 
-export default function Leaderboard({ currentTotalScore, totalGames, playerName, userId, onUpdatePlayerName }) {
+function AvatarImage({ src, alt, fallbackChar }) {
+  const [error, setError] = useState(false);
+  if (!src || error) {
+    return <span style={{ fontWeight: '900', fontSize: '15px' }}>{fallbackChar}</span>;
+  }
+  return (
+    <img
+      src={src}
+      alt={alt}
+      referrerPolicy="no-referrer"
+      onError={() => setError(true)}
+      style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover', display: 'block' }}
+    />
+  );
+}
+
+export default function Leaderboard({ currentTotalScore, totalGames, playerName, userId, photoUrl, onUpdatePlayerName }) {
   const { lang } = useLanguage();
   const t = lbTranslations[lang] || lbTranslations.ka;
   const [cloudList, setCloudList] = useState([]);
@@ -114,6 +130,7 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
     if (isMeIdx !== -1) {
       combinedList[isMeIdx] = {
         ...combinedList[isMeIdx],
+        photoUrl: combinedList[isMeIdx].photoUrl || photoUrl || '',
         score: Math.max(combinedList[isMeIdx].score || 0, displayScore),
         games: Math.max(combinedList[isMeIdx].games || 0, totalGames || 0)
       };
@@ -121,6 +138,7 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
       combinedList.push({
         id: userId || `USER_${playerName}`,
         name: playerName,
+        photoUrl: photoUrl || '',
         score: displayScore,
         games: totalGames || 0,
         avatarBg: '#22c55e'
@@ -351,11 +369,7 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
                   </div>
 
                   <div className="lb-avatar" style={{ background: item.avatarBg, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    {item.photoUrl ? (
-                      <img src={item.photoUrl} alt={item.name} style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} />
-                    ) : (
-                      item.name.charAt(0)
-                    )}
+                    <AvatarImage src={item.photoUrl} alt={item.name} fallbackChar={item.name.charAt(0)} />
                   </div>
 
                   <div className="lb-user-info">

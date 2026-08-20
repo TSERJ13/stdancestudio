@@ -455,6 +455,7 @@ export default function Game() {
                     totalGames={userProfile.totalGames || 0}
                     playerName={userProfile.name || 'Dancer'}
                     userId={userProfile.studentId}
+                    photoUrl={userProfile.photoUrl}
                     onUpdatePlayerName={handleUpdateName}
                   />
                 </ErrorBoundary>
