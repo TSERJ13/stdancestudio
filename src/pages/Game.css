@@ -495,14 +495,16 @@ body.page-game-active {
   margin-top: 6px;
   max-width: 300px;
   line-height: 1.5;
+}
+
 @keyframes slowGreenButtonPulse {
   0%, 100% {
     transform: scale(1);
-    box-shadow: 0 0 16px rgba(34, 197, 94, 0.45), 0 0 30px rgba(34, 197, 94, 0.25);
+    box-shadow: 0 0 16px rgba(34, 197, 94, 0.45), 0 0 28px rgba(34, 197, 94, 0.25);
   }
   50% {
     transform: scale(1.04);
-    box-shadow: 0 0 30px rgba(34, 197, 94, 0.85), 0 0 50px rgba(34, 197, 94, 0.5), inset 0 0 12px rgba(255, 255, 255, 0.35);
+    box-shadow: 0 0 32px rgba(34, 197, 94, 0.85), 0 0 52px rgba(34, 197, 94, 0.5);
   }
 }
 
@@ -510,7 +512,7 @@ body.page-game-active {
   height: 50px;
   padding: 0 28px;
   border-radius: 14px;
-  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+  background: #1db954;
   color: #05060a;
   font-weight: 900;
   font-size: 15px;
@@ -521,14 +523,13 @@ body.page-game-active {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  box-shadow: 0 0 20px rgba(34, 197, 94, 0.45);
+  box-shadow: 0 0 20px rgba(29, 185, 84, 0.45);
   animation: slowGreenButtonPulse 2.8s ease-in-out infinite;
   transition: transform 0.15s;
 }
 
 .game-page-wrap .btn-play-big:active {
   transform: scale(0.96);
-  animation: none;
 }
 
 .game-page-wrap .no-lives-box {
