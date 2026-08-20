@@ -127,8 +127,7 @@ export default function Game() {
     userProfile?.studentId === '99999' ||
     userProfile?.studentId === 'TG-stdancestudio' ||
     (tgUser?.username && tgUser.username.toLowerCase() === 'stdancestudio') ||
-    (userProfile?.name && userProfile.name.toLowerCase().includes('s_t dance studio')) ||
-    (userProfile?.name && userProfile.name.toLowerCase().includes('toka pataraia'));
+    (userProfile?.username && userProfile.username.toLowerCase() === 'stdancestudio');
 
   const availableLives = isTestAccount ? 999 : calculateAvailableLives(livesData);
 
