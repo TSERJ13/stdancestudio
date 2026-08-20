@@ -66,14 +66,24 @@ const lbTranslations = {
   }
 };
 
+function formatAvatarUrl(url) {
+  if (!url) return '';
+  if (url.startsWith('https://t.me/i/userpic/')) {
+    return `https://images.weserv.nl/?url=${encodeURIComponent(url)}`;
+  }
+  return url;
+}
+
 function AvatarImage({ src, alt, fallbackChar }) {
   const [error, setError] = useState(false);
-  if (!src || error) {
-    return <span style={{ fontWeight: '900', fontSize: '15px' }}>{fallbackChar}</span>;
+  const formattedSrc = formatAvatarUrl(src);
+
+  if (!formattedSrc || error) {
+    return <span style={{ fontWeight: '900', fontSize: '15px', color: 'white' }}>{fallbackChar}</span>;
   }
   return (
     <img
-      src={src}
+      src={formattedSrc}
       alt={alt}
       referrerPolicy="no-referrer"
       onError={() => setError(true)}
@@ -123,10 +133,13 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
 
   // Build dynamic leaderboard list
   const displayScore = currentTotalScore || 0;
-  const combinedList = cloudList.filter(item => item.name !== 'Dancer' && item.id !== 'USER_Dancer');
+  const combinedList = cloudList.filter(item => item.name !== 'Dancer' && !String(item.id).startsWith('USER_Dancer'));
 
   if (playerName && playerName !== 'Dancer') {
-    const isMeIdx = combinedList.findIndex(m => (userId && m.id === userId) || m.name === playerName);
+    const isMeIdx = combinedList.findIndex(m =>
+      (userId && m.id === userId) ||
+      (m.name && m.name.trim().toLowerCase() === playerName.trim().toLowerCase())
+    );
     if (isMeIdx !== -1) {
       combinedList[isMeIdx] = {
         ...combinedList[isMeIdx],
@@ -134,9 +147,9 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
         score: Math.max(combinedList[isMeIdx].score || 0, displayScore),
         games: Math.max(combinedList[isMeIdx].games || 0, totalGames || 0)
       };
-    } else {
+    } else if (userId && String(userId).startsWith('TG-')) {
       combinedList.push({
-        id: userId || `USER_${playerName}`,
+        id: userId,
         name: playerName,
         photoUrl: photoUrl || '',
         score: displayScore,
