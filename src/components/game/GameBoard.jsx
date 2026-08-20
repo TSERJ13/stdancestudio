@@ -850,18 +850,18 @@ export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOv
 
         {gameState === 'READY' && (
           <div className="overlay-screen glass">
-            <div className="game-logo" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', margin: '0 auto', transform: 'translateY(-14px)' }}>
+            <div className="game-logo" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', margin: '0 auto', transform: 'translateY(-34px)' }}>
               <img
                 src="/images/dancing_bricks_logo.png"
                 alt="Dancing Bricks"
                 style={{
-                  width: '165px',
+                  width: '160px',
                   height: 'auto',
-                  maxHeight: '165px',
+                  maxHeight: '160px',
                   objectFit: 'contain',
-                  marginBottom: '6px',
+                  marginBottom: '4px',
                   display: 'block',
-                  filter: 'drop-shadow(0 6px 16px rgba(0,0,0,0.6))'
+                  animation: 'slowLogoShimmer 4s ease-in-out infinite'
                 }}
               />
               <h2 style={{
@@ -872,12 +872,12 @@ export default function GameBoard({ tGame, availableLives, onSpendLife, onGameOv
                 background: 'linear-gradient(135deg, #FFF6D6 0%, #F0D9A8 45%, #D4A55A 80%, #A3762B 100%)',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
-                filter: 'drop-shadow(0 2px 10px rgba(212,165,90,0.55))',
+                animation: 'slowGoldGlowPulse 3.5s ease-in-out infinite',
                 margin: '4px 0 6px'
               }}>
                 DANCING BRICKS
               </h2>
-              <p style={{ fontSize: '12px', color: '#cbd5e1', margin: '0 0 10px', maxWidth: '290px', lineHeight: '1.45', fontWeight: '500' }}>
+              <p style={{ fontSize: '12px', color: '#cbd5e1', margin: '0 0 8px', maxWidth: '290px', lineHeight: '1.45', fontWeight: '500' }}>
                 {t.subtitle}
               </p>
             </div>
