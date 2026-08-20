@@ -190,6 +190,18 @@ export default function Game() {
     }
   }, []);
 
+  // Automatically sync current user score & profile to Supabase Cloud on load/change
+  useEffect(() => {
+    if (userProfile?.name) {
+      syncCloudScore({
+        id: userProfile.studentId || `USER_${userProfile.name}`,
+        name: userProfile.name,
+        score: userProfile.totalScore || userProfile.highScore || 0,
+        games: userProfile.totalGames || 0
+      }).catch(() => {});
+    }
+  }, [userProfile.studentId, userProfile.name, userProfile.highScore, userProfile.totalGames, userProfile.totalScore]);
+
   useEffect(() => {
     const interval = setInterval(() => {
       const now = new Date();

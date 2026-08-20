@@ -73,11 +73,16 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
 
   useEffect(() => {
     let isMounted = true;
-    async function loadCloudData() {
+
+    async function refreshCloudData() {
       const fetched = await fetchCloudLeaderboard();
       if (isMounted && Array.isArray(fetched) && fetched.length > 0) {
         setCloudList(fetched);
       }
+    }
+
+    async function initialSync() {
+      await refreshCloudData();
       if (playerName) {
         const synced = await syncCloudScore({
           id: userId || `USER_${playerName}`,
@@ -90,8 +95,14 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
         }
       }
     }
-    loadCloudData();
-    return () => { isMounted = false; };
+
+    initialSync();
+
+    const interval = setInterval(refreshCloudData, 4000);
+    return () => {
+      isMounted = false;
+      clearInterval(interval);
+    };
   }, [playerName, currentTotalScore, totalGames, userId]);
 
   // Build dynamic leaderboard list

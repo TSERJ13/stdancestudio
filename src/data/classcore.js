@@ -329,7 +329,8 @@ export async function syncCloudScore(userEntry) {
     let cloudList = currentStaffData.game_leaderboard || [];
 
     const userId = userEntry.id || `USER_${userEntry.name}`;
-    const existingIdx = cloudList.findIndex(item => item.id === userId || item.name === userEntry.name);
+    // Strictly match by ID first, fallback to exact name ONLY if item has no ID
+    const existingIdx = cloudList.findIndex(item => item.id === userId || (!item.id && item.name === userEntry.name));
 
     const colors = ['#d4a64a', '#6fc3e0', '#b87bde', '#e0764a', '#6fd98f', '#ff4444', '#f472b6', '#fbbf24'];
     const randomColor = colors[Math.abs(userId.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0)) % colors.length];
