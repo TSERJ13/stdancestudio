@@ -116,6 +116,7 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
   const [activeTab, setActiveTab] = useState('ranks');
   const [editingName, setEditingName] = useState(false);
   const [nameInput, setNameInput] = useState(playerName || '');
+  const [showNameModal, setShowNameModal] = useState(false);
   const [showSpinModal, setShowSpinModal] = useState(false);
   const [selectedWinner, setSelectedWinner] = useState('სერგო წივწივაძე');
   const [copiedCode, setCopiedCode] = useState(null);
@@ -186,7 +187,7 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
   const handleSaveName = () => {
     if (nameInput.trim()) {
       onUpdatePlayerName(nameInput.trim());
-      setEditingName(false);
+      setShowNameModal(false);
     }
   };
 
@@ -306,40 +307,15 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
         <>
           <div className="player-profile-bar">
             <span className="profile-lbl">{t.profileLbl}</span>
-            {editingName ? (
-              <div style={{ display: 'flex', gap: '6px', flex: 1, alignItems: 'center' }}>
-                <input
-                  type="text"
-                  value={nameInput}
-                  onChange={e => setNameInput(e.target.value)}
-                  placeholder="სახელი..."
-                  style={{
-                    background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)',
-                    color: 'white', padding: '4px 8px', borderRadius: '6px', fontSize: '12px', outline: 'none', width: '100px', height: '24px', boxSizing: 'border-box'
-                  }}
-                  autoFocus
-                />
-                <button
-                  onClick={handleSaveName}
-                  style={{
-                    background: '#d4a64a', color: '#151100', border: 'none', padding: '0 10px', height: '24px',
-                    borderRadius: '6px', fontSize: '11px', fontWeight: '800', cursor: 'pointer', boxSizing: 'border-box'
-                  }}
-                >
-                  შენახვა
-                </button>
-              </div>
-            ) : (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flex: 1 }}>
-                <span style={{ fontWeight: '800', color: '#F0D9A8', fontSize: '13px' }}>{(playerName || 'Dancer').split(' ')[0]}</span>
-                <button
-                  onClick={() => setEditingName(true)}
-                  style={{ background: 'transparent', border: 'none', color: '#a1a1aa', fontSize: '10px', textDecoration: 'underline', cursor: 'pointer' }}
-                >
-                  შეცვლა
-                </button>
-              </div>
-            )}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flex: 1 }}>
+              <span style={{ fontWeight: '800', color: '#F0D9A8', fontSize: '13px' }}>{(playerName || 'Dancer').split(' ')[0]}</span>
+              <button
+                onClick={() => { setNameInput(playerName || ''); setShowNameModal(true); }}
+                style={{ background: 'transparent', border: 'none', color: '#a1a1aa', fontSize: '10px', textDecoration: 'underline', cursor: 'pointer', padding: 0 }}
+              >
+                შეცვლა
+              </button>
+            </div>
             <div className="my-score-pill">
               <span>{t.highScoreLbl}</span>
               <strong style={{ color: '#d4a64a' }}>{(currentTotalScore || 0).toLocaleString()}</strong>

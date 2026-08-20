@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Play, Trophy, HelpCircle, Share2, Heart, Clock, Sparkles, Award, UserCheck, IdCard, Globe, Gift, FileText } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
-import { PRIZES } from '../components/game/SpinModal';
 import GameBoard from '../components/game/GameBoard';
 import QuizModal from '../components/game/QuizModal';
 import { ErrorBoundary } from '../components/ErrorBoundary';
 import SocialShareModal from '../components/game/SocialShareModal';
 import Leaderboard from '../components/game/Leaderboard';
+import PrizesPage from '../components/game/PrizesPage';
 import LoginModal from '../components/game/LoginModal';
 import { loadLivesData, saveLivesData, calculateAvailableLives, formatTimeUntilReset, getGeorgiaResetTime } from '../utils/livesManager';
 import './Game.css';
@@ -444,29 +444,7 @@ export default function Game() {
               )}
 
               {activeTab === 'prizes' && (
-                <div className="rules-card glass animate-in">
-                  <h2 style={{ fontSize: '16px', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <Gift size={18} color="#d4a64a" /> 
-                    {lang === 'ka' ? 'თვის მთავარი პრიზები' : 'Main Prizes of the Month'}
-                  </h2>
-                  <div className="rules-list">
-                    {PRIZES.map((prize, idx) => (
-                      <div key={idx} className="rule-item" style={{ alignItems: 'center' }}>
-                        <div style={{
-                          width: '40px', height: '40px', borderRadius: '10px', background: '#ffffff',
-                          display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '4px',
-                          border: `1.5px solid ${prize.color || '#d4a64a'}`
-                        }}>
-                          <img src={prize.img} alt={prize.name} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
-                        </div>
-                        <div>
-                          <strong style={{ color: prize.color || '#F0D9A8' }}>{prize.name}</strong>
-                          <p style={{ marginTop: '2px', fontSize: '11px' }}>{prize.desc}</p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
+                <PrizesPage />
               )}
 
               {activeTab === 'rules' && (
