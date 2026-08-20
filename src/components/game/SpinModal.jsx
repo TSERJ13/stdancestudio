@@ -15,8 +15,8 @@ export const PRIZES = [
 
 const modalTranslations = {
   ka: {
-    badgeTitle: 'თვის ბოლოს გათამაშების დოლურა',
-    winnerTitle: (name) => `${name} — თვის გამარჯვებული!`,
+    badgeTitle: 'ყოველი თვის 20 რიცხვის გათამაშება',
+    winnerTitle: (name) => `${name} — 20 რიცხვის გამარჯვებული!`,
     subtitle: 'დაატრიალე დოლურა და მიიღე ST DANCE STUDIO & Danceshop.Ge-ს პრიზი!',
     spinBtn: 'დოლურას დატრიალება',
     spinningText: 'დოლურა ტრიალებს...',
@@ -26,8 +26,8 @@ const modalTranslations = {
     collectBtn: 'ვაუჩერის შენახვა'
   },
   en: {
-    badgeTitle: 'Month-End Prize Wheel',
-    winnerTitle: (name) => `${name} — Winner of the Month!`,
+    badgeTitle: '20th of the Month Prize Wheel',
+    winnerTitle: (name) => `${name} — 20th of the Month Winner!`,
     subtitle: 'Spin the wheel to win a prize from ST Dance Studio & Danceshop.Ge!',
     spinBtn: 'Spin Prize Wheel',
     spinningText: 'Spinning wheel...',
@@ -37,8 +37,8 @@ const modalTranslations = {
     collectBtn: 'Collect Voucher'
   },
   ru: {
-    badgeTitle: 'Колесо призов конца месяца',
-    winnerTitle: (name) => `${name} — Победитель месяца!`,
+    badgeTitle: 'Колесо призов 20-го числа',
+    winnerTitle: (name) => `${name} — Победитель 20-го числа!`,
     subtitle: 'Крутите колесо и получите приз от ST Dance Studio и Danceshop.Ge!',
     spinBtn: 'Крутить колесо',
     spinningText: 'Колесо крутится...',

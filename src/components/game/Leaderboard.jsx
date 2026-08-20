@@ -21,7 +21,7 @@ const WINNERS_HISTORY = [
 const lbTranslations = {
   ka: {
     title: 'ლიდერბორდი',
-    subtitle: 'თვის გამარჯვებლები & Danceshop.Ge ვაუჩერები',
+    subtitle: '20 რიცხვის გამარჯვებლები & Danceshop.Ge ვაუჩერები',
     spinBtn: 'დოლურა',
     ranksTab: 'რანგები',
     myPrizesTab: (count) => `ვაუჩერი (${count})`,
@@ -39,7 +39,7 @@ const lbTranslations = {
   },
   en: {
     title: 'Leaderboard',
-    subtitle: 'Monthly winners & Danceshop.Ge Vouchers',
+    subtitle: '20th Winners & Danceshop.Ge Vouchers',
     spinBtn: 'Spin Wheel',
     ranksTab: 'Ranks',
     myPrizesTab: (count) => `Voucher (${count})`,
@@ -57,7 +57,7 @@ const lbTranslations = {
   },
   ru: {
     title: 'Лидерборд',
-    subtitle: 'Победители месяца и ваучеры Danceshop.Ge',
+    subtitle: 'Победители 20-го числа и ваучеры Danceshop.Ge',
     spinBtn: 'Колесо',
     ranksTab: 'Рейтинг',
     myPrizesTab: (count) => `Ваучер (${count})`,
