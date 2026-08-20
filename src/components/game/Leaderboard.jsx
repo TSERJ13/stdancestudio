@@ -12,17 +12,17 @@ const WINNERS_HISTORY = [];
 const lbTranslations = {
   ka: {
     title: 'ლიდერბორდი',
-    subtitle: '20 რიცხვის გამარჯვებლები & Danceshop.Ge ვაუჩერები',
+    subtitle: '20 რიცხვის გამარჯვებულები & My Prize',
     spinBtn: 'დოლურა',
     ranksTab: 'რანგები',
-    myPrizesTab: (count) => `ვაუჩერი (${count})`,
+    myPrizesTab: (count) => count > 0 ? `My Prize (${count})` : 'My Prize',
     historyTab: 'ისტორია',
     profileLbl: 'პროფაილი:',
     highScoreLbl: 'ჯამური ქულა: ',
     collectBtn: 'პრიზი',
     activeBadge: 'აქტიური',
     deliveredBadge: 'გადაცემული',
-    emptyVouchers: 'ჯერ არ გაქვს ვაუჩერი. გახდი #1!',
+    emptyVouchers: 'დაიკავე #1 ადგილი 20 რიცხვში და დაატრიალე ST Dance-ის პრიზები!',
     copyCode: 'კოდის კოპირება',
     copiedText: 'დაკოპირდა!',
     pts: 'ქულა',
@@ -30,17 +30,17 @@ const lbTranslations = {
   },
   en: {
     title: 'Leaderboard',
-    subtitle: '20th Winners & Danceshop.Ge Vouchers',
+    subtitle: '20th Winners & My Prize',
     spinBtn: 'Spin Wheel',
     ranksTab: 'Ranks',
-    myPrizesTab: (count) => `Voucher (${count})`,
+    myPrizesTab: (count) => count > 0 ? `My Prize (${count})` : 'My Prize',
     historyTab: 'History',
     profileLbl: 'Profile:',
     highScoreLbl: 'Total Score: ',
     collectBtn: 'Collect',
     activeBadge: 'ACTIVE',
     deliveredBadge: 'Delivered',
-    emptyVouchers: 'No vouchers yet. Become #1 rank winner!',
+    emptyVouchers: 'Secure #1 rank on the 20th to spin exclusive ST Dance prizes!',
     copyCode: 'Copy Code',
     copiedText: 'Copied!',
     pts: 'pts',
@@ -48,17 +48,17 @@ const lbTranslations = {
   },
   ru: {
     title: 'Лидерборд',
-    subtitle: 'Победители 20-го числа и ваучеры Danceshop.Ge',
+    subtitle: 'Победители 20-го числа и My Prize',
     spinBtn: 'Колесо',
     ranksTab: 'Рейтинг',
-    myPrizesTab: (count) => `Ваучер (${count})`,
+    myPrizesTab: (count) => count > 0 ? `My Prize (${count})` : 'My Prize',
     historyTab: 'История',
     profileLbl: 'Профиль:',
     highScoreLbl: 'Общ. счет: ',
     collectBtn: 'Забрать',
     activeBadge: 'АКТИВЕН',
     deliveredBadge: 'Выдано',
-    emptyVouchers: 'Ваучеров нет. Займите 1-е место!',
+    emptyVouchers: 'Займите 1-е место 20-го числа и выиграйте призы ST Dance!',
     copyCode: 'Скопировать код',
     copiedText: 'Скопировано!',
     pts: 'очк.',
@@ -461,24 +461,22 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
                       <button
                         onClick={() => openSpinForWinner(item.name)}
                         style={{
-                          padding: '3px 8px',
+                          padding: '4px 10px',
                           borderRadius: '8px',
-                          background: countdownState.isUnlocked ? 'linear-gradient(135deg, #22c55e, #16a34a)' : 'rgba(212,166,74,0.15)',
-                          border: countdownState.isUnlocked ? 'none' : '1px solid rgba(212,166,74,0.4)',
-                          color: countdownState.isUnlocked ? 'white' : '#F0D9A8',
+                          background: 'linear-gradient(135deg, #d4a64a 0%, #22c55e 100%)',
+                          border: 'none',
+                          color: '#05060a',
                           fontWeight: '900',
-                          fontSize: '10px',
+                          fontSize: '11px',
                           cursor: 'pointer',
                           display: 'flex',
                           alignItems: 'center',
                           gap: '4px',
-                          boxShadow: countdownState.isUnlocked ? '0 2px 8px rgba(34, 197, 94, 0.4)' : 'none'
+                          boxShadow: '0 3px 10px rgba(34, 197, 94, 0.45)'
                         }}
                       >
-                        <Trophy size={11} color={countdownState.isUnlocked ? '#ffffff' : '#d4a64a'} />
-                        {countdownState.isUnlocked
-                          ? (lang === 'ka' ? 'პრიზი' : 'Prize')
-                          : (lang === 'ka' ? '#1 ლიდერი' : '#1 Lead')}
+                        <Trophy size={12} color="#05060a" />
+                        🎰 {lang === 'ka' ? 'დაატრიალე (Spin)' : 'Spin Wheel'}
                       </button>
                     ) : (
                       <span className="lb-games">{item.games} {t.games}</span>
@@ -494,8 +492,33 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
       {activeTab === 'my_prizes' && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
           {myVouchers.length === 0 ? (
-            <div style={{ padding: '30px', textAlign: 'center', color: '#a1a1aa', fontSize: '13px' }}>
-              {t.emptyVouchers}
+            <div style={{ padding: '24px 16px', textAlign: 'center', background: 'rgba(212,166,74,0.08)', borderRadius: '16px', border: '1px solid rgba(212,166,74,0.25)' }}>
+              <Gift size={36} color="#d4a64a" style={{ margin: '0 auto 10px' }} />
+              <h4 style={{ color: '#F0D9A8', fontSize: '15px', fontWeight: '900', margin: '0 0 6px' }}>
+                {lang === 'ka' ? 'შენი პრიზი ელოდება დატრიალებას!' : 'Your Prize is Waiting to be Spun!'}
+              </h4>
+              <p style={{ color: '#a1a1aa', fontSize: '12px', margin: '0 0 16px', lineHeight: '1.4' }}>
+                {t.emptyVouchers}
+              </p>
+              <button
+                onClick={() => openSpinForWinner(playerName)}
+                style={{
+                  padding: '10px 20px',
+                  borderRadius: '12px',
+                  background: 'linear-gradient(135deg, #d4a64a 0%, #22c55e 100%)',
+                  border: 'none',
+                  color: '#05060a',
+                  fontWeight: '900',
+                  fontSize: '13px',
+                  cursor: 'pointer',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  boxShadow: '0 4px 14px rgba(34, 197, 94, 0.4)'
+                }}
+              >
+                🎰 {lang === 'ka' ? 'დაატრიალე პრიზი (Spin)' : 'Spin Wheel Now'}
+              </button>
             </div>
           ) : (
             myVouchers.map((v) => (

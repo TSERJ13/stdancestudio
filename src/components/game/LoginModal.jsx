@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { User, ShieldCheck, CheckCircle2, IdCard, LogIn, KeyRound, Loader2, Sparkles, X, Trophy, Flame, PlayCircle, Crown, Users, Radio, RefreshCw, BarChart2 } from 'lucide-react';
-import { fetchStudioData, getStudentName, fetchCloudLeaderboard } from '../../data/classcore';
+import { fetchStudioData, getStudentName, fetchCloudLeaderboard, submitFormAnswer } from '../../data/classcore';
 
 const STUDENT_ID_MAP = {
   '101': 'სერგო წივწივაძე (Head Coach)',
