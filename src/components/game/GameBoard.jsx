@@ -883,6 +883,7 @@ export default function GameBoard({ tGame, lang = 'ka', availableLives, onSpendL
                   objectFit: 'contain',
                   marginBottom: '2px',
                   display: 'block',
+                  filter: 'none',
                   animation: 'slowGreenButtonPulse 4.2s ease-in-out infinite'
                 }}
               />
