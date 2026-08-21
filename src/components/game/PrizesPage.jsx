@@ -330,13 +330,13 @@ export default function PrizesPage() {
       <div style={{ width: '100%', maxWidth: '340px', marginTop: '14px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
         <div style={{ fontSize: '13px', fontWeight: '900', color: '#F0D9A8', display: 'flex', alignItems: 'center', gap: '6px', borderBottom: '1px solid rgba(212,166,74,0.3)', paddingBottom: '6px' }}>
           <Trophy size={16} color="#d4a64a" />
-          <span>{lang === 'ka' ? 'გამარჯვებულების ისტორია' : 'Winners History'}</span>
+          <span>{lang === 'ka' ? 'გამარჯვებულების ისტორია' : lang === 'ru' ? 'История победителей' : 'Winners History'}</span>
         </div>
 
         {/* Winners History Cards */}
         {recentWinners.length === 0 ? (
           <div style={{ textAlign: 'center', color: '#a1a1aa', fontSize: '12px', padding: '16px 12px', fontWeight: '700', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', border: '1px dashed rgba(212,166,74,0.3)' }}>
-            🏆 {lang === 'ka' ? 'ჯერ არავის მოუგია. იყავი პირველი 20 რიცხვში!' : 'No winners yet. Be the first on the 20th!'}
+            🏆 {lang === 'ka' ? 'ჯერ არავის მოუგია. იყავი პირველი 20 რიცხვში!' : lang === 'ru' ? 'Никто еще не выиграл. Будьте первыми 20-го числа!' : 'No winners yet. Be the first on the 20th!'}
           </div>
         ) : (
           recentWinners.map((w, idx) => (
@@ -359,12 +359,12 @@ export default function PrizesPage() {
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px', borderBottom: '1px solid rgba(255,255,255,0.08)', paddingBottom: '8px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', color: '#F0D9A8', fontWeight: '900', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                   <Calendar size={13} color="#d4a64a" />
-                  <span>{w.month || (lang === 'ka' ? 'გათამაშება' : 'Draw')}</span>
+                  <span>{w.month || (lang === 'ka' ? 'გათამაშება' : lang === 'ru' ? 'Розыгрыш' : 'Draw')}</span>
                 </div>
 
                 <span style={{ fontSize: '10px', color: '#4ADE80', background: 'rgba(34,197,94,0.18)', border: '1px solid #22c55e', padding: '3px 8px', borderRadius: '8px', fontWeight: '900', display: 'inline-flex', alignItems: 'center', gap: '4px', whiteSpace: 'nowrap' }}>
                   <CheckCircle2 size={11} color="#4ADE80" />
-                  {lang === 'ka' ? 'გადაცემულია' : 'Delivered'}
+                  {lang === 'ka' ? 'გადაცემულია' : lang === 'ru' ? 'Выдано' : 'Delivered'}
                 </span>
               </div>
 
@@ -381,7 +381,7 @@ export default function PrizesPage() {
 
                 <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', color: '#FFD700', fontWeight: '900', background: 'rgba(255,215,0,0.12)', padding: '4px 10px', borderRadius: '10px', border: '1px solid rgba(255,215,0,0.3)', flexShrink: 0 }}>
                   <Award size={13} color="#FFD700" />
-                  <span>{w.score ? `${Number(w.score).toLocaleString()} ქულა` : (w.scoreStr || '—')}</span>
+                  <span>{w.score ? `${Number(w.score).toLocaleString()} ${lang === 'ka' ? 'ქულა' : lang === 'ru' ? 'очк.' : 'pts'}` : (w.scoreStr || '—')}</span>
                 </div>
               </div>
 
@@ -396,7 +396,7 @@ export default function PrizesPage() {
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1px', flex: 1, minWidth: 0, textAlign: 'left' }}>
                   <div style={{ fontSize: '10px', color: '#a1a1aa', fontWeight: '700' }}>
-                    🎁 {lang === 'ka' ? 'მოგებული პრიზი:' : 'Prize Won:'}
+                    🎁 {lang === 'ka' ? 'მოგებული პრიზი:' : lang === 'ru' ? 'Выигранный приз:' : 'Prize Won:'}
                   </div>
                   <div style={{ fontSize: '12px', color: '#F0D9A8', fontWeight: '900', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {w.prize || '-100% ვაუჩერი & ST Dance merch'}
