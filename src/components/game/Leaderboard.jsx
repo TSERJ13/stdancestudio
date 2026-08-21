@@ -478,16 +478,15 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
           <div className="lb-list">
             {rankedList.map((item) => {
               const isWinner = item.rank === 1;
-              const isMeWinner = isWinner && ((userId && item.id === userId) || (playerName && item.name && item.name.trim().toLowerCase() === playerName.trim().toLowerCase()));
 
               return (
                 <div
                   key={item.id}
                   className={`lb-row ${item.name === playerName ? 'is-me' : ''}`}
                   style={isWinner ? {
-                    background: 'linear-gradient(135deg, rgba(212,166,74,0.2) 0%, rgba(212,166,74,0.06) 100%)',
-                    border: '1.5px solid rgba(212,166,74,0.65)',
-                    boxShadow: '0 4px 18px rgba(212,166,74,0.25)',
+                    background: 'linear-gradient(135deg, rgba(212,166,74,0.22) 0%, rgba(212,166,74,0.06) 100%)',
+                    border: '1.5px solid rgba(255,215,0,0.7)',
+                    boxShadow: '0 4px 20px rgba(212,166,74,0.3)',
                     borderRadius: '14px',
                     position: 'relative'
                   } : {}}
@@ -496,31 +495,24 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
                     #{item.rank}
                   </div>
 
-                  <div className="lb-avatar" style={{ background: item.avatarBg, overflow: 'visible', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <div className="lb-avatar" style={{ background: item.avatarBg, overflow: 'visible', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: isWinner ? '0 0 12px rgba(255,215,0,0.6)' : 'none' }}>
                     {isWinner && (
                       <div style={{
                         position: 'absolute',
-                        top: '-11px',
+                        top: '-14px',
                         left: '50%',
-                        transform: 'translateX(-50%) rotate(-12deg)',
+                        transform: 'translateX(-50%) rotate(-10deg)',
                         zIndex: 10,
-                        filter: 'drop-shadow(0 2px 6px rgba(212,166,74,0.9))'
+                        filter: 'drop-shadow(0 3px 8px rgba(255,215,0,0.95))'
                       }}>
-                        <Crown size={17} color="#FFD700" fill="#FFD700" />
+                        <Crown size={22} color="#FFD700" fill="#FFD700" />
                       </div>
                     )}
                     <AvatarImage src={item.photoUrl} alt={item.name} fallbackChar={item.name.charAt(0)} />
                   </div>
 
                   <div className="lb-user-info">
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '5px', flexWrap: 'wrap' }}>
-                      <span className="lb-name" style={{ color: isWinner ? '#F0D9A8' : 'white', fontWeight: isWinner ? '900' : '700' }}>{item.name}</span>
-                      {isWinner && (
-                        <span style={{ fontSize: '9.5px', color: '#05060a', background: 'linear-gradient(135deg, #FFD700 0%, #d4a64a 100%)', padding: '1.5px 7px', borderRadius: '10px', fontWeight: '900', boxShadow: '0 2px 6px rgba(212,166,74,0.4)', whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
-                          {t.prizeSpot}
-                        </span>
-                      )}
-                    </div>
+                    <span className="lb-name" style={{ color: isWinner ? '#F0D9A8' : 'white', fontWeight: isWinner ? '900' : '700' }}>{item.name}</span>
                     <span className="lb-badge">ID: {item.id}</span>
                   </div>
 
@@ -529,11 +521,11 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
                       {item.score.toLocaleString()} {t.pts}
                     </span>
                     {isWinner ? (
-                      isMeWinner ? (
+                      countdownState.isUnlocked ? (
                         <button
                           onClick={() => openSpinForWinner(item.name)}
                           style={{
-                            padding: '4px 10px',
+                            padding: '5px 12px',
                             borderRadius: '8px',
                             background: 'linear-gradient(135deg, #d4a64a 0%, #22c55e 100%)',
                             border: 'none',
@@ -548,11 +540,11 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
                           }}
                         >
                           <Trophy size={13} color="#05060a" />
-                          {lang === 'ka' ? 'დაატრიალე' : 'Spin Wheel'}
+                          {lang === 'ka' ? 'დაატრიალე' : lang === 'ru' ? 'Колесо' : 'Spin Wheel'}
                         </button>
                       ) : (
-                        <span style={{ fontSize: '10.5px', color: '#d4a64a', fontWeight: '800', background: 'rgba(212,166,74,0.15)', padding: '2px 7px', borderRadius: '6px', border: '1px solid rgba(212,166,74,0.3)' }}>
-                          🏆 {lang === 'ka' ? '#1 ადგილი' : lang === 'ru' ? '#1 Место' : '#1 Rank'}
+                        <span style={{ fontSize: '10.5px', color: '#05060a', background: 'linear-gradient(135deg, #FFD700 0%, #d4a64a 100%)', padding: '2.5px 8px', borderRadius: '8px', fontWeight: '900', boxShadow: '0 2px 8px rgba(212,166,74,0.45)', whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
+                          {t.prizeSpot}
                         </span>
                       )
                     ) : (
