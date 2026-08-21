@@ -484,28 +484,27 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
                   key={item.id}
                   className={`lb-row ${item.name === playerName ? 'is-me' : ''}`}
                   style={isWinner ? {
-                    background: 'linear-gradient(135deg, rgba(212,166,74,0.22) 0%, rgba(212,166,74,0.06) 100%)',
-                    border: '1.5px solid rgba(255,215,0,0.7)',
-                    boxShadow: '0 4px 20px rgba(212,166,74,0.3)',
+                    background: 'rgba(212, 166, 74, 0.07)',
+                    border: '1px solid rgba(212, 166, 74, 0.35)',
                     borderRadius: '14px',
                     position: 'relative'
                   } : {}}
                 >
-                  <div className="lb-rank" style={{ color: isWinner ? '#FFD700' : item.rank === 2 ? '#6fc3e0' : item.rank === 3 ? '#b87bde' : '#a1a1aa', fontWeight: isWinner ? '900' : '700' }}>
+                  <div className="lb-rank" style={{ color: isWinner ? '#d4a64a' : item.rank === 2 ? '#6fc3e0' : item.rank === 3 ? '#b87bde' : '#a1a1aa', fontWeight: isWinner ? '900' : '700' }}>
                     #{item.rank}
                   </div>
 
-                  <div className="lb-avatar" style={{ background: item.avatarBg, overflow: 'visible', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: isWinner ? '0 0 12px rgba(255,215,0,0.6)' : 'none' }}>
+                  <div className="lb-avatar" style={{ background: item.avatarBg, overflow: 'visible', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     {isWinner && (
                       <div style={{
                         position: 'absolute',
-                        top: '-14px',
+                        top: '-18px',
                         left: '50%',
-                        transform: 'translateX(-50%) rotate(-10deg)',
+                        transform: 'translateX(-50%)',
                         zIndex: 10,
-                        filter: 'drop-shadow(0 3px 8px rgba(255,215,0,0.95))'
+                        pointerEvents: 'none'
                       }}>
-                        <Crown size={22} color="#FFD700" fill="#FFD700" />
+                        <Crown size={26} color="#ffd700" fill="#ffd700" />
                       </div>
                     )}
                     <AvatarImage src={item.photoUrl} alt={item.name} fallbackChar={item.name.charAt(0)} />
@@ -517,7 +516,7 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
                   </div>
 
                   <div className="lb-score-col" style={{ zIndex: 1, display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '4px' }}>
-                    <span className="lb-score" style={{ color: isWinner ? '#FFD700' : 'white', fontWeight: '900' }}>
+                    <span className="lb-score" style={{ color: isWinner ? '#d4a64a' : 'white', fontWeight: '900' }}>
                       {item.score.toLocaleString()} {t.pts}
                     </span>
                     {isWinner ? (
@@ -543,7 +542,7 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
                           {lang === 'ka' ? 'დაატრიალე' : lang === 'ru' ? 'Колесо' : 'Spin Wheel'}
                         </button>
                       ) : (
-                        <span style={{ fontSize: '10.5px', color: '#05060a', background: 'linear-gradient(135deg, #FFD700 0%, #d4a64a 100%)', padding: '2.5px 8px', borderRadius: '8px', fontWeight: '900', boxShadow: '0 2px 8px rgba(212,166,74,0.45)', whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
+                        <span style={{ fontSize: '10.5px', color: '#F0D9A8', background: 'rgba(212,166,74,0.12)', border: '1px solid rgba(212,166,74,0.3)', padding: '2.5px 8px', borderRadius: '8px', fontWeight: '800', whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
                           {t.prizeSpot}
                         </span>
                       )
