@@ -29,7 +29,7 @@ export default async function handler(req, res) {
           `🏆 <b>როგორ მივიღოთ მონაწილეობა:</b>\n` +
           `• ითამაშე <b>Dancing Bricks</b> და დააგროვე მაღალი ქულები.\n` +
           `• ყოველთვიურად, 20 რიცხვის 22:00 საათზე #1 ადგილოსანს ეძლევა ST Dance Studio & Danceshop.Ge-ს ექსკლუზიური საჩუქრებისა და ვაუჩერების მოგების შანსი!\n\n` +
-          `დააჭირე ქვემოთ ღილაკს <b>▶️ ეთამაშე / Play</b> და დაიწყე თამაში! 🚀`;
+          `დააჭირე ქვემოთ ღილაკს <b>▶️ Play Now</b> და დაიწყე თამაში! 🚀`;
 
         const telegramApiUrl = `https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`;
 
@@ -45,7 +45,7 @@ export default async function handler(req, res) {
               inline_keyboard: [
                 [
                   {
-                    text: '▶️ ეთამაშე / Play',
+                    text: '▶️ Play Now',
                     web_app: { url: GAME_WEBAPP_URL }
                   }
                 ]
