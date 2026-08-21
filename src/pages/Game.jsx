@@ -14,6 +14,17 @@ import { loadLivesData, saveLivesData, calculateAvailableLives, formatTimeUntilR
 import './Game.css';
 
 export function loadSavedUserProfile() {
+  try {
+    if (localStorage.getItem('dancing_bricks_reset_v5') !== 'true') {
+      localStorage.removeItem('dancing_bricks_lb_cache');
+      localStorage.removeItem('dancing_bricks_claimed_prizes');
+      localStorage.removeItem('dancing_bricks_my_prizes');
+      localStorage.removeItem('dancing_bricks_winners_history');
+      localStorage.removeItem('dancing_bricks_user_profile');
+      localStorage.setItem('dancing_bricks_reset_v5', 'true');
+    }
+  } catch (e) {}
+
   let saved = null;
   try {
     const raw = localStorage.getItem('dancing_bricks_user_profile');
@@ -27,12 +38,12 @@ export function loadSavedUserProfile() {
     name: sanitized?.name || saved?.name || localStorage.getItem('dancing_bricks_player_name') || 'Dancer',
     studentId: sanitized?.studentId || saved?.studentId || localStorage.getItem('dancing_bricks_saved_id') || '',
     isLoggedIn: sanitized?.isLoggedIn ?? saved?.isLoggedIn ?? !!localStorage.getItem('dancing_bricks_saved_id'),
-    highScore: sanitized?.highScore || 0,
-    totalScore: sanitized?.totalScore || 0,
-    totalGames: sanitized?.totalGames || 0,
-    monthlyHighScore: sanitized?.monthlyHighScore || 0,
-    monthlyTotalScore: sanitized?.monthlyTotalScore || 0,
-    monthlyGames: sanitized?.monthlyGames || 0,
+    highScore: 0,
+    totalScore: 0,
+    totalGames: 0,
+    monthlyHighScore: 0,
+    monthlyTotalScore: 0,
+    monthlyGames: 0,
     seasonKey: sanitized?.seasonKey
   };
 
