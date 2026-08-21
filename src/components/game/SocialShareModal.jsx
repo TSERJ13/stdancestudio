@@ -58,6 +58,14 @@ export default function SocialShareModal({ isOpen, onClose, onUnlockShareLife, h
   const [timerSeconds, setTimerSeconds] = useState(60);
 
   useEffect(() => {
+    if (isOpen) {
+      setCopied(false);
+      setVerifying(false);
+      setTimerSeconds(60);
+    }
+  }, [isOpen]);
+
+  useEffect(() => {
     let interval = null;
     if (verifying && timerSeconds > 0) {
       interval = setInterval(() => {
