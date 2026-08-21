@@ -42,7 +42,39 @@
     <title>ST Dance Studio | Batumi, E. Takaishvili 55</title>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <!-- Instant Custom Preloader while Vite/React bundle loads -->
+      <div id="app-preloader" style="
+        position: fixed;
+        inset: 0;
+        background: #090a0f;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 99999;
+        font-family: system-ui, -apple-system, sans-serif;
+      ">
+        <style>
+          @keyframes pulseGlow {
+            0%, 100% { transform: scale(1); filter: drop-shadow(0 0 15px rgba(212,166,74,0.4)); }
+            50% { transform: scale(1.04); filter: drop-shadow(0 0 28px rgba(212,166,74,0.85)); }
+          }
+          @keyframes barLoad {
+            0% { width: 0%; }
+            50% { width: 70%; }
+            100% { width: 100%; }
+          }
+        </style>
+        <div style="position: relative; margin-bottom: 24px; animation: pulseGlow 2s infinite ease-in-out;">
+          <img src="/images/dancing_bricks_logo.png" alt="Dancing Bricks" style="width: 140px; height: auto; display: block; border-radius: 20px;" />
+        </div>
+        <div style="width: 160px; height: 4px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden;">
+          <div style="height: 100%; background: linear-gradient(90deg, #d4a64a, #f0d9a8); border-radius: 10px; animation: barLoad 1.5s infinite ease-in-out;"></div>
+        </div>
+        <span style="color: #a1a1aa; font-size: 11px; font-weight: 700; letter-spacing: 2px; margin-top: 14px; text-transform: uppercase;">LOADING...</span>
+      </div>
+    </div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
