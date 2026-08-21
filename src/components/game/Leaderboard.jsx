@@ -329,12 +329,19 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
   };
 
   const openSpinForWinner = (name) => {
+    const currentWinner = rankedList.find(item => item.rank === 1);
+    const isUserFirstPlace = currentWinner && (
+      (userId && currentWinner.id === userId) ||
+      (playerName && currentWinner.name && currentWinner.name.trim().toLowerCase() === playerName.trim().toLowerCase())
+    );
+
+    if (!isUserFirstPlace) {
+      alert(lang === 'ka' ? 'მხოლოდ 1-ელ ადგილზე გასულ მოთამაშეს შეუძლია პრიზის დატრიალება!' : lang === 'ru' ? 'Только игрок на 1-м месте может вращать колесо!' : 'Only the 1st place winner can spin the wheel!');
+      return;
+    }
+
     if (countdownState.isUnlocked) {
-      if (!playerName || (playerName !== name && !name.includes(playerName))) {
-        alert(lang === 'ka' ? 'მხოლოდ 1-ელ ადგილზე გასულ მოთამაშეს შეუძლია პრიზის დატრიალება!' : 'Only the 1st place winner can spin the wheel!');
-        return;
-      }
-      setSelectedWinner(name);
+      setSelectedWinner(currentWinner ? currentWinner.name : (name || playerName));
       setShowSpinModal(true);
     } else {
       setShowCountdownModal(true);
@@ -468,6 +475,8 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
           <div className="lb-list">
             {rankedList.map((item) => {
               const isWinner = item.rank === 1;
+              const isMeWinner = isWinner && ((userId && item.id === userId) || (playerName && item.name && item.name.trim().toLowerCase() === playerName.trim().toLowerCase()));
+
               return (
                 <div key={item.id} className={`lb-row ${item.name === playerName ? 'is-me' : ''}`}>
                   <div className="lb-rank" style={{ color: isWinner ? '#d4a64a' : item.rank === 2 ? '#6fc3e0' : item.rank === 3 ? '#b87bde' : '#a1a1aa' }}>
@@ -488,26 +497,32 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
                       {item.score.toLocaleString()} {t.pts}
                     </span>
                     {isWinner ? (
-                      <button
-                        onClick={() => openSpinForWinner(item.name)}
-                        style={{
-                          padding: '4px 10px',
-                          borderRadius: '8px',
-                          background: 'linear-gradient(135deg, #d4a64a 0%, #22c55e 100%)',
-                          border: 'none',
-                          color: '#05060a',
-                          fontWeight: '900',
-                          fontSize: '11px',
-                          cursor: 'pointer',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '4px',
-                          boxShadow: '0 3px 10px rgba(34, 197, 94, 0.45)'
-                        }}
-                      >
-                        <Trophy size={13} color="#05060a" />
-                        {lang === 'ka' ? 'დაატრიალე' : 'Spin Wheel'}
-                      </button>
+                      isMeWinner ? (
+                        <button
+                          onClick={() => openSpinForWinner(item.name)}
+                          style={{
+                            padding: '4px 10px',
+                            borderRadius: '8px',
+                            background: 'linear-gradient(135deg, #d4a64a 0%, #22c55e 100%)',
+                            border: 'none',
+                            color: '#05060a',
+                            fontWeight: '900',
+                            fontSize: '11px',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '4px',
+                            boxShadow: '0 3px 10px rgba(34, 197, 94, 0.45)'
+                          }}
+                        >
+                          <Trophy size={13} color="#05060a" />
+                          {lang === 'ka' ? 'დაატრიალე' : 'Spin Wheel'}
+                        </button>
+                      ) : (
+                        <span style={{ fontSize: '10.5px', color: '#d4a64a', fontWeight: '800', background: 'rgba(212,166,74,0.15)', padding: '2px 7px', borderRadius: '6px', border: '1px solid rgba(212,166,74,0.3)' }}>
+                          🏆 {lang === 'ka' ? '#1 ადგილი' : lang === 'ru' ? '#1 Место' : '#1 Rank'}
+                        </span>
+                      )
                     ) : (
                       <span className="lb-games">{item.games} {t.games}</span>
                     )}

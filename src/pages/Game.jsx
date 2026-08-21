@@ -328,16 +328,31 @@ export default function Game() {
   const handleGameOver = (score) => {
     setUserProfile(prev => {
       const sanitized = sanitizeSeasonalProfile(prev);
+      const newTotal = (sanitized.monthlyTotalScore || sanitized.totalScore || 0) + score;
+      const newHigh = Math.max(sanitized.monthlyHighScore || sanitized.highScore || 0, score);
+      const newGames = (sanitized.monthlyGames || sanitized.totalGames || 0) + 1;
+
       const updated = {
         ...sanitized,
-        totalGames: (sanitized.totalGames || 0) + 1,
-        monthlyGames: (sanitized.monthlyGames || 0) + 1,
-        highScore: Math.max(sanitized.highScore || 0, score),
-        monthlyHighScore: Math.max(sanitized.monthlyHighScore || 0, score),
-        totalScore: (sanitized.totalScore || 0) + score,
-        monthlyTotalScore: (sanitized.monthlyTotalScore || 0) + score
+        totalGames: newGames,
+        monthlyGames: newGames,
+        highScore: newHigh,
+        monthlyHighScore: newHigh,
+        totalScore: newTotal,
+        monthlyTotalScore: newTotal
       };
       localStorage.setItem('dancing_bricks_user_profile', JSON.stringify(updated));
+
+      if (updated.studentId && (String(updated.studentId).startsWith('TG-') || String(updated.studentId).startsWith('ST-'))) {
+        syncCloudScore({
+          id: updated.studentId,
+          name: updated.name,
+          photoUrl: updated.photoUrl || '',
+          score: newTotal,
+          games: newGames
+        }).catch(() => {});
+      }
+
       return updated;
     });
 

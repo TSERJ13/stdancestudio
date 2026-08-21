@@ -508,12 +508,14 @@ export default function GameBoard({ tGame, lang = 'ka', availableLives, onSpendL
 
         if (b.specialType && stLogoImgRef.current) {
           const img = stLogoImgRef.current;
-          const imgW = b.w * 0.85;
-          const imgH = b.h * 0.85;
-          const imgX = b.x + (b.w - imgW) / 2;
-          const imgY = b.y + (b.h - imgH) / 2;
+          // Preserve 1:1 aspect ratio so logo is never squished or distorted!
+          const logoSide = Math.min(b.w, b.h) * 0.82;
+          const imgX = b.x + (b.w - logoSide) / 2;
+          const imgY = b.y + (b.h - logoSide) / 2;
 
-          ctx.drawImage(img, imgX, imgY, imgW, imgH);
+          ctx.imageSmoothingEnabled = true;
+          ctx.imageSmoothingQuality = 'high';
+          ctx.drawImage(img, imgX, imgY, logoSide, logoSide);
         } else {
           ctx.fillStyle = style.t;
           ctx.font = '700 ' + Math.round(engine.cell * 0.3) + 'px sans-serif';
