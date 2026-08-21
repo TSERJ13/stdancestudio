@@ -883,7 +883,7 @@ export default function GameBoard({ tGame, lang = 'ka', availableLives, onSpendL
                   objectFit: 'contain',
                   marginBottom: '2px',
                   display: 'block',
-                  animation: 'slowGreenButtonPulse 2.5s ease-in-out infinite'
+                  animation: 'logoPulseGlow 2.2s ease-in-out infinite'
                 }}
               />
               <h2 style={{

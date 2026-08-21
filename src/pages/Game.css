@@ -592,6 +592,17 @@ body.page-game-active {
   }
 }
 
+@keyframes logoPulseGlow {
+  0%, 100% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 8px rgba(212,166,74,0.3));
+  }
+  50% {
+    transform: scale(1.07);
+    filter: drop-shadow(0 0 22px rgba(212,166,74,0.85));
+  }
+}
+
 .game-page-wrap .btn-play-big {
   height: 50px;
   padding: 0 28px;
