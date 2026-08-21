@@ -330,9 +330,8 @@ export async function fetchCloudLeaderboard() {
     let cloudList = staffData.game_leaderboard || [];
 
     const lastReset = getLastMonthly20thResetMs();
-    if (!staffData.last_score_reset_ms || staffData.last_score_reset_ms < lastReset) {
-      cloudList = cloudList.map(item => ({ ...item, score: 0, games: 0 }));
-      const updatedStaffData = { ...staffData, game_leaderboard: cloudList, last_score_reset_ms: lastReset };
+    if (!staffData.last_score_reset_ms) {
+      const updatedStaffData = { ...staffData, last_score_reset_ms: lastReset };
       await fetch(`${SUPABASE_URL}/rest/v1/studio_settings?studio_slug=eq.${STUDIO_SLUG}`, {
         method: 'PATCH',
         headers: {
@@ -370,11 +369,7 @@ export async function syncCloudScore(userEntry) {
     const settings = settingsList[0];
     const currentStaffData = settings.staff_data || {};
     let cloudList = currentStaffData.game_leaderboard || [];
-
     const lastReset = getLastMonthly20thResetMs();
-    if (!currentStaffData.last_score_reset_ms || currentStaffData.last_score_reset_ms < lastReset) {
-      cloudList = cloudList.map(item => ({ ...item, score: 0, games: 0 }));
-    }
 
     const userId = userEntry.id || `USER_${userEntry.name}`;
     // Strictly match by ID first, fallback to exact name ONLY if item has no ID
