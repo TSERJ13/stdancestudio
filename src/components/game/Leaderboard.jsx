@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { Trophy, Gift, Ticket, History, Copy, Check, Clock } from 'lucide-react';
+import { Trophy, Gift, Ticket, History, Copy, Check, Clock, Crown } from 'lucide-react';
 import { useLanguage } from '../../context/LanguageContext';
 import SpinModal from './SpinModal';
 import { fetchCloudLeaderboard, syncCloudScore } from '../../data/classcore';
@@ -27,7 +27,8 @@ const lbTranslations = {
     copiedText: 'დაკოპირდა!',
     pts: 'ქულა',
     games: 'თამ.',
-    prizeLbl: 'პრიზი: '
+    prizeLbl: 'პრიზი: ',
+    prizeSpot: '👑 საპრიზო ადგილი'
   },
   en: {
     title: 'Leaderboard',
@@ -46,7 +47,8 @@ const lbTranslations = {
     copiedText: 'Copied!',
     pts: 'pts',
     games: 'g',
-    prizeLbl: 'Prize: '
+    prizeLbl: 'Prize: ',
+    prizeSpot: '👑 Prize Spot'
   },
   ru: {
     title: 'Лидерборд',
@@ -65,7 +67,8 @@ const lbTranslations = {
     copiedText: 'Скопировано!',
     pts: 'очк.',
     games: 'игр',
-    prizeLbl: 'Приз: '
+    prizeLbl: 'Приз: ',
+    prizeSpot: '👑 Призовое место'
   }
 };
 
@@ -478,22 +481,51 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
               const isMeWinner = isWinner && ((userId && item.id === userId) || (playerName && item.name && item.name.trim().toLowerCase() === playerName.trim().toLowerCase()));
 
               return (
-                <div key={item.id} className={`lb-row ${item.name === playerName ? 'is-me' : ''}`}>
-                  <div className="lb-rank" style={{ color: isWinner ? '#d4a64a' : item.rank === 2 ? '#6fc3e0' : item.rank === 3 ? '#b87bde' : '#a1a1aa' }}>
+                <div
+                  key={item.id}
+                  className={`lb-row ${item.name === playerName ? 'is-me' : ''}`}
+                  style={isWinner ? {
+                    background: 'linear-gradient(135deg, rgba(212,166,74,0.2) 0%, rgba(212,166,74,0.06) 100%)',
+                    border: '1.5px solid rgba(212,166,74,0.65)',
+                    boxShadow: '0 4px 18px rgba(212,166,74,0.25)',
+                    borderRadius: '14px',
+                    position: 'relative'
+                  } : {}}
+                >
+                  <div className="lb-rank" style={{ color: isWinner ? '#FFD700' : item.rank === 2 ? '#6fc3e0' : item.rank === 3 ? '#b87bde' : '#a1a1aa', fontWeight: isWinner ? '900' : '700' }}>
                     #{item.rank}
                   </div>
 
-                  <div className="lb-avatar" style={{ background: item.avatarBg, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <div className="lb-avatar" style={{ background: item.avatarBg, overflow: 'visible', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    {isWinner && (
+                      <div style={{
+                        position: 'absolute',
+                        top: '-11px',
+                        left: '50%',
+                        transform: 'translateX(-50%) rotate(-12deg)',
+                        zIndex: 10,
+                        filter: 'drop-shadow(0 2px 6px rgba(212,166,74,0.9))'
+                      }}>
+                        <Crown size={17} color="#FFD700" fill="#FFD700" />
+                      </div>
+                    )}
                     <AvatarImage src={item.photoUrl} alt={item.name} fallbackChar={item.name.charAt(0)} />
                   </div>
 
                   <div className="lb-user-info">
-                    <span className="lb-name">{item.name}</span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '5px', flexWrap: 'wrap' }}>
+                      <span className="lb-name" style={{ color: isWinner ? '#F0D9A8' : 'white', fontWeight: isWinner ? '900' : '700' }}>{item.name}</span>
+                      {isWinner && (
+                        <span style={{ fontSize: '9.5px', color: '#05060a', background: 'linear-gradient(135deg, #FFD700 0%, #d4a64a 100%)', padding: '1.5px 7px', borderRadius: '10px', fontWeight: '900', boxShadow: '0 2px 6px rgba(212,166,74,0.4)', whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
+                          {t.prizeSpot}
+                        </span>
+                      )}
+                    </div>
                     <span className="lb-badge">ID: {item.id}</span>
                   </div>
 
                   <div className="lb-score-col" style={{ zIndex: 1, display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '4px' }}>
-                    <span className="lb-score" style={{ color: isWinner ? '#d4a64a' : 'white', fontWeight: '900' }}>
+                    <span className="lb-score" style={{ color: isWinner ? '#FFD700' : 'white', fontWeight: '900' }}>
                       {item.score.toLocaleString()} {t.pts}
                     </span>
                     {isWinner ? (

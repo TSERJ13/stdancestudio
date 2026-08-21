@@ -292,7 +292,7 @@ export default function GameBoard({ tGame, lang = 'ka', availableLives, onSpendL
     engine.speedMult = currentSpd;
     setSpeedMult(currentSpd);
 
-    const baseSp = engine.superShots > 0 ? 9.6 : 8.0;
+    const baseSp = engine.superShots > 0 ? 12.5 : 10.4;
     const sp = baseSp * currentSpd;
 
     engine.balls.push({
