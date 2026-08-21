@@ -699,6 +699,7 @@ export default function GameBoard({ tGame, lang = 'ka', availableLives, onSpendL
                 if (br.hp <= 0) {
                   engine.score += br.specialType ? 6 : 2;
                   setScore(engine.score);
+                  onScoreUpdate(engine.score);
                   createParticles(br.x + br.w / 2, br.y + br.h / 2, br.specialType ? GOLD_L : '#E0764A');
                   if (br.specialType) handleSpecialBrickDestroyed(br);
                   soundFx.playCombo(engine.round);
@@ -818,6 +819,31 @@ export default function GameBoard({ tGame, lang = 'ka', availableLives, onSpendL
       cancelAnimationFrame(animId);
     };
   }, [isFullscreen, onGameOver, onScoreUpdate, t]);
+
+  // Save accumulated score & spend life if user closes or exits during active game
+  useEffect(() => {
+    const handleExitSave = () => {
+      const engine = engineRef.current;
+      if ((engine.state === 'AIM' || engine.state === 'SHOOT') && engine.score > 0) {
+        onGameOver(engine.score);
+        engine.state = 'GAMEOVER';
+      }
+    };
+
+    window.addEventListener('beforeunload', handleExitSave);
+    window.addEventListener('pagehide', handleExitSave);
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'hidden') handleExitSave();
+    };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      handleExitSave();
+      window.removeEventListener('beforeunload', handleExitSave);
+      window.removeEventListener('pagehide', handleExitSave);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [onGameOver]);
 
   return (
     <div className={`game-board-container ${isFullscreen ? 'is-fullscreen' : ''}`} ref={containerRef}>
