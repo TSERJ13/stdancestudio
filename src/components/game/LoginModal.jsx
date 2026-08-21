@@ -45,7 +45,7 @@ const loginTranslations = {
     activeOnline: 'ახლა ონლაინში / თამაშობს',
     totalGamesPlayed: 'სულ ნათამაშები თამაშები',
     topLeader: '#1 მიმდინარე ლიდერი',
-    playersListHeader: '🎮 მოთამაშეები & საჩუქრის გაცემის სტატუსი',
+    playersListHeader: '🏆 #1 ადგილზე გასული მოთამაშე (საჩუქრის გაცემა)',
     refreshBtn: 'განახლება'
   },
   en: {
@@ -659,11 +659,11 @@ export default function LoginModal({ isOpen, onClose, currentUser, onLogin, lang
                   )}
 
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', maxHeight: '270px', overflowY: 'auto' }}>
-                    {adminStats.players.map((pl, idx) => {
+                    {adminStats.players.slice(0, 1).map((pl, idx) => {
                       const pKey = pl.id || pl.name;
                       const isClaimed = !!claimedPrizes[pKey];
-                      const isWinner = idx === 0;
-                      const prizeText = isWinner ? '🏆 #1 გამარჯვებული (100% ვაუჩერი & ST Dance merch — 20 სექტემბერი)' : `#${idx + 1} პრეტენდენტი`;
+                      const isWinner = true;
+                      const prizeText = '🏆 #1 მიმდინარე გამარჯვებული (100% ვაუჩერი & ST Dance merch საჩუქრები)';
 
                       return (
                         <div key={idx} style={{ display: 'flex', flexDirection: 'column', gap: '4px', padding: '10px 11px', background: isWinner ? 'rgba(212,166,74,0.15)' : 'rgba(255,255,255,0.02)', borderRadius: '12px', border: isWinner ? '1px solid rgba(212,166,74,0.4)' : '1px solid rgba(255,255,255,0.05)' }}>
