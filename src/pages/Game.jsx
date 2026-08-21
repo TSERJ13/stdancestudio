@@ -14,17 +14,6 @@ import { loadLivesData, saveLivesData, calculateAvailableLives, formatTimeUntilR
 import './Game.css';
 
 export function loadSavedUserProfile() {
-  try {
-    if (localStorage.getItem('dancing_bricks_reset_v5') !== 'true') {
-      localStorage.removeItem('dancing_bricks_lb_cache');
-      localStorage.removeItem('dancing_bricks_claimed_prizes');
-      localStorage.removeItem('dancing_bricks_my_prizes');
-      localStorage.removeItem('dancing_bricks_winners_history');
-      localStorage.removeItem('dancing_bricks_user_profile');
-      localStorage.setItem('dancing_bricks_reset_v5', 'true');
-    }
-  } catch (e) {}
-
   let saved = null;
   try {
     const raw = localStorage.getItem('dancing_bricks_user_profile');
@@ -38,12 +27,12 @@ export function loadSavedUserProfile() {
     name: sanitized?.name || saved?.name || localStorage.getItem('dancing_bricks_player_name') || 'Dancer',
     studentId: sanitized?.studentId || saved?.studentId || localStorage.getItem('dancing_bricks_saved_id') || '',
     isLoggedIn: sanitized?.isLoggedIn ?? saved?.isLoggedIn ?? !!localStorage.getItem('dancing_bricks_saved_id'),
-    highScore: 0,
-    totalScore: 0,
-    totalGames: 0,
-    monthlyHighScore: 0,
-    monthlyTotalScore: 0,
-    monthlyGames: 0,
+    highScore: sanitized?.highScore ?? saved?.highScore ?? 0,
+    totalScore: sanitized?.totalScore ?? saved?.totalScore ?? 0,
+    totalGames: sanitized?.totalGames ?? saved?.totalGames ?? 0,
+    monthlyHighScore: sanitized?.monthlyHighScore ?? saved?.monthlyHighScore ?? 0,
+    monthlyTotalScore: sanitized?.monthlyTotalScore ?? saved?.monthlyTotalScore ?? 0,
+    monthlyGames: sanitized?.monthlyGames ?? saved?.monthlyGames ?? 0,
     seasonKey: sanitized?.seasonKey
   };
 
@@ -230,12 +219,12 @@ export default function Game() {
             photoUrl: tgUserObj.photo_url || prev.photoUrl || freshSaved.photoUrl || '',
             isLoggedIn: true,
             isTelegram: true,
-            highScore: 0,
-            totalScore: 0,
-            totalGames: 0,
-            monthlyHighScore: 0,
-            monthlyTotalScore: 0,
-            monthlyGames: 0
+            highScore: Math.max(freshSaved.highScore || 0, prev.highScore || 0, 0),
+            totalScore: Math.max(freshSaved.totalScore || 0, prev.totalScore || 0, 0),
+            totalGames: Math.max(freshSaved.totalGames || 0, prev.totalGames || 0, 0),
+            monthlyHighScore: Math.max(freshSaved.monthlyHighScore || 0, prev.monthlyHighScore || 0, 0),
+            monthlyTotalScore: Math.max(freshSaved.monthlyTotalScore || 0, prev.monthlyTotalScore || 0, 0),
+            monthlyGames: Math.max(freshSaved.monthlyGames || 0, prev.monthlyGames || 0, 0)
           });
           localStorage.setItem('dancing_bricks_user_profile', JSON.stringify(updated));
           localStorage.setItem('dancing_bricks_player_name', updated.name);

@@ -12,10 +12,10 @@ const WINNERS_HISTORY = [];
 const lbTranslations = {
   ka: {
     title: 'ლიდერბორდი',
-    subtitle: '20 რიცხვის გამარჯვებულები & ჩემი საჩუქრები',
+    subtitle: '20 რიცხვის გამარჯვებულები & საჩუქრები',
     spinBtn: 'დოლურა',
     ranksTab: 'რანგები',
-    myPrizesTab: (count) => count > 0 ? `ჩემი საჩუქრები (${count})` : 'ჩემი საჩუქრები',
+    myPrizesTab: (count) => count > 0 ? `საჩუქრები (${count})` : 'საჩუქრები',
     historyTab: 'ისტორია',
     profileLbl: 'პროფაილი:',
     highScoreLbl: 'ჯამური ქულა: ',
@@ -31,10 +31,10 @@ const lbTranslations = {
   },
   en: {
     title: 'Leaderboard',
-    subtitle: '20th Winners & My Prizes',
+    subtitle: '20th Winners & Prizes',
     spinBtn: 'Spin Wheel',
     ranksTab: 'Ranks',
-    myPrizesTab: (count) => count > 0 ? `My Prizes (${count})` : 'My Prizes',
+    myPrizesTab: (count) => count > 0 ? `Prizes (${count})` : 'Prizes',
     historyTab: 'History',
     profileLbl: 'Profile:',
     highScoreLbl: 'Total Score: ',
@@ -50,10 +50,10 @@ const lbTranslations = {
   },
   ru: {
     title: 'Лидерборд',
-    subtitle: 'Победители 20-го числа и Мои призы',
+    subtitle: 'Победители 20-го числа и Призы',
     spinBtn: 'Колесо',
     ranksTab: 'Рейтинг',
-    myPrizesTab: (count) => count > 0 ? `Мои призы (${count})` : 'Мои призы',
+    myPrizesTab: (count) => count > 0 ? `Призы (${count})` : 'Призы',
     historyTab: 'История',
     profileLbl: 'Профиль:',
     highScoreLbl: 'Общ. счет: ',
@@ -375,7 +375,7 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
       </div>
 
       {/* Sub Navigation Bar */}
-      <div style={{ display: 'flex', gap: '6px', margin: '12px 0 16px', background: 'rgba(255,255,255,0.03)', padding: '4px', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.06)' }}>
+      <div style={{ display: 'flex', gap: '4px', margin: '12px 0 16px', background: 'rgba(255,255,255,0.03)', padding: '4px', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.06)' }}>
         <button
           onClick={() => setActiveTab('ranks')}
           style={{
@@ -386,12 +386,14 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
             background: activeTab === 'ranks' ? 'rgba(212,166,74,0.2)' : 'transparent',
             color: activeTab === 'ranks' ? '#F0D9A8' : '#a1a1aa',
             fontWeight: '800',
-            fontSize: '11.5px',
+            fontSize: '11px',
             cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            gap: '6px'
+            gap: '4px',
+            whiteSpace: 'nowrap',
+            padding: '0 4px'
           }}
         >
           <Trophy size={14} /> {t.ranksTab}
@@ -407,12 +409,14 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
             background: activeTab === 'my_prizes' ? 'rgba(212,166,74,0.2)' : 'transparent',
             color: activeTab === 'my_prizes' ? '#F0D9A8' : '#a1a1aa',
             fontWeight: '800',
-            fontSize: '11.5px',
+            fontSize: '11px',
             cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            gap: '6px'
+            gap: '4px',
+            whiteSpace: 'nowrap',
+            padding: '0 4px'
           }}
         >
           <Ticket size={14} /> {t.myPrizesTab(myVouchers.filter(v => !(claimedPrizesMap[userId] || claimedPrizesMap[playerName] || claimedPrizesMap[v.winnerName] || claimedPrizesMap[v.id] || v.isClaimed)).length)}
@@ -428,12 +432,14 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
             background: activeTab === 'history' ? 'rgba(212,166,74,0.2)' : 'transparent',
             color: activeTab === 'history' ? '#F0D9A8' : '#a1a1aa',
             fontWeight: '800',
-            fontSize: '11.5px',
+            fontSize: '11px',
             cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            gap: '6px'
+            gap: '4px',
+            whiteSpace: 'nowrap',
+            padding: '0 4px'
           }}
         >
           <History size={14} /> {t.historyTab}
