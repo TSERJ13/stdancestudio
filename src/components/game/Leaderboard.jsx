@@ -204,6 +204,12 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
   combinedList.sort((a, b) => b.score - a.score);
   const rankedList = combinedList.map((item, index) => ({ ...item, rank: index + 1 }));
 
+  const myCloudItem = combinedList.find(m =>
+    (userId && m.id === userId) ||
+    (playerName && m.name && m.name.trim().toLowerCase() === playerName.trim().toLowerCase())
+  );
+  const myDisplayTotalScore = Math.max(myCloudItem?.score || 0, currentTotalScore || 0);
+
   const [activeTab, setActiveTab] = useState('ranks');
   const [editingName, setEditingName] = useState(false);
   const [nameInput, setNameInput] = useState(playerName || '');
@@ -471,7 +477,7 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
             </div>
             <div className="my-score-pill">
               <span>{t.highScoreLbl}</span>
-              <strong style={{ color: '#d4a64a' }}>{(currentTotalScore || 0).toLocaleString()}</strong>
+              <strong style={{ color: '#d4a64a' }}>{(myDisplayTotalScore || 0).toLocaleString()}</strong>
             </div>
           </div>
 
