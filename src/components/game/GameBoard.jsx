@@ -498,23 +498,15 @@ export default function GameBoard({ tGame, lang = 'ka', availableLives, onSpendL
           style = { f: 'rgba(236,72,153,.45)', s: '#ec4899', t: '#ffffff' };
         }
 
-        ctx.save();
-        ctx.shadowColor = style.s;
-        ctx.shadowBlur = b.specialType ? 18 : 8;
         ctx.fillStyle = style.f;
         ctx.strokeStyle = style.s;
-        ctx.lineWidth = b.specialType ? 2.8 : 1.8;
+        ctx.lineWidth = b.specialType ? 2.5 : 1.5;
         ctx.beginPath();
         if (ctx.roundRect) ctx.roundRect(b.x, b.y, b.w, b.h, 6);
         else ctx.rect(b.x, b.y, b.w, b.h);
         ctx.fill(); ctx.stroke();
-        ctx.restore();
 
         if (b.specialType && stLogoImgRef.current) {
-          ctx.save();
-          ctx.imageSmoothingEnabled = true;
-          ctx.imageSmoothingQuality = 'high';
-
           const img = stLogoImgRef.current;
           const imgW = b.w * 0.85;
           const imgH = b.h * 0.85;
@@ -522,7 +514,6 @@ export default function GameBoard({ tGame, lang = 'ka', availableLives, onSpendL
           const imgY = b.y + (b.h - imgH) / 2;
 
           ctx.drawImage(img, imgX, imgY, imgW, imgH);
-          ctx.restore();
         } else {
           ctx.fillStyle = style.t;
           ctx.font = '700 ' + Math.round(engine.cell * 0.3) + 'px sans-serif';
@@ -535,11 +526,8 @@ export default function GameBoard({ tGame, lang = 'ka', availableLives, onSpendL
       // Pickups (+1 Balls)
       engine.pickups.forEach(p => {
         if (p.taken) return;
-        ctx.save();
-        ctx.shadowColor = GOLD_L; ctx.shadowBlur = 12;
-        ctx.strokeStyle = GOLD_L; ctx.lineWidth = 2; ctx.fillStyle = 'rgba(240,217,168,.15)';
+        ctx.strokeStyle = GOLD_L; ctx.lineWidth = 1.8; ctx.fillStyle = 'rgba(240,217,168,.15)';
         ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
-        ctx.restore();
         ctx.fillStyle = GOLD_L; ctx.font = '700 9px sans-serif';
         ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
         ctx.fillText('+1', p.x, p.y + .5);
@@ -781,13 +769,13 @@ export default function GameBoard({ tGame, lang = 'ka', availableLives, onSpendL
         }
       }
 
+      // Render Balls (Clean & High FPS)
       engine.balls.forEach(b => {
         if (!b.alive) return;
-        ctx.save();
-        ctx.shadowColor = b.sup ? GOLD_L : '#FFFFFF'; ctx.shadowBlur = b.sup ? 20 : 12;
         ctx.fillStyle = b.sup ? GOLD_L : '#FFFFFF';
-        ctx.beginPath(); ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2); ctx.fill();
-        ctx.restore();
+        ctx.beginPath();
+        ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
+        ctx.fill();
       });
 
       if (engine.bannerTimer > 0) {
