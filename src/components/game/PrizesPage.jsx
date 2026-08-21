@@ -35,11 +35,7 @@ export default function PrizesPage() {
     try {
       const rawHist = localStorage.getItem('dancing_bricks_winners_history');
       const hist = rawHist ? JSON.parse(rawHist) : [];
-      const defaultHist = [
-        { month: 'აგვისტო 2026', winner: 'სერგო წივწივაძე (Head Coach)', score: 18420, prize: '-100% ვაუჩერი', prizeImg: '/images/prizes/voucher_100.png', isClaimed: true },
-        { month: 'ივლისი 2026', winner: 'მარიამი (Samba Star)', score: 14200, prize: '-50% ვაუჩერი', prizeImg: '/images/prizes/voucher_50.png', isClaimed: true }
-      ];
-      setRecentWinners(Array.isArray(hist) && hist.length > 0 ? hist : defaultHist);
+      setRecentWinners(Array.isArray(hist) ? hist : []);
     } catch (e) {}
   }, []);
 
@@ -338,72 +334,78 @@ export default function PrizesPage() {
         </div>
 
         {/* Winners History Cards */}
-        {recentWinners.map((w, idx) => (
-          <div
-            key={idx}
-            style={{
-              background: 'linear-gradient(145deg, rgba(212,166,74,0.12) 0%, rgba(20,20,25,0.95) 100%)',
-              border: '1.5px solid rgba(212,166,74,0.35)',
-              borderRadius: '16px',
-              padding: '12px 14px',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '10px',
-              boxShadow: '0 8px 22px rgba(0,0,0,0.4)',
-              width: '100%',
-              boxSizing: 'border-box'
-            }}
-          >
-            {/* Header Row: Month Tag + Delivered Status */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px', borderBottom: '1px solid rgba(255,255,255,0.08)', paddingBottom: '8px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', color: '#F0D9A8', fontWeight: '900', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                <Calendar size={13} color="#d4a64a" />
-                <span>{w.month || (lang === 'ka' ? 'გათამაშება' : 'Draw')}</span>
-              </div>
-
-              <span style={{ fontSize: '10px', color: '#4ADE80', background: 'rgba(34,197,94,0.18)', border: '1px solid #22c55e', padding: '3px 8px', borderRadius: '8px', fontWeight: '900', display: 'inline-flex', alignItems: 'center', gap: '4px', whiteSpace: 'nowrap' }}>
-                <CheckCircle2 size={11} color="#4ADE80" />
-                {lang === 'ka' ? 'გადაცემულია' : 'Delivered'}
-              </span>
-            </div>
-
-            {/* Winner Name & Score Row */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '10px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0 }}>
-                <div style={{ width: '28px', height: '28px', borderRadius: '50%', background: 'rgba(212,166,74,0.2)', border: '1px solid #d4a64a', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                  <User size={15} color="#F0D9A8" />
-                </div>
-                <div style={{ fontSize: '14px', fontWeight: '900', color: '#ffffff', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                  {w.winner}
-                </div>
-              </div>
-
-              <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', color: '#FFD700', fontWeight: '900', background: 'rgba(255,215,0,0.12)', padding: '4px 10px', borderRadius: '10px', border: '1px solid rgba(255,215,0,0.3)', flexShrink: 0 }}>
-                <Award size={13} color="#FFD700" />
-                <span>{w.score ? `${Number(w.score).toLocaleString()} ქულა` : (w.scoreStr || '18,420 ქულა')}</span>
-              </div>
-            </div>
-
-            {/* Prize Won Banner Row */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', background: 'rgba(0, 0, 0, 0.45)', padding: '8px 12px', borderRadius: '12px', border: '1px solid rgba(212,166,74,0.25)' }}>
-              <div style={{ width: '38px', height: '38px', borderRadius: '10px', background: '#ffffff', overflow: 'hidden', border: '1.5px solid #d4a64a', padding: '2px', flexShrink: 0, boxShadow: '0 4px 10px rgba(0,0,0,0.3)' }}>
-                <img
-                  src={w.prizeImg || (w.prize?.includes('50%') ? '/images/prizes/voucher_50.png' : '/images/prizes/voucher_100.png')}
-                  alt={w.prize || 'Prize'}
-                  style={{ width: '100%', height: '100%', objectFit: 'contain' }}
-                />
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1px', flex: 1, minWidth: 0, textAlign: 'left' }}>
-                <div style={{ fontSize: '10px', color: '#a1a1aa', fontWeight: '700' }}>
-                  🎁 {lang === 'ka' ? 'მოგებული პრიზი:' : 'Prize Won:'}
-                </div>
-                <div style={{ fontSize: '12px', color: '#F0D9A8', fontWeight: '900', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                  {w.prize || '-100% ვაუჩერი & ST Dance merch'}
-                </div>
-              </div>
-            </div>
+        {recentWinners.length === 0 ? (
+          <div style={{ textAlign: 'center', color: '#a1a1aa', fontSize: '12px', padding: '16px 12px', fontWeight: '700', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', border: '1px dashed rgba(212,166,74,0.3)' }}>
+            🏆 {lang === 'ka' ? 'ჯერ არავის მოუგია. იყავი პირველი 20 რიცხვში!' : 'No winners yet. Be the first on the 20th!'}
           </div>
-        ))}
+        ) : (
+          recentWinners.map((w, idx) => (
+            <div
+              key={idx}
+              style={{
+                background: 'linear-gradient(145deg, rgba(212,166,74,0.12) 0%, rgba(20,20,25,0.95) 100%)',
+                border: '1.5px solid rgba(212,166,74,0.35)',
+                borderRadius: '16px',
+                padding: '12px 14px',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '10px',
+                boxShadow: '0 8px 22px rgba(0,0,0,0.4)',
+                width: '100%',
+                boxSizing: 'border-box'
+              }}
+            >
+              {/* Header Row: Month Tag + Delivered Status */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px', borderBottom: '1px solid rgba(255,255,255,0.08)', paddingBottom: '8px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', color: '#F0D9A8', fontWeight: '900', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                  <Calendar size={13} color="#d4a64a" />
+                  <span>{w.month || (lang === 'ka' ? 'გათამაშება' : 'Draw')}</span>
+                </div>
+
+                <span style={{ fontSize: '10px', color: '#4ADE80', background: 'rgba(34,197,94,0.18)', border: '1px solid #22c55e', padding: '3px 8px', borderRadius: '8px', fontWeight: '900', display: 'inline-flex', alignItems: 'center', gap: '4px', whiteSpace: 'nowrap' }}>
+                  <CheckCircle2 size={11} color="#4ADE80" />
+                  {lang === 'ka' ? 'გადაცემულია' : 'Delivered'}
+                </span>
+              </div>
+
+              {/* Winner Name & Score Row */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '10px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0 }}>
+                  <div style={{ width: '28px', height: '28px', borderRadius: '50%', background: 'rgba(212,166,74,0.2)', border: '1px solid #d4a64a', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <User size={15} color="#F0D9A8" />
+                  </div>
+                  <div style={{ fontSize: '14px', fontWeight: '900', color: '#ffffff', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {w.winner}
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', color: '#FFD700', fontWeight: '900', background: 'rgba(255,215,0,0.12)', padding: '4px 10px', borderRadius: '10px', border: '1px solid rgba(255,215,0,0.3)', flexShrink: 0 }}>
+                  <Award size={13} color="#FFD700" />
+                  <span>{w.score ? `${Number(w.score).toLocaleString()} ქულა` : (w.scoreStr || '—')}</span>
+                </div>
+              </div>
+
+              {/* Prize Won Banner Row */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', background: 'rgba(0, 0, 0, 0.45)', padding: '8px 12px', borderRadius: '12px', border: '1px solid rgba(212,166,74,0.25)' }}>
+                <div style={{ width: '38px', height: '38px', borderRadius: '10px', background: '#ffffff', overflow: 'hidden', border: '1.5px solid #d4a64a', padding: '2px', flexShrink: 0, boxShadow: '0 4px 10px rgba(0,0,0,0.3)' }}>
+                  <img
+                    src={w.prizeImg || (w.prize?.includes('50%') ? '/images/prizes/voucher_50.png' : '/images/prizes/voucher_100.png')}
+                    alt={w.prize || 'Prize'}
+                    style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                  />
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1px', flex: 1, minWidth: 0, textAlign: 'left' }}>
+                  <div style={{ fontSize: '10px', color: '#a1a1aa', fontWeight: '700' }}>
+                    🎁 {lang === 'ka' ? 'მოგებული პრიზი:' : 'Prize Won:'}
+                  </div>
+                  <div style={{ fontSize: '12px', color: '#F0D9A8', fontWeight: '900', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {w.prize || '-100% ვაუჩერი & ST Dance merch'}
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))
+        )}
       </div>
 
       {/* Prize popup modal */}
