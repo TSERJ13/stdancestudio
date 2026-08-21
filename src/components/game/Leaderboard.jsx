@@ -758,15 +758,6 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
         document.body
       )}
 
-      {/* Spin Modal */}
-      {showSpinModal && (
-        <SpinModal
-          winnerName={selectedWinner || playerName}
-          onClose={() => setShowSpinModal(false)}
-          onClaimPrize={handleClaimPrize}
-        />
-      )}
-
     </div>
   );
 }
