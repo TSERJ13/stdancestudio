@@ -882,7 +882,8 @@ export default function GameBoard({ tGame, lang = 'ka', availableLives, onSpendL
                   maxHeight: '145px',
                   objectFit: 'contain',
                   marginBottom: '2px',
-                  display: 'block'
+                  display: 'block',
+                  animation: 'slowGreenButtonPulse 2.5s ease-in-out infinite'
                 }}
               />
               <h2 style={{

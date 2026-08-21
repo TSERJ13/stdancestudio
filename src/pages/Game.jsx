@@ -436,7 +436,17 @@ export default function Game() {
             <header className="app-header glass compact-top-bar">
               {/* Left: Logo + Login button */}
               <div className="compact-header-left">
-                <Award size={20} color="#d4a64a" />
+                <img
+                  src="/images/dancing_bricks_logo.png"
+                  alt="Dancing Bricks"
+                  style={{
+                    height: '40px',
+                    width: 'auto',
+                    maxHeight: '40px',
+                    objectFit: 'contain',
+                    display: 'block'
+                  }}
+                />
                 <button
                   className="user-login-btn glass"
                   onClick={() => setShowLoginModal(true)}
