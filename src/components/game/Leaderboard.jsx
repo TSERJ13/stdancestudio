@@ -12,10 +12,10 @@ const WINNERS_HISTORY = [];
 const lbTranslations = {
   ka: {
     title: 'ლიდერბორდი',
-    subtitle: '20 რიცხვის გამარჯვებულები & My Prize',
+    subtitle: '20 რიცხვის გამარჯვებულები & ჩემი საჩუქრები',
     spinBtn: 'დოლურა',
     ranksTab: 'რანგები',
-    myPrizesTab: (count) => count > 0 ? `My Prize (${count})` : 'My Prize',
+    myPrizesTab: (count) => count > 0 ? `ჩემი საჩუქრები (${count})` : 'ჩემი საჩუქრები',
     historyTab: 'ისტორია',
     profileLbl: 'პროფაილი:',
     highScoreLbl: 'ჯამური ქულა: ',
@@ -26,14 +26,15 @@ const lbTranslations = {
     copyCode: 'კოდის კოპირება',
     copiedText: 'დაკოპირდა!',
     pts: 'ქულა',
-    games: 'თამ.'
+    games: 'თამ.',
+    prizeLbl: 'პრიზი: '
   },
   en: {
     title: 'Leaderboard',
-    subtitle: '20th Winners & My Prize',
+    subtitle: '20th Winners & My Prizes',
     spinBtn: 'Spin Wheel',
     ranksTab: 'Ranks',
-    myPrizesTab: (count) => count > 0 ? `My Prize (${count})` : 'My Prize',
+    myPrizesTab: (count) => count > 0 ? `My Prizes (${count})` : 'My Prizes',
     historyTab: 'History',
     profileLbl: 'Profile:',
     highScoreLbl: 'Total Score: ',
@@ -44,14 +45,15 @@ const lbTranslations = {
     copyCode: 'Copy Code',
     copiedText: 'Copied!',
     pts: 'pts',
-    games: 'g'
+    games: 'g',
+    prizeLbl: 'Prize: '
   },
   ru: {
     title: 'Лидерборд',
-    subtitle: 'Победители 20-го числа и My Prize',
+    subtitle: 'Победители 20-го числа и Мои призы',
     spinBtn: 'Колесо',
     ranksTab: 'Рейтинг',
-    myPrizesTab: (count) => count > 0 ? `My Prize (${count})` : 'My Prize',
+    myPrizesTab: (count) => count > 0 ? `Мои призы (${count})` : 'Мои призы',
     historyTab: 'История',
     profileLbl: 'Профиль:',
     highScoreLbl: 'Общ. счет: ',
@@ -62,7 +64,8 @@ const lbTranslations = {
     copyCode: 'Скопировать код',
     copiedText: 'Скопировано!',
     pts: 'очк.',
-    games: 'игр'
+    games: 'игр',
+    prizeLbl: 'Приз: '
   }
 };
 
@@ -650,7 +653,7 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
                 <div>
                   <div style={{ fontSize: '11px', color: '#a1a1aa', fontWeight: '700' }}>{h.month}</div>
                   <div style={{ fontSize: '14px', fontWeight: '900', color: 'white' }}>{h.winner}</div>
-                  <div style={{ fontSize: '12px', color: '#d4a64a', fontWeight: '800' }}>პრიზი: {h.prize}</div>
+                  <div style={{ fontSize: '12px', color: '#d4a64a', fontWeight: '800' }}>{t.prizeLbl}{h.prize}</div>
                 </div>
                 <div style={{ textAlign: 'right' }}>
                   <span style={{ fontSize: '11px', color: '#22c55e', fontWeight: '800', background: 'rgba(34,197,94,0.15)', padding: '2px 8px', borderRadius: '8px' }}>
