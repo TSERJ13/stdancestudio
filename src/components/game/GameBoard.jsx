@@ -874,7 +874,7 @@ export default function GameBoard({ tGame, lang = 'ka', availableLives, onSpendL
           <div className="overlay-screen glass">
             <div className="game-logo" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', margin: '0 auto', transform: 'translateY(-24px)' }}>
               <img
-                src="/images/dancing_bricks_logo.png"
+                src="/images/dancing_bricks_logo.png?v=5"
                 alt="Dancing Bricks"
                 style={{
                   width: '145px',

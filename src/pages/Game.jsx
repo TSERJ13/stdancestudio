@@ -437,7 +437,7 @@ export default function Game() {
               {/* Left: Logo + Login button */}
               <div className="compact-header-left">
                 <img
-                  src="/images/dancing_bricks_logo.png"
+                  src="/images/dancing_bricks_logo.png?v=5"
                   alt="Dancing Bricks"
                   style={{
                     height: '40px',

@@ -393,7 +393,7 @@ export default function LoginModal({ isOpen, onClose, currentUser, onLogin, lang
         {/* Clean Header Bar */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', borderBottom: '1px solid rgba(255,255,255,0.08)', paddingBottom: '10px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <IdCard size={18} color="#d4a64a" />
+            <img src="/images/dancing_bricks_logo.png?v=5" alt="Dancing Bricks" style={{ height: '28px', width: 'auto', objectFit: 'contain' }} />
             <span style={{ fontSize: '13px', fontWeight: '900', color: '#F0D9A8' }}>
               {currentUser?.isLoggedIn ? t.modalTitle : t.inputTitle}
             </span>
