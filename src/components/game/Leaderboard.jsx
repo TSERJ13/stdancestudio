@@ -28,7 +28,7 @@ const lbTranslations = {
     pts: 'ქულა',
     games: 'თამ.',
     prizeLbl: 'პრიზი: ',
-    prizeSpot: '👑 საპრიზო ადგილი'
+    prizeSpot: '👑 საპრიზო'
   },
   en: {
     title: 'Leaderboard',
@@ -48,7 +48,7 @@ const lbTranslations = {
     pts: 'pts',
     games: 'g',
     prizeLbl: 'Prize: ',
-    prizeSpot: '👑 Prize Spot'
+    prizeSpot: '👑 Prize'
   },
   ru: {
     title: 'Лидерборд',
@@ -68,7 +68,7 @@ const lbTranslations = {
     pts: 'очк.',
     games: 'игр',
     prizeLbl: 'Приз: ',
-    prizeSpot: '👑 Призовое место'
+    prizeSpot: '👑 Призовой'
   }
 };
 
@@ -498,13 +498,13 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
                     {isWinner && (
                       <div style={{
                         position: 'absolute',
-                        top: '-18px',
-                        left: '50%',
-                        transform: 'translateX(-50%)',
+                        top: '-12px',
+                        left: '2px',
+                        transform: 'rotate(-14deg)',
                         zIndex: 10,
                         pointerEvents: 'none'
                       }}>
-                        <Crown size={26} color="#ffd700" fill="#ffd700" />
+                        <Crown size={20} color="#FFD700" fill="#FFD700" />
                       </div>
                     )}
                     <AvatarImage src={item.photoUrl} alt={item.name} fallbackChar={item.name.charAt(0)} />
