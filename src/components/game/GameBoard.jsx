@@ -660,12 +660,22 @@ export default function GameBoard({ tGame, lang = 'ka', availableLives, onSpendL
           spawnBall();
         }
 
+        // Auto-boost if round shooting takes longer than 15 seconds to prevent freeze/hang
+        if (engine.shootTimer > 900) {
+          engine.holdingBoost = true;
+        }
+
         const steps = engine.holdingBoost ? 5 : 2;
 
         engine.balls.forEach(b => {
           if (!b.alive) return;
           for (let s = 0; s < steps; s++) {
             b.x += (b.vx / 2); b.y += (b.vy / 2);
+
+            // Anti horizontal-stuck check: ensure ball always has vertical motion
+            if (Math.abs(b.vy) < 1.2) {
+              b.vy = b.vy >= 0 ? 1.5 : -1.5;
+            }
 
             if (b.x < b.r) {
               b.x = b.r;
@@ -838,7 +848,6 @@ export default function GameBoard({ tGame, lang = 'ka', availableLives, onSpendL
     document.addEventListener('visibilitychange', handleVisibilityChange);
 
     return () => {
-      handleExitSave();
       window.removeEventListener('beforeunload', handleExitSave);
       window.removeEventListener('pagehide', handleExitSave);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
