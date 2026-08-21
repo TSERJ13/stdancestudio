@@ -904,19 +904,13 @@ export function getCurrentSeasonKey() {
 
 export function sanitizeSeasonalProfile(prevProfile) {
   const currentKey = getCurrentSeasonKey();
-  if (!prevProfile) {
-    return {
-      seasonKey: currentKey,
-      monthlyHighScore: 0,
-      monthlyTotalScore: 0,
-      monthlyGames: 0
-    };
-  }
-
-  if (prevProfile.seasonKey !== currentKey) {
+  if (!prevProfile || prevProfile.seasonKey !== currentKey) {
     return {
       ...prevProfile,
       seasonKey: currentKey,
+      highScore: 0,
+      totalScore: 0,
+      totalGames: 0,
       monthlyHighScore: 0,
       monthlyTotalScore: 0,
       monthlyGames: 0

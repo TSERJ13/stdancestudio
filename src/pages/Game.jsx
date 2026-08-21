@@ -22,21 +22,22 @@ export function loadSavedUserProfile() {
     console.warn('Failed to parse user profile:', e);
   }
 
+  const sanitized = sanitizeSeasonalProfile(saved);
   const base = {
-    name: saved?.name || localStorage.getItem('dancing_bricks_player_name') || 'Dancer',
-    studentId: saved?.studentId || localStorage.getItem('dancing_bricks_saved_id') || '',
-    isLoggedIn: saved?.isLoggedIn ?? !!localStorage.getItem('dancing_bricks_saved_id'),
-    highScore: saved?.highScore || 0,
-    totalScore: saved?.totalScore || saved?.highScore || 0,
-    totalGames: saved?.totalGames || 0,
-    monthlyHighScore: saved?.monthlyHighScore || saved?.highScore || 0,
-    monthlyTotalScore: saved?.monthlyTotalScore || saved?.totalScore || saved?.highScore || 0,
-    monthlyGames: saved?.monthlyGames || saved?.totalGames || 0
+    name: sanitized?.name || saved?.name || localStorage.getItem('dancing_bricks_player_name') || 'Dancer',
+    studentId: sanitized?.studentId || saved?.studentId || localStorage.getItem('dancing_bricks_saved_id') || '',
+    isLoggedIn: sanitized?.isLoggedIn ?? saved?.isLoggedIn ?? !!localStorage.getItem('dancing_bricks_saved_id'),
+    highScore: sanitized?.highScore || 0,
+    totalScore: sanitized?.totalScore || 0,
+    totalGames: sanitized?.totalGames || 0,
+    monthlyHighScore: sanitized?.monthlyHighScore || 0,
+    monthlyTotalScore: sanitized?.monthlyTotalScore || 0,
+    monthlyGames: sanitized?.monthlyGames || 0,
+    seasonKey: sanitized?.seasonKey
   };
 
-  const sanitized = sanitizeSeasonalProfile(base);
-  localStorage.setItem('dancing_bricks_user_profile', JSON.stringify(sanitized));
-  return sanitized;
+  localStorage.setItem('dancing_bricks_user_profile', JSON.stringify(base));
+  return base;
 }
 
 export const gameTranslations = {
