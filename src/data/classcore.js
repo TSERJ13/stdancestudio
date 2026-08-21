@@ -899,7 +899,7 @@ export function getCurrentSeasonKey() {
     }
   }
 
-  return `season_${year}_${month}`;
+  return `season_${year}_${month}_v2`;
 }
 
 export function sanitizeSeasonalProfile(prevProfile) {
