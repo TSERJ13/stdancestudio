@@ -77,20 +77,28 @@ export default function PlanCalendar() {
         <button
           onClick={() => setIsExamModalOpen(true)}
           style={{
-            background: 'linear-gradient(135deg, #d4a64a, #b5832a)',
-            color: '#000000',
-            border: 'none',
-            padding: '10px 20px',
-            borderRadius: '25px',
-            fontWeight: 'bold',
-            fontSize: '0.88rem',
-            cursor: 'pointer',
-            boxShadow: '0 4px 14px rgba(212,166,74,0.4)',
-            transition: 'all 0.2s ease'
+            borderColor: 'var(--color-gold, #d4a64a)',
+            color: '#f0c878',
+            fontSize: '0.82rem',
+            padding: '8px 16px'
           }}
         >
-          📝 {lang === 'ka' ? '28 რიცხვის ონლაინ ტესტირება (PDF & Email)' : '28th Monthly Exam (PDF & Email)'}
+          📝 {lang === 'ka' ? '28 რიცხვის ონლაინ ტესტირება' : '28th Monthly Exam'}
         </button>
+
+        <a
+          href={`/exam?group=${selectedGroup}&month=${activeMonthId}&preview=true`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="btn btn--gold"
+          style={{
+            fontSize: '0.82rem',
+            padding: '8px 16px',
+            textDecoration: 'none'
+          }}
+        >
+          🔗 {lang === 'ka' ? 'ტესტის ლინკის გენერირება & პასუხების გადამოწმება' : 'Exam Link & Answer Key'}
+        </a>
       </div>
 
       {/* Group Selector Bar */}

@@ -22,6 +22,7 @@ import AdminLogin from './pages/admin/AdminLogin'
 import AdminDashboard from './pages/admin/AdminDashboard'
 import PortalLogin from './pages/portal/PortalLogin'
 import StudentDashboard from './pages/portal/StudentDashboard'
+import PublicExamView from './pages/PublicExamView'
 
 import Promo from './pages/Promo'
 import Game from './pages/Game'
@@ -73,7 +74,7 @@ const AppRoutes = () => (
 
 export default function App() {
   const { pathname } = useLocation()
-  const isStandalone = pathname.startsWith('/admin') || pathname.startsWith('/portal') || pathname.includes('/bio') || pathname.includes('/link') || pathname.includes('/game') || pathname.includes('/dancing-bricks')
+  const isStandalone = pathname.startsWith('/admin') || pathname.startsWith('/portal') || pathname.includes('/bio') || pathname.includes('/link') || pathname.includes('/game') || pathname.includes('/dancing-bricks') || pathname.startsWith('/exam')
 
   return (
     <>
@@ -81,6 +82,7 @@ export default function App() {
       {isStandalone ? (
         <ErrorBoundary>
           <Routes>
+            <Route path="/exam" element={<PublicExamView />} />
             <Route path="/admin" element={<AdminLogin />} />
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
             <Route path="/portal" element={<PortalLogin />} />

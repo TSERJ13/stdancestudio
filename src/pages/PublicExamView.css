@@ -1,0 +1,239 @@
+.pub-exam-container {
+  min-height: 100vh;
+  background: #0a0908;
+  color: #f5f0eb;
+  padding: 2rem 1rem;
+  font-family: system-ui, -apple-system, sans-serif;
+  display: flex;
+  justify-content: center;
+}
+
+.pub-exam-card {
+  width: 100%;
+  max-width: 900px;
+  background: #141210;
+  border: 1px solid rgba(212, 166, 74, 0.3);
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+}
+
+.pub-exam-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  margin-bottom: 1.5rem;
+}
+
+.pub-exam-header h2 {
+  margin: 0;
+  color: var(--color-gold, #d4a64a);
+  font-size: 1.5rem;
+}
+
+.pub-exam-header p {
+  margin: 4px 0 0 0;
+  color: #b0ab9f;
+  font-size: 0.9rem;
+}
+
+.pub-exam-teacher-bar {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.pub-exam-mode-btn {
+  background: rgba(212, 166, 74, 0.15);
+  color: #f0c878;
+  border: 1px solid #d4a64a;
+  padding: 8px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.85rem;
+  transition: all 0.2s ease;
+}
+
+.pub-exam-mode-btn.active {
+  background: #d4a64a;
+  color: #0a0908;
+}
+
+.pub-exam-copy-btn {
+  background: linear-gradient(135deg, #d4af37, #f0c878);
+  color: #0a0908;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 0.85rem;
+  box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
+}
+
+.pub-exam-controls {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 1rem;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.pub-exam-control-group label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 0.85rem;
+  color: #d4a64a;
+  font-weight: 600;
+}
+
+.pub-exam-control-group select {
+  width: 100%;
+  background: #1c1a17;
+  color: #fff;
+  border: 1px solid rgba(212, 166, 74, 0.3);
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  outline: none;
+}
+
+.pub-exam-teacher-banner {
+  background: rgba(46, 125, 50, 0.15);
+  border: 1px solid #2e7d32;
+  color: #a5d6a7;
+  padding: 12px 16px;
+  border-radius: 12px;
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.pub-exam-input-card {
+  margin-bottom: 1.5rem;
+}
+
+.pub-exam-input-card label {
+  display: block;
+  margin-bottom: 8px;
+  color: #f0c878;
+  font-weight: bold;
+}
+
+.pub-exam-input-card input {
+  width: 100%;
+  background: #1c1a17;
+  border: 1px solid rgba(212, 166, 74, 0.4);
+  color: #fff;
+  padding: 14px;
+  border-radius: 12px;
+  font-size: 1rem;
+  outline: none;
+}
+
+.pub-exam-q-item {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  padding: 1.2rem;
+  margin-bottom: 1rem;
+}
+
+.pub-exam-q-title {
+  margin: 0 0 12px 0;
+  font-size: 1.05rem;
+  color: #ffffff;
+  line-height: 1.4;
+}
+
+.pub-exam-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 10px;
+}
+
+.pub-exam-opt-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #1c1a17;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 12px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+.pub-exam-opt-label.selected {
+  border-color: var(--color-gold, #d4a64a);
+  background: rgba(212, 166, 74, 0.12);
+}
+
+.pub-exam-opt-label.teacher-correct {
+  border-color: #2e7d32 !important;
+  background: rgba(46, 125, 50, 0.2) !important;
+}
+
+.pub-exam-submit-wrap {
+  text-align: center;
+  margin-top: 2rem;
+}
+
+.pub-exam-submit-btn {
+  background: linear-gradient(135deg, #d4af37, #f0c878);
+  color: #0a0908;
+  border: none;
+  padding: 16px 36px;
+  border-radius: 30px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
+  transition: transform 0.2s ease;
+}
+
+.pub-exam-submit-btn:hover {
+  transform: scale(1.03);
+}
+
+.pub-exam-result {
+  text-align: center;
+  padding: 2rem 0;
+}
+
+.pub-exam-score-box {
+  background: rgba(212, 166, 74, 0.15);
+  border: 2px solid #d4a64a;
+  display: inline-block;
+  padding: 20px 40px;
+  border-radius: 20px;
+  margin: 1.5rem 0;
+}
+
+.pub-exam-score-num {
+  font-size: 3rem;
+  font-weight: bold;
+  color: #ffffff;
+  display: block;
+}
+
+@media (max-width: 600px) {
+  .pub-exam-card {
+    padding: 1.2rem;
+  }
+  .pub-exam-header h2 {
+    font-size: 1.2rem;
+  }
+  .pub-exam-options {
+    grid-template-columns: 1fr;
+  }
+}
