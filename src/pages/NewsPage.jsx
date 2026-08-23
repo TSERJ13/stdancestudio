@@ -1,30 +1,37 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
+import { Link } from 'react-router-dom'
 import { useLanguage } from '../context/LanguageContext'
-import { getNews } from '../data/db'
-import NewsSection from '../components/NewsSection'
-import { renderTextWithTelegramLinks } from '../utils/linkify'
+import { getAllNewsArticles } from '../data/newsData'
 import './InnerPage.css'
 import './NewsPage.css'
 
 export default function NewsPage() {
   const { lang } = useLanguage()
-  const [articles, setArticles] = useState([])
-
-  useEffect(() => {
-    try {
-      const items = getNews()
-      if (items && Array.isArray(items)) {
-        setArticles(items)
-      }
-    } catch (e) {
-      console.error('Error loading news articles:', e)
-    }
-  }, [])
+  const basePath = lang === 'ka' ? '' : `/${lang}`
+  const articles = getAllNewsArticles(lang)
 
   const titles = {
-    ka: { eyebrow: 'სიახლეები & განცხადებები', title: 'ახალი ამბები &', italic: 'ოფიციალური განცხადებები', lead: 'გაეცანით ST Dance Studio-ს უახლეს სიახლეებს, სეზონის გეგმას, ტურნირების კალენდარსა და სტუდიის განცხადებებს.' },
-    en: { eyebrow: 'News & Announcements', title: 'Latest News &', italic: 'Official Announcements', lead: 'Stay updated with ST Dance Studio news, season plans, tournament schedules, and studio announcements.' },
-    ru: { eyebrow: 'Новости и Объявления', title: 'Последние Новости &', italic: 'Официальные Объявления', lead: 'Будьте в курсе последних новостей ST Dance Studio, планов сезона, расписания турниров и объявлений.' }
+    ka: {
+      eyebrow: 'სიახლეები & განცხადებები',
+      title: 'ახალი ამბები &',
+      italic: 'ოფიციალური პოსტები',
+      lead: 'გაეცანით ST Dance Studio-ს უახლეს სიახლეებს, სეზონის გეგმას, სატურნირო კალენდარსა და ოფიციალურ განცხადებებს.',
+      readBtn: 'სრულად წაკითხვა ➔'
+    },
+    en: {
+      eyebrow: 'News & Announcements',
+      title: 'Latest News &',
+      italic: 'Official Posts',
+      lead: 'Stay updated with ST Dance Studio news, season plans, tournament schedules, and studio announcements.',
+      readBtn: 'Read Full Article ➔'
+    },
+    ru: {
+      eyebrow: 'Новости и Объявления',
+      title: 'Последние Новости &',
+      italic: 'Официальные Посты',
+      lead: 'Будьте в курсе последних новостей ST Dance Studio, планов сезона, расписания турниров и объявлений.',
+      readBtn: 'Читать полностью ➔'
+    }
   }
 
   const tObj = titles[lang] || titles.ka
@@ -44,32 +51,31 @@ export default function NewsPage() {
         </div>
       </section>
 
-      {/* Published News Articles List (If Any) */}
-      {articles.length > 0 && (
-        <section className="section news-page-articles">
-          <div className="container">
-            <div className="news-articles-grid">
-              {articles.map((art) => (
-                <article key={art.id || art.date} className="news-article-card">
-                  {art.image && (
-                    <div className="article-img-wrap">
-                      <img src={art.image} alt={art.title} />
-                    </div>
-                  )}
-                  <div className="article-content">
-                    <span className="article-date">🗓️ {art.date}</span>
-                    <h3 className="article-title">{art.title}</h3>
-                    <div className="article-text">{renderTextWithTelegramLinks(art.content || art.text)}</div>
-                  </div>
-                </article>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
+      {/* 3-Column News Desktop Grid */}
+      <section className="section news-page">
+        <div className="container">
+          <div className="news-grid-3col">
+            {articles.map((article) => (
+              <article key={article.slug} className="news-card-grid-item">
+                <div className="news-card-thumb-wrap">
+                  <img src={article.poster} alt={article.title} className="news-card-thumb-img" />
+                  <span className="news-card-badge">📢 News</span>
+                </div>
 
-      {/* Season Opening Announcement, Tournament Table, Rules & Dress Code */}
-      <NewsSection />
+                <div className="news-card-content">
+                  <span className="news-card-date">🗓️ {article.date}</span>
+                  <h3 className="news-card-title">{article.title}</h3>
+                  <p className="news-card-excerpt">{article.excerpt}</p>
+                  
+                  <Link to={`${basePath}/news/${article.slug}`} className="news-card-read-btn">
+                    {tObj.readBtn}
+                  </Link>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
     </>
   )
 }
