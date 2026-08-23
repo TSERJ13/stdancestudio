@@ -13,6 +13,7 @@ export default function Footer() {
     { label: t('nav.home'), to: `${basePath}/` },
     { label: t('nav.about'), to: `${basePath}/about` },
     { label: t('nav.schedule'), to: `${basePath}/schedule` },
+    { label: t('nav.faq'), to: `${basePath}/faq` },
     { label: t('nav.payment'), to: `${basePath}/payment` },
     { label: t('nav.contact'), to: `${basePath}/contact` },
   ]
