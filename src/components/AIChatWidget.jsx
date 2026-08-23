@@ -19,6 +19,9 @@ const botTranslations = {
     welcome: 'გამარჯობა! მე ვარ ST Dance Studio-ს AI ასისტენტი. რა გაინტერესებთ სტუდიის შესახებ?',
     pillPrice: '💰 რა ღირს აბონემენტი?',
     pillSchedule: '📅 განრიგი',
+    pillSyllabus: '💃 WDSF 11-თვიანი გეგმა & ფიგურები',
+    pillRules: '🏆 2026-2027 წესები & ტურნირები',
+    pillDressCode: '👗 ჩაცმულობა & აუტფიტები',
     pillRegister: '✨ რეგისტრაცია',
     pillAddress: '📍 მისამართი',
     regTitle: 'ონლაინ რეგისტრაცია',
@@ -39,7 +42,7 @@ const botTranslations = {
       'Silver ჯგუფი (2+ წლიანი გამოცდილება) | 19:30 (130₾/თვე)',
       'Golden ჯგუფი (5+ წლიანი გამოცდილება) | 16:30 (130₾/თვე)',
       'წყვილების ჯგუფი | 18:30 (130₾/თვე)',
-      'Hobby Class (მოყვარულები/ზრდასრულები) | 19:15 (130₾/თვე)',
+      'Hobby Class (მოყვარულები/ზრდასრულები) | 19:15 (120₾/თვე)',
       'ინდივიდუალური გაკვეთილები (70₾ - 400₾)'
     ]
   },
@@ -52,6 +55,9 @@ const botTranslations = {
     welcome: 'Hello! I am ST Dance Studio AI Assistant. How can I help you today?',
     pillPrice: '💰 Prices & Packages',
     pillSchedule: '📅 Schedule',
+    pillSyllabus: '💃 WDSF 11-Month Syllabus',
+    pillRules: '🏆 2026-2027 Rules & Tournaments',
+    pillDressCode: '👗 Dress Code & Outfits',
     pillRegister: '✨ Register',
     pillAddress: '📍 Location',
     regTitle: 'Online Registration',
@@ -72,7 +78,7 @@ const botTranslations = {
       'Silver Group (2+ Yrs Exp) | 19:30 (130 GEL/mo)',
       'Golden Group (5+ Yrs Exp) | 16:30 (130 GEL/mo)',
       'Couples Group | 18:30 (130 GEL/mo)',
-      'Hobby Class (Adults / Amateurs) | 19:15 (130 GEL/mo)',
+      'Hobby Class (Adults / Amateurs) | 19:15 (120 GEL/mo)',
       'Private Coaching (70 GEL - 400 GEL)'
     ]
   },
@@ -85,6 +91,9 @@ const botTranslations = {
     welcome: 'Здравствуйте! Я AI-помощник ST Dance Studio. Чем могу помочь?',
     pillPrice: '💰 Цены и абонементы',
     pillSchedule: '📅 Расписание',
+    pillSyllabus: '💃 WDSF 11-месячная программа',
+    pillRules: '🏆 2026-2027 Правила и турниры',
+    pillDressCode: '👗 Дресс-код и костюмы',
     pillRegister: '✨ Регистрация',
     pillAddress: '📍 Локация',
     regTitle: 'Онлайн регистрация',
@@ -105,7 +114,7 @@ const botTranslations = {
       'Silver группа (2+ года опыта) | 19:30 (130 GEL/мес)',
       'Golden группа (5+ лет опыта) | 16:30 (130 GEL/мес)',
       'Группа для пар | 18:30 (130 GEL/мес)',
-      'Hobby Class (Взрослые / Любители) | 19:15 (130 GEL/мес)',
+      'Hobby Class (Взрослые / Любители) | 19:15 (120 GEL/мес)',
       'Индивидуальные уроки (70 GEL - 400 GEL)'
     ]
   }
@@ -885,6 +894,15 @@ USER QUESTION: ${query}`
                   <div className="std-bot-pills-row">
                     <button className="std-bot-pill" onClick={() => handleSend(activeTrans.pillPrice)}>
                       {activeTrans.pillPrice}
+                    </button>
+                    <button className="std-bot-pill" onClick={() => handleSend(activeTrans.pillSyllabus)}>
+                      {activeTrans.pillSyllabus}
+                    </button>
+                    <button className="std-bot-pill" onClick={() => handleSend(activeTrans.pillRules)}>
+                      {activeTrans.pillRules}
+                    </button>
+                    <button className="std-bot-pill" onClick={() => handleSend(activeTrans.pillDressCode)}>
+                      {activeTrans.pillDressCode}
                     </button>
                     <button className="std-bot-pill" onClick={() => handleSend(activeTrans.pillSchedule)}>
                       {activeTrans.pillSchedule}

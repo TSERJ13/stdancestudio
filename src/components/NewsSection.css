@@ -1,0 +1,269 @@
+.news-section {
+  padding: 5rem 0;
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+
+.news-card {
+  background: var(--color-bg-card, #121214);
+  border: 1px solid var(--color-line, rgba(255, 255, 255, 0.08));
+  border-radius: 16px;
+  padding: 2.5rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+.news-header {
+  margin-bottom: 2.5rem;
+}
+
+.news-badge {
+  display: inline-block;
+  background: rgba(212, 166, 74, 0.15);
+  color: var(--color-gold, #d4a64a);
+  border: 1px solid rgba(212, 166, 74, 0.3);
+  padding: 0.35rem 0.9rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  margin-bottom: 1rem;
+}
+
+.news-title {
+  font-size: 2.2rem;
+  line-height: 1.25;
+  margin-bottom: 1.25rem;
+  color: #fff;
+}
+
+.news-intro {
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: #b0ab9f;
+  margin-bottom: 2.5rem;
+}
+
+/* Tournament Table */
+.tournament-block {
+  margin-top: 3rem;
+  margin-bottom: 3rem;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--color-line, rgba(255, 255, 255, 0.08));
+  border-radius: 12px;
+  padding: 1.75rem;
+}
+
+.tournament-block__title {
+  font-size: 1.4rem;
+  color: var(--color-gold, #d4a64a);
+  margin-bottom: 0.5rem;
+}
+
+.tournament-block__subtitle {
+  font-size: 0.95rem;
+  color: #888277;
+  margin-bottom: 1.5rem;
+}
+
+.tournament-table-wrapper {
+  overflow-x: auto;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.tournament-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.95rem;
+}
+
+.tournament-table th {
+  background: rgba(212, 166, 74, 0.1);
+  color: var(--color-gold, #d4a64a);
+  font-weight: 700;
+  padding: 1rem 1.25rem;
+  border-bottom: 2px solid rgba(212, 166, 74, 0.2);
+  white-space: nowrap;
+}
+
+.tournament-table td {
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  color: #d1ccc0;
+}
+
+.tournament-table tr:last-child td {
+  border-bottom: none;
+}
+
+.tournament-table tr:hover td {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.tournament-note {
+  margin-top: 1.25rem;
+  padding: 1rem 1.25rem;
+  background: rgba(212, 166, 74, 0.08);
+  border-left: 4px solid var(--color-gold, #d4a64a);
+  border-radius: 0 8px 8px 0;
+  font-size: 0.9rem;
+  color: #e0d9cc;
+  line-height: 1.6;
+}
+
+/* Studio Rules */
+.rules-block {
+  margin-top: 3.5rem;
+}
+
+.rules-block__title {
+  font-size: 1.6rem;
+  color: #fff;
+  margin-bottom: 0.5rem;
+}
+
+.rules-block__intro {
+  font-size: 1rem;
+  color: #999388;
+  margin-bottom: 2rem;
+}
+
+.rules-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+}
+
+.rule-item {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  padding: 1.5rem 1.75rem;
+}
+
+.rule-item__head {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.rule-item__num {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--color-gold, #d4a64a);
+  color: #000;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.95rem;
+  flex-shrink: 0;
+}
+
+.rule-item__title {
+  font-size: 1.2rem;
+  color: #fff;
+  margin: 0;
+  font-weight: 700;
+}
+
+.rule-item__body {
+  font-size: 0.95rem;
+  color: #bab5a9;
+  line-height: 1.65;
+}
+
+.rule-item__body ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.rule-item__body li {
+  position: relative;
+  padding-left: 1.5rem;
+  margin-bottom: 0.6rem;
+}
+
+.rule-item__body li:last-child {
+  margin-bottom: 0;
+}
+
+.rule-item__body li::before {
+  content: "•";
+  position: absolute;
+  left: 0.5rem;
+  color: var(--color-gold, #d4a64a);
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+/* Outfit Links */
+.outfit-group {
+  margin-top: 1.25rem;
+  padding: 1rem 1.25rem;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.outfit-label {
+  font-weight: 600;
+  color: #e6dfd3;
+  margin-bottom: 0.6rem;
+  display: block;
+}
+
+.outfit-links-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.75rem;
+}
+
+.outfit-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  background: rgba(212, 166, 74, 0.12);
+  color: var(--color-gold, #d4a64a);
+  border: 1px solid rgba(212, 166, 74, 0.3);
+  padding: 0.35rem 0.8rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.outfit-link:hover {
+  background: var(--color-gold, #d4a64a);
+  color: #000;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(212, 166, 74, 0.3);
+}
+
+.outfit-link::after {
+  content: "↗";
+  font-size: 0.75rem;
+}
+
+.outfit-separator {
+  color: #555;
+  user-select: none;
+}
+
+@media (max-width: 768px) {
+  .news-card {
+    padding: 1.5rem;
+  }
+  .news-title {
+    font-size: 1.6rem;
+  }
+  .rule-item {
+    padding: 1.25rem;
+  }
+}

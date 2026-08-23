@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
 import { useLanguage } from '../context/LanguageContext'
+import SyllabusExplorer from '../components/SyllabusExplorer'
 import './InnerPage.css'
 import './Schedule.css'
 
@@ -172,6 +172,9 @@ export default function Schedule() {
 
         </div>
       </section>
+
+      {/* 11-Month WDSF Educational Syllabus & Schedule Algorithm */}
+      <SyllabusExplorer />
     </>
   )
 }
