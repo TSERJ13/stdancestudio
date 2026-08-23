@@ -970,17 +970,14 @@ USER QUESTION: ${query}`
                     <button className="std-bot-pill" onClick={() => handleSend(activeTrans.pillPrice)}>
                       {activeTrans.pillPrice}
                     </button>
-                    <button className="std-bot-pill" onClick={() => handleSend(activeTrans.pillRules)}>
-                      {activeTrans.pillRules}
+                    <button className="std-bot-pill" onClick={() => handleSend(activeTrans.pillSchedule)}>
+                      {activeTrans.pillSchedule}
                     </button>
                     <button className="std-bot-pill" onClick={() => handleSend(activeTrans.pillDressCode)}>
                       {activeTrans.pillDressCode}
                     </button>
-                    <button className="std-bot-pill" onClick={() => handleSend(activeTrans.pillSchedule)}>
-                      {activeTrans.pillSchedule}
-                    </button>
-                    <button className="std-bot-pill" onClick={() => handleSend(activeTrans.pillRegister)}>
-                      {activeTrans.pillRegister}
+                    <button className="std-bot-pill" onClick={() => handleSend(activeTrans.pillRules)}>
+                      {activeTrans.pillRules}
                     </button>
                     <button className="std-bot-pill" onClick={() => handleSend(activeTrans.pillAddress)}>
                       {activeTrans.pillAddress}
