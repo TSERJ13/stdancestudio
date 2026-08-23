@@ -18,14 +18,38 @@ export class ErrorBoundary extends React.Component {
   render() {
     if (this.state.hasError) {
       return (
-        <div style={{ color: 'white', padding: '20px', background: 'red', margin: '20px', borderRadius: '8px' }}>
-          <h3>Game UI Crashed!</h3>
-          <p style={{ fontFamily: 'monospace', fontSize: '12px' }}>
-            {this.state.error && this.state.error.toString()}
+        <div style={{
+          color: '#fff',
+          padding: '35px 25px',
+          background: 'var(--color-bg-card, #121214)',
+          border: '1px solid rgba(212, 166, 74, 0.4)',
+          margin: '40px auto',
+          maxWidth: '600px',
+          borderRadius: '16px',
+          textAlign: 'center',
+          boxShadow: '0 10px 30px rgba(0, 0, 0, 0.5)'
+        }}>
+          <h3 style={{ color: 'var(--color-gold, #d4a64a)', marginBottom: '12px', fontSize: '1.4rem' }}>
+            ST Dance Studio — გვერდის განახლება
+          </h3>
+          <p style={{ color: '#b0ab9f', fontSize: '0.95rem', marginBottom: '22px', lineHeight: '1.6' }}>
+            საიტზე განხორციელდა ახალი განახლება. გთხოვთ დააჭიროთ ქვემოთ მოცემულ ღილაკს გვერდის განახლებისთვის.
           </p>
-          <pre style={{ fontSize: '10px', overflowX: 'auto' }}>
-            {this.state.errorInfo && this.state.errorInfo.componentStack}
-          </pre>
+          <button
+            onClick={() => window.location.reload()}
+            style={{
+              background: 'var(--color-gold, #d4a64a)',
+              color: '#000',
+              border: 'none',
+              padding: '12px 28px',
+              borderRadius: '8px',
+              fontWeight: '700',
+              cursor: 'pointer',
+              fontSize: '0.95rem'
+            }}
+          >
+            გვერდის განახლება ➔
+          </button>
         </div>
       );
     }
