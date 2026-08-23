@@ -217,6 +217,9 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ===================== FAQ SECTION (Right after Programs) ===================== */}
+      <FaqSection />
+
       {/* ===================== TEACHERS ===================== */}
       <section className="section teachers-preview">
         <div className="container">
@@ -247,9 +250,6 @@ export default function Home() {
 
       {/* ===================== NEWS & ANNOUNCEMENTS ===================== */}
       <NewsSection />
-
-      {/* ===================== FAQ SECTION ===================== */}
-      <FaqSection />
 
       {/* ===================== TESTIMONIALS ===================== */}
       <section className="section testimonials">

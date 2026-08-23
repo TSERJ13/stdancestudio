@@ -1,12 +1,14 @@
 .faq-section {
-  padding: 5rem 0;
+  padding: 6rem 0;
   background: var(--color-bg);
+  border-top: 1px solid var(--color-line);
+  position: relative;
 }
 
 .faq-head {
-  text-align: center;
-  max-width: 700px;
-  margin: 0 auto 3.5rem auto;
+  text-align: left;
+  max-width: 800px;
+  margin-bottom: 3.5rem;
 }
 
 .faq-head .eyebrow {
@@ -15,64 +17,99 @@
 }
 
 .faq-head__title {
-  font-size: 2.5rem;
+  font-size: clamp(2rem, 4vw, 3rem);
   color: #fff;
+  line-height: 1.2;
 }
 
 .faq-list {
-  max-width: 900px;
-  margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.25rem;
 }
 
 .faq-item {
-  background: var(--color-bg-card, #121214);
+  background: var(--color-bg-soft, #0e0e10);
   border: 1px solid var(--color-line, rgba(255, 255, 255, 0.08));
   border-radius: 12px;
   overflow: hidden;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+  transition: background 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
+}
+
+.faq-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: var(--color-gold, #d4a64a);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.5s ease;
+}
+
+.faq-item.is-open::before,
+.faq-item:hover::before {
+  transform: scaleX(1);
+}
+
+.faq-item:hover {
+  background: var(--color-bg-card, #141417);
+  border-color: rgba(212, 166, 74, 0.25);
 }
 
 .faq-item.is-open {
+  background: var(--color-bg-card, #141417);
   border-color: rgba(212, 166, 74, 0.4);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
 }
 
 .faq-question {
   width: 100%;
   text-align: left;
-  padding: 1.5rem 1.75rem;
+  padding: 1.75rem 2rem;
   background: transparent;
   border: none;
   color: #fff;
-  font-size: 1.1rem;
+  font-size: 1.15rem;
   font-weight: 600;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 1rem;
+  gap: 1.5rem;
   cursor: pointer;
-  transition: color 0.2s ease;
+  transition: color 0.3s ease;
+  font-family: inherit;
 }
 
 .faq-question:hover {
   color: var(--color-gold, #d4a64a);
 }
 
+.faq-num-prefix {
+  font-family: var(--font-accent, sans-serif);
+  font-size: 0.85rem;
+  letter-spacing: 0.2em;
+  color: var(--color-gold, #d4a64a);
+  margin-right: 0.75rem;
+  opacity: 0.9;
+}
+
 .faq-icon {
-  width: 24px;
-  height: 24px;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(212, 166, 74, 0.2);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.1rem;
-  font-weight: 400;
+  font-size: 1.2rem;
+  font-weight: 300;
   color: var(--color-gold, #d4a64a);
-  transition: transform 0.3s ease, background 0.3s ease;
+  transition: transform 0.4s ease, background 0.3s ease, color 0.3s ease;
   flex-shrink: 0;
 }
 
@@ -85,36 +122,36 @@
 .faq-answer {
   max-height: 0;
   overflow: hidden;
-  transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1), padding 0.35s ease;
-  padding: 0 1.75rem;
+  transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), padding 0.4s ease;
+  padding: 0 2rem;
 }
 
 .faq-item.is-open .faq-answer {
   max-height: 600px;
-  padding: 0 1.75rem 1.5rem 1.75rem;
+  padding: 0 2rem 1.75rem 2rem;
 }
 
 .faq-answer__inner {
-  font-size: 0.95rem;
-  line-height: 1.7;
-  color: #b3ad9f;
+  font-size: 0.98rem;
+  line-height: 1.75;
+  color: var(--color-text-muted, #b0ab9f);
   white-space: pre-line;
-  border-top: 1px dashed rgba(255, 255, 255, 0.08);
-  padding-top: 1rem;
+  border-top: 1px solid var(--color-line-soft, rgba(255, 255, 255, 0.06));
+  padding-top: 1.25rem;
 }
 
 @media (max-width: 768px) {
-  .faq-head__title {
-    font-size: 1.8rem;
+  .faq-section {
+    padding: 4rem 0;
   }
   .faq-question {
-    padding: 1.25rem;
-    font-size: 1rem;
+    padding: 1.25rem 1.5rem;
+    font-size: 1.02rem;
   }
   .faq-answer {
-    padding: 0 1.25rem;
+    padding: 0 1.5rem;
   }
   .faq-item.is-open .faq-answer {
-    padding: 0 1.25rem 1.25rem 1.25rem;
+    padding: 0 1.5rem 1.5rem 1.5rem;
   }
 }

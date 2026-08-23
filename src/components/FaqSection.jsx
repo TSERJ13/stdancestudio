@@ -28,8 +28,9 @@ export default function FaqSection() {
         </div>
 
         <div className="faq-list">
-          {faqData.items.map((item) => {
+          {faqData.items.map((item, idx) => {
             const isOpen = openId === item.id
+            const numStr = idx < 9 ? `0${idx + 1}` : `${idx + 1}`
             return (
               <div 
                 key={item.id} 
@@ -40,7 +41,10 @@ export default function FaqSection() {
                   onClick={() => toggleItem(item.id)}
                   aria-expanded={isOpen}
                 >
-                  <span>{item.q}</span>
+                  <div>
+                    <span className="faq-num-prefix">{numStr}</span>
+                    <span>{item.q}</span>
+                  </div>
                   <span className="faq-icon">+</span>
                 </button>
 

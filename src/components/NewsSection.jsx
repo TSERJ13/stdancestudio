@@ -10,10 +10,18 @@ export default function NewsSection() {
 
   if (!news) return null
 
+  const posterSrc = lang === 'ru' ? '/images/poster-ru.jpg' : lang === 'en' ? '/images/poster-en.jpg' : '/images/poster-ka.jpg'
+
   return (
     <section className="news-section section" id="news">
       <div className="container">
         <div className="news-card">
+          
+          {/* Season Opening Poster */}
+          <div className="news-poster-wrapper">
+            <img src={posterSrc} alt="ST Dance 2026/27 Season Opening" className="news-poster-img" />
+          </div>
+
           <div className="news-header">
             <span className="news-badge">{news.eyebrow}</span>
             <h2 className="display news-title">{news.title}</h2>
@@ -24,6 +32,11 @@ export default function NewsSection() {
           <div className="tournament-block">
             <h3 className="display tournament-block__title">{news.calendarTitle}</h3>
             <p className="tournament-block__subtitle">{news.calendarSubtitle}</p>
+
+            {/* Competition Calendar Poster */}
+            <div className="tournament-poster-wrapper">
+              <img src="/images/poster-calendar.jpg" alt="ST Dance Competition Calendar" className="tournament-poster-img" />
+            </div>
 
             <div className="tournament-table-wrapper">
               <table className="tournament-table">

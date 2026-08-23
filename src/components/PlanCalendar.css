@@ -1,0 +1,174 @@
+.plan-calendar {
+  background: var(--color-bg-card, #121214);
+  border: 1px solid var(--color-line, rgba(255, 255, 255, 0.08));
+  border-radius: 16px;
+  padding: 2.25rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  margin-bottom: 3.5rem;
+}
+
+.plan-calendar__head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.75rem;
+}
+
+.plan-calendar__title {
+  font-size: 1.6rem;
+  color: #fff;
+  margin: 0;
+}
+
+.month-selector-bar {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.month-btn {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #b0ab9f;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.month-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+}
+
+.month-btn.active {
+  background: var(--color-gold, #d4a64a);
+  color: #000;
+  border-color: var(--color-gold, #d4a64a);
+  font-weight: 800;
+}
+
+/* Calendar Grid */
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.5rem;
+}
+
+.cal-day-header {
+  text-align: center;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--color-gold, #d4a64a);
+  padding: 0.5rem;
+  letter-spacing: 0.05em;
+  background: rgba(212, 166, 74, 0.08);
+  border-radius: 6px;
+}
+
+.cal-cell {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: 8px;
+  min-height: 85px;
+  padding: 0.6rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: all 0.2s ease;
+}
+
+.cal-cell.empty {
+  background: transparent;
+  border-color: transparent;
+}
+
+.cal-cell.has-event {
+  border-color: rgba(212, 166, 74, 0.3);
+}
+
+.cal-cell.is-tournament {
+  background: rgba(212, 166, 74, 0.12);
+  border-color: var(--color-gold, #d4a64a);
+}
+
+.cal-cell.is-holiday {
+  background: rgba(244, 67, 54, 0.1);
+  border-color: rgba(244, 67, 54, 0.3);
+}
+
+.cal-cell-num {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.cal-cell-badge {
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+  line-height: 1.25;
+  margin-top: 0.3rem;
+  word-break: break-word;
+}
+
+.badge-tournament {
+  background: var(--color-gold, #d4a64a);
+  color: #000;
+}
+
+.badge-holiday {
+  background: rgba(244, 67, 54, 0.25);
+  color: #ff8a80;
+}
+
+.badge-regular {
+  background: rgba(255, 255, 255, 0.06);
+  color: #c0baa9;
+}
+
+.cal-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  font-size: 0.85rem;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #b0ab9f;
+}
+
+.legend-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+}
+
+@media (max-width: 768px) {
+  .plan-calendar {
+    padding: 1.25rem;
+  }
+  .cal-cell {
+    min-height: 60px;
+    padding: 0.35rem;
+  }
+  .cal-cell-badge {
+    font-size: 0.65rem;
+    padding: 0.1rem 0.2rem;
+  }
+}
