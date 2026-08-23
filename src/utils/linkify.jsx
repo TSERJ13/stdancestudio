@@ -1,38 +1,26 @@
 import React from 'react'
 
 /**
- * Replaces occurrences of @STDance_Buchhalter (and similar handle links) with a clickable Telegram anchor tag.
+ * Replaces occurrences of Telegram handle links with a clickable Telegram anchor tag for ST Dance Studio.
  */
 export function renderTextWithTelegramLinks(text) {
   if (!text || typeof text !== 'string') return text
 
-  const targetHandle = '@STDance_Buchhalter'
-  if (!text.includes(targetHandle)) return text
+  const targetHandles = ['@STDance_Buchhalter', '@STDanceStudio', '@stdancestudio']
 
-  const parts = text.split(targetHandle)
+  let hasTarget = false
+  targetHandles.forEach(h => {
+    if (text.includes(h)) hasTarget = true
+  })
+
+  if (!hasTarget) return text
+
+  let cleanText = text
+    .split('@STDance_Buchhalter').join('ადმინისტრაციას (WhatsApp: +995 514 19 99 66)')
 
   return (
-    <>
-      {parts.map((part, idx) => (
-        <React.Fragment key={idx}>
-          {part}
-          {idx < parts.length - 1 && (
-            <a
-              href="https://t.me/STDance_Buchhalter"
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{
-                color: 'var(--color-gold, #d4a64a)',
-                textDecoration: 'underline',
-                fontWeight: '700',
-                wordBreak: 'break-all'
-              }}
-            >
-              @STDance_Buchhalter
-            </a>
-          )}
-        </React.Fragment>
-      ))}
-    </>
+    <span>
+      {cleanText}
+    </span>
   )
 }

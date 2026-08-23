@@ -5,7 +5,8 @@ import { submitRegistration } from '../data/classcore'
 import { studioKnowledgeBase } from '../data/aiKnowledge'
 import { trackAnalyticsEvent } from '../utils/analytics'
 import { renderTextWithTelegramLinks } from '../utils/linkify'
-import { sendUnansweredQuestionToAdminEmail } from '../utils/emailNotifier'
+import { sendUnansweredQuestionToAdminEmail, sendLeadToAdminEmail } from '../utils/emailNotifier'
+import { geoLatinToGeorgian, isGeoLatinInput } from '../utils/transliterateGeoLatin'
 import './AIChatWidget.css'
 
 const GEMINI_KEY = atob('QVEuQWI4Uk42SnhSZVRtaWZfOEFCSHBnUWhLRS11dmhlUG5YMTdYSkhBaTZNQjZQQm9ZUg==')
@@ -499,7 +500,7 @@ export function getSmartFallbackAnswer(query, lang) {
 
 1. ⏰ დრო & დისციპლინა: მოსწავლე მოდის 10 წუთით ადრე. დაგვიანებული სახლში ბრუნდება. დარბაზში ტელეფონები უხმო რეჟიმშია.
 2. 👨‍👩‍👧 მშობლები: მშობელი ელოდება გარეთ; კატეგორიულად იკრძალება მწვრთნელის შეწუხება გაკვეთილის დროს.
-3. 🩺 გაცდენები & გაყინვა: საპატიოდ ითვლება მხოლოდ ჯანმრთელობის მდგომარეობა (საჭიროა ექიმის ცნობა) და წინასწარი შეტყობინება ბუღალტრისთვის Telegram-ზე: @STDance_Buchhalter.
+3. 🩺 გაცდენები & გაყინვა: საპატიოდ ითვლება მხოლოდ ჯანმრთელობის მდგომარეობა (საჭიროა ექიმის ცნობა) და წინასწარი შეტყობინება სტუდიის ადმინისტრაციაში (WhatsApp: +995 514 19 99 66).
 4. 👗 ჩაცმულობა: სავალდებულოა მხოლოდ სპორტულ-სამეჯლისო ცეკვების სპეციალური ფორმა.
 5. 🏆 სატურნირო კალენდარი: სეზონზე დაგეგმილია 10 ძირითადი ტურნირი (ქუთაისი, თბილისი, ბათუმი, კავკასიის თასი & Batumi Open).
 6. 🔒 კონფიდენციალურობა & მონაცემები: თქვენი მონაცემები დაცულია (stdancegroupdue@gmail.com).`
@@ -508,7 +509,7 @@ export function getSmartFallbackAnswer(query, lang) {
 
 1. ⏰ Дисциплина: Приходить за 10 минут до начала.
 2. 👨‍👩‍👧 Родители: Ожидают снаружи, не отвлекают тренера во время урока.
-3. 🩺 Заморозка: Только по болезни (справка от врача + уведомление бухгалтера в Telegram: @STDance_Buchhalter).
+3. 🩺 Заморозка: Только по болезни (справка от врача + уведомление администрации в WhatsApp: +995 514 19 99 66).
 4. 👗 Дресс-код: Обязательна только специальная бальная форма.
 5. 🏆 Турнирный календарь: 10 главных турниров в сезоне 2026-2027.
 6. 🔒 Конфиденциальность: Ваши данные защищены (stdancegroupdue@gmail.com).`
@@ -517,7 +518,7 @@ export function getSmartFallbackAnswer(query, lang) {
 
 1. ⏰ Discipline: Arrive 10 mins early. Phones on silent.
 2. 👨‍👩‍👧 Parents: Please wait outside; strictly no interruptions during lessons.
-3. 🩺 Absence & Freezing: Only medical health reasons qualify via doctor note and Telegram notification to @STDance_Buchhalter.
+3. 🩺 Absence & Freezing: Only medical health reasons qualify via doctor note and notification to studio management (WhatsApp: +995 514 19 99 66).
 4. 👗 Dress Code: Mandatory official ballroom dancewear only.
 5. 🏆 Competition Calendar: 10 major tournaments scheduled for 2026-2027.
 6. 🔒 Data Privacy: Personal data protected under policy (stdancegroupdue@gmail.com).`
@@ -601,21 +602,27 @@ export function getSmartFallbackAnswer(query, lang) {
   if (lang === 'ka') {
     return `✨ გმადლობთ შეკითხვისთვის!
 
-თქვენი შეკითხვა ("${query}") წარმატებით გადაეგზავნა ადმინისტრაციის ოფიციალურ ელ-ფოსტას (stdancegroupdue@gmail.com). ჩვენი მენეჯერი უმოკლეს დროში დაგიკავშირდებათ!
+თქვენი შეკითხვა ("${query}") მიღებულია.
 
-ასევე შეგიძლიათ პირდაპირ მოგვწეროთ WhatsApp-ზე: +995 514 19 99 66 ან Telegram-ზე: @STDance_Buchhalter.`
+📱 **გთხოვთ დამიტოვოთ თქვენი ტელეფონის ნომერი (მაგ: 5XX XX XX XX)**, რომ ჩვენი მენეჯერი უმოკლეს დროში დაგიკავშირდეთ!
+
+ასევე შეგიძლიათ პირდაპირ მოგვწეროთ WhatsApp-ზე: +995 514 19 99 66.`
   } else if (lang === 'ru') {
     return `✨ Спасибо за ваш вопрос!
 
-Ваш запрос ("${query}") успешно перенаправлен на официальную почту администрации (stdancegroupdue@gmail.com). Наш менеджер свяжется с вами в ближайшее время!
+Ваш запрос ("${query}") принят.
 
-Вы также можете написать нам напрямую в WhatsApp: +995 514 19 99 66 или Telegram: @STDance_Buchhalter.`
+📱 **Пожалуйста, оставьте ваш номер телефона (например, +995 5XX XX XX XX)**, чтобы наш менеджер связался с вами!
+
+Вы также можете написать нам напрямую в WhatsApp: +995 514 19 99 66.`
   } else {
     return `✨ Thank you for your question!
 
-Your inquiry ("${query}") has been successfully forwarded to administration email (stdancegroupdue@gmail.com). Our team will respond to you shortly!
+Your inquiry ("${query}") has been received.
 
-You can also contact us on WhatsApp: +995 514 19 99 66 or Telegram: @STDance_Buchhalter.`
+📱 **Please leave your phone number (e.g. +995 5XX XX XX XX)** so our manager can call you directly!
+
+You can also contact us on WhatsApp: +995 514 19 99 66.`
   }
 }
 
@@ -722,19 +729,56 @@ setMessages([{ role: 'bot', text: activeTrans.welcome }])
     }
   }, [messages, isRegMode, isTyping])
 
+  const [lastQuestion, setLastQuestion] = useState('')
+
   const handleSend = async (textToSend) => {
-    const query = textToSend || inputMsg
+    let query = textToSend || inputMsg
     if (!query.trim() || isTyping) return
 
-    trackAnalyticsEvent('bot_question_asked', { query })
+    // 1. Geo-Latin Transliteration Check (e.g. "ra cekvebs astavlit" -> "რა ცეკვებს ასწავლით")
+    let processedQuery = query
+    if (isGeoLatinInput(query)) {
+      processedQuery = geoLatinToGeorgian(query)
+    }
+
+    trackAnalyticsEvent('bot_question_asked', { query, processedQuery })
 
     const newMsgs = [...messages, { role: 'user', text: query }]
     setMessages(newMsgs)
     setInputMsg('')
     setIsTyping(true)
 
-    // Check Registration Intent across all 3 languages (GE, EN, RU)
-    const qLower = query.toLowerCase()
+    // 2. Phone Number Detection & Lead Dispatch
+    const phoneMatch = query.match(/(?:\+?995\s*)?(?:5\d{2}[\s.-]?\d{2}[\s.-]?\d{2}[\s.-]?\d{2}|\d{9})/g)
+    if (phoneMatch && phoneMatch.length > 0) {
+      const capturedPhone = phoneMatch[0]
+      await sendLeadToAdminEmail({
+        name: 'სტუმარი AI ჩატიდან',
+        phone: capturedPhone,
+        question: lastQuestion || 'ზოგადი კონსულტაცია',
+        lang
+      })
+
+      setTimeout(() => {
+        setIsTyping(false)
+        setMessages((prev) => [
+          ...prev,
+          {
+            role: 'bot',
+            text: lang === 'ka'
+              ? `✨ დიდი მადლობა! თქვენი ტელეფონის ნომერი (${capturedPhone}) წარმატებით მივიღეთ და გადავეცით ST Dance Studio-ს მენეჯერს. ჩვენი მენეჯერი უმოკლეს დროში დაგიკავშირდებათ! 📞\n\nასევე შეგიძლიათ პირდაპირ მოგვწეროთ WhatsApp-ზე: +995 514 19 99 66.`
+              : `✨ Thank you! Your phone number (${capturedPhone}) has been received and forwarded to our studio manager. We will contact you shortly! 📞\n\nWhatsApp: +995 514 19 99 66.`
+          }
+        ])
+      }, 400)
+      return
+    }
+
+    // Save non-phone query as last question
+    setLastQuestion(processedQuery)
+
+    // Use processedQuery for lower casing and search
+    const qLower = processedQuery.toLowerCase()
     if (
       qLower.includes('რეგისტრაცი') ||
       qLower.includes('დამარეგისტრირ') ||
