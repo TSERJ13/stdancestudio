@@ -5,6 +5,7 @@ import { submitRegistration } from '../data/classcore'
 import { studioKnowledgeBase } from '../data/aiKnowledge'
 import { trackAnalyticsEvent } from '../utils/analytics'
 import { renderTextWithTelegramLinks } from '../utils/linkify'
+import { sendUnansweredQuestionToAdminEmail } from '../utils/emailNotifier'
 import './AIChatWidget.css'
 
 const GEMINI_KEY = atob('QVEuQWI4Uk42SnhSZVRtaWZfOEFCSHBnUWhLRS11dmhlUG5YMTdYSkhBaTZNQjZQQm9ZUg==')
@@ -356,34 +357,110 @@ export function getSmartFallbackAnswer(query, lang) {
     );
   }
 
-  // 4. General Creative Response Variations about Studio
-  const kaGeneralReplies = [
-    `✨ ST DANCE STUDIO არის ბათუმში წამყვანი სპორტული ცეკვების აკადემია, სადაც ბავშვები და მოზრდილები ეუფლებიან სამეჯლისო ცეკვების ხელოვნებას, დისციპლინასა და პარკეტზე თავდაჯერებულობას!
+  // 4. Dress Code & Outfits
+  if (
+    q.includes('ჩაცმულობ') ||
+    q.includes('ტანსაცმელ') ||
+    q.includes('აუტფიტ') ||
+    q.includes('კაბ') ||
+    q.includes('dress') ||
+    q.includes('outfit') ||
+    q.includes('дресс') ||
+    q.includes('одежда') ||
+    q.includes('костюм')
+  ) {
+    if (lang === 'ka') {
+      return `${intro}
 
-🌟 რატომ ST Dance Studio?
-• 🏆 WDSF საერთაშორისო კატეგორიის მსაჯი და პროფესიონალი მწვრთნელები
-• 🥇 ეროვნულ და საერთაშორისო ტურნირებში მონაწილეობა
-• 🎪 საზაფხულო & ზამთრის საცეკვაო ბანაკები (Camps) და შოუ-პროგრამები
-• 🎁 100%-ით უფასო პირველი საცდელი გაკვეთილი!
+👗 ST DANCE STUDIO — ჩაცმულობის წესი (Dress Code):
 
-ჩასაწერად დააჭირეთ ღილაკს "რეგისტრაცია".`,
-    `🌟 კეთილი იყოს თქვენი მობრძანება ST Dance Studio-ში!
+გაკვეთილზე მოსწავლეები დაიშვებიან მხოლოდ სამეჯლისო-სპორტული ცეკვების სპეციალური ტანსაცმლით (იკრძალება ქართული ცეკვების სავარჯიშოები, ყოველდღიური კაბები და ფიტნესის ტანსაცმელი).
 
-ჩვენი სტუდია ბათუმში უკვე მრავალი წელია ზრდის ჩემპიონებსა და ცეკვის მოყვარულებს. WDSF საერთაშორისო მსაჯის, სერგო წივწივაძის ხელმძღვანელობით, თითოეული მოსწავლე იღებს უმაღლესი დონის საცეკვაო განათლებას!
+• ბიჭების აუტფიტების შეძენის ბმულები:
+  - ვარიანტი 1: https://link.stdance.ge/QgmQ1I
+  - ვარიანტი 2: https://link.stdance.ge/H1e2EM
+  - ვარიანტი 3: https://link.stdance.ge/tuOcHA
+  - ვარიანტი 4: https://link.stdance.ge/UOTfmo
+  - ვარიანტი 5: https://link.stdance.ge/Pf3aGG
 
-🎁 პირველი საცდელი გაკვეთილი სრულიად უფასოა! გსურთ რეგისტრაცია?`
-  ]
+• გოგონების აუტფიტების შეძენის ბმულები:
+  - ვარიანტი 1: https://link.stdance.ge/WMkI7b
+  - ვარიანტი 2: https://link.stdance.ge/4oin9a
+  - ვარიანტი 3-14: იხილეთ სიახლეების (/news) გვერდზე.`
+    } else if (lang === 'ru') {
+      return `👗 ST DANCE STUDIO — Дресс-код:
+
+На занятия допускаются только ученики в специальной форме.
+
+• Ссылки для мальчиков: https://link.stdance.ge/QgmQ1I , https://link.stdance.ge/H1e2EM , https://link.stdance.ge/tuOcHA
+• Ссылки для девочек: https://link.stdance.ge/WMkI7b , https://link.stdance.ge/4oin9a (полный список на странице /news).`
+    } else {
+      return `👗 ST DANCE STUDIO — Dress Code:
+
+Special ballroom dance training attire is mandatory.
+
+• Boys outfits: https://link.stdance.ge/QgmQ1I , https://link.stdance.ge/H1e2EM
+• Girls outfits: https://link.stdance.ge/WMkI7b , https://link.stdance.ge/4oin9a (full list on /news page).`
+    }
+  }
+
+  // 5. Rules & Tournaments
+  if (
+    q.includes('წეს') ||
+    q.includes('ტურშირ') ||
+    q.includes('ტურისტ') ||
+    q.includes('rule') ||
+    q.includes('tournament') ||
+    q.includes('правил') ||
+    q.includes('турниრ')
+  ) {
+    if (lang === 'ka') {
+      return `${intro}
+
+🏆 ST DANCE STUDIO — 2026-2027 წესები & ტურნირები:
+
+1. დრო და დისციპლინა: მოსწავლე მოდის 10 წუთით ადრე. დაგვიანებული სახლში ბრუნდება.
+2. მშობლები: მშობელი არ შედის გამოსაცვლელ ოთახში და არ აწუხებს ტრენერს გაკვეთილზე.
+3. 2026-2027 სატურნირო კალენდარი: 10 ძირითადი ტურნირი (ქუთაისი, თბილისი, ბათუმი, კავკასიის თასი).
+4. გაცდენები & გაყინვა: საპატიო მიზეზად ითვლება მხოლოდ ჯანმრთელობის მდგომარეობა (საჭიროა ექიმის ცნობა) და წინასწარი შეტყობინება ბუღალტრისთვის ტელეგრამზე: @STDance_Buchhalter.`
+    } else if (lang === 'ru') {
+      return `🏆 ST DANCE STUDIO — Правила и Турниры 2026-2027:
+
+1. Дисциплина: приход за 10 мин до начала.
+2. Родители: ожидают снаружи, не мешают тренеру.
+3. Турнирный календарь: 10 главных турниров в сезоне.
+4. Заморозка: только по болезни через врача и уведомление бухгалтера в Telegram: @STDance_Buchhalter.`
+    } else {
+      return `🏆 ST DANCE STUDIO — 2026-2027 Rules & Tournaments:
+
+1. Discipline: Arrive 10 mins early.
+2. Parents: Wait outside during lessons.
+3. Competition Calendar: 10 major tournaments (Caucasus Cup, Batumi Open).
+4. Freezing: Only medical health reasons via doctor note & Telegram notification to @STDance_Buchhalter.`
+    }
+  }
+
+  // 6. Unknown / Un-answered Specific Query Handling — Email Forward to stdabcegroup@gmail.com
+  sendUnansweredQuestionToAdminEmail(query, lang)
 
   if (lang === 'ka') {
-    return getRandomArrayItem(kaGeneralReplies)
+    return `✨ გმადლობთ შეკითხვისთვის!
+
+თქვენი შეკითხვა ("${query}") წარმატებით გადაეგზავნა ადმინისტრაციის ოფიციალურ ელ-ფოსტას (stdabcegroup@gmail.com). ჩვენი მენეჯერი უმოკლეს დროში დაგიკავშირდებათ!
+
+ასევე შეგიძლიათ პირდაპირ მოგვწეროთ WhatsApp-ზე: +995 514 19 99 66 ან Telegram-ზე: @STDance_Buchhalter.`
   } else if (lang === 'ru') {
-    return `✨ ST DANCE STUDIO — ведущая студия бальных и спортивных танцев в Батуми под руководством международного судьи WDSF Серго Цивцивадзе!
+    return `✨ Спасибо за ваш вопрос!
 
-🎁 Первый пробный урок 100% бесплатно! Нажмите "Регистрация" для записи.`
+Ваш запрос ("${query}") успешно перенаправлен на официальную почту администрации (stdabcegroup@gmail.com). Наш менеджер свяжется с вами в ближайшее время!
+
+Вы также можете написать нам напрямую в WhatsApp: +995 514 19 99 66 или Telegram: @STDance_Buchhalter.`
   } else {
-    return `✨ ST DANCE STUDIO is a premier ballroom dance academy in Batumi directed by WDSF International Judge Sergi Tsivtsivadze!
+    return `✨ Thank you for your question!
 
-🎁 First trial lesson is 100% Free! Click Registration to join us.`
+Your inquiry ("${query}") has been successfully forwarded to administration email (stdabcegroup@gmail.com). Our team will respond to you shortly!
+
+You can also contact us on WhatsApp: +995 514 19 99 66 or Telegram: @STDance_Buchhalter.`
   }
 }
 

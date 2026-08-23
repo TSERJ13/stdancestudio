@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react'
 import { useLanguage } from '../context/LanguageContext'
 import { studioKnowledgeBase } from '../data/aiKnowledge'
 import { getSmartFallbackAnswer } from './AIChatWidget'
+import { renderTextWithTelegramLinks } from '../utils/linkify'
 import './FaqBotEmbed.css'
 
 const initialWelcome = {
