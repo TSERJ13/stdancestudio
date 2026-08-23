@@ -1,34 +1,35 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { useLanguage } from '../context/LanguageContext'
 import { studioKnowledgeBase } from '../data/aiKnowledge'
+import { getSmartFallbackAnswer } from './AIChatWidget'
 import './FaqBotEmbed.css'
 
 const initialWelcome = {
-  ka: 'გამარჯობა! მე ვარ ST Dance Studio-ს AI ასისტენტი. დასვით ნებისმიერი შეკითხვა ფასების, განრიგის, წესების, WDSF 11-თვიანი სილაბუსის ან დრესკოდის შესახებ.',
-  en: 'Hello! I am ST Dance Studio AI Assistant. Ask any question regarding prices, schedule, rules, 11-month WDSF syllabus, or dress code.',
-  ru: 'Здравствуйте! Я AI-помощник ST Dance Studio. Задайте любой вопрос о ценах, расписании, правилах, 11-месячной программе WDSF или дресс-коде.'
+  ka: 'გამარჯობა! მე ვარ ST Dance Studio-ს AI ასისტენტი. დასვით ნებისმიერი შეკითხვა ფასების, განრიგის, წესების, ჩაცმულობის ან ლოკაციის შესახებ.',
+  en: 'Hello! I am ST Dance Studio AI Assistant. Ask any question regarding prices, schedule, rules, dress code, or location.',
+  ru: 'Здравствуйте! Я AI-помощник ST Dance Studio. Задайте любой вопрос о ценах, расписании, правилах, дресс-коде или локации.'
 }
 
 const pills = {
   ka: [
     '💰 რა ღირს აბონემენტი?',
-    '💃 WDSF 11-თვიანი გეგმა & ფიგურები',
+    'ჩაცმულობა',
     '🏆 2026-2027 წესები & ტურნირები',
-    '👗 ჩაცმულობა & აუტფიტები',
+    '📅 განრიგი',
     '📍 მისამართი & ლოკაცია'
   ],
   en: [
     '💰 Prices & Packages',
-    '💃 WDSF 11-Month Syllabus',
+    'Dress Code',
     '🏆 Rules & Tournaments',
-    '👗 Dress Code & Outfits',
+    '📅 Schedule',
     '📍 Location & Contact'
   ],
   ru: [
     '💰 Цены и абонементы',
-    '💃 WDSF 11-месячная программа',
+    'Дресс-код',
     '🏆 Правила и турниры',
-    '👗 Дресс-код и костюмы',
+    '📅 Расписание',
     '📍 Адрес и контакты'
   ]
 }
@@ -57,40 +58,42 @@ export default function FaqBotEmbed() {
     if (!textToSend) setInput('')
     setLoading(true)
 
-    try {
-      const apiKey = import.meta.env.VITE_GEMINI_API_KEY
-      if (!apiKey) {
-        throw new Error('API Key missing')
-      }
-
-      const promptContext = `You are the official AI Assistant of ST Dance Studio in Batumi, Georgia.
+    setTimeout(async () => {
+      try {
+        const apiKey = import.meta.env.VITE_GEMINI_API_KEY
+        if (apiKey) {
+          const promptContext = `You are the official AI Assistant of ST Dance Studio in Batumi, Georgia.
 Use the knowledge base below to answer the user's question accurately in the language they used (Georgian, English, or Russian).
 Knowledge Base:
 ${studioKnowledgeBase}
 
 User Question: ${query}`
 
-      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: promptContext }] }]
-        })
-      })
+          const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contents: [{ parts: [{ text: promptContext }] }]
+            })
+          })
 
-      const data = await response.json()
-      const answer = data?.candidates?.[0]?.content?.parts?.[0]?.text || 'ბოდიშს გიხდით, პასუხის მიღება ვერ მოხერხდა. გთხოვთ სცადოთ მოგვიანებით.'
+          const data = await response.json()
+          const answer = data?.candidates?.[0]?.content?.parts?.[0]?.text
+          if (answer && answer.trim()) {
+            setMessages(prev => [...prev, { sender: 'bot', text: answer }])
+            setLoading(false)
+            return
+          }
+        }
+      } catch (err) {
+        console.error('Gemini fetch error, using built-in knowledge engine:', err)
+      }
 
-      setMessages(prev => [...prev, { sender: 'bot', text: answer }])
-    } catch (err) {
-      console.error(err)
-      setMessages(prev => [...prev, {
-        sender: 'bot',
-        text: lang === 'ka' ? 'დაფიქსირდა ხარვეზი. გთხოვთ დაგვიკავშირდეთ WhatsApp-ზე: +995 514 19 99 66' : 'An error occurred. Please contact us on WhatsApp: +995 514 19 99 66'
-      }])
-    } finally {
+      // Built-in Studio Knowledge Engine fallback (100% reliable, zero error messages!)
+      const fallbackAns = getSmartFallbackAnswer(query, lang)
+      setMessages(prev => [...prev, { sender: 'bot', text: fallbackAns }])
       setLoading(false)
-    }
+    }, 300)
   }
 
   const activePills = pills[lang] || pills.ka

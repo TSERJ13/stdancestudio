@@ -19,9 +19,8 @@ const botTranslations = {
     welcome: 'გამარჯობა! მე ვარ ST Dance Studio-ს AI ასისტენტი. რა გაინტერესებთ სტუდიის შესახებ?',
     pillPrice: '💰 რა ღირს აბონემენტი?',
     pillSchedule: '📅 განრიგი',
-    pillSyllabus: '💃 WDSF 11-თვიანი გეგმა & ფიგურები',
     pillRules: '🏆 2026-2027 წესები & ტურნირები',
-    pillDressCode: '👗 ჩაცმულობა & აუტფიტები',
+    pillDressCode: 'ჩაცმულობა',
     pillRegister: '✨ რეგისტრაცია',
     pillAddress: '📍 მისამართი',
     regTitle: 'ონლაინ რეგისტრაცია',
@@ -55,9 +54,8 @@ const botTranslations = {
     welcome: 'Hello! I am ST Dance Studio AI Assistant. How can I help you today?',
     pillPrice: '💰 Prices & Packages',
     pillSchedule: '📅 Schedule',
-    pillSyllabus: '💃 WDSF 11-Month Syllabus',
     pillRules: '🏆 2026-2027 Rules & Tournaments',
-    pillDressCode: '👗 Dress Code & Outfits',
+    pillDressCode: 'Dress Code',
     pillRegister: '✨ Register',
     pillAddress: '📍 Location',
     regTitle: 'Online Registration',
@@ -91,9 +89,8 @@ const botTranslations = {
     welcome: 'Здравствуйте! Я AI-помощник ST Dance Studio. Чем могу помочь?',
     pillPrice: '💰 Цены и абонементы',
     pillSchedule: '📅 Расписание',
-    pillSyllabus: '💃 WDSF 11-месячная программа',
     pillRules: '🏆 2026-2027 Правила и турниры',
-    pillDressCode: '👗 Дресс-код и костюмы',
+    pillDressCode: 'Дресс-код',
     pillRegister: '✨ Регистрация',
     pillAddress: '📍 Локация',
     regTitle: 'Онлайн регистрация',
@@ -126,7 +123,7 @@ function getRandomArrayItem(arr) {
 }
 
 // Dynamic Smart Fallback Engine with randomized creative variations
-function getSmartFallbackAnswer(query, lang) {
+export function getSmartFallbackAnswer(query, lang) {
   const q = query.toLowerCase()
 
   const kaIntros = [
