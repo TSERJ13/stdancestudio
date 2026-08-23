@@ -100,9 +100,16 @@
   border-color: var(--color-gold, #d4a64a);
 }
 
-.cal-cell.is-holiday {
-  background: rgba(244, 67, 54, 0.1);
-  border-color: rgba(244, 67, 54, 0.3);
+.cal-cell.is-selected {
+  border: 2px solid var(--color-gold, #d4a64a) !important;
+  box-shadow: 0 0 12px rgba(212, 166, 74, 0.4);
+  transform: translateY(-2px);
+  background: rgba(212, 166, 74, 0.18) !important;
+}
+
+.cal-cell.is-outrange {
+  opacity: 0.35;
+  background: rgba(0, 0, 0, 0.3);
 }
 
 .cal-cell-num {
