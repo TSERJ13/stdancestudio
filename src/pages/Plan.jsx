@@ -334,48 +334,60 @@ export default function Plan() {
         </div>
       </section>
 
-      {/* 4. DEDICATED PRINTABLE GEORGIAN STUDY SHEET FOR WINDOW.PRINT() */}
+      {/* 4. DEDICATED PRINTABLE FULL 1-MONTH GEORGIAN STUDY SHEET FOR WINDOW.PRINT() */}
       <div id="printable-parent-sheet">
         <div className="print-header">
-          <h2>ST DANCE STUDIO — მშობლის & მოსწავლის სასწავლო ფურცელი</h2>
-          <p><strong>ჯგუფი:</strong> {activeGroupObj.ka} | <strong>გაკვეთილის თარიღი:</strong> {activeLessonData.dateDisplay}</p>
-          <p><strong>მთავარი მწვრთნელი:</strong> სერგი წივწივაძე | <strong>ტელ / WhatsApp:</strong> +995 514 19 99 66</p>
+          <h2>ST DANCE STUDIO — მშობლის & მოსწავლის თვიური სასწავლო გზამკვლევი</h2>
+          <p style={{ fontSize: '1.05rem', margin: '4px 0' }}>
+            <strong>ჯგუფი:</strong> {activeGroupObj.ka} | <strong>სასწავლო თვე:</strong> {getMonthKaName(currentMonthIdx + 1)} {currentYear}
+          </p>
+          <p style={{ fontSize: '0.9rem', color: '#555', margin: '2px 0' }}>
+            <strong>მთავარი მწვრთნელი:</strong> სერგი წივწივაძე | <strong>ტელ / WhatsApp:</strong> +995 514 19 99 66
+          </p>
         </div>
-        <hr style={{ border: 'none', borderTop: '1px solid #ccc', margin: '14px 0' }} />
+        <hr style={{ border: 'none', borderTop: '2px solid #b5832a', margin: '14px 0' }} />
 
+        {/* Section 1: Month Syllabus */}
         <div className="print-section">
-          <h3>💃 1. დღევანდელი ცეკვა & WDSF ფიგურები:</h3>
-          <p style={{ fontWeight: 'bold', fontSize: '1.1rem' }}>{activeLessonData.dance}</p>
-          <ul>
+          <h3>💃 1. თვის საცეკვაო პროგრამა & WDSF ფიგურები:</h3>
+          <p style={{ fontWeight: 'bold', fontSize: '1.1rem', margin: '4px 0' }}>{activeLessonData.dance}</p>
+          <ul style={{ margin: '6px 0', paddingLeft: '20px' }}>
             {activeLessonData.figures.map((fig, i) => (
               <li key={i} style={{ marginBottom: '4px' }}>• {fig}</li>
             ))}
           </ul>
-        </div>
-
-        <div className="print-section">
-          <h3>✨ 2. დგომი & რიტმი (რა უნდა იცოდეს ბავშვმა):</h3>
           <p><strong>🧍 დგომი (Posture):</strong> {activeLessonData.posture}</p>
           <p><strong>🎵 რიტმი (Rhythm):</strong> {activeLessonData.rhythm}</p>
-        </div>
-
-        <div className="print-section">
-          <h3>🏡 3. სახლის სავარჯიშო ინსტრუქცია მშობლისთვის:</h3>
-          <p style={{ background: '#f4f4f4', padding: '10px', borderRadius: '6px', fontWeight: '600' }}>
-            {activeLessonData.homePractice}
-          </p>
-          <p style={{ fontSize: '0.85rem', color: '#666' }}>
-            💡 საკმარისია 10-15 წუთი დღეში სარკის წინ დგომის დაცვით!
+          <p style={{ background: '#f8f9fa', borderLeft: '4px solid #b5832a', padding: '8px 12px', margin: '8px 0' }}>
+            <strong>🏡 სახლის სავარჯიშო ინსტრუქცია:</strong> {activeLessonData.homePractice}
           </p>
         </div>
 
-        <div className="print-section print-exam" style={{ background: '#f4fbf4', border: '1px solid #4caf50', padding: '12px', borderRadius: '8px' }}>
-          <h3>📝 4. 28 რიცხვის ტესტის საგამოცდო კითხვა:</h3>
-          <p><strong>❓ კითხვა:</strong> {activeLessonData.examQ}</p>
-          <p style={{ color: '#2e7d32', fontWeight: 'bold' }}>✅ <strong>სწორი პასუხი:</strong> {activeLessonData.examA}</p>
+        {/* Section 2: Full 20 Exam Questions for the 28th Monthly Test */}
+        <div className="print-section print-exam-container" style={{ marginTop: '16px' }}>
+          <h3>📚 2. 28 რიცხვის ონლაინ ტესტის საგამოცდო კითხვები ({questionList.length} შეკითხვა):</h3>
+          <p style={{ fontSize: '0.88rem', color: '#555', marginBottom: '12px' }}>
+            ეს არის 28 რიცხვის ონლაინ ტესტირების 20-ვე შეკითხვა და სწორი პასუხები. მშობელს შეუძლია ამობეჭდოს ეს მასალა და ამეცადინოს ბავშვი თვის განმავლობაში!
+          </p>
+
+          <div className="print-questions-grid" style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            {questionList.map((q, idx) => {
+              const correctChoice = q.optionsKa ? q.optionsKa[q.correct] : q.optionsEn[q.correct]
+              return (
+                <div key={q.id} style={{ border: '1px solid #e0e0e0', borderRadius: '6px', padding: '8px 12px', background: '#fafafa', pageBreakInside: 'avoid' }}>
+                  <p style={{ margin: '0 0 4px 0', fontWeight: 'bold', fontSize: '0.95rem' }}>
+                    {idx + 1}. {q.questionKa || q.questionEn}
+                  </p>
+                  <p style={{ margin: 0, color: '#2e7d32', fontWeight: '600', fontSize: '0.9rem' }}>
+                    ✅ <strong>სწორი პასუხი:</strong> {correctChoice}
+                  </p>
+                </div>
+              )
+            })}
+          </div>
         </div>
 
-        <div className="print-footer" style={{ marginTop: '20px', fontSize: '0.82rem', color: '#777', textAlign: 'center' }}>
+        <div className="print-footer" style={{ marginTop: '24px', paddingTop: '12px', borderTop: '1px solid #ccc', fontSize: '0.82rem', color: '#777', textAlign: 'center' }}>
           ოფიციალური ვებ-საიტი: https://stdance.ge | ონლაინ ტესტირება: https://stdance.ge/exam
         </div>
       </div>
