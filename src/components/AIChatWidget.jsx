@@ -251,8 +251,121 @@ export function getSmartFallbackAnswer(query, lang) {
 • Professional dancer and international WDSF certified instructor.
 
 📱 **Contacts:**
-• WhatsApp: **+995 514 19 99 66**
-• Email: **stdancegroupdue@gmail.com**`
+• WhatsApp: **+995 514 19 99 66**`
+    }
+  }
+
+  // 1.8. Dances Taught (Standard & Latin Disciplines)
+  if (
+    q.includes('რა ცეკვ') ||
+    q.includes('ცეკვები') ||
+    q.includes('დისციპლინ') ||
+    q.includes('სტილი') ||
+    q.includes('ვალს') ||
+    q.includes('ჩა ჩა') ||
+    q.includes('ჩაჩა') ||
+    q.includes('ლათინ') ||
+    q.includes('სტანდარტ') ||
+    q.includes('what dances') ||
+    q.includes('dances taught') ||
+    q.includes('какие танцы') ||
+    q.includes('виды танцев')
+  ) {
+    if (lang === 'ka') {
+      return `${intro}
+
+💃 ST DANCE STUDIO — საცეკვაო პროგრამები & დისციპლინები (WDSF):
+
+🏆 **ევროპული სტანდარტული ცეკვები (Standard):**
+1. ნელი ვალსი (Slow Waltz)
+2. ტანგო (Tango)
+3. ვენური ვალსი (Viennese Waltz)
+4. ნელი ფოქსტროტი (Slow Foxtrot)
+5. ქვიქსტეპი / სწრაფი ფოქსტროტი (Quickstep)
+
+💃 **ლათინოამერიკული ცეკვები (Latin):**
+1. ჩა-ჩა-ჩა (Cha-Cha-Cha)
+2. სამბა (Samba)
+3. რუმბა (Rumba)
+4. პასოდობლე (Paso Doble)
+5. ჯაივი (Jive)
+
+✨ **სპეციალური მიმართულებები:**
+• 👧 **Solo კატეგორია**: გოგონებისა და ბიჭებისთვის წყვილის გარეშე!
+• 👫 **წყვილების ჯგუფი**: სატურნირო პარტნიორობა.
+• 🍷 **Hobby Class**: ზრდასრულთა და მოყვარულთა საცეკვაო კლასი.`
+    } else if (lang === 'ru') {
+      return `💃 ST DANCE STUDIO — Танцевальные программы WDSF:
+
+🏆 **Европейская программа (Стандарт):**
+Медленный Вальс, Танго, Венский Вальс, Медленный Фокстрот, Квикстеп.
+
+💃 **Латиноамериканская программа (Латина):**
+Ча-Ча-Ча, Самба, Румба, Пасодобль, Джайв.
+
+✨ **Категории:**
+• 👧 **Соло**: Танцы без партнера!
+• 👫 **Пары**: Конкурсные пары.
+• 🍷 **Hobby Class**: Любители и взрослые.`
+    } else {
+      return `💃 ST DANCE STUDIO — Dance Disciplines (WDSF):
+
+🏆 **Standard Dances:** Slow Waltz, Tango, Viennese Waltz, Slow Foxtrot, Quickstep.
+💃 **Latin Dances:** Cha-Cha-Cha, Samba, Rumba, Paso Doble, Jive.
+✨ **Categories:** Solo (without partner), Couples, and Adult Hobby Class.`
+    }
+  }
+
+  // 1.9. Shoes & Heel Regulations Intent
+  if (
+    q.includes('ფეხსაცმელ') ||
+    q.includes('ქუსლ') ||
+    q.includes('ტუფლ') ||
+    q.includes('shoes') ||
+    q.includes('heels') ||
+    q.includes('обувь') ||
+    q.includes('туфли') ||
+    q.includes('каблук')
+  ) {
+    if (lang === 'ka') {
+      return `${intro}
+
+👠 ST DANCE STUDIO — საცეკვაო ფეხსაცმლის წესები (WDSF):
+
+• 👶 **Baby & Bronze ჯგუფები (დამწყებები)**: დაბალქუსლიანი ბლოკ-ქუსლი (2.5 – 3.5 სმ) სპეციალური სამეჯლისო ფეხსაცმელი.
+• 🥈 **Pre-Silver & Silver (H კლასი)**: სპეციალური ლათინური და სტანდარტის ფეხსაცმელი (3.5 – 5 სმ).
+• 🏆 **Golden & ზრდასრულები**: 5 – 7 სმ პროფესიონალური საცეკვაო ფეხსაცმელი (Flared Heel).
+
+💡 პირველ უფასო საცდელ გაკვეთილზე შეგიძლიათ მოხვიდეთ მოსახერხებელი სპორტული ფეხსაცმლით (კეტები/ბოტასები), ხოლო შემდეგ მწვრთნელის რეკომენდაციით შეიძენთ სპეციალურ საცეკვაო ფეხსაცმელს.`
+    } else {
+      return `👠 ST DANCE STUDIO — Dance Shoes Guidelines:
+
+For trial lessons, clean sports sneakers are allowed. Official dance shoes with 2.5–5cm heels are purchased based on coach advice after enrollment.`
+    }
+  }
+
+  // 1.95. Solo Category & Partner Search Intent
+  if (
+    q.includes('წყვილ') ||
+    q.includes('პარტნიორ') ||
+    q.includes('სოლო') ||
+    q.includes('მარტო') ||
+    q.includes('partner') ||
+    q.includes('solo') ||
+    q.includes('партнер') ||
+    q.includes('соло')
+  ) {
+    if (lang === 'ka') {
+      return `${intro}
+
+👧 ST DANCE STUDIO — Solo კატეგორია & წყვილის გარეშე ჩაწერა:
+
+• **წყვილი არ არის სავალდებულო!** სტუდიაში მოქმედებს **Solo კატეგორია**, სადაც გოგონები და ბიჭები დამოუკიდებლად სწავლობენ სრულ სატურნირო პროგრამას და გამოდიან შეჯიბრებებზე Solo დისციპლინაში.
+• წყვილის სურვილის შემთხვევაში, მწვრთნელი (სერგი წივწივაძე) გაკვეთილებზე აკვირდება მოსწავლეებს და ეხმარება შეთანხმებული საცეკვაო წყვილის ჩამოყალიბებაში!`
+    } else {
+      return `👧 ST DANCE STUDIO — Solo Category & Partner Matching:
+
+Partner is NOT mandatory! We have Solo competition categories. Coach Sergi Tsivtsivadze also assists with partner matching during training.`
     }
   }
 
