@@ -8,106 +8,88 @@
 
 .parent-hero {
   background: linear-gradient(180deg, #141210 0%, #0a0908 100%);
-  padding: 4rem 0 2rem 0;
+  padding: 3.5rem 0 1.5rem 0;
   border-bottom: 1px solid rgba(212, 166, 74, 0.2);
 }
 
-.parent-hero-top {
+.parent-hero-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   flex-wrap: wrap;
-  gap: 1rem;
-  margin-bottom: 1rem;
+  gap: 1.5rem;
 }
 
-.parent-eyebrow {
-  color: #d4a64a;
+.parent-badge {
+  display: inline-block;
+  background: rgba(212, 166, 74, 0.15);
+  border: 1px solid #d4a64a;
+  color: #f0c878;
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 0.85rem;
   font-weight: 700;
-  font-size: 0.95rem;
-  letter-spacing: 0.05em;
+  margin-bottom: 0.8rem;
   text-transform: uppercase;
 }
 
-.parent-coach-link {
-  color: #f0c878;
-  background: rgba(212, 166, 74, 0.12);
-  border: 1px solid rgba(212, 166, 74, 0.4);
-  padding: 8px 18px;
-  border-radius: 20px;
-  text-decoration: none;
-  font-weight: 600;
-  font-size: 0.85rem;
-  transition: all 0.2s ease;
-}
-
-.parent-coach-link:hover {
-  background: #d4a64a;
-  color: #0a0908;
-}
-
-.parent-title {
-  font-size: 2.4rem;
+.parent-main-title {
+  font-size: 2.2rem;
   font-weight: 800;
-  margin: 0.5rem 0 1rem 0;
   color: #ffffff;
-  line-height: 1.2;
+  margin: 0 0 0.8rem 0;
+  line-height: 1.25;
 }
 
-.parent-title-italic {
-  font-style: italic;
-  color: var(--color-gold, #d4a64a);
-}
-
-.parent-lead {
-  max-width: 800px;
+.parent-sub-lead {
+  max-width: 680px;
   color: #b0ab9f;
-  font-size: 1.05rem;
-  line-height: 1.6;
-  margin-bottom: 1.8rem;
+  font-size: 1rem;
+  line-height: 1.55;
+  margin: 0;
 }
 
-.parent-download-wrap {
+.parent-top-actions {
   display: flex;
-  gap: 14px;
-  flex-wrap: wrap;
-  align-items: center;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-end;
 }
 
-.parent-download-btn {
+.parent-print-btn {
   background: linear-gradient(135deg, #d4af37, #f0c878);
   color: #0a0908;
   border: none;
-  padding: 14px 28px;
-  border-radius: 30px;
+  padding: 12px 24px;
+  border-radius: 25px;
   font-weight: bold;
-  font-size: 1rem;
+  font-size: 0.95rem;
   cursor: pointer;
-  box-shadow: 0 6px 20px rgba(212, 175, 55, 0.35);
+  box-shadow: 0 4px 16px rgba(212, 175, 55, 0.4);
   transition: transform 0.2s ease;
 }
 
-.parent-download-btn:hover {
+.parent-print-btn:hover {
   transform: scale(1.03);
 }
 
-.parent-exam-link-btn {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid #d4a64a;
+.parent-coach-btn {
   color: #f0c878;
-  padding: 14px 24px;
-  border-radius: 30px;
-  font-weight: 600;
-  font-size: 0.95rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(212, 166, 74, 0.3);
+  padding: 8px 16px;
+  border-radius: 20px;
   text-decoration: none;
+  font-size: 0.82rem;
+  font-weight: 600;
   transition: all 0.2s ease;
 }
 
-.parent-exam-link-btn:hover {
+.parent-coach-btn:hover {
   background: rgba(212, 166, 74, 0.2);
 }
 
-.parent-card {
+.parent-container-card {
   background: #141210;
   border: 1px solid rgba(212, 166, 74, 0.25);
   border-radius: 20px;
@@ -115,183 +97,230 @@
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
 }
 
-.parent-label {
-  display: block;
-  font-weight: bold;
+.parent-sec-title {
+  font-size: 1rem;
+  font-weight: 700;
   color: #d4a64a;
-  margin-bottom: 10px;
-  font-size: 0.95rem;
+  display: block;
 }
 
-.parent-group-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+.parent-group-buttons {
+  display: flex;
   gap: 10px;
-  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  margin-top: 10px;
 }
 
-.parent-group-btn {
-  padding: 12px 16px;
-  border-radius: 12px;
-  color: #ffffff;
-  font-weight: 600;
-  font-size: 0.9rem;
+.parent-g-btn {
+  padding: 10px 18px;
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 0.88rem;
   cursor: pointer;
   transition: all 0.2s ease;
-  text-align: left;
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.parent-group-btn.active {
-  color: #ffffff;
+.parent-g-btn.active {
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
 }
 
-.parent-month-selector {
-  margin-bottom: 1.5rem;
-}
-
-.parent-month-select {
-  width: 100%;
-  max-width: 400px;
-  background: #1c1a17;
+/* Calendar Grid */
+.parent-nav-month-btn {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   color: #fff;
-  border: 1px solid rgba(212, 166, 74, 0.4);
-  padding: 12px 16px;
-  border-radius: 12px;
-  font-size: 1rem;
-  outline: none;
-}
-
-.parent-tabs {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  padding-bottom: 12px;
-  margin-bottom: 1.5rem;
-}
-
-.parent-tab-btn {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: #b0ab9f;
-  padding: 10px 20px;
-  border-radius: 20px;
-  font-weight: 600;
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.parent-tab-btn.active {
-  background: #d4a64a;
-  color: #0a0908;
-  border-color: #d4a64a;
-}
-
-.parent-tab-content {
-  animation: fadeIn 0.3s ease;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(6px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.parent-badge-bar {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  margin-bottom: 1.5rem;
-}
-
-.parent-tag-badge {
   padding: 6px 14px;
-  border-radius: 20px;
-  font-size: 0.82rem;
+  border-radius: 14px;
+  cursor: pointer;
   font-weight: bold;
 }
 
-.parent-section-grid {
+.parent-cal-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 1.5rem;
-  margin-bottom: 1.5rem;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
 }
 
-.parent-info-box {
+.parent-cal-header-cell {
+  text-align: center;
+  font-weight: 700;
+  font-size: 0.82rem;
+  color: #d4a64a;
+  padding: 8px 0;
   background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 14px;
-  padding: 1.4rem;
+  border-radius: 8px;
 }
 
-.parent-info-box h4 {
-  color: #f0c878;
-  margin: 0 0 12px 0;
-  font-size: 1.05rem;
-}
-
-.parent-info-box ul {
-  margin: 0;
-  padding-left: 18px;
-  color: #d8d3c5;
-  line-height: 1.6;
-}
-
-.parent-info-box li {
-  margin-bottom: 10px;
-}
-
-.parent-home-guide {
-  background: rgba(46, 125, 50, 0.15);
-  border: 1px solid #2e7d32;
-  color: #a5d6a7;
-  padding: 14px 18px;
-  border-radius: 12px;
-  font-size: 0.95rem;
-  line-height: 1.5;
-}
-
-.parent-exam-questions-list {
+.parent-cal-cell {
+  background: #1c1a17;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  min-height: 54px;
+  border-radius: 10px;
+  padding: 6px;
+  cursor: pointer;
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  margin-top: 1.5rem;
+  justify-content: space-between;
+  transition: all 0.2s ease;
 }
 
-.parent-q-card {
+.parent-cal-cell:hover {
+  border-color: #d4a64a;
+  background: rgba(212, 166, 74, 0.12);
+}
+
+.parent-cal-cell.selected {
+  border: 2px solid #d4a64a !important;
+  background: rgba(212, 166, 74, 0.22) !important;
+  box-shadow: 0 0 12px rgba(212, 166, 74, 0.4);
+}
+
+.parent-cal-cell.is-exam {
+  border-color: #ffd180;
+}
+
+.parent-cal-cell.empty {
+  background: transparent;
+  border: none;
+  cursor: default;
+}
+
+.parent-day-num {
+  font-weight: bold;
+  font-size: 0.95rem;
+  color: #ffffff;
+}
+
+.parent-cell-badge {
+  font-size: 0.65rem;
+  background: rgba(212, 166, 74, 0.2);
+  color: #f0c878;
+  padding: 2px 4px;
+  border-radius: 4px;
+  font-weight: bold;
+}
+
+/* Today's Lesson Card */
+.parent-lesson-card {
   background: rgba(255, 255, 255, 0.02);
+  border: 1.5px solid rgba(212, 166, 74, 0.4);
+  border-radius: 16px;
+  padding: 1.5rem;
+  margin-top: 1.5rem;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+}
+
+.parent-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  margin-bottom: 1.2rem;
+}
+
+.parent-card-print-btn {
+  background: rgba(212, 166, 74, 0.15);
+  border: 1px solid #d4a64a;
+  color: #f0c878;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-weight: bold;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.parent-boxes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.2rem;
+}
+
+.parent-box {
+  background: #1c1a17;
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 12px;
   padding: 1.2rem;
 }
 
-.parent-q-title {
-  margin: 0 0 8px 0;
-  color: #ffffff;
-  font-size: 1rem;
+.parent-box-icon {
+  font-size: 1.5rem;
+  margin-bottom: 6px;
 }
 
-.parent-q-answer {
+.parent-box h4 {
+  margin: 0 0 10px 0;
+  color: #f0c878;
+  font-size: 0.98rem;
+}
+
+.parent-box-main-text {
+  font-weight: bold;
+  color: #ffffff;
+  font-size: 1.05rem;
+  margin: 0 0 10px 0;
+}
+
+.parent-pill-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  color: #d8d3c5;
+  font-size: 0.9rem;
+
+  li {
+    margin-bottom: 6px;
+  }
+}
+
+.parent-box-highlight {
+  background: rgba(212, 166, 74, 0.15);
+  border: 1px solid rgba(212, 166, 74, 0.3);
+  padding: 10px;
+  border-radius: 8px;
+  color: #ffffff;
+  font-weight: 600;
+  margin: 0;
+}
+
+.parent-box.exam-box {
+  border-color: rgba(46, 125, 50, 0.5);
+  background: rgba(46, 125, 50, 0.08);
+}
+
+.parent-exam-ans {
+  background: rgba(46, 125, 50, 0.25);
   color: #a5d6a7;
-  font-size: 0.92rem;
-  background: rgba(46, 125, 50, 0.15);
   padding: 8px 12px;
   border-radius: 8px;
+  font-size: 0.9rem;
+  margin: 8px 0;
+}
+
+.parent-card-exam-link {
   display: inline-block;
+  color: #a5d6a7;
+  font-weight: bold;
+  font-size: 0.85rem;
+  margin-top: 6px;
+  text-decoration: none;
 }
 
 @media (max-width: 600px) {
-  .parent-title {
-    font-size: 1.8rem;
+  .parent-main-title {
+    font-size: 1.7rem;
   }
-  .parent-card {
+  .parent-container-card {
     padding: 1.2rem;
   }
-  .parent-download-btn, .parent-exam-link-btn {
+  .parent-top-actions {
     width: 100%;
+    align-items: stretch;
+  }
+  .parent-print-btn {
     text-align: center;
   }
 }
