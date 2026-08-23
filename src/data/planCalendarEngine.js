@@ -1,6 +1,6 @@
 /**
  * ST DANCE STUDIO — Live 11-Month Interactive Calendar Engine
- * August 25, 2026 – July 15, 2027
+ * August 24, 2026 – July 15, 2027
  */
 
 export const HOLIDAYS_MAP = {
@@ -30,7 +30,7 @@ export const HOLIDAYS_MAP = {
 }
 
 export const TOURNAMENTS_MAP = {
-  '2026-08-25': { ka: '🚀 2026-2027 სეზონის ოფიციალური სტარტი!', en: '🚀 Season 2026-2027 Opening!', ru: '🚀 Официальный старт сезона 2026-2027!' },
+  '2026-08-24': { ka: '🚀 2026-2027 სეზონის ოფიციალური სტარტი (24 აგვისტო)!', en: '🚀 Season 2026-2027 Official Opening (Aug 24)!', ru: '🚀 Официальный старт сезона 2026-2027 (24 Авг)!' },
   '2026-11-15': { ka: '🏆 ქუთაისისა & თბილისის თასი (ეროვნული ტურნირი)', en: '🏆 Kutaisi & Tbilisi National Cup', ru: '🏆 Кубок Кутаиси и Тбилиси' },
   '2026-12-20': { ka: '🏆 წლის დასკვნითი საახალწლო თასი 2026', en: '🏆 Year-End Christmas Cup 2026', ru: '🏆 Новогодний финал года 2026' },
   '2027-01-11': { ka: '✨ სწავლის განახლება & საზამთრო სტარტი', en: '✨ Resuming Classes & Winter Start', ru: '✨ Возобновление занятий' },
@@ -50,10 +50,26 @@ export const GROUPS_INFO = [
 ]
 
 /**
+ * Returns true if the day of week is an official training day for the specified group
+ */
+export function isGroupTrainingDay(groupId, dayOfWeek) {
+  if (groupId === 'baby_bronze') {
+    return dayOfWeek === 2 || dayOfWeek === 4 || dayOfWeek === 6 // Tue, Thu, Sat
+  } else if (groupId === 'presilver_silver') {
+    return dayOfWeek === 1 || dayOfWeek === 3 || dayOfWeek === 5 // Mon, Wed, Fri
+  } else if (groupId === 'golden') {
+    return dayOfWeek === 1 || dayOfWeek === 3 || dayOfWeek === 5 || dayOfWeek === 6 // Mon, Wed, Fri, Sat
+  } else if (groupId === 'couples_hobby') {
+    return dayOfWeek === 1 || dayOfWeek === 2 || dayOfWeek === 3 || dayOfWeek === 4 || dayOfWeek === 5 // Mon - Fri
+  }
+  return false
+}
+
+/**
  * Returns macro-cycle phase details for a given date
  */
 export function getMacroCyclePhase(dateStr) {
-  if (dateStr >= '2026-08-25' && dateStr <= '2026-10-31') {
+  if (dateStr >= '2026-08-24' && dateStr <= '2026-10-31') {
     return {
       num: 1,
       nameKa: 'I ეტაპი — ბაზის აღდგენა & ტექნიკური საძირკველი',
@@ -103,19 +119,19 @@ export function getDailyLessonTask(dateStr, groupId, lang = 'ka') {
   const dateObj = new Date(dateStr)
   const dayOfWeek = dateObj.getDay() // 0 = Sun, 1 = Mon, ..., 6 = Sat
 
-  // Check out of range (< 2026-08-25 or > 2027-07-15)
-  if (dateStr < '2026-08-25') {
+  // Check out of range (< 2026-08-24 or > 2027-07-15)
+  if (dateStr < '2026-08-24') {
     return {
       isLocked: true,
-      title: lang === 'ka' ? '🔒 სეზონის სტარტამდე' : '🔒 Before Season Start',
-      desc: lang === 'ka' ? '2026-2027 სასწავლო სეზონი იწყება 25 აგვისტოს.' : 'The 2026-2027 season begins on August 25.'
+      title: lang === 'ka' ? '🔒 სეზონის სტარტამდე' : lang === 'ru' ? '🔒 До старта сезона' : '🔒 Before Season Start',
+      desc: lang === 'ka' ? '2026-2027 სასწავლო სეზონი იწყება 24 აგვისტოს (ორშაბათი).' : lang === 'ru' ? 'Учебный сезон 2026-2027 начинается 24 августа (понедельник).' : 'The 2026-2027 season starts on August 24 (Monday).'
     }
   }
   if (dateStr > '2027-07-15') {
     return {
       isLocked: true,
-      title: lang === 'ka' ? '🏆 სეზონი დასრულდა (ზაფხულის შესვენება)' : '🏆 Season Completed (Summer Recess)',
-      desc: lang === 'ka' ? '15 ივლისის Batumi Open-ის შემდეგ სტუდია გადის ზაფხულის არდადეგებზე 25 აგვისტომდე.' : 'After July 15 Batumi Open, the studio enters summer recess until August 25.'
+      title: lang === 'ka' ? '🏆 სეზონი დასრულდა (ზაფხულის შესვენება)' : lang === 'ru' ? '🏆 Сезон завершен (Летний перерыв)' : '🏆 Season Completed (Summer Recess)',
+      desc: lang === 'ka' ? '15 ივლისის Batumi Open-ის შემდეგ სტუდია გადის ზაფხულის არდადეგებზე 24 აგვისტომდე.' : lang === 'ru' ? 'После Batumi Open 15 июля студия уходит на летние каникулы до 24 августа.' : 'After July 15 Batumi Open, the studio enters summer recess until August 24.'
     }
   }
 
@@ -126,17 +142,17 @@ export function getDailyLessonTask(dateStr, groupId, lang = 'ka') {
       isLocked: true,
       isHoliday: true,
       title: `🔒 ${h[lang] || h.ka}`,
-      desc: lang === 'ka' ? 'სტუდია ჩაკეტილია — ოფიციალური უქმეები / არდადეგები. მეცადინეობები არ ტარდება.' : 'Studio is closed for official holiday / vacation. No classes today.'
+      desc: lang === 'ka' ? 'სტუდია ჩაკეტილია — ოფიციალური უქმეები / არდადეგები. მეცადინეობები არ ტარდება.' : lang === 'ru' ? 'Студия закрыта — официальный праздник / каникулы. Занятий нет.' : 'Studio is closed for official holiday / vacation. No classes today.'
     }
   }
 
-  // Check Sundays (Rest day)
-  if (dayOfWeek === 0) {
+  // Check if this specific day of week is NOT a training day for this group
+  if (!isGroupTrainingDay(groupId, dayOfWeek)) {
     return {
       isLocked: true,
-      isSunday: true,
-      title: lang === 'ka' ? '☀️ კვირა — აღდგენა & ვიდეო-ანალიზი' : '☀️ Sunday — Recovery & Video Analysis',
-      desc: lang === 'ka' ? 'დასვენების დღე. მოსწავლეებს ევალებათ გასული კვირის გაკვეთილების ვიდეოების გადახედვა და კუნთოვანი აღდგენა.' : 'Rest day. Students review video recordings of weekly training for mental consolidation.'
+      isOffDay: true,
+      title: lang === 'ka' ? '🔒 ჩაკეტილია — ამ ჯგუფს დღეს მეცადინეობა არ აქვს' : lang === 'ru' ? '🔒 Закрыто — У этой группы нет занятия в этот день' : '🔒 Closed — No training for this group on this day',
+      desc: lang === 'ka' ? 'ამ ჯგუფისთვის ეს დღე უქმეა. აირჩიეთ კალენდარში მონიშნული აქტიური მეცადინეობის დღეები.' : lang === 'ru' ? 'Для этой группы этот день свободный. Выберите активный день занятий в календаре.' : 'This day is an off-day for the selected group. Please select an active training day in the calendar.'
     }
   }
 
@@ -144,155 +160,128 @@ export function getDailyLessonTask(dateStr, groupId, lang = 'ka') {
 
   // 1. Baby & Bronze (Tue, Thu, Sat)
   if (groupId === 'baby_bronze') {
-    const isTrainingDay = dayOfWeek === 2 || dayOfWeek === 4 || dayOfWeek === 6
-    if (!isTrainingDay) {
-      return {
-        isOffDay: true,
-        title: lang === 'ka' ? '💤 არასავარჯიშო დღე (Baby/Bronze)' : '💤 Non-Training Day',
-        desc: lang === 'ka' ? 'Baby & Bronze ჯგუფის მეცადინეობები ტარდება სამშაბათს, ხუთშაბათს (17:30) და შაბათს (10:00).' : 'Baby & Bronze classes run on Tue, Thu (17:30) & Sat (10:00).'
-      }
-    }
-
     if (dayOfWeek === 2) {
       return {
         phase,
-        danceName: lang === 'ka' ? 'ნელი ვალსი (Slow Waltz)' : 'Slow Waltz',
-        targetFigures: lang === 'ka' ? 'Closed Changes (Right & Left), Natural Turn, Posture Balance' : 'Closed Changes, Natural Turn, Posture',
+        danceName: lang === 'ka' ? 'ნელი ვალსი (Slow Waltz)' : lang === 'ru' ? 'Медленный Вальс (Slow Waltz)' : 'Slow Waltz',
+        targetFigures: lang === 'ka' ? 'Closed Changes (Right & Left), Natural Turn, Posture Balance' : lang === 'ru' ? 'Closed Changes (Правый и Левый), Natural Turn, Баланс осанки' : 'Closed Changes, Natural Turn, Posture Balance',
         breakdown: [
-          { time: '15 წთ', text: lang === 'ka' ? 'გახურება & ფეხის ტექნიკა (Rise & Fall ბაზა)' : 'Rise & Fall Footwork Drill' },
-          { time: '30 წთ', text: lang === 'ka' ? 'WDSF ფიგურების ახსნა: Closed Changes & Natural Turn' : 'WDSF Figures: Closed Changes & Natural Turn' },
-          { time: '15 წთ', text: lang === 'ka' ? 'ნელ მუსიკაში დახვეწა & წყვილში დგომი' : 'Slow Music Practice & Posture Balance' }
+          { time: '15 წთ', text: lang === 'ka' ? 'გახურება & ფეხის ტექნიკა (Rise & Fall ბაზა)' : lang === 'ru' ? 'Разминка и техника стопы (Rise & Fall)' : 'Rise & Fall Footwork Drill' },
+          { time: '30 წთ', text: lang === 'ka' ? 'WDSF ფიგურების ახსნა: Closed Changes & Natural Turn' : lang === 'ru' ? 'Фигуры WDSF: Closed Changes & Natural Turn' : 'WDSF Figures: Closed Changes & Natural Turn' },
+          { time: '15 წთ', text: lang === 'ka' ? 'ნელ მუსიკაში დახვეწა & წყვილში დგომი' : lang === 'ru' ? 'Отработка под музыку и баланс в паре' : 'Slow Music Practice & Posture Balance' }
         ],
-        dailyGoal: lang === 'ka' ? 'ნელი ვალსის რიტმული Rise & Fall-ის იდეალური შესრულება' : 'Master Slow Waltz Rise & Fall rhythm'
+        dailyGoal: lang === 'ka' ? 'ნელი ვალსის რიტმული Rise & Fall-ის იდეალური შესრულება' : lang === 'ru' ? 'Идеальное исполнение Rise & Fall в ритме Вальса' : 'Master Slow Waltz Rise & Fall rhythm'
       }
     } else if (dayOfWeek === 4) {
       return {
         phase,
-        danceName: lang === 'ka' ? 'ჩა-ჩა-ჩა (Cha-Cha-Cha)' : 'Cha-Cha-Cha',
-        targetFigures: lang === 'ka' ? 'Time Step, Basic Movement (Closed/Open), New York' : 'Time Step, Basic Movement, New York',
+        danceName: lang === 'ka' ? 'ჩა-ჩა-ჩა (Cha-Cha-Cha)' : lang === 'ru' ? 'Ча-Ча-Ча (Cha-Cha-Cha)' : 'Cha-Cha-Cha',
+        targetFigures: lang === 'ka' ? 'Time Step, Basic Movement (Closed/Open), New York' : lang === 'ru' ? 'Time Step, Basic Movement, New York' : 'Time Step, Basic Movement, New York',
         breakdown: [
-          { time: '15 წთ', text: lang === 'ka' ? 'თეძოს ტექნიკა (Hip Action) & რიტმული დათვლა 2-3-4-&-1' : 'Hip Action & 2-3-4-&-1 Rhythm Drill' },
-          { time: '30 წთ', text: lang === 'ka' ? 'WDSF ფიგურები: Basic Movement & New York' : 'WDSF Figures: Basic Movement & New York' },
-          { time: '15 წთ', text: lang === 'ka' ? 'მუსიკაში დახვეწა & სცენური ღიმილი' : 'Music Practice & Stage Expression' }
+          { time: '15 წთ', text: lang === 'ka' ? 'თეძოს ტექნიკა (Hip Action) & რიტმული დათვლა 2-3-4-&-1' : lang === 'ru' ? 'Работа бедер (Hip Action) и счет 2-3-4-&-1' : 'Hip Action & 2-3-4-&-1 Rhythm Drill' },
+          { time: '30 წთ', text: lang === 'ka' ? 'WDSF ფიგურები: Basic Movement & New York' : lang === 'ru' ? 'Фигуры WDSF: Basic Movement & New York' : 'WDSF Figures: Basic Movement & New York' },
+          { time: '15 წთ', text: lang === 'ka' ? 'მუსიკაში დახვეწა & სცენური ღიმილი' : lang === 'ru' ? 'Отработка под музыку и подача' : 'Music Practice & Stage Expression' }
         ],
-        dailyGoal: lang === 'ka' ? 'ჩა-ჩა-ჩა-ს რიტმის 100%-ით ზუსტი დაჭერა' : 'Achieve 100% Cha-Cha-Cha rhythm precision'
+        dailyGoal: lang === 'ka' ? 'ჩა-ჩა-ჩა-ს რიტმის 100%-ით ზუსტი დაჭერა' : lang === 'ru' ? '100% точное попадание в ритм Ча-Ча-Ча' : 'Achieve 100% Cha-Cha-Cha rhythm precision'
       }
     } else {
       // Saturday
       return {
         phase,
-        danceName: lang === 'ka' ? 'ვალსი + ჩა-ჩა-ჩა (კომბინირებული შაბათი)' : 'Waltz + Cha-Cha-Cha Combined',
-        targetFigures: lang === 'ka' ? 'ორივე ცეკვის სრული პრაგონი & ტანვარჯიში' : 'Full 2-Dance Run & Gymnastics',
+        danceName: lang === 'ka' ? 'ვალსი + ჩა-ჩა-ჩა (კომბინირებული შაბათი)' : lang === 'ru' ? 'Вальс + Ча-Ча-Ча (Субботний прогон)' : 'Waltz + Cha-Cha-Cha Combined',
+        targetFigures: lang === 'ka' ? 'ორივე ცეკვის სრული პრაგონი & ტანვარჯიში' : lang === 'ru' ? 'Полный прогон 2 танцев и гимнастика' : 'Full 2-Dance Run & Gymnastics',
         breakdown: [
-          { time: '20 წთ', text: lang === 'ka' ? 'OFP ფიზიკური მომზადება & გაწელვა' : 'Physical Conditioning & Stretching' },
-          { time: '25 წთ', text: lang === 'ka' ? 'ნელი ვალსისა და ჩა-ჩა-ჩას კომბინაციები' : 'Waltz & Cha-Cha-Cha Combinations' },
-          { time: '15 წთ', text: lang === 'ka' ? 'შოუ-პრაგონი მშობლებისთვის' : 'Mini Show Run' }
+          { time: '20 წთ', text: lang === 'ka' ? 'OFP ფიზიკური მომზადება & გაწელვა' : lang === 'ru' ? 'ОФП физическая подготовка и растяжка' : 'Physical Conditioning & Stretching' },
+          { time: '25 წთ', text: lang === 'ka' ? 'ნელი ვალსისა და ჩა-ჩა-ჩას კომბინაციები' : lang === 'ru' ? 'Комбинации Вальса и Ча-Ча-Ча' : 'Waltz & Cha-Cha-Cha Combinations' },
+          { time: '15 წთ', text: lang === 'ka' ? 'შოუ-პრაგონი მშობლებისთვის' : lang === 'ru' ? 'Мини-прогон для родителей' : 'Mini Show Run' }
         ],
-        dailyGoal: lang === 'ka' ? 'ორ ცეკვაში შეუჩერებელი სატურნირო პრაგონი' : 'Execute non-stop 2-dance competition run'
+        dailyGoal: lang === 'ka' ? 'ორ ცეკვაში შეუჩერებელი სატურნირო პრაგონი' : lang === 'ru' ? 'Безостановочный турнирный прогон 2 танцев' : 'Execute non-stop 2-dance competition run'
       }
     }
   }
 
   // 2. Pre-Silver & Silver (Mon, Wed, Fri)
   if (groupId === 'presilver_silver') {
-    const isTrainingDay = dayOfWeek === 1 || dayOfWeek === 3 || dayOfWeek === 5
-    if (!isTrainingDay) {
-      return {
-        isOffDay: true,
-        title: lang === 'ka' ? '💤 არასავარჯიშო დღე (Pre-Silver/Silver)' : '💤 Non-Training Day',
-        desc: lang === 'ka' ? 'Pre-Silver & Silver ჯგუფის მეცადინეობები ტარდება ორშაბათს, ოთხშაბათს და პარასკევს (17:30 / 19:30).' : 'Pre-Silver & Silver classes run Mon, Wed, Fri.'
-      }
-    }
-
     if (dayOfWeek === 1) {
       return {
         phase,
-        danceName: lang === 'ka' ? 'სტანდარტი: ნელი ვალსი & ქვიქსტეპი' : 'Standard: Slow Waltz & Quickstep',
-        targetFigures: lang === 'ka' ? 'Whisk, Chasse from PP, Quarter Turn to Right, Progressive Chasse' : 'Whisk, Chasse from PP, Quarter Turn, Progressive Chasse',
+        danceName: lang === 'ka' ? 'სტანდარტი: ნელი ვალსი & ქვიქსტეპი' : lang === 'ru' ? 'Стандарт: Медленный Вальс и Квикстеп' : 'Standard: Slow Waltz & Quickstep',
+        targetFigures: lang === 'ka' ? 'Whisk, Chasse from PP, Quarter Turn to Right, Progressive Chasse' : lang === 'ru' ? 'Whisk, Chasse from PP, Quarter Turn, Progressive Chasse' : 'Whisk, Chasse from PP, Quarter Turn, Progressive Chasse',
         breakdown: [
-          { time: '15 წთ', text: lang === 'ka' ? 'სტანდარტის დგომი (Frame & Hold) & ფეხის ბალანსი' : 'Standard Hold & Balance Drill' },
-          { time: '30 წთ', text: lang === 'ka' ? 'WDSF ფიგურები: Whisk, Chasse & Quickstep Forward Lock' : 'WDSF Figures: Whisk, Chasse & Lock Step' },
-          { time: '15 წთ', text: lang === 'ka' ? 'პარკეტის ნავიგაცია & ტემპში პრაგონი' : 'Floor Craft & Tempo Run' }
+          { time: '15 წთ', text: lang === 'ka' ? 'სტანდარტის დგომი (Frame & Hold) & ფეხის ბალანსი' : lang === 'ru' ? 'Стойка Стандарта (Frame & Hold) и баланс' : 'Standard Hold & Balance Drill' },
+          { time: '30 წთ', text: lang === 'ka' ? 'WDSF ფიგურები: Whisk, Chasse & Quickstep Forward Lock' : lang === 'ru' ? 'Фигуры WDSF: Whisk, Chasse и Quickstep Lock' : 'WDSF Figures: Whisk, Chasse & Lock Step' },
+          { time: '15 წთ', text: lang === 'ka' ? 'პარკეტის ნავიგაცია & ტემპში პრაგონი' : lang === 'ru' ? 'Навигация по паркету и прогон в темпе' : 'Floor Craft & Tempo Run' }
         ],
-        dailyGoal: lang === 'ka' ? 'სტანდარტის ჩარჩოს (Frame) უძრავი შენარჩუნება მოძრაობისას' : 'Maintain immovable Standard frame during movement'
+        dailyGoal: lang === 'ka' ? 'სტანდარტის ჩარჩოს (Frame) უძრავი შენარჩუნება მოძრაობისას' : lang === 'ru' ? 'Сохранение неподвижной рамки Стандарта' : 'Maintain immovable Standard frame during movement'
       }
     } else if (dayOfWeek === 3) {
       return {
         phase,
-        danceName: lang === 'ka' ? 'ლათინო: ჩა-ჩა-ჩა & ჯაივი' : 'Latin: Cha-Cha-Cha & Jive',
-        targetFigures: lang === 'ka' ? 'Alemana, Hockey Stick, Fallaway Rock, Change of Places' : 'Alemana, Hockey Stick, Fallaway Rock, Change of Places',
+        danceName: lang === 'ka' ? 'ლათინო: ჩა-ჩა-ჩა & ჯაივი' : lang === 'ru' ? 'Латина: Ча-Ча-Ча и Джайв' : 'Latin: Cha-Cha-Cha & Jive',
+        targetFigures: lang === 'ka' ? 'Alemana, Hockey Stick, Fallaway Rock, Change of Places' : lang === 'ru' ? 'Alemana, Hockey Stick, Fallaway Rock, Change of Places' : 'Alemana, Hockey Stick, Fallaway Rock, Change of Places',
         breakdown: [
-          { time: '15 წთ', text: lang === 'ka' ? 'მუხლების სწრაფი მუშაობა & კორპუსის როტაცია' : 'Fast Knee Action & Weight Transfer' },
-          { time: '30 წთ', text: lang === 'ka' ? 'WDSF ფიგურები: Alemana, Hockey Stick & Jive Chasses' : 'WDSF Figures: Alemana, Hockey Stick & Jive Chasses' },
-          { time: '15 წთ', text: lang === 'ka' ? 'ენერგიული პრაგონი & სცენური კონტაქტი' : 'High Energy Run & Stage Contact' }
+          { time: '15 წთ', text: lang === 'ka' ? 'მუხლების სწრაფი მუშაობა & კორპუსის როტაცია' : lang === 'ru' ? 'Быстрая работа коленей и ротация корпуса' : 'Fast Knee Action & Weight Transfer' },
+          { time: '30 წთ', text: lang === 'ka' ? 'WDSF ფიგურები: Alemana, Hockey Stick & Jive Chasses' : lang === 'ru' ? 'Фигуры WDSF: Alemana, Hockey Stick & Джайв' : 'WDSF Figures: Alemana, Hockey Stick & Jive Chasses' },
+          { time: '15 წთ', text: lang === 'ka' ? 'ენერგიული პრაგონი & სცენური კონტაქტი' : lang === 'ru' ? 'Энергичный прогон и сценический контакт' : 'High Energy Run & Stage Contact' }
         ],
-        dailyGoal: lang === 'ka' ? 'ჯაივისა და ჩა-ჩა-ჩას მაღალი სიჩქარისა და სისუფთავის ბალანსი' : 'Balance high speed with figure cleanliness in Jive'
+        dailyGoal: lang === 'ka' ? 'ჯაივისა და ჩა-ჩა-ჩას მაღალი სიჩქარისა და სისუფთავის ბალანსი' : lang === 'ru' ? 'Баланс скорости и чистоты в Джайве и Ча-Ча-Ча' : 'Balance high speed with figure cleanliness in Jive'
       }
     } else {
       // Friday
       return {
         phase,
-        danceName: lang === 'ka' ? '4-ვე ცეკვის სატურნირო პრაგონი (W, Q, CCC, J)' : '4-Dance Competition Run (W, Q, CCC, J)',
-        targetFigures: lang === 'ka' ? 'H-კლასის 4 ცეკვის ფინალური პრაგონები & AJS შეფასება' : '4-Dance Finals & AJS Judging',
+        danceName: lang === 'ka' ? '4-ვე ცეკვის სატურნირო პრაგონი (W, Q, CCC, J)' : lang === 'ru' ? 'Турнирный прогон 4 танцев (W, Q, CCC, J)' : '4-Dance Competition Run (W, Q, CCC, J)',
+        targetFigures: lang === 'ka' ? 'H-კლასის 4 ცეკვის ფინალური პრაგონები & AJS შეფასება' : lang === 'ru' ? 'Финальные прогоны 4 танцев Н-класса и AJS' : '4-Dance Finals & AJS Judging',
         breakdown: [
-          { time: '15 წთ', text: lang === 'ka' ? 'გახურება & დისციპლინა' : 'Warmup & Discipline' },
-          { time: '35 წთ', text: lang === 'ka' ? '4 ცეკვის შეუჩერებელი ფინალები (1.30 წთ ცეკვაზე)' : 'Non-stop 4-Dance Finals (1.30m each)' },
-          { time: '10 წთ', text: lang === 'ka' ? 'მწვრთნელის შენიშვნების გარჩევა & კორექცია' : 'Coach Feedback & Correction' }
+          { time: '15 წთ', text: lang === 'ka' ? 'გახურება & დისციპლინა' : lang === 'ru' ? 'Разминка и дисциплина' : 'Warmup & Discipline' },
+          { time: '35 წთ', text: lang === 'ka' ? '4 ცეკვის შეუჩერებელი ფინალები (1.30 წთ ცეკვაზე)' : lang === 'ru' ? 'Безостановочные финалы 4 танцев (по 1.30 мин)' : 'Non-stop 4-Dance Finals (1.30m each)' },
+          { time: '10 წთ', text: lang === 'ka' ? 'მწვრთნელის შენიშვნების გარჩევა & კორექცია' : lang === 'ru' ? 'Разбор замечаний тренера' : 'Coach Feedback & Correction' }
         ],
-        dailyGoal: lang === 'ka' ? 'სატურნირო გამძლეობის 100%-ით დემონსტრირება' : 'Demonstrate 100% competition stamina'
+        dailyGoal: lang === 'ka' ? 'სატურნირო გამძლეობის 100%-ით დემონსტრირება' : lang === 'ru' ? '100% демонстрация турнирной выносливости' : 'Demonstrate 100% competition stamina'
       }
     }
   }
 
-  // 3. Golden (E, D, C Classes)
+  // 3. Golden (Mon, Wed, Fri, Sat)
   if (groupId === 'golden') {
-    const isTrainingDay = dayOfWeek === 1 || dayOfWeek === 3 || dayOfWeek === 5 || dayOfWeek === 6
-    if (!isTrainingDay) {
-      return {
-        isOffDay: true,
-        title: lang === 'ka' ? '💤 არასავარჯიშო დღე (Golden)' : '💤 Non-Training Day',
-        desc: lang === 'ka' ? 'Golden ჯგუფი ვარჯიშობს ორშ, ოთხ, პარ (16:30) და შაბათს (13:00 - 15:00 ინტენსივი).' : 'Golden group trains Mon, Wed, Fri & Sat intensive.'
-      }
-    }
-
     if (dayOfWeek === 6) {
       // Saturday Intensive
       return {
         phase,
-        danceName: lang === 'ka' ? '🏛️ შაბათის 120-წუთიანი ინტენსივი (საბალეტო კლასიკა, OFP & გაწელვა)' : '🏛️ Saturday 120-Min Intensive',
-        targetFigures: lang === 'ka' ? 'კლასიკური ბალეტი, ტანვარჯიში, OFP გამძლეობა & გაწელვა' : 'Classical Ballet, Conditioning & Stretch',
+        danceName: lang === 'ka' ? '🏛️ შაბათის 120-წუთიანი ინტენსივი (საბალეტო კლასიკა, OFP & გაწელვა)' : lang === 'ru' ? '🏛️ Субботний 120-минутный интенсив' : '🏛️ Saturday 120-Min Intensive',
+        targetFigures: lang === 'ka' ? 'კლასიკური ბალეტი, ტანვარჯიში, OFP გამძლეობა & გაწელვა' : lang === 'ru' ? 'Классический балет, ОФП и растяжка' : 'Classical Ballet, Conditioning & Stretch',
         breakdown: [
-          { time: '45 წთ', text: lang === 'ka' ? 'საბალეტო დაზგა & კლასიკური ქორეოგრაფია' : 'Ballet Barre & Classical Technical Form' },
-          { time: '45 წთ', text: lang === 'ka' ? 'OFP ფიზიკური მომზადება & პრესი/ზურგი' : 'Core & Back Physical Conditioning (OFP)' },
-          { time: '30 წთ', text: lang === 'ka' ? 'ღრმა გაწელვები & შპაგატების დამუშავება' : 'Deep Flexibility & Splits Training' }
+          { time: '45 წთ', text: lang === 'ka' ? 'საბალეტო დაზგა & კლასიკური ქორეოგრაფია' : lang === 'ru' ? 'Балетный станок и классика' : 'Ballet Barre & Classical Technical Form' },
+          { time: '45 წთ', text: lang === 'ka' ? 'OFP ფიზიკური მომზადება & პრესი/ზურგი' : lang === 'ru' ? 'ОФП физическая подготовка' : 'Core & Back Physical Conditioning (OFP)' },
+          { time: '30 წთ', text: lang === 'ka' ? 'ღრმა გაწელვები & შპაგატების დამუშავება' : lang === 'ru' ? 'Глубокая растяжка и шпагаты' : 'Deep Flexibility & Splits Training' }
         ],
-        dailyGoal: lang === 'ka' ? 'ფიზიკური ძალისა და მოქნილობის მაქსიმალური განვითარება' : 'Maximize physical power and flexibility'
+        dailyGoal: lang === 'ka' ? 'ფიზიკური ძალისა და მოქნილობის მაქსიმალური განვითარება' : lang === 'ru' ? 'Максимальное развитие силы и гибкости' : 'Maximize physical power and flexibility'
       }
     }
 
     return {
       phase,
-      danceName: lang === 'ka' ? 'ST / LA 6-10 ცეკვის ოსტატობის კლასი' : 'ST / LA 6-10 Dance Masterclass',
-      targetFigures: lang === 'ka' ? 'Tango, Samba, Rumba, Viennese Waltz, Pasodoble WDSF Advanced Figures' : 'Tango, Samba, Rumba, VW, Paso WDSF Figures',
+      danceName: lang === 'ka' ? 'ST / LA 6-10 ცეკვის ოსტატობის კლასი' : lang === 'ru' ? 'Мастер-класс ST / LA (6-10 танцев)' : 'ST / LA 6-10 Dance Masterclass',
+      targetFigures: lang === 'ka' ? 'Tango, Samba, Rumba, Viennese Waltz, Pasodoble WDSF Advanced Figures' : lang === 'ru' ? 'Сложные фигуры WDSF (Танго, Самба, Румба, Вальс, Пасодобль)' : 'Tango, Samba, Rumba, VW, Paso WDSF Figures',
       breakdown: [
-        { time: '15 წთ', text: lang === 'ka' ? 'პროფესიონალური ტრენაჟი & ტექნიკური იზოლაციები' : 'Pro Warmup & Isolations' },
-        { time: '30 წთ', text: lang === 'ka' ? 'WDSF რთული ფიგურები & რიტმული დინამიკა' : 'WDSF Advanced Figures & Dynamics' },
-        { time: '15 წთ', text: lang === 'ka' ? 'სრული 10 ცეკვის სატურნირო ფინალები' : 'Full 10-Dance Competition Runs' }
+        { time: '15 წთ', text: lang === 'ka' ? 'პროფესიონალური ტრენაჟი & ტექნიკური იზოლაციები' : lang === 'ru' ? 'Профессиональная разминка и изоляции' : 'Pro Warmup & Isolations' },
+        { time: '30 წთ', text: lang === 'ka' ? 'WDSF რთული ფიგურები & რიტმული დინამიკა' : lang === 'ru' ? 'Сложные фигуры WDSF и динамика' : 'WDSF Advanced Figures & Dynamics' },
+        { time: '15 წთ', text: lang === 'ka' ? 'სრული 10 ცეკვის სატურნირო ფინალები' : lang === 'ru' ? 'Турнирные финалы 10 танцев' : 'Full 10-Dance Competition Runs' }
       ],
-      dailyGoal: lang === 'ka' ? 'WDSF საერთაშორისო სტანდარტის AJS ქულების მაქსიმიზაცია' : 'Maximize AJS scores to WDSF international standards'
+      dailyGoal: lang === 'ka' ? 'WDSF საერთაშორისო სტანდარტის AJS ქულების მაქსიმიზაცია' : lang === 'ru' ? 'Максимизация оценок AJS по стандартам WDSF' : 'Maximize AJS scores to WDSF international standards'
     }
   }
 
-  // 4. Couples & Hobby Class
+  // 4. Couples & Hobby Class (Mon - Fri)
   return {
     phase,
-    danceName: lang === 'ka' ? 'წყვილების ჰარმონია & Hobby Class (Waltz & Cha-Cha)' : 'Couples & Hobby Class',
-    targetFigures: lang === 'ka' ? 'Partner Lead & Follow, Basic WDSF Variations, Musicality' : 'Lead & Follow, WDSF Variations',
+    danceName: lang === 'ka' ? 'წყვილების ჰარმონია & Hobby Class (Waltz & Cha-Cha)' : lang === 'ru' ? 'Группа Пар и Hobby Class (Вальс и Ча-Ча)' : 'Couples & Hobby Class',
+    targetFigures: lang === 'ka' ? 'Partner Lead & Follow, Basic WDSF Variations, Musicality' : lang === 'ru' ? 'Ведение в паре, базовые вариации WDSF, музыкальность' : 'Lead & Follow, WDSF Variations',
     breakdown: [
-      { time: '15 წთ', text: lang === 'ka' ? 'გახურება & წყვილში კავშირი (Contact & Lead)' : 'Connection & Lead/Follow Warmup' },
-      { time: '30 წთ', text: lang === 'ka' ? 'სალონური და სპორტული ცეკვების ფიგურები' : 'Social & Ballroom Dance Variations' },
-      { time: '15 წთ', text: lang === 'ka' ? 'სასიამოვნო მუსიკალური პრაქტიკა' : 'Enjoyable Musical Practice' }
+      { time: '15 წთ', text: lang === 'ka' ? 'გახურება & წყვილში კავშირი (Contact & Lead)' : lang === 'ru' ? 'Разминка и контакт в паре' : 'Connection & Lead/Follow Warmup' },
+      { time: '30 წთ', text: lang === 'ka' ? 'სალონური და სპორტული ცეკვების ფიგურები' : lang === 'ru' ? 'Бальные и спортивные фигуры' : 'Social & Ballroom Dance Variations' },
+      { time: '15 წთ', text: lang === 'ka' ? 'სასიამოვნო მუსიკალური პრაქტიკა' : lang === 'ru' ? 'Практика под музыку' : 'Enjoyable Musical Practice' }
     ],
-    dailyGoal: lang === 'ka' ? 'წყვილში იდეალური ჰარმონიისა და პლასტიკის მიღწევა' : 'Achieve perfect partner harmony and rhythm'
+    dailyGoal: lang === 'ka' ? 'წყვილში იდეალური ჰარმონიისა და პლასტიკის მიღწევა' : lang === 'ru' ? 'Достижение идеальной гармонии в паре' : 'Achieve perfect partner harmony and rhythm'
   }
 }
