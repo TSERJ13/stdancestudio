@@ -130,27 +130,12 @@ export default function Plan() {
       {/* Top Banner */}
       <section className="parent-hero">
         <div className="container">
-          <div className="parent-hero-header">
-            <div>
-              <span className="parent-badge">👨‍👩‍👧 მშობლის & მოსწავლის სასწავლო კალენდარი</span>
-              <h1 className="parent-main-title">
-                რას სწავლობს ჩემი შვილი <span style={{ color: 'var(--color-gold, #d4a64a)', fontStyle: 'italic' }}>დღეს?</span>
-              </h1>
-              <p className="parent-sub-lead">
-                დააჭირეთ კალენდარში დღევანდელ თარიღს და ნახეთ ზუსტად რა ცეკვას, WDSF ფიგურებსა და საგამოცდო მასალას სწავლობს თქვენი შვილის ჯგუფი!
-              </p>
-            </div>
-
-            {/* Clean Print / PDF Download Button */}
-            <div className="parent-top-actions">
-              <button className="parent-print-btn" onClick={handlePrintPdf}>
-                🖨️ / 📥 დღევანდელი მასალის ამობეჭდვა (PDF)
-              </button>
-              <Link to="/coachplan" className="parent-coach-btn">
-                👨‍🏫 მწვრთნელების სილაბუსი (/coachplan) ➔
-              </Link>
-            </div>
-          </div>
+          <h1 className="parent-main-title">
+            რას სწავლობს ჩემი შვილი <span style={{ color: 'var(--color-gold, #d4a64a)', fontStyle: 'italic' }}>დღეს?</span>
+          </h1>
+          <p className="parent-sub-lead">
+            დააჭირეთ კალენდარში დღევანდელ თარიღს და ნახეთ ზუსტად რა ცეკვას, WDSF ფიგურებსა და საგამოცდო მასალას სწავლობს თქვენი შვილის ჯგუფი!
+          </p>
         </div>
       </section>
 

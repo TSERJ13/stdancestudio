@@ -1231,7 +1231,7 @@ USER QUESTION: ${query}`
                   <span>AI</span>
                 </div>
                 <div>
-                  <h3 className="std-bot-title">{t.botTitle}</h3>
+                  <h3 className="std-bot-title">{activeTrans.botTitle}</h3>
                   <p className="std-bot-subtitle">{activeTrans.subtitle}</p>
                 </div>
               </div>
