@@ -15,6 +15,7 @@ import Privacy from './pages/Privacy'
 import Terms from './pages/Terms'
 import Bio from './pages/Bio'
 import Plan from './pages/Plan'
+import CoachPlan from './pages/CoachPlan'
 import FaqPage from './pages/FaqPage'
 import NewsPage from './pages/NewsPage'
 import NewsSinglePage from './pages/NewsSinglePage'
@@ -57,6 +58,8 @@ const AppRoutes = () => (
     <Route path="news" element={<NewsPage />} />
     <Route path="news/:slug" element={<NewsSinglePage />} />
     <Route path="plan" element={<Plan />} />
+    <Route path="coachplan" element={<CoachPlan />} />
+    <Route path="coach-plan" element={<CoachPlan />} />
     <Route path="faq" element={<FaqPage />} />
     <Route path="payment" element={<Payment />} />
     <Route path="success" element={<Success />} />
