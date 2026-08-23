@@ -369,39 +369,112 @@ export function getSmartFallbackAnswer(query, lang) {
     q.includes('одежда') ||
     q.includes('костюм')
   ) {
-    if (lang === 'ka') {
-      return `${intro}
+    const boysLinks = [
+      { text: lang === 'ka' ? 'ვარიანტი 1' : lang === 'ru' ? 'Вариант 1' : 'Option 1', url: 'https://link.stdance.ge/QgmQ1I' },
+      { text: lang === 'ka' ? 'ვარიანტი 2' : lang === 'ru' ? 'Вариант 2' : 'Option 2', url: 'https://link.stdance.ge/H1e2EM' },
+      { text: lang === 'ka' ? 'ვარიანტი 3' : lang === 'ru' ? 'Вариант 3' : 'Option 3', url: 'https://link.stdance.ge/tuOcHA' },
+      { text: lang === 'ka' ? 'ვარიანტი 4' : lang === 'ru' ? 'Вариант 4' : 'Option 4', url: 'https://link.stdance.ge/UOTfmo' },
+      { text: lang === 'ka' ? 'ვარიანტი 5' : lang === 'ru' ? 'Вариант 5' : 'Option 5', url: 'https://link.stdance.ge/Pf3aGG' }
+    ]
 
-👗 ST DANCE STUDIO — ჩაცმულობის წესი (Dress Code):
+    const girlsLinks = [
+      { text: '1', url: 'https://link.stdance.ge/WMkI7b' },
+      { text: '2', url: 'https://link.stdance.ge/4oin9a' },
+      { text: '3', url: 'https://link.stdance.ge/WXuRkQ' },
+      { text: '4', url: 'https://link.stdance.ge/hPAAyl' },
+      { text: '5', url: 'https://link.stdance.ge/RU8Tnp' },
+      { text: '6', url: 'https://link.stdance.ge/qDWU62' },
+      { text: '7', url: 'https://link.stdance.ge/HCrSdw' },
+      { text: '8', url: 'https://link.stdance.ge/e05ynF' },
+      { text: '9', url: 'https://link.stdance.ge/Nkj71x' },
+      { text: '10', url: 'https://link.stdance.ge/9kjYp7' },
+      { text: '11', url: 'https://link.stdance.ge/xuKlGT' },
+      { text: '12', url: 'https://link.stdance.ge/7ulMkn' },
+      { text: '13', url: 'https://link.stdance.ge/zKx3e6' },
+      { text: '14', url: 'https://link.stdance.ge/caFJCS' }
+    ]
 
-გაკვეთილზე მოსწავლეები დაიშვებიან მხოლოდ სამეჯლისო-სპორტული ცეკვების სპეციალური ტანსაცმლით (იკრძალება ქართული ცეკვების სავარჯიშოები, ყოველდღიური კაბები და ფიტნესის ტანსაცმელი).
+    return (
+      <div className="std-bot-dresscode-card" style={{ fontSize: '0.9rem', lineHeight: '1.5' }}>
+        <p style={{ margin: '0 0 8px 0', fontSize: '0.95rem', fontWeight: 'bold', color: '#f0c878' }}>
+          👗 ST DANCE STUDIO — {lang === 'ka' ? 'ჩაცმულობის წესი (Dress Code):' : lang === 'ru' ? 'Правила Дресс-кода:' : 'Dress Code Regulations:'}
+        </p>
 
-• ბიჭების აუტფიტების შეძენის ბმულები:
-  - ვარიანტი 1: https://link.stdance.ge/QgmQ1I
-  - ვარიანტი 2: https://link.stdance.ge/H1e2EM
-  - ვარიანტი 3: https://link.stdance.ge/tuOcHA
-  - ვარიანტი 4: https://link.stdance.ge/UOTfmo
-  - ვარიანტი 5: https://link.stdance.ge/Pf3aGG
+        <p style={{ margin: '0 0 12px 0', color: '#d8d3c5', fontSize: '0.88rem' }}>
+          {lang === 'ka' 
+            ? 'გაკვეთილზე მოსწავლეები დაიშვებიან მხოლოდ სამეჯლისო-სპორტული ცეკვების სპეციალური ტანსაცმლით (იკრძალება ქართული ცეკვების სავარჯიშოები, ყოველდღიური კაბები და ფიტნესის ტანსაცმელი).'
+            : lang === 'ru'
+            ? 'На занятия допускаются только ученики в специальной форме для спортивно-бальных танцев.'
+            : 'Students must attend classes exclusively in official ballroom-sports dancewear.'}
+        </p>
 
-• გოგონების აუტფიტების შეძენის ბმულები:
-  - ვარიანტი 1: https://link.stdance.ge/WMkI7b
-  - ვარიანტი 2: https://link.stdance.ge/4oin9a
-  - ვარიანტი 3-14: იხილეთ სიახლეების (/news) გვერდზე.`
-    } else if (lang === 'ru') {
-      return `👗 ST DANCE STUDIO — Дресс-код:
+        {/* Boys Outfits Section */}
+        <div style={{ marginBottom: '14px' }}>
+          <p style={{ margin: '0 0 6px 0', fontWeight: '700', color: '#fff', fontSize: '0.86rem' }}>
+            👦 {lang === 'ka' ? 'ბიჭების აუტფიტები (5 ვარიანტი):' : lang === 'ru' ? 'Костюмы для мальчиков (5 вариантов):' : "Boys' Outfits (5 options):"}
+          </p>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+            {boysLinks.map((item, idx) => (
+              <a
+                key={idx}
+                href={item.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '4px',
+                  background: 'rgba(212,166,74,0.15)',
+                  color: '#f0c878',
+                  border: '1px solid rgba(212,166,74,0.4)',
+                  padding: '5px 11px',
+                  borderRadius: '16px',
+                  fontSize: '0.8rem',
+                  fontWeight: '600',
+                  textDecoration: 'none',
+                  transition: 'transform 0.2s ease'
+                }}
+              >
+                👕 {item.text} ➔
+              </a>
+            ))}
+          </div>
+        </div>
 
-На занятия допускаются только ученики в специальной форме.
-
-• Ссылки для мальчиков: https://link.stdance.ge/QgmQ1I , https://link.stdance.ge/H1e2EM , https://link.stdance.ge/tuOcHA
-• Ссылки для девочек: https://link.stdance.ge/WMkI7b , https://link.stdance.ge/4oin9a (полный список на странице /news).`
-    } else {
-      return `👗 ST DANCE STUDIO — Dress Code:
-
-Special ballroom dance training attire is mandatory.
-
-• Boys outfits: https://link.stdance.ge/QgmQ1I , https://link.stdance.ge/H1e2EM
-• Girls outfits: https://link.stdance.ge/WMkI7b , https://link.stdance.ge/4oin9a (full list on /news page).`
-    }
+        {/* Girls Outfits Section */}
+        <div>
+          <p style={{ margin: '0 0 6px 0', fontWeight: '700', color: '#fff', fontSize: '0.86rem' }}>
+            👧 {lang === 'ka' ? 'გოგონების აუტფიტები (14 ვარიანტი):' : lang === 'ru' ? 'Костюмы для девочек (14 вариантов):' : "Girls' Outfits (14 options):"}
+          </p>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+            {girlsLinks.map((item, idx) => (
+              <a
+                key={idx}
+                href={item.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '4px',
+                  background: 'rgba(235, 130, 160, 0.15)',
+                  color: '#ffb6c1',
+                  border: '1px solid rgba(235, 130, 160, 0.4)',
+                  padding: '5px 10px',
+                  borderRadius: '16px',
+                  fontSize: '0.8rem',
+                  fontWeight: '600',
+                  textDecoration: 'none',
+                  transition: 'transform 0.2s ease'
+                }}
+              >
+                👗 {lang === 'ka' ? `ვარიანტი ${item.text}` : lang === 'ru' ? `Вариант ${item.text}` : `Option ${item.text}`} ➔
+              </a>
+            ))}
+          </div>
+        </div>
+      </div>
+    )
   }
 
   // 5. Rules & Tournaments
