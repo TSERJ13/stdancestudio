@@ -126,37 +126,11 @@ export default function Header() {
                 {item.label}
               </NavLink>
             ))}
-
-            <button
-              onClick={() => window.dispatchEvent(new CustomEvent('open-ai-chat'))}
-              className="header__link"
-              style={{
-                background: 'transparent',
-                border: 'none',
-                cursor: 'pointer',
-                color: '#f0c878',
-                fontWeight: 'bold',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px'
-              }}
-            >
-              🤖 ST Dance AI
-            </button>
           </nav>
 
-          <button
-            onClick={() => window.dispatchEvent(new CustomEvent('open-ai-chat'))}
-            className="btn header__cta"
-            style={{
-              background: 'linear-gradient(135deg, #d4af37, #f0c878)',
-              color: '#0a0908',
-              fontWeight: 'bold',
-              marginRight: '8px'
-            }}
-          >
-            🤖 AI ასისტენტი
-          </button>
+          <Link to={`${basePath}/contact`} className="btn btn-primary header__cta">
+            {t('nav.contact')}
+          </Link>
 
           <button
             className={`header__burger ${mobileOpen ? 'is-open' : ''}`}
@@ -187,41 +161,14 @@ export default function Header() {
                 {item.label}
               </NavLink>
             ))}
-
-            <button
-              onClick={() => {
-                setMobileOpen(false)
-                window.dispatchEvent(new CustomEvent('open-ai-chat'))
-              }}
-              className="mobile-menu__link"
-              style={{
-                background: 'transparent',
-                border: 'none',
-                cursor: 'pointer',
-                color: '#f0c878',
-                textAlign: 'left',
-                width: '100%',
-                padding: '12px 0'
-              }}
-            >
-              <span className="mobile-menu__num">07</span>
-              🤖 ST Dance AI ასისტენტი
-            </button>
           </nav>
-          <button
-            onClick={() => {
-              setMobileOpen(false)
-              window.dispatchEvent(new CustomEvent('open-ai-chat'))
-            }}
-            className="btn mobile-menu__cta"
-            style={{
-              background: 'linear-gradient(135deg, #d4af37, #f0c878)',
-              color: '#0a0908',
-              fontWeight: 'bold'
-            }}
+          <Link
+            to={`${basePath}/contact`}
+            onClick={() => setMobileOpen(false)}
+            className="btn btn-primary mobile-menu__cta"
           >
-            🤖 AI ჩატი
-          </button>
+            {t('nav.contact')}
+          </Link>
         </div>
       </header>
       <FloatingLangSwitcher />
