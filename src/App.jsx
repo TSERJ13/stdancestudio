@@ -28,11 +28,22 @@ import Game from './pages/Game'
 import { trackPageView } from './utils/analytics'
 
 function ScrollToTop() {
-  const { pathname } = useLocation()
+  const { pathname, hash } = useLocation()
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'instant' })
+    if (hash) {
+      setTimeout(() => {
+        const el = document.querySelector(hash)
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth' })
+        } else {
+          window.scrollTo({ top: 0, behavior: 'instant' })
+        }
+      }, 100)
+    } else {
+      window.scrollTo({ top: 0, behavior: 'instant' })
+    }
     trackPageView(pathname)
-  }, [pathname])
+  }, [pathname, hash])
   return null
 }
 
