@@ -761,7 +761,71 @@ Partner is NOT mandatory! We have Solo competition categories. Coach Sergi Tsivt
     }
   }
 
-  // 6. General / Specific Query Handling — Ask for phone number (No email sent without phone!)
+  // 7. Age Limits & Kids vs Adults Intent
+  if (
+    q.includes('ასაკ') ||
+    q.includes('ბავშვ') ||
+    q.includes('პატარ') ||
+    q.includes('დიდ') ||
+    q.includes('ზრდასრულ') ||
+    q.includes('age') ||
+    q.includes('kids') ||
+    q.includes('adults') ||
+    q.includes('возраст') ||
+    q.includes('дети') ||
+    q.includes('взрослые')
+  ) {
+    if (lang === 'ka') {
+      return `${intro}
+
+👶 ST DANCE STUDIO — ასაკობრივი ჯგუფები & მიღება:
+
+• **საბავშვო ჯგუფები (4.5-დან 16 წლამდე):**
+  - Baby (4.5 – 6 წელი)
+  - Bronze (დამწყებები 6-12 წ)
+  - Pre-Silver & Silver (1-2 წ გამოცდილება)
+  - Golden (5+ წ გამოცდილება)
+
+• **ზრდასრულთა ჯგუფი (Hobby Class):**
+  - 16 წლიდან ზევით (ასაკობრივი ზედა ზღვარი არ არსებობს!).
+
+🎁 **პირველი საცდელი გაკვეთილი 100%-ით უფასოა!**`
+    } else {
+      return `👶 ST DANCE STUDIO — Age Groups & Enrollment:
+
+Kids starting from age 4.5 to 16, and Adults (16+) in our Hobby Class. First trial lesson is 100% FREE!`
+    }
+  }
+
+  // 8. Broad / General Dance & Benefits Intent
+  if (
+    q.includes('ცეკვ') ||
+    q.includes('სპორტ') ||
+    q.includes('მოქნილ') ||
+    q.includes('ტანვარჯიშ') ||
+    q.includes('dance') ||
+    q.includes('sport') ||
+    q.includes('танец') ||
+    q.includes('танцы')
+  ) {
+    if (lang === 'ka') {
+      return `${intro}
+
+💃 ST DANCE STUDIO — სამეჯლისო და სპორტული ცეკვები:
+
+სტუდიაში ისწავლება WDSF-ის 10 ოფიციალური საცეკვაო დისციპლინა (ვალსი, ტანგო, ფოქსტროტი, ქვიქსტეპი, ჩა-ჩა-ჩა, სამბა, რუმბა, პასოდობლე, ჯაივი).
+მთავარი მწვრთნელი: **სერგი წივწივაძე**.
+
+✨ პირველი საცდელი გაკვეთილი 100%-ით უფასოა! 
+📱 გსურთ ჩაწერა? დაგვიტოვეთ თქვენი ტელეფონის ნომერი (მაგ: 5XX XX XX XX)!`
+    } else {
+      return `💃 ST DANCE STUDIO — Ballroom & Latin Sport Dancing:
+
+Head Coach: Sergi Tsivtsivadze. 10 official WDSF dances taught. First trial lesson is 100% FREE!`
+    }
+  }
+
+  // 9. General / Specific Query Handling — Ask for phone number (No email sent without phone!)
   if (lang === 'ka') {
     return `✨ გმადლობთ შეკითხვისთვის!
 
