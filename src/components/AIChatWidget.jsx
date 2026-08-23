@@ -648,9 +648,7 @@ export function getSmartFallbackAnswer(query, lang) {
     }
   }
 
-  // 6. Unknown / Un-answered Specific Query Handling — Email Forward to stdancegroupdue@gmail.com
-  sendUnansweredQuestionToAdminEmail(query, lang)
-
+  // 6. General / Specific Query Handling — Ask for phone number (No email sent without phone!)
   if (lang === 'ka') {
     return `✨ გმადლობთ შეკითხვისთვის!
 
