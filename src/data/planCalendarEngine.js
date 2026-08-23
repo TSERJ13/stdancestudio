@@ -671,10 +671,24 @@ export function getDailyLessonTask(dateStr, groupId, lang = 'ka') {
     }
   }
 
-  const monthData = (MONTHLY_WDSF_CURRICULUM[monthKey] && (MONTHLY_WDSF_CURRICULUM[monthKey][groupId] || MONTHLY_WDSF_CURRICULUM[monthKey]['baby_bronze'])) || MONTHLY_WDSF_CURRICULUM['2026-09']['baby_bronze']
+  const dayNum = parseInt(dateStr.split('-')[2], 10)
+  const weekNum = dayNum <= 7 ? 1 : dayNum <= 15 ? 2 : dayNum <= 23 ? 3 : 4
 
   const figuresText = monthData ? (monthData[lang === 'ru' ? 'figsRu' : lang === 'en' ? 'figsEn' : 'figsKa'] || '') : ''
-  const goalText = monthData ? (monthData[lang === 'ru' ? 'goalRu' : lang === 'en' ? 'goalEn' : 'goalKa'] || '') : ''
+  const baseGoalText = monthData ? (monthData[lang === 'ru' ? 'goalRu' : lang === 'en' ? 'goalEn' : 'goalKa'] || '') : ''
+
+  let weekFocusText = ''
+  if (weekNum === 1) {
+    weekFocusText = lang === 'ka' ? '📌 I კვირის ფოკუსი: ბაზისური დგომი (Posture), ტერფის იზოლაციები (Footwork) და ნელი ტემპის ბალანსი.' : '📌 Week 1 Focus: Base posture, footwork isolations, and slow tempo balance.'
+  } else if (weekNum === 2) {
+    weekFocusText = lang === 'ka' ? '📌 II კვირის ფოკუსი: მოხვევითი ფიგურების როტაციები, თეძოს მუშაობა (Hip Action) და რიტმული სიზუსტე.' : '📌 Week 2 Focus: Turning figure rotations, Hip Action, and rhythm precision.'
+  } else if (weekNum === 3) {
+    weekFocusText = lang === 'ka' ? '📌 III კვირის ფოკუსი: სწრაფი ტემპის ჩასეები, პარკეტის ნავიგაცია (LOD) და WDSF ვარიაციები.' : '📌 Week 3 Focus: High-speed chasses, LOD floor navigation, and WDSF variations.'
+  } else {
+    weekFocusText = lang === 'ka' ? '📌 IV კვირის ფოკუსი: 100% სატურნირო შეუჩერებელი პრაგონები, AJS შეფასება & 28 რიცხვის ტესტირება.' : '📌 Week 4 Focus: Competition non-stop runs, AJS scoring, and 28th monthly exam.'
+  }
+
+  const goalText = `${baseGoalText} • ${weekFocusText}`
 
   // 1. Baby / Bronze (Tue, Thu, Sat)
   if (groupId === 'baby' || groupId === 'bronze' || groupId === 'baby_bronze') {
@@ -684,11 +698,12 @@ export function getDailyLessonTask(dateStr, groupId, lang = 'ka') {
         danceName: lang === 'ka' ? 'ნელი ვალსი (Slow Waltz)' : lang === 'ru' ? 'Медленный Вальс (Slow Waltz)' : 'Slow Waltz',
         targetFigures: figuresText,
         breakdown: [
-          { time: '15 წთ', text: lang === 'ka' ? 'გახურება & ფეხის ტექნიკა (Rise & Fall ბაზა)' : lang === 'ru' ? 'Разминка и техника стопы (Rise & Fall)' : 'Rise & Fall Footwork Drill' },
-          { time: '30 წთ', text: lang === 'ka' ? `WDSF ფიგურების ახსნა: ${figuresText}` : lang === 'ru' ? `Фигуры WDSF: ${figuresText}` : `WDSF Figures: ${figuresText}` },
-          { time: '15 წთ', text: lang === 'ka' ? 'ნელ მუსიკაში დახვეწა & წყვილში დგომი' : lang === 'ru' ? 'Отработка под музыку и баланс в паре' : 'Slow Music Practice & Posture Balance' }
+          { time: '15 წთ', text: weekNum === 1 ? 'Posture & Rise/Fall იზოლაციები' : weekNum === 2 ? 'Natural/Reverse Turn ბრუნვის ტექნიკა' : weekNum === 3 ? 'Chasse from PP & ჩარჩოს სისწრაფე' : 'სატურნირო 2-ცეკვიანი პრაგონი' },
+          { time: '30 წთ', text: `WDSF ფიგურები (${weekNum} კვირის ეტაპი): ${figuresText}` },
+          { time: '15 წთ', text: weekNum === 4 ? 'AJS შეფასება & ტესტირების მზადება' : 'მუსიკალური ბალანსის დახვეწა' }
         ],
-        dailyGoal: goalText
+        dailyGoal: goalText,
+        theoryNotes: getWdsfTheoryNotes('Slow Waltz', figuresText, lang)
       }
     } else if (dayOfWeek === 4) {
       return {
@@ -696,24 +711,26 @@ export function getDailyLessonTask(dateStr, groupId, lang = 'ka') {
         danceName: lang === 'ka' ? 'ჩა-ჩა-ჩა (Cha-Cha-Cha)' : lang === 'ru' ? 'Ча-Ча-Ча (Cha-Cha-Cha)' : 'Cha-Cha-Cha',
         targetFigures: figuresText,
         breakdown: [
-          { time: '15 წთ', text: lang === 'ka' ? 'თეძოს ტექნიკა (Hip Action) & რიტმული დათვლა 2-3-4-&-1' : lang === 'ru' ? 'Работа бедер (Hip Action) и счет 2-3-4-&-1' : 'Hip Action & 2-3-4-&-1 Rhythm Drill' },
-          { time: '30 წთ', text: lang === 'ka' ? `WDSF ფიგურები: ${figuresText}` : lang === 'ru' ? `Фигуры WDSF: ${figuresText}` : `WDSF Figures: ${figuresText}` },
-          { time: '15 წთ', text: lang === 'ka' ? 'მუსიკაში დახვეწა & სცენური ღიმილი' : lang === 'ru' ? 'Отработка под музыку и подача' : 'Music Practice & Stage Expression' }
+          { time: '15 წთ', text: weekNum === 1 ? 'Hip Settling & მუხლის ჩაკეტვა' : weekNum === 2 ? 'Spot Turn 360° ბრუნვის სისწრაფე' : weekNum === 3 ? 'Lock Steps & სწრაფი ჩასე 4-&-1' : 'ჩა-ჩა-ჩას სატურნირო ფინალები' },
+          { time: '30 წთ', text: `WDSF ფიგურები (${weekNum} კვირის ეტაპი): ${figuresText}` },
+          { time: '15 წთ', text: weekNum === 4 ? 'სცენური ექსპრესია & ტესტირების მზადება' : 'რიტმული დათვლის სიზუსტე' }
         ],
-        dailyGoal: goalText
+        dailyGoal: goalText,
+        theoryNotes: getWdsfTheoryNotes('Cha-Cha-Cha', figuresText, lang)
       }
     } else {
       // Saturday
       return {
         phase,
-        danceName: lang === 'ka' ? 'ვალსი + ჩა-ჩა-ჩა (კომბინირებული შაბათი)' : lang === 'ru' ? 'Вальс + Ча-Ча-Ча (Субботний прогон)' : 'Waltz + Cha-Cha-Cha Combined',
+        danceName: lang === 'ka' ? 'ვალსი + ჩა-ჩა-ჩა (შაბათის ოსტატობის კლასი)' : 'Waltz + Cha-Cha Combined',
         targetFigures: figuresText,
         breakdown: [
-          { time: '20 წთ', text: lang === 'ka' ? 'OFP ფიზიკური მომზადება & გაწელვა' : lang === 'ru' ? 'ОФП физическая подготовка и растяжка' : 'Physical Conditioning & Stretching' },
-          { time: '25 წთ', text: lang === 'ka' ? 'ნელი ვალსისა და ჩა-ჩა-ჩას კომბინაციები' : lang === 'ru' ? 'Комбинации Вальса и Ча-Ча-Ча' : 'Waltz & Cha-Cha-Cha Combinations' },
-          { time: '15 წთ', text: lang === 'ka' ? 'შოუ-პრაგონი მშობლებისთვის' : lang === 'ru' ? 'Мини-прогон для родителей' : 'Mini Show Run' }
+          { time: '20 წთ', text: 'OFP ფიზიკური მომზადება & გაწელვა' },
+          { time: '25 წთ', text: `ვალსისა და ჩა-ჩა-ჩას კომბინაციები (${weekNum} კვირა)` },
+          { time: '15 წთ', text: 'შოუ-პრაგონი მშობლებისთვის' }
         ],
-        dailyGoal: goalText
+        dailyGoal: goalText,
+        theoryNotes: getWdsfTheoryNotes('Slow Waltz', figuresText, lang)
       }
     }
   }
@@ -723,39 +740,42 @@ export function getDailyLessonTask(dateStr, groupId, lang = 'ka') {
     if (dayOfWeek === 1) {
       return {
         phase,
-        danceName: lang === 'ka' ? 'სტანდარტი: ნელი ვალსი & ქვიქსტეპი' : lang === 'ru' ? 'Стандарт: Медленный Вальс и Квикстеп' : 'Standard: Slow Waltz & Quickstep',
+        danceName: lang === 'ka' ? 'სტანდარტი: ნელი ვალსი & ქვიქსტეპი' : 'Standard: Slow Waltz & Quickstep',
         targetFigures: figuresText,
         breakdown: [
-          { time: '15 წთ', text: lang === 'ka' ? 'სტანდარტის დგომი (Frame & Hold) & ფეხის ბალანსი' : lang === 'ru' ? 'Стойка Стандарта (Frame & Hold) и баланс' : 'Standard Hold & Balance Drill' },
-          { time: '30 წთ', text: lang === 'ka' ? `WDSF ფიგურები: ${figuresText}` : lang === 'ru' ? `Фигуры WDSF: ${figuresText}` : `WDSF Figures: ${figuresText}` },
-          { time: '15 წთ', text: lang === 'ka' ? 'პარკეტის ნავიგაცია & ტემპში პრაგონი' : lang === 'ru' ? 'Навигация по паркету и прогон в темпе' : 'Floor Craft & Tempo Run' }
+          { time: '15 წთ', text: weekNum === 1 ? 'Frame Hold & წონის გადატანის დრილი' : weekNum === 2 ? 'Natural Spin Turn & Heel Turn ტექნიკა' : weekNum === 3 ? 'Quickstep Forward Lock & LOD ნავიგაცია' : '4-ცეკვის შეუჩერებელი პრაგონი' },
+          { time: '30 წთ', text: `WDSF ფიგურები (${weekNum} კვირა): ${figuresText}` },
+          { time: '15 წთ', text: weekNum === 4 ? 'AJS შეფასების კრიტერიუმები' : 'ტემპში პრაგონი' }
         ],
-        dailyGoal: goalText
+        dailyGoal: goalText,
+        theoryNotes: getWdsfTheoryNotes('Slow Waltz', figuresText, lang)
       }
     } else if (dayOfWeek === 3) {
       return {
         phase,
-        danceName: lang === 'ka' ? 'ლათინო: ჩა-ჩა-ჩა & ჯაივი' : lang === 'ru' ? 'Латина: Ча-Ча-Ча и Джайв' : 'Latin: Cha-Cha-Cha & Jive',
+        danceName: lang === 'ka' ? 'ლათინო: ჩა-ჩა-ჩა & ჯაივი' : 'Latin: Cha-Cha-Cha & Jive',
         targetFigures: figuresText,
         breakdown: [
-          { time: '15 წთ', text: lang === 'ka' ? 'მუხლების სწრაფი მუშაობა & კორპუსის როტაცია' : lang === 'ru' ? 'Быстрая работа коленей и ротация корпуса' : 'Fast Knee Action & Weight Transfer' },
-          { time: '30 წთ', text: lang === 'ka' ? `WDSF ფიგურები: ${figuresText}` : lang === 'ru' ? `Фигуры WDSF: ${figuresText}` : `WDSF Figures: ${figuresText}` },
-          { time: '15 წთ', text: lang === 'ka' ? 'ენერგიული პრაგონი & სცენური კონტაქტი' : lang === 'ru' ? 'Энергичный прогон и сценический контакт' : 'High Energy Run & Stage Contact' }
+          { time: '15 წთ', text: weekNum === 1 ? 'კორპუსის იზოლაციები & Jive Spring' : weekNum === 2 ? 'Alemana & Underarm Pass' : weekNum === 3 ? 'Three Cha-Chas & Jive Stop and Go' : 'ლათინო ამერიკული ფინალები' },
+          { time: '30 წთ', text: `WDSF ფიგურები (${weekNum} კვირა): ${figuresText}` },
+          { time: '15 წთ', text: weekNum === 4 ? 'სცენური კონტაქტი & ტესტირება' : 'რიტმული აქცენტები' }
         ],
-        dailyGoal: goalText
+        dailyGoal: goalText,
+        theoryNotes: getWdsfTheoryNotes('Cha-Cha-Cha', figuresText, lang)
       }
     } else {
       // Friday
       return {
         phase,
-        danceName: lang === 'ka' ? '4-ვე ცეკვის სატურნირო პრაგონი (W, Q, CCC, J)' : lang === 'ru' ? 'Турнирный прогон 4 танцев (W, Q, CCC, J)' : '4-Dance Competition Run (W, Q, CCC, J)',
+        danceName: lang === 'ka' ? '4-ვე ცეკვის სატურნირო პრაგონი (W, Q, CCC, J)' : '4-Dance Competition Run',
         targetFigures: figuresText,
         breakdown: [
-          { time: '15 წთ', text: lang === 'ka' ? 'გახურება & დისციპლინა' : lang === 'ru' ? 'Разминка и дисциплина' : 'Warmup & Discipline' },
-          { time: '35 წთ', text: lang === 'ka' ? '4 ცეკვის შეუჩერებელი ფინალები (1.30 წთ ცეკვაზე)' : lang === 'ru' ? 'Безостановочные финалы 4 танцев (по 1.30 мин)' : 'Non-stop 4-Dance Finals (1.30m each)' },
-          { time: '10 წთ', text: lang === 'ka' ? 'მწვრთნელის შენიშვნების გარჩევა & კორექცია' : lang === 'ru' ? 'Разбор замечаний тренера' : 'Coach Feedback & Correction' }
+          { time: '15 წთ', text: 'გახურება & დისციპლინა' },
+          { time: '35 წთ', text: `4 ცეკვის შეუჩერებელი ფინალები (${weekNum} კვირა)` },
+          { time: '10 წთ', text: 'მწვრთნელის შენიშვნების გარჩევა' }
         ],
-        dailyGoal: goalText
+        dailyGoal: goalText,
+        theoryNotes: getWdsfTheoryNotes('Quickstep', figuresText, lang)
       }
     }
   }
@@ -763,30 +783,31 @@ export function getDailyLessonTask(dateStr, groupId, lang = 'ka') {
   // 3. Golden (Mon, Wed, Fri, Sat)
   if (groupId === 'golden') {
     if (dayOfWeek === 6) {
-      // Saturday Intensive
       return {
         phase,
-        danceName: lang === 'ka' ? '🏛️ შაბათის 120-წუთიანი ინტენსივი (საბალეტო კლასიკა, OFP & გაწელვა)' : lang === 'ru' ? '🏛️ Субботний 120-минутный интенсив' : '🏛️ Saturday 120-Min Intensive',
+        danceName: lang === 'ka' ? '🏛️ შაბათის 120-წუთიანი ინტენსივი (საბალეტო კლასიკა & OFP)' : 'Saturday 120-Min Intensive',
         targetFigures: figuresText,
         breakdown: [
-          { time: '45 წთ', text: lang === 'ka' ? 'საბალეტო დაზგა & კლასიკური ქორეოგრაფია' : lang === 'ru' ? 'Балетный станок и классика' : 'Ballet Barre & Classical Technical Form' },
-          { time: '45 წთ', text: lang === 'ka' ? 'OFP ფიზიკური მომზადება & პრესი/ზურგი' : lang === 'ru' ? 'ОФП физическая подготовка' : 'Core & Back Physical Conditioning (OFP)' },
-          { time: '30 წთ', text: lang === 'ka' ? 'ღრმა გაწელვები & შპაგატების დამუშავება' : lang === 'ru' ? 'Глубокая растяжка и шпагаты' : 'Deep Flexibility & Splits Training' }
+          { time: '45 წთ', text: 'საბალეტო დაზგა & კლასიკური ქორეოგრაფია' },
+          { time: '45 წთ', text: 'OFP ფიზიკური მომზადება & პრესი/ზურგი' },
+          { time: '30 წთ', text: 'ღრმა გაწელვები & შპაგატები' }
         ],
-        dailyGoal: goalText
+        dailyGoal: goalText,
+        theoryNotes: getWdsfTheoryNotes('Slow Waltz', figuresText, lang)
       }
     }
 
     return {
       phase,
-      danceName: lang === 'ka' ? 'ST / LA 6-10 ცეკვის ოსტატობის კლასი' : lang === 'ru' ? 'Мастер-класс ST / LA (6-10 танцев)' : 'ST / LA 6-10 Dance Masterclass',
+      danceName: lang === 'ka' ? 'ST / LA 6-10 ცეკვის ოსტატობის კლასი' : 'ST / LA Masterclass',
       targetFigures: figuresText,
       breakdown: [
-        { time: '15 წთ', text: lang === 'ka' ? 'პროფესიონალური ტრენაჟი & ტექნიკური იზოლაციები' : lang === 'ru' ? 'Профессиональная разминка и изоляции' : 'Pro Warmup & Isolations' },
-        { time: '30 წთ', text: lang === 'ka' ? `WDSF ფიგურები: ${figuresText}` : lang === 'ru' ? `Фигуры WDSF: ${figuresText}` : `WDSF Figures: ${figuresText}` },
-        { time: '15 წთ', text: lang === 'ka' ? 'სრული 10 ცეკვის სატურნირო ფინალები' : lang === 'ru' ? 'Турнирные финалы 10 танцев' : 'Full 10-Dance Competition Runs' }
+        { time: '15 წთ', text: weekNum === 1 ? 'პროფესიონალური ტრენაჟი & იზოლაცია' : weekNum === 2 ? ' Fleckerls & Paso Doble Huit' : weekNum === 3 ? 'AJS ტემპის ცვლილებები' : 'სრული 10 ცეკვის ფინალები' },
+        { time: '30 წთ', text: `WDSF ფიგურები (${weekNum} კვირა): ${figuresText}` },
+        { time: '15 წთ', text: 'სატურნირო პრაგონი მუსიკაში' }
       ],
-      dailyGoal: goalText
+      dailyGoal: goalText,
+      theoryNotes: getWdsfTheoryNotes('Slow Waltz', figuresText, lang)
     }
   }
 
@@ -794,29 +815,30 @@ export function getDailyLessonTask(dateStr, groupId, lang = 'ka') {
   if (groupId === 'couples') {
     return {
       phase,
-      danceName: lang === 'ka' ? '💃 წყვილების სატურნირო პარტნიორობა (WDSF Lead/Follow)' : lang === 'ru' ? '💃 Конкурсное партнерство пар' : '💃 Competitive Couples Partnering',
+      danceName: lang === 'ka' ? '💃 წყვილების სატურნირო პარტნიორობა (WDSF Lead/Follow)' : 'Competitive Couples Partnering',
       targetFigures: figuresText,
       breakdown: [
-        { time: '15 წთ', text: lang === 'ka' ? 'წყვილში კავშირი (Contact, Lead & Follow)' : lang === 'ru' ? 'Контакт в паре и ведение' : 'Partner Connection & Lead/Follow' },
-        { time: '30 წთ', text: lang === 'ka' ? `WDSF სატურნირო სქემები: ${figuresText}` : lang === 'ru' ? `Турнирные схемы: ${figuresText}` : `Competition Routines: ${figuresText}` },
-        { time: '15 წთ', text: lang === 'ka' ? 'სატურნირო პრაგონები & წყვილთა სინქრონი' : lang === 'ru' ? 'Турнирные прогоны и синхрон' : 'Competition Runs & Synchronization' }
+        { time: '15 წთ', text: weekNum === 1 ? 'წყვილში კავშირი & Contact' : weekNum === 2 ? 'Lead/Follow ტექნიკური ბრუნები' : weekNum === 3 ? 'LOD პარკეტის ნავიგაცია' : 'სატურნირო პრაგონები & სინქრონი' },
+        { time: '30 წთ', text: `WDSF სატურნირო სქემები (${weekNum} კვირა): ${figuresText}` },
+        { time: '15 წთ', text: 'სატურნირო პრაგონი & შეფასება' }
       ],
-      dailyGoal: goalText
+      dailyGoal: goalText,
+      theoryNotes: getWdsfTheoryNotes('Slow Waltz', figuresText, lang)
     }
   }
 
   // 5. Hobby Class (Tue, Thu - Relaxed Social Dance Fun)
   return {
     phase,
-    danceName: lang === 'ka' ? '✨ Hobby Class — მოყვარულთა საცეკვაო კლასი (მხიარული მოძრაობები)' : lang === 'ru' ? '✨ Hobby Class — Любительский класс' : '✨ Hobby Class — Adult Social Dance',
+    danceName: lang === 'ka' ? '✨ Hobby Class — მოყვარულთა საცეკვაო კლასი (მხიარული მოძრაობები)' : '✨ Hobby Class — Adult Social Dance',
     targetFigures: figuresText,
     breakdown: [
-      { time: '15 წთ', text: lang === 'ka' ? 'მხიარული გახურება & რიტმული განწყობა' : lang === 'ru' ? 'Разминка и позитивный настрой' : 'Fun Warmup & Social Rhythm' },
-      { time: '30 წთ', text: lang === 'ka' ? `პოპულარული საცეკვაო მოძრაობები: ${figuresText}` : lang === 'ru' ? `Популярные танцевальные движения: ${figuresText}` : `Popular Dance Moves: ${figuresText}` },
-      { time: '15 წთ', text: lang === 'ka' ? 'სასიამოვნო მუსიკალური პრაქტიკა & თავისუფალი ცეკვა' : lang === 'ru' ? 'Приятная практика под музыку' : 'Enjoyable Music Practice & Social Dance' }
+      { time: '15 წთ', text: weekNum === 1 ? 'მხიარული გახურება & რიტმული განწყობა' : weekNum === 2 ? 'სალონური მოძრაობები & ბალანსი' : weekNum === 3 ? 'ლათინური მხიარული მიქსი' : 'საცეკვაო წვეულება & თავისუფალი ცეკვა' },
+      { time: '30 წთ', text: `პოპულარული საცეკვაო მოძრაობები (${weekNum} კვირა): ${figuresText}` },
+      { time: '15 წთ', text: 'სასიამოვნო მუსიკალური პრაქტიკა' }
     ],
     dailyGoal: goalText,
-    theoryNotes: getWdsfTheoryNotes(lang === 'ka' ? '✨ Hobby Class — მოყვარულთა საცეკვაო კლასი' : 'Hobby Class', figuresText, lang)
+    theoryNotes: getWdsfTheoryNotes('Hobby Class', figuresText, lang)
   }
 }
 

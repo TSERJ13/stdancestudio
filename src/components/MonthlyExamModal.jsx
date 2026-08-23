@@ -295,9 +295,18 @@ ${answersBreakdown}
                 📧 სრული პასუხები და 10-ქულიანი PDF რეპორტი გაიგზავნა მეილზე: <strong>stdancegroupdue@gmail.com</strong>
               </p>
 
-              <button className="exam-submit-btn" onClick={onClose}>
-                დახურვა
-              </button>
+              <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
+                <button
+                  className="exam-submit-btn"
+                  style={{ background: 'transparent', border: '1px solid var(--color-gold, #d4a64a)', color: '#d4a64a' }}
+                  onClick={() => generatePdfReport(scoreResult, questionList, answers)}
+                >
+                  📥 PDF რეპორტის ჩამოტვირთვა
+                </button>
+                <button className="exam-submit-btn" onClick={onClose}>
+                  დახურვა
+                </button>
+              </div>
             </div>
           </div>
         )}
