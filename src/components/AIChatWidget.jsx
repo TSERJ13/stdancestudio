@@ -477,7 +477,7 @@ export function getSmartFallbackAnswer(query, lang) {
     )
   }
 
-  // 5. Rules & Tournaments
+  // 5. Rules, Terms, Privacy & Tournaments (Combined Clear & Comprehensive Summary)
   if (
     q.includes('წეს') ||
     q.includes('ტურშირ') ||
@@ -485,31 +485,110 @@ export function getSmartFallbackAnswer(query, lang) {
     q.includes('rule') ||
     q.includes('tournament') ||
     q.includes('правил') ||
-    q.includes('турниრ')
+    q.includes('турниრ') ||
+    q.includes('პირობ') ||
+    q.includes('კონფიდენციალურობ')
   ) {
     if (lang === 'ka') {
       return `${intro}
 
-🏆 ST DANCE STUDIO — 2026-2027 წესები & ტურნირები:
+🏆 ST DANCE STUDIO — წესები, პირობები & ტურნირები (2026-2027):
 
-1. დრო და დისციპლინა: მოსწავლე მოდის 10 წუთით ადრე. დაგვიანებული სახლში ბრუნდება.
-2. მშობლები: მშობელი არ შედის გამოსაცვლელ ოთახში და არ აწუხებს ტრენერს გაკვეთილზე.
-3. 2026-2027 სატურნირო კალენდარი: 10 ძირითადი ტურნირი (ქუთაისი, თბილისი, ბათუმი, კავკასიის თასი).
-4. გაცდენები & გაყინვა: საპატიო მიზეზად ითვლება მხოლოდ ჯანმრთელობის მდგომარეობა (საჭიროა ექიმის ცნობა) და წინასწარი შეტყობინება ბუღალტრისთვის ტელეგრამზე: @STDance_Buchhalter.`
+1. ⏰ დრო & დისციპლინა: მოსწავლე მოდის 10 წუთით ადრე. დაგვიანებული სახლში ბრუნდება. დარბაზში ტელეფონები უხმო რეჟიმშია.
+2. 👨‍👩‍👧 მშობლები: მშობელი ელოდება გარეთ; კატეგორიულად იკრძალება მწვრთნელის შეწუხება გაკვეთილის დროს.
+3. 🩺 გაცდენები & გაყინვა: საპატიოდ ითვლება მხოლოდ ჯანმრთელობის მდგომარეობა (საჭიროა ექიმის ცნობა) და წინასწარი შეტყობინება ბუღალტრისთვის Telegram-ზე: @STDance_Buchhalter.
+4. 👗 ჩაცმულობა: სავალდებულოა მხოლოდ სპორტულ-სამეჯლისო ცეკვების სპეციალური ფორმა.
+5. 🏆 სატურნირო კალენდარი: სეზონზე დაგეგმილია 10 ძირითადი ტურნირი (ქუთაისი, თბილისი, ბათუმი, კავკასიის თასი & Batumi Open).
+6. 🔒 კონფიდენციალურობა & მონაცემები: თქვენი მონაცემები დაცულია (stdancegroupdue@gmail.com).`
     } else if (lang === 'ru') {
-      return `🏆 ST DANCE STUDIO — Правила и Турниры 2026-2027:
+      return `🏆 ST DANCE STUDIO — Правила, Условия и Турниры (2026-2027):
 
-1. Дисциплина: приход за 10 мин до начала.
-2. Родители: ожидают снаружи, не мешают тренеру.
-3. Турнирный календарь: 10 главных турниров в сезоне.
-4. Заморозка: только по болезни через врача и уведомление бухгалтера в Telegram: @STDance_Buchhalter.`
+1. ⏰ Дисциплина: Приходить за 10 минут до начала.
+2. 👨‍👩‍👧 Родители: Ожидают снаружи, не отвлекают тренера во время урока.
+3. 🩺 Заморозка: Только по болезни (справка от врача + уведомление бухгалтера в Telegram: @STDance_Buchhalter).
+4. 👗 Дресс-код: Обязательна только специальная бальная форма.
+5. 🏆 Турнирный календарь: 10 главных турниров в сезоне 2026-2027.
+6. 🔒 Конфиденциальность: Ваши данные защищены (stdancegroupdue@gmail.com).`
     } else {
-      return `🏆 ST DANCE STUDIO — 2026-2027 Rules & Tournaments:
+      return `🏆 ST DANCE STUDIO — Rules, Terms & Tournaments (2026-2027):
 
-1. Discipline: Arrive 10 mins early.
-2. Parents: Wait outside during lessons.
-3. Competition Calendar: 10 major tournaments (Caucasus Cup, Batumi Open).
-4. Freezing: Only medical health reasons via doctor note & Telegram notification to @STDance_Buchhalter.`
+1. ⏰ Discipline: Arrive 10 mins early. Phones on silent.
+2. 👨‍👩‍👧 Parents: Please wait outside; strictly no interruptions during lessons.
+3. 🩺 Absence & Freezing: Only medical health reasons qualify via doctor note and Telegram notification to @STDance_Buchhalter.
+4. 👗 Dress Code: Mandatory official ballroom dancewear only.
+5. 🏆 Competition Calendar: 10 major tournaments scheduled for 2026-2027.
+6. 🔒 Data Privacy: Personal data protected under policy (stdancegroupdue@gmail.com).`
+    }
+  }
+
+  // 6. 11-Month Educational Plan & Today's Lesson Algorithm
+  if (
+    q.includes('გეგმ') ||
+    q.includes('პლან') ||
+    q.includes('სილაბუს') ||
+    q.includes('wdsf') ||
+    q.includes('დღეს') ||
+    q.includes('გაკვეთილ') ||
+    q.includes('რა ვაკეთებთ') ||
+    q.includes('პროგრამ') ||
+    q.includes('ალგორითმ') ||
+    q.includes('plan') ||
+    q.includes('syllabus') ||
+    q.includes('curriculum') ||
+    q.includes('программ') ||
+    q.includes('план') ||
+    q.includes('сегодня')
+  ) {
+    if (lang === 'ka') {
+      return `${intro}
+
+🎓 ST DANCE STUDIO — 11-თვიანი საგანმანათლებლო გეგმა & WDSF ალგორითმი:
+
+📍 დღევანდელი 60-წუთიანი გაკვეთილის სტრუქტურა:
+• 15 წუთი: ტრენაჟი / ფეხის ტექნიკა (Footwork) & დგომი (Posture).
+• 30 წუთი: ახსნა & ახალი WDSF ფიგურების დამუშავება.
+• 15 წუთი: პრაქტიკა მუსიკაში დახვეწით & ფინალების პრაგონი.
+*(შაბათობით 13:00-15:00: 120 წთ საბალეტო კლასიკა, ქორეოგრაფია & გაწელვები).*
+
+🗓️ 11-თვიანი საგანმანათლებლო მაკრო-ციკლი (2026-2027):
+1. აგვისტო – ოქტომბერი (I ეტაპი): ბაზის აღდგენა, დგომი & WDSF ფიგურები.
+2. ნოემბერი – იანვარი (II ეტაპი): სატურნირო გამძლეობა & პროგრამების გასუფთავება.
+3. თებერვალი – აპრილი (III ეტაპი): დინამიკა & AJS შეფასების სისტემა.
+4. მაისი – ივლისი (IV ეტაპი): პიკური ფორმა (კავკასიის თასი & Batumi Open).
+
+💡 დეტალური 11-თვიანი გეგმა და ჯგუფების WDSF ფიგურები იხილეთ საიტის /plan გვერდზე!`
+    } else if (lang === 'ru') {
+      return `🎓 ST DANCE STUDIO — 11-месячная учебная программа и алгоритм WDSF:
+
+📍 Структура 60-минутного урока сегодня:
+• 15 мин: Разминка / Техника стопы (Footwork) и осанка (Posture).
+• 30 мин: Объяснение и отработка новых фигур WDSF.
+• 15 мин: Практика под музыку и прогон финалов.
+*(По субботам 13:00-15:00: 120 мин балетная классика, ОФП и растяжка).*
+
+🗓️ 11-месячный макроцикл (2026-2027):
+1. Август – Октябрь (I этап): Базовая техника и фигуры WDSF.
+2. Ноябрь – Январь (II этап): Турнирная выносливость и чистка программ.
+3. Февраль – Апрель (III этап): Динамика и система оценки AJS.
+4. Май – Июль (IV этап): Пиковая форма (Кубок Кавказа и Batumi Open).
+
+💡 Полный 11-месячный план смотрите на странице /plan!`
+    } else {
+      return `🎓 ST DANCE STUDIO — 11-Month Educational Plan & WDSF Algorithm:
+
+📍 Today's 60-Minute Lesson Breakdown:
+• 15 min: Warmup / Footwork technique & Posture.
+• 30 min: WDSF figure breakdown & instruction.
+• 15 min: Music practice & final runs.
+*(Saturdays 13:00-15:00: 120 min classical ballet, conditioning & stretching).*
+
+🗓️ 11-Month Macro Cycle (2026-2027):
+1. Aug – Oct (Phase I): Base recovery, posture & WDSF figures.
+2. Nov – Jan (Phase II): Competition stamina & program refinement.
+3. Feb – Apr (Phase III): Dynamics & AJS judging system.
+4. May – Jul (Phase IV): Peak form (Caucasus Cup & Batumi Open).
+
+💡 Explore the full 11-month plan on /plan!`
     }
   }
 
