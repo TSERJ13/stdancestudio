@@ -8,9 +8,9 @@ export default function FaqPage() {
   const { lang } = useLanguage()
 
   const titles = {
-    ka: { eyebrow: 'FAQ & AI ასისტენტი', title: 'ხშირად დასმული კითხვები &', italic: 'ჭკვიანი ასისტენტი', lead: 'დასვით ნებისმიერი შეკითხვა ონლაინ AI ასისტენტთან ან გაეცანით სტუდიის ოფიციალურ პასუხებს ქვემოთ.' },
+    ka: { eyebrow: 'კითხვები & AI ასისტენტი', title: 'ხშირად დასმული კითხვები &', italic: 'ჭკვიანი ასისტენტი', lead: 'დასვით ნებისმიერი შეკითხვა ონლაინ AI ასისტენტთან ან გაეცანით სტუდიის ოფიციალურ პასუხებს ქვემოთ.' },
     en: { eyebrow: 'FAQ & AI Assistant', title: 'Frequently Asked Questions &', italic: 'AI Assistant', lead: 'Ask any question to our online AI assistant above or browse official studio answers below.' },
-    ru: { eyebrow: 'FAQ и AI Ассистент', title: 'Часто Задаваемые Вопросы &', italic: 'AI Ассистент', lead: 'Задайте любой вопрос онлайн AI-ассистенту выше или ознакомьтесь с официальными ответами студии ниже.' }
+    ru: { eyebrow: 'Вопросы и AI Ассистент', title: 'Часто Задаваемые Вопросы &', italic: 'AI Ассистент', lead: 'Задайте любой вопрос онлайн AI-ассистенту выше или ознакомьтесь с официальными ответами студии ниже.' }
   }
 
   const tObj = titles[lang] || titles.ka
