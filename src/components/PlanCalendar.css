@@ -168,14 +168,45 @@
 
 @media (max-width: 768px) {
   .plan-calendar {
-    padding: 1.25rem;
+    padding: 0.85rem 0.6rem;
+    border-radius: 12px;
   }
+
+  .month-selector-bar {
+    flex-wrap: wrap !important;
+    justify-content: center;
+    gap: 0.4rem;
+    overflow-x: visible !important;
+  }
+
+  .month-btn {
+    padding: 0.4rem 0.65rem;
+    font-size: 0.76rem;
+    border-radius: 6px;
+    flex: 1 1 auto;
+    text-align: center;
+  }
+
+  .cal-grid {
+    gap: 3px;
+  }
+
   .cal-cell {
-    min-height: 60px;
-    padding: 0.35rem;
+    min-height: 42px;
+    padding: 2px;
+    border-radius: 6px;
   }
+
+  .cal-cell-num {
+    font-size: 0.78rem;
+  }
+
   .cal-cell-badge {
-    font-size: 0.65rem;
-    padding: 0.1rem 0.2rem;
+    font-size: 0.55rem;
+    padding: 1px 2px;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 }

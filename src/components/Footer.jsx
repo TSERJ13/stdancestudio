@@ -54,7 +54,7 @@ export default function Footer() {
             </li>
             <li>
               <span className="footer__contact-label">{t('contact.email')}</span>
-              <a href={`mailto:${contact.email}`}>{contact.email}</a>
+              <a href="mailto:stdancegroup@gmail.com">stdancegroup@gmail.com</a>
             </li>
             <li>
               <span className="footer__contact-label">{t('contact.address')}</span>

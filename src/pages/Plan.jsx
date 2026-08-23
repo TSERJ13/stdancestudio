@@ -223,19 +223,17 @@ export default function Plan() {
 
                   const dayNum = parseInt(dateKey.split('-')[2], 10)
                   const isSelected = selectedDateKey === dateKey
-                  const is28th = dateKey.endsWith('-28')
                   const isHoliday = !!HOLIDAYS_MAP[dateKey]
                   const isTournament = !!TOURNAMENTS_MAP[dateKey]
 
                   return (
                     <div
                       key={dateKey}
-                      className={`parent-cal-cell ${isSelected ? 'selected' : ''} ${is28th ? 'is-exam' : ''} ${isHoliday ? 'is-holiday' : ''} ${isTournament ? 'is-tourn' : ''}`}
+                      className={`parent-cal-cell ${isSelected ? 'selected' : ''} ${isHoliday ? 'is-holiday' : ''} ${isTournament ? 'is-tourn' : ''}`}
                       onClick={() => setSelectedDateKey(dateKey)}
                     >
                       <span className="parent-day-num">{dayNum}</span>
-                      {is28th && <span className="parent-cell-badge">📝 ტესტი</span>}
-                      {isTournament && !is28th && <span className="parent-cell-badge">🏆</span>}
+                      {isTournament && <span className="parent-cell-badge">🏆</span>}
                       {isHoliday && <span className="parent-cell-badge">🌴</span>}
                     </div>
                   )
@@ -296,20 +294,6 @@ export default function Plan() {
                   </p>
                 </div>
 
-                {/* Box 4: Exam Question for 28th */}
-                <div className="parent-box exam-box">
-                  <div className="parent-box-icon">📝</div>
-                  <h4>28 რიცხვის ტესტის საგამოცდო კითხვა</h4>
-                  <p><strong>❓ კითხვა:</strong> {activeLessonData.examQ}</p>
-                  <p className="parent-exam-ans">✅ <strong>სწორი პასუხი:</strong> {activeLessonData.examA}</p>
-                  <Link
-                    to={`/exam?group=${selectedGroup}&month=${activeMonthKey}`}
-                    className="parent-card-exam-link"
-                  >
-                    📝 28 რიცხვის ონლაინ ტესტის შევსება ➔
-                  </Link>
-                </div>
-
               </div>
             </div>
 
@@ -325,7 +309,7 @@ export default function Plan() {
             <strong>ჯგუფი:</strong> {activeGroupObj.ka} | <strong>სასწავლო თვე:</strong> {getMonthKaName(currentMonthIdx + 1)} {currentYear}
           </p>
           <p style={{ fontSize: '0.9rem', color: '#555', margin: '2px 0' }}>
-            <strong>მთავარი მწვრთნელი:</strong> სერგი წივწივაძე | <strong>ტელ / WhatsApp:</strong> +995 514 19 99 66
+            <strong>მთავარი მწვრთნელი:</strong> სერგი წივწივაძე | <strong>სტუდიის ადმინისტრაცია / WhatsApp:</strong> +995 555 13 00 13
           </p>
         </div>
         <hr style={{ border: 'none', borderTop: '2px solid #b5832a', margin: '14px 0' }} />
@@ -346,32 +330,8 @@ export default function Plan() {
           </p>
         </div>
 
-        {/* Section 2: Full 20 Exam Questions for the 28th Monthly Test */}
-        <div className="print-section print-exam-container" style={{ marginTop: '16px' }}>
-          <h3>📚 2. 28 რიცხვის ონლაინ ტესტის საგამოცდო კითხვები ({questionList.length} შეკითხვა):</h3>
-          <p style={{ fontSize: '0.88rem', color: '#555', marginBottom: '12px' }}>
-            ეს არის 28 რიცხვის ონლაინ ტესტირების 20-ვე შეკითხვა და სწორი პასუხები. მშობელს შეუძლია ამობეჭდოს ეს მასალა და ამეცადინოს ბავშვი თვის განმავლობაში!
-          </p>
-
-          <div className="print-questions-grid" style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            {questionList.map((q, idx) => {
-              const correctChoice = q.optionsKa ? q.optionsKa[q.correct] : q.optionsEn[q.correct]
-              return (
-                <div key={q.id} className="print-q-box">
-                  <p style={{ margin: '0 0 4px 0', fontWeight: 'bold', fontSize: '0.95rem' }}>
-                    {idx + 1}. {q.questionKa || q.questionEn}
-                  </p>
-                  <p style={{ margin: 0, color: '#2e7d32', fontWeight: '600', fontSize: '0.9rem' }}>
-                    ✅ <strong>სწორი პასუხი:</strong> {correctChoice}
-                  </p>
-                </div>
-              )
-            })}
-          </div>
-        </div>
-
         <div className="print-footer" style={{ marginTop: '24px', paddingTop: '12px', borderTop: '1px solid #ccc', fontSize: '0.82rem', color: '#777', textAlign: 'center' }}>
-          ოფიციალური ვებ-საიტი: https://stdance.ge | ონლაინ ტესტირება: https://stdance.ge/exam
+          ოფიციალური ვებ-საიტი: https://stdance.ge
         </div>
       </div>
     </div>

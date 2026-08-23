@@ -233,8 +233,9 @@ export function getSmartFallbackAnswer(query, lang) {
 • მრავალწლიანი გამოცდილებით ამზადებს მოსწავლეებს ეროვნული და საერთაშორისო ტურნირებისთვის (WDSF, Batumi Open, კავკასიის თასი).
 
 📱 **მენეჯმენტთან და მწვრთნელთან დაკავშირება:**
-• WhatsApp: **+995 514 19 99 66**
-• Email: **stdancegroupdue@gmail.com**`
+• WhatsApp / Tel: **+995 555 13 00 13**
+• Telegram (ბუღალტერია): **@STDance_Buchhalter**
+• Email: **stdancegroup@gmail.com**`
     } else if (lang === 'ru') {
       return `🕺 ST DANCE STUDIO — Основатель и Главный Тренер:
 
@@ -242,8 +243,9 @@ export function getSmartFallbackAnswer(query, lang) {
 • Профессиональный танцор, тренер и педагог международного класса WDSF.
 
 📱 **Контакты:**
-• WhatsApp: **+995 514 19 99 66**
-• Email: **stdancegroupdue@gmail.com**`
+• WhatsApp / Tel: **+995 555 13 00 13**
+• Telegram (Бухгалтерия): **@STDance_Buchhalter**
+• Email: **stdancegroup@gmail.com**`
     } else {
       return `🕺 ST DANCE STUDIO — Founder & Head Coach:
 
@@ -251,7 +253,8 @@ export function getSmartFallbackAnswer(query, lang) {
 • Professional dancer and international WDSF certified instructor.
 
 📱 **Contacts:**
-• WhatsApp: **+995 514 19 99 66**`
+• WhatsApp / Tel: **+995 555 13 00 13**
+• Telegram (Accounting): **@STDance_Buchhalter**`
     }
   }
 
@@ -505,18 +508,18 @@ Partner is NOT mandatory! We have Solo competition categories. Coach Sergi Tsivt
         </div>
 
         <p style={{ margin: '0 0 10px 0' }}>
-          📞 <strong>{lang === 'ka' ? 'ტელეფონი:' : lang === 'ru' ? 'Тел:' : 'Phone:'}</strong> +995 514 19 99 66
+          📞 <strong>{lang === 'ka' ? 'ტელეფონი:' : lang === 'ru' ? 'Тел:' : 'Phone:'}</strong> +995 555 13 00 13
         </p>
 
         <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-          <a href="tel:+995514199966" style={{ background: 'rgba(212,175,55,0.15)', color: '#f0c878', border: '1px solid #d4af37', textDecoration: 'none', padding: '6px 12px', borderRadius: '16px', fontSize: '0.82rem', fontWeight: '600' }}>
+          <a href="tel:+995555130013" style={{ background: 'rgba(212,175,55,0.15)', color: '#f0c878', border: '1px solid #d4af37', textDecoration: 'none', padding: '6px 12px', borderRadius: '16px', fontSize: '0.82rem', fontWeight: '600' }}>
             📞 {lang === 'ka' ? 'დარეკვა' : lang === 'ru' ? 'Позвонить' : 'Call'}
           </a>
-          <a href="https://wa.me/995514199966" target="_blank" rel="noreferrer" style={{ background: 'rgba(37, 211, 102, 0.15)', color: '#25D366', border: '1px solid #25D366', textDecoration: 'none', padding: '6px 12px', borderRadius: '16px', fontSize: '0.82rem', fontWeight: '600' }}>
+          <a href="https://wa.me/995555130013" target="_blank" rel="noreferrer" style={{ background: 'rgba(37, 211, 102, 0.15)', color: '#25D366', border: '1px solid #25D366', textDecoration: 'none', padding: '6px 12px', borderRadius: '16px', fontSize: '0.82rem', fontWeight: '600' }}>
             💬 WhatsApp
           </a>
-          <a href="https://t.me/+995514199966" target="_blank" rel="noreferrer" style={{ background: 'rgba(0, 136, 204, 0.15)', color: '#0088cc', border: '1px solid #0088cc', textDecoration: 'none', padding: '6px 12px', borderRadius: '16px', fontSize: '0.82rem', fontWeight: '600' }}>
-            ✈️ Telegram
+          <a href="https://t.me/STDance_Buchhalter" target="_blank" rel="noreferrer" style={{ background: 'rgba(0, 136, 204, 0.15)', color: '#0088cc', border: '1px solid #0088cc', textDecoration: 'none', padding: '6px 12px', borderRadius: '16px', fontSize: '0.82rem', fontWeight: '600' }}>
+            ✈️ Telegram (@STDance_Buchhalter)
           </a>
           <a href="https://instagram.com/stdancestudio.ge" target="_blank" rel="noreferrer" style={{ background: 'rgba(225, 48, 108, 0.15)', color: '#e1306c', border: '1px solid #e1306c', textDecoration: 'none', padding: '6px 12px', borderRadius: '16px', fontSize: '0.82rem', fontWeight: '600' }}>
             📸 Instagram
@@ -665,28 +668,28 @@ Partner is NOT mandatory! We have Solo competition categories. Coach Sergi Tsivt
 
 1. ⏰ დრო & დისციპლინა: მოსწავლე მოდის 10 წუთით ადრე. დაგვიანებული სახლში ბრუნდება. დარბაზში ტელეფონები უხმო რეჟიმშია.
 2. 👨‍👩‍👧 მშობლები: მშობელი ელოდება გარეთ; კატეგორიულად იკრძალება მწვრთნელის შეწუხება გაკვეთილის დროს.
-3. 🩺 გაცდენები & გაყინვა: საპატიოდ ითვლება მხოლოდ ჯანმრთელობის მდგომარეობა (საჭიროა ექიმის ცნობა) და წინასწარი შეტყობინება სტუდიის ადმინისტრაციაში (WhatsApp: +995 514 19 99 66).
+3. 🩺 გაცდენები & გაყინვა: საპატიოდ ითვლება მხოლოდ ჯანმრთელობის მდგომარეობა (საჭიროა ექიმის ცნობა) და წინასწარი შეტყობინება ბუღალტერთან Telegram-ზე: @STDance_Buchhalter ან WhatsApp: +995 555 13 00 13.
 4. 👗 ჩაცმულობა: სავალდებულოა მხოლოდ სპორტულ-სამეჯლისო ცეკვების სპეციალური ფორმა.
 5. 🏆 სატურნირო კალენდარი: სეზონზე დაგეგმილია 10 ძირითადი ტურნირი (ქუთაისი, თბილისი, ბათუმი, კავკასიის თასი & Batumi Open).
-6. 🔒 კონფიდენციალურობა & მონაცემები: თქვენი მონაცემები დაცულია (stdancegroupdue@gmail.com).`
+6. 🔒 კონფიდენციალურობა & მონაცემები: თქვენი მონაცემები დაცულია (stdancegroup@gmail.com).`
     } else if (lang === 'ru') {
       return `🏆 ST DANCE STUDIO — Правила, Условия и Турниры (2026-2027):
 
 1. ⏰ Дисциплина: Приходить за 10 минут до начала.
 2. 👨‍👩‍👧 Родители: Ожидают снаружи, не отвлекают тренера во время урока.
-3. 🩺 Заморозка: Только по болезни (справка от врача + уведомление администрации в WhatsApp: +995 514 19 99 66).
+3. 🩺 Заморозка: Только по болезни (справка от врача + уведомление бухгалтера в Telegram: @STDance_Buchhalter или WhatsApp: +995 555 13 00 13).
 4. 👗 Дресс-код: Обязательна только специальная бальная форма.
 5. 🏆 Турнирный календарь: 10 главных турниров в сезоне 2026-2027.
-6. 🔒 Конфиденциальность: Ваши данные защищены (stdancegroupdue@gmail.com).`
+6. 🔒 Конфиденциальность: Ваши данные защищены (stdancegroup@gmail.com).`
     } else {
       return `🏆 ST DANCE STUDIO — Rules, Terms & Tournaments (2026-2027):
 
 1. ⏰ Discipline: Arrive 10 mins early. Phones on silent.
 2. 👨‍👩‍👧 Parents: Please wait outside; strictly no interruptions during lessons.
-3. 🩺 Absence & Freezing: Only medical health reasons qualify via doctor note and notification to studio management (WhatsApp: +995 514 19 99 66).
+3. 🩺 Absence & Freezing: Only medical health reasons qualify via doctor note and prior notice to accountant on Telegram: @STDance_Buchhalter or WhatsApp: +995 555 13 00 13.
 4. 👗 Dress Code: Mandatory official ballroom dancewear only.
 5. 🏆 Competition Calendar: 10 major tournaments scheduled for 2026-2027.
-6. 🔒 Data Privacy: Personal data protected under policy (stdancegroupdue@gmail.com).`
+6. 🔒 Data Privacy: Personal data protected under policy (stdancegroup@gmail.com).`
     }
   }
 
@@ -833,7 +836,7 @@ Head Coach: Sergi Tsivtsivadze. 10 official WDSF dances taught. First trial less
 
 📱 **გთხოვთ დამიტოვოთ თქვენი ტელეფონის ნომერი (მაგ: 5XX XX XX XX)**, რომ ჩვენი მენეჯერი უმოკლეს დროში დაგიკავშირდეთ!
 
-ასევე შეგიძლიათ პირდაპირ მოგვწეროთ WhatsApp-ზე: +995 514 19 99 66.`
+ასევე შეგიძლიათ პირდაპირ მოგვწეროთ WhatsApp-ზე: +995 555 13 00 13 ან Telegram-ზე: @STDance_Buchhalter.`
   } else if (lang === 'ru') {
     return `✨ Спасибо за ваш вопрос!
 
@@ -841,7 +844,7 @@ Head Coach: Sergi Tsivtsivadze. 10 official WDSF dances taught. First trial less
 
 📱 **Пожалуйста, оставьте ваш номер телефона (например, +995 5XX XX XX XX)**, чтобы наш менеджер связался с вами!
 
-Вы также можете написать нам напрямую в WhatsApp: +995 514 19 99 66.`
+Вы также можете написать нам напрямую в WhatsApp: +995 555 13 00 13 или в Telegram: @STDance_Buchhalter.`
   } else {
     return `✨ Thank you for your question!
 
@@ -849,7 +852,7 @@ Your inquiry ("${query}") has been received.
 
 📱 **Please leave your phone number (e.g. +995 5XX XX XX XX)** so our manager can call you directly!
 
-You can also contact us on WhatsApp: +995 514 19 99 66.`
+You can also contact us on WhatsApp: +995 555 13 00 13 or Telegram: @STDance_Buchhalter.`
   }
 }
 
@@ -993,8 +996,8 @@ setMessages([{ role: 'bot', text: activeTrans.welcome }])
           {
             role: 'bot',
             text: lang === 'ka'
-              ? `✨ დიდი მადლობა! თქვენი ტელეფონის ნომერი (${capturedPhone}) წარმატებით მივიღეთ და გადავეცით ST Dance Studio-ს მენეჯერს. ჩვენი მენეჯერი უმოკლეს დროში დაგიკავშირდებათ! 📞\n\nასევე შეგიძლიათ პირდაპირ მოგვწეროთ WhatsApp-ზე: +995 514 19 99 66.`
-              : `✨ Thank you! Your phone number (${capturedPhone}) has been received and forwarded to our studio manager. We will contact you shortly! 📞\n\nWhatsApp: +995 514 19 99 66.`
+              ? `✨ დიდი მადლობა! თქვენი ტელეფონის ნომერი (${capturedPhone}) წარმატებით მივიღეთ და გადავეცით ST Dance Studio-ს მენეჯერს. ჩვენი მენეჯერი უმოკლეს დროში დაგიკავშირდებათ! 📞\n\nასევე შეგიძლიათ პირდაპირ მოგვწეროთ WhatsApp-ზე: +995 555 13 00 13 ან Telegram-ზე: @STDance_Buchhalter.`
+              : `✨ Thank you! Your phone number (${capturedPhone}) has been received and forwarded to our studio manager. We will contact you shortly! 📞\n\nWhatsApp: +995 555 13 00 13 | Telegram: @STDance_Buchhalter.`
           }
         ])
       }, 400)

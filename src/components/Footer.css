@@ -160,63 +160,71 @@
   box-shadow: 0 5px 15px var(--color-gold-glow);
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 960px) {
   .footer__inner {
-    grid-template-columns: 1.4fr 1fr;
-    gap: 4rem 2rem;
+    grid-template-columns: 1fr !important;
+    gap: 2rem !important;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    width: 100%;
+    box-sizing: border-box;
   }
-}
 
-@media (max-width: 640px) {
-  .footer__inner {
-    grid-template-columns: 1fr 1fr; /* Side by side */
-    gap: 2.5rem 1rem;
+  .footer__col {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    align-items: flex-start;
+    text-align: left;
   }
-  
-  /* Navigation and Contact at the top */
-  .footer__col:nth-child(2) { order: 1; }
-  .footer__col:nth-child(3) { order: 2; }
 
-  /* Brand and Social move to the bottom */
+  .footer__contact a,
+  .footer-address-text {
+    word-break: break-word;
+    overflow-wrap: break-word;
+    max-width: 100%;
+  }
+
   .footer__brand {
-    grid-column: span 1;
-    order: 3;
-    margin-top: 2rem;
+    max-width: 100%;
+    margin-top: 0.5rem;
   }
   .footer__brand .footer__logo {
-    width: 40px;
-    height: 40px;
+    width: 48px;
+    height: 48px;
   }
   .footer__brand .footer__name {
-    font-size: 1.1rem;
+    font-size: 1.3rem;
   }
   .footer__brand .footer__tagline {
-    font-size: 0.8rem;
+    font-size: 0.85rem;
   }
 
   .footer__col--social {
-    grid-column: span 1;
-    order: 4;
-    margin-top: 2rem;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end; /* Push icons to the right */
+    margin-top: 0.5rem;
+    align-items: flex-start;
+    width: 100%;
   }
 
   .footer__social-icons {
-    justify-content: flex-end;
+    justify-content: flex-start;
+    width: 100%;
   }
 
   .footer__bottom {
-    margin-top: 6rem; /* Extra space as requested */
+    margin-top: 2.5rem;
     flex-direction: column;
     gap: 0.5rem;
     text-align: center;
+    padding-left: 1rem;
+    padding-right: 1rem;
   }
 
   .footer-address-text .address-city,
   .footer-address-text .address-street {
-    display: block;
+    display: inline;
   }
 }
 

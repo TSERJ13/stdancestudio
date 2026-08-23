@@ -685,7 +685,7 @@ export function getDailyLessonTask(dateStr, groupId, lang = 'ka') {
   } else if (weekNum === 3) {
     weekFocusText = lang === 'ka' ? '📌 III კვირის ფოკუსი: სწრაფი ტემპის ჩასეები, პარკეტის ნავიგაცია (LOD) და WDSF ვარიაციები.' : '📌 Week 3 Focus: High-speed chasses, LOD floor navigation, and WDSF variations.'
   } else {
-    weekFocusText = lang === 'ka' ? '📌 IV კვირის ფოკუსი: 100% სატურნირო შეუჩერებელი პრაგონები, AJS შეფასება & 28 რიცხვის ტესტირება.' : '📌 Week 4 Focus: Competition non-stop runs, AJS scoring, and 28th monthly exam.'
+    weekFocusText = lang === 'ka' ? '📌 IV კვირის ფოკუსი: 100% სატურნირო შეუჩერებელი პრაგონები & AJS შეფასება.' : '📌 Week 4 Focus: Competition non-stop runs and AJS scoring.'
   }
 
   const goalText = `${baseGoalText} • ${weekFocusText}`
@@ -700,7 +700,7 @@ export function getDailyLessonTask(dateStr, groupId, lang = 'ka') {
         breakdown: [
           { time: '15 წთ', text: weekNum === 1 ? 'Posture & Rise/Fall იზოლაციები' : weekNum === 2 ? 'Natural/Reverse Turn ბრუნვის ტექნიკა' : weekNum === 3 ? 'Chasse from PP & ჩარჩოს სისწრაფე' : 'სატურნირო 2-ცეკვიანი პრაგონი' },
           { time: '30 წთ', text: `WDSF ფიგურები (${weekNum} კვირის ეტაპი): ${figuresText}` },
-          { time: '15 წთ', text: weekNum === 4 ? 'AJS შეფასება & ტესტირების მზადება' : 'მუსიკალური ბალანსის დახვეწა' }
+          { time: '15 წთ', text: weekNum === 4 ? 'AJS შეფასება & ტექნიკური მონიტორინგი' : 'მუსიკალური ბალანსის დახვეწა' }
         ],
         dailyGoal: goalText,
         theoryNotes: getWdsfTheoryNotes('Slow Waltz', figuresText, lang)
@@ -713,7 +713,7 @@ export function getDailyLessonTask(dateStr, groupId, lang = 'ka') {
         breakdown: [
           { time: '15 წთ', text: weekNum === 1 ? 'Hip Settling & მუხლის ჩაკეტვა' : weekNum === 2 ? 'Spot Turn 360° ბრუნვის სისწრაფე' : weekNum === 3 ? 'Lock Steps & სწრაფი ჩასე 4-&-1' : 'ჩა-ჩა-ჩას სატურნირო ფინალები' },
           { time: '30 წთ', text: `WDSF ფიგურები (${weekNum} კვირის ეტაპი): ${figuresText}` },
-          { time: '15 წთ', text: weekNum === 4 ? 'სცენური ექსპრესია & ტესტირების მზადება' : 'რიტმული დათვლის სიზუსტე' }
+          { time: '15 წთ', text: weekNum === 4 ? 'სცენური ექსპრესია & ემოცია' : 'რიტმული დათვლის სიზუსტე' }
         ],
         dailyGoal: goalText,
         theoryNotes: getWdsfTheoryNotes('Cha-Cha-Cha', figuresText, lang)
@@ -758,7 +758,7 @@ export function getDailyLessonTask(dateStr, groupId, lang = 'ka') {
         breakdown: [
           { time: '15 წთ', text: weekNum === 1 ? 'კორპუსის იზოლაციები & Jive Spring' : weekNum === 2 ? 'Alemana & Underarm Pass' : weekNum === 3 ? 'Three Cha-Chas & Jive Stop and Go' : 'ლათინო ამერიკული ფინალები' },
           { time: '30 წთ', text: `WDSF ფიგურები (${weekNum} კვირა): ${figuresText}` },
-          { time: '15 წთ', text: weekNum === 4 ? 'სცენური კონტაქტი & ტესტირება' : 'რიტმული აქცენტები' }
+          { time: '15 წთ', text: weekNum === 4 ? 'სცენური კონტაქტი & პარტნიორობა' : 'რიტმული აქცენტები' }
         ],
         dailyGoal: goalText,
         theoryNotes: getWdsfTheoryNotes('Cha-Cha-Cha', figuresText, lang)

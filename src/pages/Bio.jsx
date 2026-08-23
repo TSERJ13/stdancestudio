@@ -479,11 +479,11 @@ Click the Online Registration button to sign up.`
     q.includes('адрес')
   ) {
     if (lang === 'ka') {
-      return 'მისამართი: ქ. ბათუმი, ექვთიმე თაყაიშვილის ქუჩა №55 (3-სართულიანი თეთრი შენობის მე-3 სართული, შესასვლელი ბალოტისფერი სახლის ჭიშკრიდან). ტელ: +995 514 19 99 66.'
+      return 'მისამართი: ქ. ბათუმი, ექვთიმე თაყაიშვილის ქუჩა №55 (3-სართულიანი თეთრი შენობის მე-3 სართული, შესასვლელი ბალოტისფერი სახლის ჭიშკრიდან). ტელ: +995 555 13 00 13.'
     } else if (lang === 'en') {
-      return 'Location: 55 Eka Takaishvili St, Batumi (3rd floor of 3-story white building, entrance through olive gate). Tel: +995 514 19 99 66.'
+      return 'Location: 55 Eka Takaishvili St, Batumi (3rd floor of 3-story white building, entrance through olive gate). Tel: +995 555 13 00 13.'
     } else {
-      return 'Адрес: Батуми, ул. Екатирене Такаишвили №55 (3-й этаж 3-этажного белого здания, вход через оливковые ворота). Тел: +995 514 19 99 66.'
+      return 'Адрес: Батуми, ул. Екатирене Такаишвили №55 (3-й этаж 3-этажного белого здания, вход через оливковые ворота). Тел: +995 555 13 00 13.'
     }
   }
 
@@ -1296,7 +1296,7 @@ export default function Bio() {
             </svg>
           </a>
           <a
-            href="https://wa.me/995514199966"
+            href="https://wa.me/995555130013"
             target="_blank"
             rel="noopener noreferrer"
             className="bio-social-btn"
@@ -1378,7 +1378,7 @@ export default function Bio() {
 
             <div className="bio-contact-modal-list">
               {/* 1. Phone */}
-              <a href="tel:+995514199966" className="bio-contact-item">
+              <a href="tel:+995555130013" className="bio-contact-item">
                 <div className="bio-contact-icon-box">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"></path>
@@ -1386,13 +1386,13 @@ export default function Bio() {
                 </div>
                 <div className="bio-contact-info">
                   <div className="bio-contact-title">ტელეფონის ნომერი</div>
-                  <div className="bio-contact-sub">+995 514 19 99 66</div>
+                  <div className="bio-contact-sub">+995 555 13 00 13</div>
                 </div>
                 <div className="bio-contact-arrow">➔</div>
               </a>
 
               {/* 2. WhatsApp */}
-              <a href="https://wa.me/995514199966" target="_blank" rel="noopener noreferrer" className="bio-contact-item">
+              <a href="https://wa.me/995555130013" target="_blank" rel="noopener noreferrer" className="bio-contact-item">
                 <div className="bio-contact-icon-box">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>

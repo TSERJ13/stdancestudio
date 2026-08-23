@@ -249,17 +249,17 @@ ${answersBreakdown}
                 setSearchParams({ group: selectedGroup, month: e.target.value })
               }}
             >
-              <option value="2026-08">2026 წლის აგვისტო (28 რიცხვი)</option>
-              <option value="2026-09">2026 წლის სექტემბერი (28 რიცხვი)</option>
-              <option value="2026-10">2026 წლის ოქტომბერი (28 რიცხვი)</option>
-              <option value="2026-11">2026 წლის ნოემბერი (28 რიცხვი)</option>
-              <option value="2026-12">2026 წლის დეკემბერი (28 რიცხვი)</option>
-              <option value="2027-01">2027 წლის იანვარი (28 რიცხვი)</option>
-              <option value="2027-02">2027 წლის თებერვალი (28 რიცხვი)</option>
-              <option value="2027-03">2027 წლის მარტი (28 რიცხვი)</option>
-              <option value="2027-04">2027 წლის აპრილი (28 რიცხვი)</option>
-              <option value="2027-05">2027 წლის მაისი (28 რიცხვი)</option>
-              <option value="2027-06">2027 წლის ივნისი (28 რიცხვი)</option>
+              <option value="2026-08">2026 წლის აგვისტო</option>
+              <option value="2026-09">2026 წლის სექტემბერი</option>
+              <option value="2026-10">2026 წლის ოქტომბერი</option>
+              <option value="2026-11">2026 წლის ნოემბერი</option>
+              <option value="2026-12">2026 წლის დეკემბერი</option>
+              <option value="2027-01">2027 წლის იანვარი</option>
+              <option value="2027-02">2027 წლის თებერვალი</option>
+              <option value="2027-03">2027 წლის მარტი</option>
+              <option value="2027-04">2027 წლის აპრილი</option>
+              <option value="2027-05">2027 წლის მაისი</option>
+              <option value="2027-06">2027 წლის ივნისი</option>
             </select>
           </div>
         </div>
@@ -353,7 +353,7 @@ ${answersBreakdown}
 
             <p style={{ color: '#b0ab9f', maxWidth: '560px', margin: '1rem auto' }}>
               ✅ PDF სერტიფიკატი გადმოიწერა თქვენს მოწყობილობაში.<br />
-              📧 სრული პასუხები და 10-ქულიანი რეპორტი გადაეგზავნა სტუდიის მეილს: <strong>stdancegroupdue@gmail.com</strong>
+              📧 სრული პასუხები და 10-ქულიანი რეპორტი გადაეგზავნა სტუდიის მეილს: <strong>stdancegroup@gmail.com</strong>
             </p>
 
             <div style={{ display: 'flex', gap: '14px', justifyContent: 'center', flexWrap: 'wrap', marginTop: '1.5rem' }}>

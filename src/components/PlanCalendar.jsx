@@ -69,36 +69,9 @@ export default function PlanCalendar() {
             🗓️ {lang === 'ka' ? 'ინტერაქტიული საგანმანათლებლო კალენდარი (2026-2027)' : lang === 'ru' ? 'Интерактивный учебный календарь (2026-2027)' : 'Interactive Educational Calendar (2026-2027)'}
           </h3>
           <p style={{ margin: '4px 0 0 0', color: '#b0ab9f', fontSize: '0.88rem' }}>
-            {lang === 'ka' ? 'აირჩიეთ ჯგუფი. არასავარჯიშო დღეები ჩაკეტილია. 28 რიცხვში ჩააბარეთ ყოველთვიური ონლაინ ტესტირება.' : 'Select group. Non-training days locked. Take 28th monthly online exam.'}
+            {lang === 'ka' ? 'აირჩიეთ ჯგუფი. არასავარჯიშო დღეები ჩაკეტილია.' : lang === 'ru' ? 'Выберите группу. Неучебные дни заблокированы.' : 'Select group. Non-training days locked.'}
           </p>
         </div>
-
-        {/* Exam Trigger Button */}
-        <button
-          onClick={() => setIsExamModalOpen(true)}
-          style={{
-            borderColor: 'var(--color-gold, #d4a64a)',
-            color: '#f0c878',
-            fontSize: '0.82rem',
-            padding: '8px 16px'
-          }}
-        >
-          📝 {lang === 'ka' ? '28 რიცხვის ონლაინ ტესტირება' : '28th Monthly Exam'}
-        </button>
-
-        <a
-          href={`/exam?group=${selectedGroup}&month=${activeMonthId}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="btn btn--gold"
-          style={{
-            fontSize: '0.82rem',
-            padding: '8px 16px',
-            textDecoration: 'none'
-          }}
-        >
-          🔗 {lang === 'ka' ? 'ტესტის ლინკის გენერირება & პასუხების გადამოწმება' : 'Exam Link & Answer Key'}
-        </a>
       </div>
 
       {/* Group Selector Bar */}
@@ -183,8 +156,7 @@ export default function PlanCalendar() {
             >
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <span className="cal-cell-num">{day}</span>
-                {is28th && <span style={{ fontSize: '0.72rem' }}>📝</span>}
-                {isLocked && !is28th && <span style={{ fontSize: '0.68rem', opacity: 0.8 }}>🔒</span>}
+                {isLocked && <span style={{ fontSize: '0.68rem', opacity: 0.8 }}>🔒</span>}
                 {isTournament && !isHoliday && <span style={{ fontSize: '0.7rem' }}>🏆</span>}
               </div>
 
@@ -198,12 +170,7 @@ export default function PlanCalendar() {
                   {tournament[lang] || tournament.ka}
                 </span>
               )}
-              {is28th && !holiday && (
-                <span className="cal-cell-badge" style={{ background: 'rgba(255,209,128,0.25)', color: '#ffd180', fontWeight: 'bold' }}>
-                  📝 ტესტირება
-                </span>
-              )}
-              {!isLocked && !tournament && !holiday && !is28th && (
+              {!isLocked && !tournament && !holiday && (
                 <span className="cal-cell-badge badge-regular" style={{ background: 'rgba(76,175,80,0.2)', color: '#81c784' }}>
                   {lang === 'ka' ? '✓ გაკვეთილი' : lang === 'ru' ? '✓ Урок' : '✓ Training'}
                 </span>
@@ -218,10 +185,6 @@ export default function PlanCalendar() {
         <div className="legend-item">
           <div className="legend-dot" style={{ background: '#4caf50' }}></div>
           <span>{lang === 'ka' ? '✓ ჯგუფის აქტიური მეცადინეობა' : '✓ Active Group Class'}</span>
-        </div>
-        <div className="legend-item">
-          <div className="legend-dot" style={{ background: '#ffd180' }}></div>
-          <span>{lang === 'ka' ? '📝 28 რიცხვის ონლაინ ტესტირება' : '📝 28th Monthly Exam'}</span>
         </div>
         <div className="legend-item">
           <div className="legend-dot" style={{ background: 'var(--color-gold, #d4a64a)' }}></div>
@@ -258,37 +221,6 @@ export default function PlanCalendar() {
               </span>
             )}
           </div>
-
-          {/* 28th Monthly Exam Notification Banner */}
-          {isExamDay && (
-            <div style={{
-              background: 'linear-gradient(90deg, rgba(255,209,128,0.2), rgba(212,166,74,0.1))',
-              border: '1px solid #ffd180',
-              padding: '12px 16px',
-              borderRadius: '12px',
-              marginBottom: '16px',
-              display: 'flex',
-              justify: 'space-between',
-              alignItems: 'center',
-              flexWrap: 'wrap',
-              gap: '10px'
-            }}>
-              <div>
-                <span style={{ fontWeight: 'bold', color: '#ffd180', fontSize: '0.9rem' }}>
-                  📝 {lang === 'ka' ? 'დღეს 28 რიცხვია — ყოველთვიური ონლაინ ტესტირების დღე!' : 'Today is the 28th — Monthly Exam Day!'}
-                </span>
-                <p style={{ margin: '2px 0 0 0', color: '#ffffff', fontSize: '0.85rem' }}>
-                  {lang === 'ka' ? 'გაიარეთ 20-კითხვიანი ტესტირება. PDF რეპორტი ავტომატურად გაიგზავნება სტუდიის მეილზე.' : 'Take 20-question exam. PDF report emailed automatically.'}
-                </p>
-              </div>
-              <button
-                onClick={() => setIsExamModalOpen(true)}
-                style={{ background: '#ffd180', color: '#000', border: 'none', padding: '8px 16px', borderRadius: '20px', fontWeight: 'bold', cursor: 'pointer' }}
-              >
-                {lang === 'ka' ? 'ტესტირების დაწყება ➔' : 'Start Exam ➔'}
-              </button>
-            </div>
-          )}
 
           {/* Locked Day Case */}
           {selectedTask.isLocked && (

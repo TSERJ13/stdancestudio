@@ -292,7 +292,7 @@ ${answersBreakdown}
 
               <p style={{ color: '#b0ab9f', fontSize: '0.9rem', maxWidth: '520px', margin: '0 auto 1.5rem auto' }}>
                 ✅ PDF სერტიფიკატი გადმოიწერა თქვენს მოწყობილობაში.<br />
-                📧 სრული პასუხები და 10-ქულიანი PDF რეპორტი გაიგზავნა მეილზე: <strong>stdancegroupdue@gmail.com</strong>
+                📧 სრული პასუხები და 10-ქულიანი PDF რეპორტი გაიგზავნა მეილზე: <strong>stdancegroup@gmail.com</strong>
               </p>
 
               <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>

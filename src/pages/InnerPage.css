@@ -569,11 +569,57 @@
 /* ===========================================
    CONTACT MEDIA SHOWCASE (MAP & HALL PHOTO)
    =========================================== */
+.contact-list a,
+.contact-list p {
+  word-break: break-word;
+  overflow-wrap: break-word;
+  max-width: 100%;
+}
+
+@media (max-width: 768px) {
+  .contact-grid {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
+
+  .contact-list {
+    gap: 1.2rem;
+    margin-bottom: 2rem;
+  }
+
+  .contact-list li {
+    background: rgba(255, 255, 255, 0.025);
+    border: 1px solid rgba(212, 166, 74, 0.22);
+    border-radius: 12px;
+    padding: 1.2rem 1rem;
+    box-sizing: border-box;
+    width: 100%;
+  }
+
+  .contact-list a,
+  .contact-list p {
+    font-size: clamp(1rem, 4.2vw, 1.25rem);
+    word-break: break-word;
+    overflow-wrap: break-word;
+  }
+
+  .contact-media-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1.5rem !important;
+  }
+
+  .contact-map-box a,
+  .contact-hall-box > div {
+    height: 240px !important;
+  }
+}
+
 .contact-media-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: clamp(1.5rem, 3vw, 2.5rem);
   width: 100%;
+  box-sizing: border-box;
 }
 
 .contact-hover-card {
