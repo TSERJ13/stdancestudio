@@ -204,6 +204,58 @@ export function getSmartFallbackAnswer(query, lang) {
     }
   }
 
+  // 1.5. Teacher, Coach & Founder Intent
+  if (
+    q.includes('მასწავლებელ') ||
+    q.includes('მწვრთნელ') ||
+    q.includes('პედაგოგ') ||
+    q.includes('დამფუძნებელ') ||
+    q.includes('სერგ') ||
+    q.includes('წივწივაძ') ||
+    q.includes('ვინ არის') ||
+    q.includes('ვინ ასწავლ') ||
+    q.includes('teacher') ||
+    q.includes('coach') ||
+    q.includes('instructor') ||
+    q.includes('founder') ||
+    q.includes('учитель') ||
+    q.includes('тренер') ||
+    q.includes('педагог') ||
+    q.includes('основатель')
+  ) {
+    if (lang === 'ka') {
+      return `${intro}
+
+🕺 ST DANCE STUDIO — დამფუძნებელი & მთავარი მწვრთნელი:
+
+👑 **სერგი (სერგო) წივწივაძე** — ST Dance Studio-ს დამფუძნებელი, მფლობელი და მთავარი პედაგოგი/მწვრთნელი.
+• პროფესიონალი მოცეკვავე, მწვრთნელი და WDSF საერთაშორისო სტანდარტების პედაგოგი.
+• მრავალწლიანი გამოცდილებით ამზადებს მოსწავლეებს ეროვნული და საერთაშორისო ტურნირებისთვის (WDSF, Batumi Open, კავკასიის თასი).
+
+📱 **მენეჯმენტთან და მწვრთნელთან დაკავშირება:**
+• WhatsApp: **+995 514 19 99 66**
+• Email: **stdancegroupdue@gmail.com**`
+    } else if (lang === 'ru') {
+      return `🕺 ST DANCE STUDIO — Основатель и Главный Тренер:
+
+👑 **Серги (Серго) Цивцивадзе** — основатель, владелец и главный педагог ST Dance Studio.
+• Профессиональный танцор, тренер и педагог международного класса WDSF.
+
+📱 **Контакты:**
+• WhatsApp: **+995 514 19 99 66**
+• Email: **stdancegroupdue@gmail.com**`
+    } else {
+      return `🕺 ST DANCE STUDIO — Founder & Head Coach:
+
+👑 **Sergi (Sergo) Tsivtsivadze** — Founder, Owner, and Head Coach of ST Dance Studio.
+• Professional dancer and international WDSF certified instructor.
+
+📱 **Contacts:**
+• WhatsApp: **+995 514 19 99 66**
+• Email: **stdancegroupdue@gmail.com**`
+    }
+  }
+
   // 2. Schedule & Groups
   if (
     q.includes('განრიგ') ||
@@ -866,7 +918,8 @@ CRITICAL MULTILINGUAL & PRICING RULES:
    - Monthly Group Pass: 130 GEL/mo (12 lessons) / 130 GEL в месяц (12 занятий) / 130 ლარი თვეში (12 გაკვეთილი)
    - Sibling Discount: 100 GEL per student / 100 GEL за ученика (200 GEL за двоих) / 100 ლარი 1 მოსწავლეზე (200 ლარი 2 დედმამიშვილზე)
    - Private Coaching: 1 lesson = 70 GEL | 4 lessons = 240 GEL | 8 lessons = 400 GEL
-3. Be friendly, polite, elegant, and helpful. Use emojis tastefully (📅, 💰, 📍, 🏆, 👶, ✨, 🎁, 💃, 🌟).
+3. FOUNDER & HEAD TEACHER RULE: When asked about who the teacher, founder, or coach is ("ვინ არის მასწავლებელი?", "ვინ ასწავლის?", "кто тренер?", "who is the coach?"), ALWAYS answer clearly: **Sergi (Sergo) Tsivtsivadze (სერგი წივწივაძე)** is the Founder, Owner, and Head Coach of ST Dance Studio in Batumi!
+4. Be friendly, polite, elegant, and helpful. Use emojis tastefully (📅, 💰, 📍, 🏆, 👶, ✨, 🎁, 💃, 🌟).
 
 ST DANCE STUDIO OFFICIAL KNOWLEDGE BASE:
 ${studioKnowledgeBase}
