@@ -1,6 +1,6 @@
 /**
  * ST DANCE STUDIO — Live 11-Month Interactive Calendar Engine
- * August 24, 2026 – July 15, 2027
+ * August 24, 2026 – July 15, 2027 (Detailed 11-Month Progression)
  */
 
 export const HOLIDAYS_MAP = {
@@ -48,6 +48,420 @@ export const GROUPS_INFO = [
   { id: 'golden', ka: '🏆 Golden (E, D, C კლასები)', en: '🏆 Golden (E, D, C Classes)', ru: '🏆 Golden (E, D, C Классы)', color: '#d4af37' },
   { id: 'couples_hobby', ka: '💃 წყვილები & Hobby Class', en: '💃 Couples & Hobby Class', ru: '💃 Пары и Hobby Class', color: '#e1306c' }
 ]
+
+/**
+ * Detailed Month-by-Month WDSF Curriculum Progression (11 Months: Aug 24, 2026 - Jul 15, 2027)
+ */
+export const MONTHLY_WDSF_CURRICULUM = {
+  '2026-08': {
+    baby_bronze: {
+      figsKa: 'Rise & Fall ბაზა, Closed Changes (Right)',
+      figsEn: 'Rise & Fall Base, Closed Changes (Right)',
+      figsRu: 'Rise & Fall База, Closed Changes (Правый)',
+      goalKa: 'სეზონის სტარტი: დგომის (Posture) და რიტმის ბაზის ჩამოყალიბება',
+      goalEn: 'Season Start: Establishing posture & rhythm baseline',
+      goalRu: 'Старт сезона: Постановка осанки и базового ритма'
+    },
+    presilver_silver: {
+      figsKa: 'Waltz Posture, Natural Turn, Cha-Cha Time Step',
+      figsEn: 'Waltz Posture, Natural Turn, Cha-Cha Time Step',
+      figsRu: 'Стойка Вальса, Natural Turn, Time Step',
+      goalKa: 'სტანდარტის ჩარჩოს (Frame) და ლათინოს თეძოს მუშაობის აღდგენა',
+      goalEn: 'Restoring Standard frame and Latin hip action',
+      goalRu: 'Восстановление рамки Стандарта и работы бедер'
+    },
+    golden: {
+      figsKa: 'WDSF Body Isolations, Waltz Closed Changes, Cha-Cha Basic',
+      figsEn: 'WDSF Body Isolations, Waltz Closed Changes, Cha-Cha Basic',
+      figsRu: 'Изоляции тела WDSF, Базовый Вальс и Ча-Ча-Ча',
+      goalKa: 'სატურნირო ფიზიკური კონდიციების აღდგენის სტარტი',
+      goalEn: 'Kickstarting competition physical conditioning',
+      goalRu: 'Старт восстановления турнирной формы'
+    },
+    couples_hobby: {
+      figsKa: 'Partner Connection & Lead/Follow Principles',
+      figsEn: 'Partner Connection & Lead/Follow Principles',
+      figsRu: 'Контакт в паре и ведение',
+      goalKa: 'წყვილში კავშირისა და ჰარმონიული მოძრაობის ბაზა',
+      goalEn: 'Establishing partner connection baseline',
+      goalRu: 'Базовый контакт и гармония в паре'
+    }
+  },
+  '2026-09': {
+    baby_bronze: {
+      figsKa: 'Closed Changes (Left), Natural Turn, Cha-Cha Time Step',
+      figsEn: 'Closed Changes (Left), Natural Turn, Time Step',
+      figsRu: 'Closed Changes (Левый), Natural Turn, Time Step',
+      goalKa: 'ვალსისა და ჩა-ჩა-ჩას პირველი ძირითადი ფიგურების ათვისება',
+      goalEn: 'Mastering core Waltz & Cha-Cha figures',
+      goalRu: 'Освоение основных фигур Вальса и Ча-Ча'
+    },
+    presilver_silver: {
+      figsKa: 'Whisk, Chasse from PP, New York, Hand to Hand',
+      figsEn: 'Whisk, Chasse from PP, New York, Hand to Hand',
+      figsRu: 'Whisk, Chasse from PP, New York, Hand to Hand',
+      goalKa: 'სალონური ფიგურების სიზუსტე და მუსიკალური დათვლა',
+      goalEn: 'Precision in ballroom figures & musical timing',
+      goalRu: 'Точность бальных фигур и ритмический счет'
+    },
+    golden: {
+      figsKa: 'Tango Walk, Progressive Link, Samba Whisks, Bota Fogos',
+      figsEn: 'Tango Walk, Progressive Link, Samba Whisks, Bota Fogos',
+      figsRu: 'Танго Шаги, Progressive Link, Самба Whisks, Bota Fogos',
+      goalKa: 'ტანგოსა და სამბას ტექნიკური იზოლაციის დახვეწა',
+      goalEn: 'Technical isolation in Tango & Samba',
+      goalRu: 'Техническая отработка Танго и Самбы'
+    },
+    couples_hobby: {
+      figsKa: 'Waltz Natural Turn, Cha-Cha New York',
+      figsEn: 'Waltz Natural Turn, Cha-Cha New York',
+      figsRu: 'Правый поворот Вальса, Нью-Йорк в Ча-Ча',
+      goalKa: 'წყვილში თავდაჯერებული სვლა პარკეტზე',
+      goalEn: 'Confident floor movement in couples',
+      goalRu: 'Уверенное движение пары по паркету'
+    }
+  },
+  '2026-10': {
+    baby_bronze: {
+      figsKa: 'Reverse Turn, Cha-Cha Basic Movement',
+      figsEn: 'Reverse Turn, Cha-Cha Basic Movement',
+      figsRu: 'Обратный поворот, Основное движение Ча-Ча',
+      goalKa: 'მოხვევითი მოძრაობებისა და თეძოს როტაციის განვითარება',
+      goalEn: 'Developing turning actions & hip rotation',
+      goalRu: 'Развитие вращений и ротации бедер'
+    },
+    presilver_silver: {
+      figsKa: 'Quickstep Quarter Turn, Progressive Chasse, Jive Fallaway Rock',
+      figsEn: 'Quickstep Quarter Turn, Progressive Chasse, Jive Fallaway Rock',
+      figsRu: 'Четвертной поворот Квикстепа, Fallaway Rock в Джайве',
+      goalKa: 'ქვიქსტეპისა და ჯაივის დინამიური ტემპის დაჭერა',
+      goalEn: 'Capturing dynamic tempo in Quickstep & Jive',
+      goalRu: 'Динамичный темп Квикстепа и Джайва'
+    },
+    golden: {
+      figsKa: 'Tango Closed Promenade, Back Corte, Samba Voltas',
+      figsEn: 'Tango Closed Promenade, Back Corte, Samba Voltas',
+      figsRu: 'Танго Променад, Back Corte, Вольты в Самбе',
+      goalKa: 'ლათინო ამერიკული ცეკვების რიტმული აქცენტების გამოკვეთა',
+      goalEn: 'Highlighting Latin rhythmic accents & speed',
+      goalRu: 'Выделение ритмических акцентов Латины'
+    },
+    couples_hobby: {
+      figsKa: 'Closed Promenade, Spot Turns',
+      figsEn: 'Closed Promenade, Spot Turns',
+      figsRu: 'Закрытый променад, Повороты на месте',
+      goalKa: 'წყვილის იდეალური სინქრონიზაცია',
+      goalEn: 'Achieving ideal partner synchronization',
+      goalRu: 'Идеальная синхронизация пары'
+    }
+  },
+  '2026-11': {
+    baby_bronze: {
+      figsKa: 'Spot Turn, Hand to Hand (ქუთაისისა & თბილისის თასის მზადება)',
+      figsEn: 'Spot Turn, Hand to Hand (National Cup Prep)',
+      figsRu: 'Spot Turn, Hand to Hand (Подготовка к кубку)',
+      goalKa: 'პირველი ეროვნული ტურნირისთვის საცენო ფორმის მიღწევა',
+      goalEn: 'Reaching stage form for first national cup',
+      goalRu: 'Выход на сцену первого национального турнира'
+    },
+    presilver_silver: {
+      figsKa: 'Forward Lock Step, Alemana, Jive Fallaway Throwaway',
+      figsEn: 'Forward Lock Step, Alemana, Jive Fallaway Throwaway',
+      figsRu: 'Forward Lock Step, Alemana, Fallaway Throwaway',
+      goalKa: '4 ცეკვის შეუჩერებელი სატურნირო პრაგონი',
+      goalEn: 'Non-stop 4-dance competition routine run',
+      goalRu: 'Безостановочный прогон 4 танцев'
+    },
+    golden: {
+      figsKa: 'Open Promenade, Five Step, Solo Spot Voltas, Rumba Basics',
+      figsEn: 'Open Promenade, Five Step, Solo Spot Voltas, Rumba Basics',
+      figsRu: 'Open Promenade, Five Step, Вольты, Базовый Румба',
+      goalKa: 'ეროვნულ ტურნირებზე საპრიზო ადგილების დაკავება',
+      goalEn: 'Securing top podium placements at national cups',
+      goalRu: 'Завоевание призовых мест на национальном кубке'
+    },
+    couples_hobby: {
+      figsKa: '4-Dance Routine Cleaning',
+      figsEn: '4-Dance Routine Cleaning',
+      figsRu: 'Чистка схем 4 танцев',
+      goalKa: 'საცეკვაო სქემების სრული გასუფთავება',
+      goalEn: 'Complete routine cleanup & presentation',
+      goalRu: 'Полная чистка танцевальных схем'
+    }
+  },
+  '2026-12': {
+    baby_bronze: {
+      figsKa: 'Full 2-Dance Routine Clean-up (წლის დასკვნითი თასი)',
+      figsEn: 'Full 2-Dance Clean-up (Year-End Cup)',
+      figsRu: 'Чистка 2 танцев (Финал года)',
+      goalKa: 'საახალწლო ტურნირზე 100%-იანი შედეგის ჩვენება',
+      goalEn: 'Achieving 100% score at Year-End Christmas Cup',
+      goalRu: '100% результат на Новогоднем кубке'
+    },
+    presilver_silver: {
+      figsKa: 'Impetus Turn, Outside Change, Hockey Stick, American Spin',
+      figsEn: 'Impetus Turn, Outside Change, Hockey Stick, American Spin',
+      figsRu: 'Impetus Turn, Outside Change, Hockey Stick, American Spin',
+      goalKa: 'H-კლასის რთული ფიგურების იდეალური შესრულება',
+      goalEn: 'Flawless execution of H-Class WDSF figures',
+      goalRu: 'Идеальное исполнение фигур Н-класса'
+    },
+    golden: {
+      figsKa: 'Full 6-8 Dance Competition Routines & Non-Stop Music Practice',
+      figsEn: 'Full 6-8 Dance Competition Routines & Non-Stop Runs',
+      figsRu: 'Прогоны 6-8 танцев под музыку',
+      goalKa: 'წლის ფინალურ ტურნირზე ჩემპიონობის მოპოვება',
+      goalEn: 'Claiming championship titles at Year-End Finale',
+      goalRu: 'Завоевание чемпионства на финале года'
+    },
+    couples_hobby: {
+      figsKa: 'Social Ballroom Showcase',
+      figsEn: 'Social Ballroom Showcase',
+      figsRu: 'Шоу-прогон бальной программы',
+      goalKa: 'საახალწლო შოუ-პროგრამის წარმატებული ჩვენება',
+      goalEn: 'Successful performance at Christmas Gala Showcase',
+      goalRu: 'Успешное выступление на Новогоднем Шоу'
+    }
+  },
+  '2027-01': {
+    baby_bronze: {
+      figsKa: 'Hesitation Change, Cha-Cha Lock Steps (საზამთრო სტარტი)',
+      figsEn: 'Hesitation Change, Cha-Cha Lock Steps',
+      figsRu: 'Hesitation Change, Лок-степы в Ча-Ча',
+      goalKa: 'ზამთრის არდადეგების შემდეგ ტონუსის სწრაფი აღდგენა',
+      goalEn: 'Rapid tone recovery after winter break',
+      goalRu: 'Быстрое восстановление формы после каникул'
+    },
+    presilver_silver: {
+      figsKa: 'Natural Spin Turn, Three Cha-Chas, Change of Places',
+      figsEn: 'Natural Spin Turn, Three Cha-Chas, Change of Places',
+      figsRu: 'Natural Spin Turn, Три Ча-Ча-Ча, Change of Places',
+      goalKa: 'WDSF საერთაშორისო მასტერკლასების მასალის ათვისება',
+      goalEn: 'Integrating WDSF international masterclass content',
+      goalRu: 'Освоение материала мастер-классов WDSF'
+    },
+    golden: {
+      figsKa: 'Viennese Waltz Natural & Reverse Fleckerls, Paso Doble Huit',
+      figsEn: 'Viennese Waltz Fleckerls, Paso Doble Huit',
+      figsRu: 'Флекерлы Венского Вальса, Пасодобль Huit',
+      goalKa: 'WDSF საერთაშორისო პედაგოგების მასტერკლასებზე უმაღლესი შეფასება',
+      goalEn: 'Earning top marks at international masterclasses',
+      goalRu: 'Высшая оценка на международных мастер-классах'
+    },
+    couples_hobby: {
+      figsKa: 'Slow Foxtrot Feather Step & Three Step',
+      figsEn: 'Slow Foxtrot Feather Step & Three Step',
+      figsRu: 'Перо и Три шага в Медленном Фокстроте',
+      goalKa: 'ფოქსტროტის ნაზი და უწყვეტი სვლის ათვისება',
+      goalEn: 'Mastering smooth continuous Foxtrot action',
+      goalRu: 'Освоение плавного хода Фокстрота'
+    }
+  },
+  '2027-02': {
+    baby_bronze: {
+      figsKa: 'Chasse to Right, Cuban Breaks (აჭარის ჩემპიონატის მზადება)',
+      figsEn: 'Chasse to Right, Cuban Breaks (Adjara Open Prep)',
+      figsRu: 'Шассе вправо, Кубинские брейки',
+      goalKa: 'აჭარის ღია ჩემპიონატზე ოქროს მედლების მოპოვება',
+      goalEn: 'Winning gold medals at Adjara Open Championship',
+      goalRu: 'Завоевание золотых медалей на Чемпионате Аджарии'
+    },
+    presilver_silver: {
+      figsKa: 'Quickstep Chasse Turn, Jive Stop and Go',
+      figsEn: 'Quickstep Chasse Turn, Jive Stop and Go',
+      figsRu: 'Поворот Шассе в Квикстепе, Stop and Go в Джайве',
+      goalKa: 'მაღალი სიჩქარისა და ენერგიის მართვა ჩემპიონატზე',
+      goalEn: 'Managing high speed and energy at championship',
+      goalRu: 'Управление высокой скоростью и энергией'
+    },
+    golden: {
+      figsKa: 'Foxtrot Feather Finish, Paso Doble Counter Promenade',
+      figsEn: 'Foxtrot Feather Finish, Paso Doble Counter Promenade',
+      figsRu: 'Перо-финиш в Фокстроте, Контр-променад Пасодобля',
+      goalKa: 'აჭარის ჩემპიონის ტიტულის დაცვა',
+      goalEn: 'Defending Adjara Champion title',
+      goalRu: 'Защита титула Чемпиона Аджарии'
+    },
+    couples_hobby: {
+      figsKa: 'Speed & Rhythm Acceleration',
+      figsEn: 'Speed & Rhythm Acceleration',
+      figsRu: 'Ускорение темпа и ритма',
+      goalKa: 'ტემპის აჩქარებისას წყვილის სტაბილურობის შენარჩუნება',
+      goalEn: 'Maintaining couple balance during speedup',
+      goalRu: 'Сохранение баланса пары при ускорении'
+    }
+  },
+  '2027-03': {
+    baby_bronze: {
+      figsKa: 'Reverse Corte, Sweetheart',
+      figsEn: 'Reverse Corte, Sweetheart',
+      figsRu: 'Обратное Корте, Sweetheart',
+      goalKa: 'საგაზაფხულო თასისთვის ფიგურების სიზუსტე',
+      goalEn: 'Figure accuracy for Spring Dance Cup',
+      goalRu: 'Точность фигур к Весеннему кубку'
+    },
+    presilver_silver: {
+      figsKa: 'Weave from PP, Natural Turn with Hesitation, Opening Out',
+      figsEn: 'Weave from PP, Natural Turn with Hesitation, Opening Out',
+      figsRu: 'Плетение из ПП, Правый поворот с задержкой',
+      goalKa: 'AJS (Absolute Judging System) კრიტერიუმებში მაღალი ქულების მიღება',
+      goalEn: 'Scoring top AJS marks in technical Execution',
+      goalRu: 'Высокие баллы AJS в техническом исполнении'
+    },
+    golden: {
+      figsKa: 'AJS Judging Criteria & High Speed Isolations',
+      figsEn: 'AJS Judging Criteria & High Speed Isolations',
+      figsRu: 'Критерии оценки AJS и высокоскоростные изоляции',
+      goalKa: 'AJS შეფასების სისტემის 4-ვე კომპონენტის პიკი',
+      goalEn: 'Peak scoring across all 4 AJS judging pillars',
+      goalRu: 'Пиковые оценки по всем 4 критериям AJS'
+    },
+    couples_hobby: {
+      figsKa: 'Styling & Expression',
+      figsEn: 'Styling & Expression',
+      figsRu: 'Стилистика и эмоции',
+      goalKa: 'სცენური არტისტისტულობისა და ემოციის გაღრმავება',
+      goalEn: 'Deepening artistic expression & partnership',
+      goalRu: 'Углубление артистизма и эмоциональности'
+    }
+  },
+  '2027-04': {
+    baby_bronze: {
+      figsKa: 'Full Silver Transition Figures (გასვლითი ტურნირის მზადება)',
+      figsEn: 'Full Silver Transition Figures (Away Cup Prep)',
+      figsRu: 'Переходные фигуры Серебра',
+      goalKa: 'გასვლით ტურნირზე (თბილისი) უშეცდომო გამოსვლა',
+      goalEn: 'Flawless performance at Away Tournament (Tbilisi)',
+      goalRu: 'Безупречное выступление на выездном кубке'
+    },
+    presilver_silver: {
+      figsKa: 'Telemark, Open Telemark, Spiral, Windmill',
+      figsEn: 'Telemark, Open Telemark, Spiral, Windmill',
+      figsRu: 'Телемарк, Открытый Телемарк, Спираль, Мельница',
+      goalKa: 'რთული WDSF ფიგურების დინამიური დაკავშირება',
+      goalEn: 'Dynamic linking of complex WDSF figures',
+      goalRu: 'Динамичное связывание сложных фигур WDSF'
+    },
+    golden: {
+      figsKa: 'High-Level Open Choreography & Dynamic Tempo Changes',
+      figsEn: 'High-Level Open Choreography & Dynamic Tempo Changes',
+      figsRu: 'Сложная открытая хореография и смена темпа',
+      goalKa: 'საერთაშორისო დონის ღია ქორეოგრაფიის პრაგონი',
+      goalEn: 'Executing international open choreography',
+      goalRu: 'Исполнение открытой хореографии международного уровня'
+    },
+    couples_hobby: {
+      figsKa: 'Advanced Partnering',
+      figsEn: 'Advanced Partnering',
+      figsRu: 'Продвинутое взаимодействие в паре',
+      goalKa: 'წყვილში უსიტყვო გაგება და მსუბუქი სვლა',
+      goalEn: 'Effortless partner response and movement',
+      goalRu: 'Легкость и взаимопонимание в паре'
+    }
+  },
+  '2027-05': {
+    baby_bronze: {
+      figsKa: 'Peak Performance Routine Run (კავკასიის თასი 2027)',
+      figsEn: 'Peak Performance Routine Run (Caucasus Cup 2027)',
+      figsRu: 'Пиковый прогон (Кубок Кавказа 2027)',
+      goalKa: 'კავკასიის თასზე 2027 გრანდიოზული გამარჯვება',
+      goalEn: 'Grand victory at Caucasus Cup 2027',
+      goalRu: 'Грандиозная победа на Кубке Кавказа 2027'
+    },
+    presilver_silver: {
+      figsKa: 'Caucasus Cup 4-Dance Non-Stop Finals',
+      figsEn: 'Caucasus Cup 4-Dance Non-Stop Finals',
+      figsRu: 'Безостановочные финалы 4 танцев на Кубке Кавказа',
+      goalKa: 'კავკასიის თასის ჩემპიონის ოქროს თასის მოპოვება',
+      goalEn: 'Capturing Caucasus Cup Gold Trophy',
+      goalRu: 'Завоевание Главного Кубка Кавказа'
+    },
+    golden: {
+      figsKa: 'Caucasus Cup 10-Dance Non-Stop Finals',
+      figsEn: 'Caucasus Cup 10-Dance Non-Stop Finals',
+      figsRu: 'Финалы 10 танцев на Кубке Кавказа',
+      goalKa: '10 ცეკვის აბსოლუტური ჩემპიონობა',
+      goalEn: 'Absolute 10-Dance Championship title',
+      goalRu: 'Титул Абсолютного Чемпиона 10 танцев'
+    },
+    couples_hobby: {
+      figsKa: 'Showcase Routine Finals',
+      figsEn: 'Showcase Routine Finals',
+      figsRu: 'Финальный шоу-прогон',
+      goalKa: 'კავკასიის თასის საპატიო შოუ-გამოსვლა',
+      goalEn: 'Honorary showcase performance at Caucasus Cup',
+      goalRu: 'Почетное шоу-выступление на Кубке Кавказа'
+    }
+  },
+  '2027-06': {
+    baby_bronze: {
+      figsKa: 'Batumi Open 2027 Pre-Final Polishing',
+      figsEn: 'Batumi Open 2027 Pre-Final Polishing',
+      figsRu: 'Подготовка к Batumi Open 2027',
+      goalKa: 'სეზონის მთავარი საერთაშორისო ფინალისთვის მზადება',
+      goalEn: 'Preparation for season main international finale',
+      goalRu: 'Подготовка к главному международному финалу'
+    },
+    presilver_silver: {
+      figsKa: 'Batumi Open 2027 International Routine Cleaning',
+      figsEn: 'Batumi Open 2027 International Routine Cleaning',
+      figsRu: 'Чистка схем к Batumi Open 2027',
+      goalKa: 'საერთაშორისო მსაჯების წინაშე უნაკლო ტექნიკა',
+      goalEn: 'Flawless technique before international judges',
+      goalRu: 'Безупречная техника перед международными судьями'
+    },
+    golden: {
+      figsKa: 'Batumi Open 2027 WDSF World Ranking Finals Prep',
+      figsEn: 'Batumi Open 2027 WDSF World Ranking Finals Prep',
+      figsRu: 'Подготовка к WDSF Batumi Open 2027',
+      goalKa: 'WDSF საერთაშორისო რეიტინგში მაღალი ადგილის დაკავება',
+      goalEn: 'Securing top international WDSF ranking points',
+      goalRu: 'Высокие позиции в мировом рейтинге WDSF'
+    },
+    couples_hobby: {
+      figsKa: 'Grand Season Finale Routine',
+      figsEn: 'Grand Season Finale Routine',
+      figsRu: 'Финальная программа сезона',
+      goalKa: 'სეზონის გრანდიოზული დასკვნითი ნომრის მომზადება',
+      goalEn: 'Preparing grand season finale performance',
+      goalRu: 'Подготовка грандиозного номера к финалу'
+    }
+  },
+  '2027-07': {
+    baby_bronze: {
+      figsKa: '🏆 Batumi Open 2027 (15 ივლისის გრანდიოზული ფინალი!)',
+      figsEn: '🏆 Batumi Open 2027 (July 15 Grand Finale!)',
+      figsRu: '🏆 Batumi Open 2027 (Грандиозный финал 15 июля!)',
+      goalKa: '15 ივლისი: Batumi Open 2027-ის ჩემპიონის ტიტული & სეზონის ტრიუმფი!',
+      goalEn: 'July 15: Batumi Open 2027 Championship Title & Season Triumph!',
+      goalRu: '15 Июля: Титул Чемпиона Batumi Open 2027 и Триумф Сезона!'
+    },
+    presilver_silver: {
+      figsKa: '🏆 Batumi Open 2027 (15 ივლისის გრანდიოზული ფინალი!)',
+      figsEn: '🏆 Batumi Open 2027 (July 15 Grand Finale!)',
+      figsRu: '🏆 Batumi Open 2027 (Грандиозный финал 15 июля!)',
+      goalKa: '15 ივლისი: Batumi Open 2027 H-კლასის ჩემპიონის ოქროს თასი!',
+      goalEn: 'July 15: Batumi Open 2027 H-Class Gold Champion Trophy!',
+      goalRu: '15 Июля: Золотой Кубок Чемпиона Batumi Open 2027 Н-Класса!'
+    },
+    golden: {
+      figsKa: '🏆 Batumi Open 2027 (15 ივლისის გრანდიოზული ფინალი!)',
+      figsEn: '🏆 Batumi Open 2027 (July 15 Grand Finale!)',
+      figsRu: '🏆 Batumi Open 2027 (Грандиозный финал 15 июля!)',
+      goalKa: '15 ივლისი: Batumi Open 2027 WDSF საერთაშორისო თასი & ჩემპიონობა!',
+      goalEn: 'July 15: Batumi Open 2027 WDSF International Trophy & Title!',
+      goalRu: '15 Июля: Международный Кубок WDSF Batumi Open 2027!'
+    },
+    couples_hobby: {
+      figsKa: '🏆 Batumi Open 2027 (15 ივლისის გრანდიოზული ფინალი!)',
+      figsEn: '🏆 Batumi Open 2027 (July 15 Grand Finale!)',
+      figsRu: '🏆 Batumi Open 2027 (Грандиозный финал 15 июля!)',
+      goalKa: '15 ივლისი: სეზონის საზეიმო ფინალური დაჯილდოება & გალა-კონცერტი!',
+      goalEn: 'July 15: Grand Season Finale Awards Gala & Concert!',
+      goalRu: '15 Июля: Торжественное награждение и гала-концерт сезона!'
+    }
+  }
+}
 
 /**
  * Returns true if the day of week is an official training day for the specified group
@@ -118,6 +532,7 @@ export function getMacroCyclePhase(dateStr) {
 export function getDailyLessonTask(dateStr, groupId, lang = 'ka') {
   const dateObj = new Date(dateStr)
   const dayOfWeek = dateObj.getDay() // 0 = Sun, 1 = Mon, ..., 6 = Sat
+  const monthKey = dateStr.substring(0, 7) // e.g. "2026-09"
 
   // Check out of range (< 2026-08-24 or > 2027-07-15)
   if (dateStr < '2026-08-24') {
@@ -157,6 +572,10 @@ export function getDailyLessonTask(dateStr, groupId, lang = 'ka') {
   }
 
   const phase = getMacroCyclePhase(dateStr)
+  const monthData = (MONTHLY_WDSF_CURRICULUM[monthKey] && MONTHLY_WDSF_CURRICULUM[monthKey][groupId]) || MONTHLY_WDSF_CURRICULUM['2026-09'][groupId]
+
+  const figuresText = monthData[lang === 'ru' ? 'figsRu' : lang === 'en' ? 'figsEn' : 'figsKa']
+  const goalText = monthData[lang === 'ru' ? 'goalRu' : lang === 'en' ? 'goalEn' : 'goalKa']
 
   // 1. Baby & Bronze (Tue, Thu, Sat)
   if (groupId === 'baby_bronze') {
@@ -164,38 +583,38 @@ export function getDailyLessonTask(dateStr, groupId, lang = 'ka') {
       return {
         phase,
         danceName: lang === 'ka' ? 'ნელი ვალსი (Slow Waltz)' : lang === 'ru' ? 'Медленный Вальс (Slow Waltz)' : 'Slow Waltz',
-        targetFigures: lang === 'ka' ? 'Closed Changes (Right & Left), Natural Turn, Posture Balance' : lang === 'ru' ? 'Closed Changes (Правый и Левый), Natural Turn, Баланс осанки' : 'Closed Changes, Natural Turn, Posture Balance',
+        targetFigures: figuresText,
         breakdown: [
           { time: '15 წთ', text: lang === 'ka' ? 'გახურება & ფეხის ტექნიკა (Rise & Fall ბაზა)' : lang === 'ru' ? 'Разминка и техника стопы (Rise & Fall)' : 'Rise & Fall Footwork Drill' },
-          { time: '30 წთ', text: lang === 'ka' ? 'WDSF ფიგურების ახსნა: Closed Changes & Natural Turn' : lang === 'ru' ? 'Фигуры WDSF: Closed Changes & Natural Turn' : 'WDSF Figures: Closed Changes & Natural Turn' },
+          { time: '30 წთ', text: lang === 'ka' ? `WDSF ფიგურების ახსნა: ${figuresText}` : lang === 'ru' ? `Фигуры WDSF: ${figuresText}` : `WDSF Figures: ${figuresText}` },
           { time: '15 წთ', text: lang === 'ka' ? 'ნელ მუსიკაში დახვეწა & წყვილში დგომი' : lang === 'ru' ? 'Отработка под музыку и баланс в паре' : 'Slow Music Practice & Posture Balance' }
         ],
-        dailyGoal: lang === 'ka' ? 'ნელი ვალსის რიტმული Rise & Fall-ის იდეალური შესრულება' : lang === 'ru' ? 'Идеальное исполнение Rise & Fall в ритме Вальса' : 'Master Slow Waltz Rise & Fall rhythm'
+        dailyGoal: goalText
       }
     } else if (dayOfWeek === 4) {
       return {
         phase,
         danceName: lang === 'ka' ? 'ჩა-ჩა-ჩა (Cha-Cha-Cha)' : lang === 'ru' ? 'Ча-Ча-Ча (Cha-Cha-Cha)' : 'Cha-Cha-Cha',
-        targetFigures: lang === 'ka' ? 'Time Step, Basic Movement (Closed/Open), New York' : lang === 'ru' ? 'Time Step, Basic Movement, New York' : 'Time Step, Basic Movement, New York',
+        targetFigures: figuresText,
         breakdown: [
           { time: '15 წთ', text: lang === 'ka' ? 'თეძოს ტექნიკა (Hip Action) & რიტმული დათვლა 2-3-4-&-1' : lang === 'ru' ? 'Работа бедер (Hip Action) и счет 2-3-4-&-1' : 'Hip Action & 2-3-4-&-1 Rhythm Drill' },
-          { time: '30 წთ', text: lang === 'ka' ? 'WDSF ფიგურები: Basic Movement & New York' : lang === 'ru' ? 'Фигуры WDSF: Basic Movement & New York' : 'WDSF Figures: Basic Movement & New York' },
+          { time: '30 წთ', text: lang === 'ka' ? `WDSF ფიგურები: ${figuresText}` : lang === 'ru' ? `Фигуры WDSF: ${figuresText}` : `WDSF Figures: ${figuresText}` },
           { time: '15 წთ', text: lang === 'ka' ? 'მუსიკაში დახვეწა & სცენური ღიმილი' : lang === 'ru' ? 'Отработка под музыку и подача' : 'Music Practice & Stage Expression' }
         ],
-        dailyGoal: lang === 'ka' ? 'ჩა-ჩა-ჩა-ს რიტმის 100%-ით ზუსტი დაჭერა' : lang === 'ru' ? '100% точное попадание в ритм Ча-Ча-Ча' : 'Achieve 100% Cha-Cha-Cha rhythm precision'
+        dailyGoal: goalText
       }
     } else {
       // Saturday
       return {
         phase,
         danceName: lang === 'ka' ? 'ვალსი + ჩა-ჩა-ჩა (კომბინირებული შაბათი)' : lang === 'ru' ? 'Вальс + Ча-Ча-Ча (Субботний прогон)' : 'Waltz + Cha-Cha-Cha Combined',
-        targetFigures: lang === 'ka' ? 'ორივე ცეკვის სრული პრაგონი & ტანვარჯიში' : lang === 'ru' ? 'Полный прогон 2 танцев и гимнастика' : 'Full 2-Dance Run & Gymnastics',
+        targetFigures: figuresText,
         breakdown: [
           { time: '20 წთ', text: lang === 'ka' ? 'OFP ფიზიკური მომზადება & გაწელვა' : lang === 'ru' ? 'ОФП физическая подготовка и растяжка' : 'Physical Conditioning & Stretching' },
           { time: '25 წთ', text: lang === 'ka' ? 'ნელი ვალსისა და ჩა-ჩა-ჩას კომბინაციები' : lang === 'ru' ? 'Комбинации Вальса и Ча-Ча-Ча' : 'Waltz & Cha-Cha-Cha Combinations' },
           { time: '15 წთ', text: lang === 'ka' ? 'შოუ-პრაგონი მშობლებისთვის' : lang === 'ru' ? 'Мини-прогон для родителей' : 'Mini Show Run' }
         ],
-        dailyGoal: lang === 'ka' ? 'ორ ცეკვაში შეუჩერებელი სატურნირო პრაგონი' : lang === 'ru' ? 'Безостановочный турнирный прогон 2 танцев' : 'Execute non-stop 2-dance competition run'
+        dailyGoal: goalText
       }
     }
   }
@@ -206,38 +625,38 @@ export function getDailyLessonTask(dateStr, groupId, lang = 'ka') {
       return {
         phase,
         danceName: lang === 'ka' ? 'სტანდარტი: ნელი ვალსი & ქვიქსტეპი' : lang === 'ru' ? 'Стандарт: Медленный Вальс и Квикстеп' : 'Standard: Slow Waltz & Quickstep',
-        targetFigures: lang === 'ka' ? 'Whisk, Chasse from PP, Quarter Turn to Right, Progressive Chasse' : lang === 'ru' ? 'Whisk, Chasse from PP, Quarter Turn, Progressive Chasse' : 'Whisk, Chasse from PP, Quarter Turn, Progressive Chasse',
+        targetFigures: figuresText,
         breakdown: [
           { time: '15 წთ', text: lang === 'ka' ? 'სტანდარტის დგომი (Frame & Hold) & ფეხის ბალანსი' : lang === 'ru' ? 'Стойка Стандарта (Frame & Hold) и баланс' : 'Standard Hold & Balance Drill' },
-          { time: '30 წთ', text: lang === 'ka' ? 'WDSF ფიგურები: Whisk, Chasse & Quickstep Forward Lock' : lang === 'ru' ? 'Фигуры WDSF: Whisk, Chasse и Quickstep Lock' : 'WDSF Figures: Whisk, Chasse & Lock Step' },
+          { time: '30 წთ', text: lang === 'ka' ? `WDSF ფიგურები: ${figuresText}` : lang === 'ru' ? `Фигуры WDSF: ${figuresText}` : `WDSF Figures: ${figuresText}` },
           { time: '15 წთ', text: lang === 'ka' ? 'პარკეტის ნავიგაცია & ტემპში პრაგონი' : lang === 'ru' ? 'Навигация по паркету и прогон в темпе' : 'Floor Craft & Tempo Run' }
         ],
-        dailyGoal: lang === 'ka' ? 'სტანდარტის ჩარჩოს (Frame) უძრავი შენარჩუნება მოძრაობისას' : lang === 'ru' ? 'Сохранение неподвижной рамки Стандарта' : 'Maintain immovable Standard frame during movement'
+        dailyGoal: goalText
       }
     } else if (dayOfWeek === 3) {
       return {
         phase,
         danceName: lang === 'ka' ? 'ლათინო: ჩა-ჩა-ჩა & ჯაივი' : lang === 'ru' ? 'Латина: Ча-Ча-Ча и Джайв' : 'Latin: Cha-Cha-Cha & Jive',
-        targetFigures: lang === 'ka' ? 'Alemana, Hockey Stick, Fallaway Rock, Change of Places' : lang === 'ru' ? 'Alemana, Hockey Stick, Fallaway Rock, Change of Places' : 'Alemana, Hockey Stick, Fallaway Rock, Change of Places',
+        targetFigures: figuresText,
         breakdown: [
           { time: '15 წთ', text: lang === 'ka' ? 'მუხლების სწრაფი მუშაობა & კორპუსის როტაცია' : lang === 'ru' ? 'Быстрая работа коленей и ротация корпуса' : 'Fast Knee Action & Weight Transfer' },
-          { time: '30 წთ', text: lang === 'ka' ? 'WDSF ფიგურები: Alemana, Hockey Stick & Jive Chasses' : lang === 'ru' ? 'Фигуры WDSF: Alemana, Hockey Stick & Джайв' : 'WDSF Figures: Alemana, Hockey Stick & Jive Chasses' },
+          { time: '30 წთ', text: lang === 'ka' ? `WDSF ფიგურები: ${figuresText}` : lang === 'ru' ? `Фигуры WDSF: ${figuresText}` : `WDSF Figures: ${figuresText}` },
           { time: '15 წთ', text: lang === 'ka' ? 'ენერგიული პრაგონი & სცენური კონტაქტი' : lang === 'ru' ? 'Энергичный прогон и сценический контакт' : 'High Energy Run & Stage Contact' }
         ],
-        dailyGoal: lang === 'ka' ? 'ჯაივისა და ჩა-ჩა-ჩას მაღალი სიჩქარისა და სისუფთავის ბალანსი' : lang === 'ru' ? 'Баланс скорости и чистоты в Джайве и Ча-Ча-Ча' : 'Balance high speed with figure cleanliness in Jive'
+        dailyGoal: goalText
       }
     } else {
       // Friday
       return {
         phase,
         danceName: lang === 'ka' ? '4-ვე ცეკვის სატურნირო პრაგონი (W, Q, CCC, J)' : lang === 'ru' ? 'Турнирный прогон 4 танцев (W, Q, CCC, J)' : '4-Dance Competition Run (W, Q, CCC, J)',
-        targetFigures: lang === 'ka' ? 'H-კლასის 4 ცეკვის ფინალური პრაგონები & AJS შეფასება' : lang === 'ru' ? 'Финальные прогоны 4 танцев Н-класса и AJS' : '4-Dance Finals & AJS Judging',
+        targetFigures: figuresText,
         breakdown: [
           { time: '15 წთ', text: lang === 'ka' ? 'გახურება & დისციპლინა' : lang === 'ru' ? 'Разминка и дисциплина' : 'Warmup & Discipline' },
           { time: '35 წთ', text: lang === 'ka' ? '4 ცეკვის შეუჩერებელი ფინალები (1.30 წთ ცეკვაზე)' : lang === 'ru' ? 'Безостановочные финалы 4 танцев (по 1.30 мин)' : 'Non-stop 4-Dance Finals (1.30m each)' },
           { time: '10 წთ', text: lang === 'ka' ? 'მწვრთნელის შენიშვნების გარჩევა & კორექცია' : lang === 'ru' ? 'Разбор замечаний тренера' : 'Coach Feedback & Correction' }
         ],
-        dailyGoal: lang === 'ka' ? 'სატურნირო გამძლეობის 100%-ით დემონსტრირება' : lang === 'ru' ? '100% демонстрация турнирной выносливости' : 'Demonstrate 100% competition stamina'
+        dailyGoal: goalText
       }
     }
   }
@@ -249,26 +668,26 @@ export function getDailyLessonTask(dateStr, groupId, lang = 'ka') {
       return {
         phase,
         danceName: lang === 'ka' ? '🏛️ შაბათის 120-წუთიანი ინტენსივი (საბალეტო კლასიკა, OFP & გაწელვა)' : lang === 'ru' ? '🏛️ Субботний 120-минутный интенсив' : '🏛️ Saturday 120-Min Intensive',
-        targetFigures: lang === 'ka' ? 'კლასიკური ბალეტი, ტანვარჯიში, OFP გამძლეობა & გაწელვა' : lang === 'ru' ? 'Классический балет, ОФП и растяжка' : 'Classical Ballet, Conditioning & Stretch',
+        targetFigures: figuresText,
         breakdown: [
           { time: '45 წთ', text: lang === 'ka' ? 'საბალეტო დაზგა & კლასიკური ქორეოგრაფია' : lang === 'ru' ? 'Балетный станок и классика' : 'Ballet Barre & Classical Technical Form' },
           { time: '45 წთ', text: lang === 'ka' ? 'OFP ფიზიკური მომზადება & პრესი/ზურგი' : lang === 'ru' ? 'ОФП физическая подготовка' : 'Core & Back Physical Conditioning (OFP)' },
           { time: '30 წთ', text: lang === 'ka' ? 'ღრმა გაწელვები & შპაგატების დამუშავება' : lang === 'ru' ? 'Глубокая растяжка и шпагаты' : 'Deep Flexibility & Splits Training' }
         ],
-        dailyGoal: lang === 'ka' ? 'ფიზიკური ძალისა და მოქნილობის მაქსიმალური განვითარება' : lang === 'ru' ? 'Максимальное развитие силы и гибкости' : 'Maximize physical power and flexibility'
+        dailyGoal: goalText
       }
     }
 
     return {
       phase,
       danceName: lang === 'ka' ? 'ST / LA 6-10 ცეკვის ოსტატობის კლასი' : lang === 'ru' ? 'Мастер-класс ST / LA (6-10 танцев)' : 'ST / LA 6-10 Dance Masterclass',
-      targetFigures: lang === 'ka' ? 'Tango, Samba, Rumba, Viennese Waltz, Pasodoble WDSF Advanced Figures' : lang === 'ru' ? 'Сложные фигуры WDSF (Танго, Самба, Румба, Вальс, Пасодобль)' : 'Tango, Samba, Rumba, VW, Paso WDSF Figures',
+      targetFigures: figuresText,
       breakdown: [
         { time: '15 წთ', text: lang === 'ka' ? 'პროფესიონალური ტრენაჟი & ტექნიკური იზოლაციები' : lang === 'ru' ? 'Профессиональная разминка и изоляции' : 'Pro Warmup & Isolations' },
-        { time: '30 წთ', text: lang === 'ka' ? 'WDSF რთული ფიგურები & რიტმული დინამიკა' : lang === 'ru' ? 'Сложные фигуры WDSF и динамика' : 'WDSF Advanced Figures & Dynamics' },
+        { time: '30 წთ', text: lang === 'ka' ? `WDSF ფიგურები: ${figuresText}` : lang === 'ru' ? `Фигуры WDSF: ${figuresText}` : `WDSF Figures: ${figuresText}` },
         { time: '15 წთ', text: lang === 'ka' ? 'სრული 10 ცეკვის სატურნირო ფინალები' : lang === 'ru' ? 'Турнирные финалы 10 танцев' : 'Full 10-Dance Competition Runs' }
       ],
-      dailyGoal: lang === 'ka' ? 'WDSF საერთაშორისო სტანდარტის AJS ქულების მაქსიმიზაცია' : lang === 'ru' ? 'Максимизация оценок AJS по стандартам WDSF' : 'Maximize AJS scores to WDSF international standards'
+      dailyGoal: goalText
     }
   }
 
@@ -276,12 +695,12 @@ export function getDailyLessonTask(dateStr, groupId, lang = 'ka') {
   return {
     phase,
     danceName: lang === 'ka' ? 'წყვილების ჰარმონია & Hobby Class (Waltz & Cha-Cha)' : lang === 'ru' ? 'Группа Пар и Hobby Class (Вальс и Ча-Ча)' : 'Couples & Hobby Class',
-    targetFigures: lang === 'ka' ? 'Partner Lead & Follow, Basic WDSF Variations, Musicality' : lang === 'ru' ? 'Ведение в паре, базовые вариации WDSF, музыкальность' : 'Lead & Follow, WDSF Variations',
+    targetFigures: figuresText,
     breakdown: [
       { time: '15 წთ', text: lang === 'ka' ? 'გახურება & წყვილში კავშირი (Contact & Lead)' : lang === 'ru' ? 'Разминка и контакт в паре' : 'Connection & Lead/Follow Warmup' },
-      { time: '30 წთ', text: lang === 'ka' ? 'სალონური და სპორტული ცეკვების ფიგურები' : lang === 'ru' ? 'Бальные и спортивные фигуры' : 'Social & Ballroom Dance Variations' },
+      { time: '30 წთ', text: lang === 'ka' ? `სალონური და სპორტული ფიგურები: ${figuresText}` : lang === 'ru' ? `Бальные фигуры: ${figuresText}` : `Ballroom Figures: ${figuresText}` },
       { time: '15 წთ', text: lang === 'ka' ? 'სასიამოვნო მუსიკალური პრაქტიკა' : lang === 'ru' ? 'Практика под музыку' : 'Enjoyable Musical Practice' }
     ],
-    dailyGoal: lang === 'ka' ? 'წყვილში იდეალური ჰარმონიისა და პლასტიკის მიღწევა' : lang === 'ru' ? 'Достижение идеальной гармонии в паре' : 'Achieve perfect partner harmony and rhythm'
+    dailyGoal: goalText
   }
 }
