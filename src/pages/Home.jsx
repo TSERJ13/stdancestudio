@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react'
 import { siteContent } from '../data/content'
 import { translations } from '../data/translations'
 import { useLanguage } from '../context/LanguageContext'
-import NewsSection from '../components/NewsSection'
 import FaqSection from '../components/FaqSection'
 import './Home.css'
 
@@ -247,9 +246,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
-      {/* ===================== NEWS & ANNOUNCEMENTS ===================== */}
-      <NewsSection />
 
       {/* ===================== TESTIMONIALS ===================== */}
       <section className="section testimonials">
