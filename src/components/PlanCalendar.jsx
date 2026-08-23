@@ -29,7 +29,7 @@ export default function PlanCalendar() {
   const { lang } = useLanguage()
   const [activeMonthId, setActiveMonthId] = useState('2026-08')
   const [selectedGroup, setSelectedGroup] = useState('baby_bronze')
-  const [selectedDateKey, setSelectedDateKey] = useState('2026-08-25')
+  const [selectedDateKey, setSelectedDateKey] = useState('2026-08-24')
 
   const activeMonth = monthsData.find(m => m.id === activeMonthId) || monthsData[0]
   const weekHeaders = lang === 'ka' ? ['ორშ', 'სამ', 'ოთხ', 'ხუთ', 'პარ', 'შაბ', 'კვ'] : lang === 'ru' ? ['ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ', 'СБ', 'ВС'] : ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN']

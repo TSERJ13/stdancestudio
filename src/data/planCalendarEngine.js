@@ -1,6 +1,6 @@
 /**
  * ST DANCE STUDIO — Live 11-Month Interactive Calendar Engine
- * August 24, 2026 – July 15, 2027 (Detailed 11-Month Progression)
+ * August 24, 2026 – July 15, 2027 (5 Groups Engine)
  */
 
 export const HOLIDAYS_MAP = {
@@ -46,11 +46,12 @@ export const GROUPS_INFO = [
   { id: 'baby_bronze', ka: '👶 Baby & ბრონზა (4.5 - 7 წ)', en: '👶 Baby & Bronze (4.5 - 7 yrs)', ru: '👶 Baby и Бронза (4.5 - 7 лет)', color: '#cd7f32' },
   { id: 'presilver_silver', ka: '🥈 Pre-Silver & Silver (H კლასი)', en: '🥈 Pre-Silver & Silver (H Class)', ru: '🥈 Pre-Silver и Silver (H Класс)', color: '#c0c0c0' },
   { id: 'golden', ka: '🏆 Golden (E, D, C კლასები)', en: '🏆 Golden (E, D, C Classes)', ru: '🏆 Golden (E, D, C Классы)', color: '#d4af37' },
-  { id: 'couples_hobby', ka: '💃 წყვილები & Hobby Class', en: '💃 Couples & Hobby Class', ru: '💃 Пары и Hobby Class', color: '#e1306c' }
+  { id: 'couples', ka: '💃 წყვილების ჯგუფი (Couples)', en: '💃 Couples Group', ru: '💃 Группа Пар', color: '#e1306c' },
+  { id: 'hobby', ka: '✨ Hobby Class (მოყვარულები)', en: '✨ Hobby Class (Adults/Social)', ru: '✨ Hobby Class (Взрослые)', color: '#9c27b0' }
 ]
 
 /**
- * Detailed Month-by-Month WDSF Curriculum Progression (11 Months: Aug 24, 2026 - Jul 15, 2027)
+ * Detailed Month-by-Month Curriculum Progression (11 Months)
  */
 export const MONTHLY_WDSF_CURRICULUM = {
   '2026-08': {
@@ -78,13 +79,21 @@ export const MONTHLY_WDSF_CURRICULUM = {
       goalEn: 'Kickstarting competition physical conditioning',
       goalRu: 'Старт восстановления турнирной формы'
     },
-    couples_hobby: {
-      figsKa: 'Partner Connection & Lead/Follow Principles',
+    couples: {
+      figsKa: 'Partner Connection & Lead/Follow WDSF Principles',
       figsEn: 'Partner Connection & Lead/Follow Principles',
-      figsRu: 'Контакт в паре и ведение',
-      goalKa: 'წყვილში კავშირისა და ჰარმონიული მოძრაობის ბაზა',
-      goalEn: 'Establishing partner connection baseline',
-      goalRu: 'Базовый контакт и гармония в паре'
+      figsRu: 'Контакт в паре и ведение WDSF',
+      goalKa: 'წყვილში სატურნირო კავშირისა და ჰარმონიის ბაზა',
+      goalEn: 'Establishing competition couple connection',
+      goalRu: 'Турнирный контакт и гармония в паре'
+    },
+    hobby: {
+      figsKa: 'ვალსი & ჩა-ჩა-ჩა (პოპულარული მოყვარულთა მოძრაობები)',
+      figsEn: 'Waltz & Cha-Cha (Popular Social Dance Variations)',
+      figsRu: 'Вальс и Ча-Ча-Ча (Популярные движения)',
+      goalKa: 'მხიარული საცეკვაო განწყობა და პოპულარული მოძრაობების სწავლა',
+      goalEn: 'Fun social dance mood & learning popular moves',
+      goalRu: 'Веселое настроение и освоение популярных движений'
     }
   },
   '2026-09': {
@@ -112,13 +121,21 @@ export const MONTHLY_WDSF_CURRICULUM = {
       goalEn: 'Technical isolation in Tango & Samba',
       goalRu: 'Техническая отработка Танго и Самбы'
     },
-    couples_hobby: {
-      figsKa: 'Waltz Natural Turn, Cha-Cha New York',
-      figsEn: 'Waltz Natural Turn, Cha-Cha New York',
-      figsRu: 'Правый поворот Вальса, Нью-Йорк в Ча-Ча',
+    couples: {
+      figsKa: 'Waltz Natural Turn, Cha-Cha New York (WDSF Partnering)',
+      figsEn: 'Waltz Natural Turn, Cha-Cha New York (WDSF Partnering)',
+      figsRu: 'Правый поворот Вальса, Нью-Йорк в паре',
       goalKa: 'წყვილში თავდაჯერებული სვლა პარკეტზე',
       goalEn: 'Confident floor movement in couples',
       goalRu: 'Уверенное движение пары по паркету'
+    },
+    hobby: {
+      figsKa: 'ნელი ვალსი (სალონური სვლა) + ჩა-ჩა-ჩა ნიუ-იორკი',
+      figsEn: 'Slow Waltz (Social Move) + Cha-Cha New York',
+      figsRu: 'Медленный Вальс + Ча-Ча Нью-Йорк',
+      goalKa: 'მუსიკაში თავისუფალი სვლა და სასიამოვნო ვარჯიში',
+      goalEn: 'Free dancing to music & enjoyable training',
+      goalRu: 'Свободное движение под музыку и приятное занятие'
     }
   },
   '2026-10': {
@@ -146,13 +163,21 @@ export const MONTHLY_WDSF_CURRICULUM = {
       goalEn: 'Highlighting Latin rhythmic accents & speed',
       goalRu: 'Выделение ритмических акцентов Латины'
     },
-    couples_hobby: {
-      figsKa: 'Closed Promenade, Spot Turns',
-      figsEn: 'Closed Promenade, Spot Turns',
-      figsRu: 'Закрытый променад, Повороты на месте',
-      goalKa: 'წყვილის იდეალური სინქრონიზაცია',
-      goalEn: 'Achieving ideal partner synchronization',
-      goalRu: 'Идеальная синхронизация пары'
+    couples: {
+      figsKa: 'Closed Promenade, Spot Turns & Open Posture',
+      figsEn: 'Closed Promenade, Spot Turns & Open Posture',
+      figsRu: 'Закрытый променад, Повороты на месте в паре',
+      goalKa: 'წყვილის იდეალური სატურნირო სინქრონიზაცია',
+      goalEn: 'Achieving ideal competition partner synchronization',
+      goalRu: 'Идеальная турнирная синхронизация пары'
+    },
+    hobby: {
+      figsKa: 'ქვიქსტეპი (მხიარული ნაბიჯები) & ჯაივი (როკ-ენ-როლის რიტმი)',
+      figsEn: 'Quickstep (Fun Steps) & Jive (Rock-n-Roll Rhythm)',
+      figsRu: 'Квикстеп (Веселые шаги) и Джайв (Рок-н-Ролл)',
+      goalKa: 'ენერგიული და მხიარული როკ-ენ-როლის განწყობა',
+      goalEn: 'Energetic & fun Rock-n-Roll vibe',
+      goalRu: 'Энергичное настроение в стиле Рок-н-Ролл'
     }
   },
   '2026-11': {
@@ -180,13 +205,21 @@ export const MONTHLY_WDSF_CURRICULUM = {
       goalEn: 'Securing top podium placements at national cups',
       goalRu: 'Завоевание призовых мест на национальном кубке'
     },
-    couples_hobby: {
-      figsKa: '4-Dance Routine Cleaning',
-      figsEn: '4-Dance Routine Cleaning',
-      figsRu: 'Чистка схем 4 танцев',
-      goalKa: 'საცეკვაო სქემების სრული გასუფთავება',
-      goalEn: 'Complete routine cleanup & presentation',
-      goalRu: 'Полная чистка танцевальных схем'
+    couples: {
+      figsKa: 'Couples Competition Routine Clean-up',
+      figsEn: 'Couples Competition Routine Clean-up',
+      figsRu: 'Чистка конкурсных схем пар',
+      goalKa: 'წყვილთა სატურნირო სქემების სრული გასუფთავება',
+      goalEn: 'Complete routine cleanup & competition presentation',
+      goalRu: 'Полная чистка конкурсных схем'
+    },
+    hobby: {
+      figsKa: 'ლათინო ამერიკული მიქსი (ჩა-ჩა & რუმბას მოძრაობები)',
+      figsEn: 'Latin Mix (Cha-Cha & Rumba Social Moves)',
+      figsRu: 'Латина Микс (Движения Ча-Ча и Румбы)',
+      goalKa: 'პლასტიკური და ლამაზი მოძრაობების ათვისება',
+      goalEn: 'Learning graceful social dance moves',
+      goalRu: 'Освоение красивых пластичных движений'
     }
   },
   '2026-12': {
@@ -214,13 +247,21 @@ export const MONTHLY_WDSF_CURRICULUM = {
       goalEn: 'Claiming championship titles at Year-End Finale',
       goalRu: 'Завоевание чемпионства на финале года'
     },
-    couples_hobby: {
-      figsKa: 'Social Ballroom Showcase',
-      figsEn: 'Social Ballroom Showcase',
-      figsRu: 'Шоу-прогон бальной программы',
-      goalKa: 'საახალწლო შოუ-პროგრამის წარმატებული ჩვენება',
-      goalEn: 'Successful performance at Christmas Gala Showcase',
-      goalRu: 'Успешное выступление на Новогоднем Шоу'
+    couples: {
+      figsKa: 'Couples Championship Showcase Finals',
+      figsEn: 'Couples Championship Showcase Finals',
+      figsRu: 'Финальный конкурсный прогон пар',
+      goalKa: 'წლის დასკვნით ტურნირზე ოქროს თასის მოპოვება',
+      goalEn: 'Winning Gold Trophy at Year-End Championship',
+      goalRu: 'Завоевание Золотого кубка на финале года'
+    },
+    hobby: {
+      figsKa: 'საახალწლო სადღესასწაულო საცეკვაო მიქსი',
+      figsEn: 'Christmas Party Social Dance Mix',
+      figsRu: 'Новогодний праздничный танцевальный микс',
+      goalKa: 'საახალწლო წვეულებაზე მხიარული საცეკვაო გამოსვლა',
+      goalEn: 'Fun social dancing performance at Christmas Party',
+      goalRu: 'Веселое выступление на Новогодней вечеринке'
     }
   },
   '2027-01': {
@@ -248,13 +289,21 @@ export const MONTHLY_WDSF_CURRICULUM = {
       goalEn: 'Earning top marks at international masterclasses',
       goalRu: 'Высшая оценка на международных мастер-классах'
     },
-    couples_hobby: {
-      figsKa: 'Slow Foxtrot Feather Step & Three Step',
-      figsEn: 'Slow Foxtrot Feather Step & Three Step',
-      figsRu: 'Перо и Три шага в Медленном Фокстроте',
-      goalKa: 'ფოქსტროტის ნაზი და უწყვეტი სვლის ათვისება',
-      goalEn: 'Mastering smooth continuous Foxtrot action',
-      goalRu: 'Освоение плавного хода Фокстрота'
+    couples: {
+      figsKa: 'WDSF International Masterclass Partnering',
+      figsEn: 'WDSF International Masterclass Partnering',
+      figsRu: 'Мастер-классы WDSF для пар',
+      goalKa: 'საერთაშორისო მასტერკლასების რთული ელემენტების ჩასმა',
+      goalEn: 'Integrating advanced international elements',
+      goalRu: 'Интеграция сложных элементов мастер-классов'
+    },
+    hobby: {
+      figsKa: 'ვალსი (ნაზი მოძრაობები) & სალსა/ჩა-ჩა რიტმები',
+      figsEn: 'Smooth Waltz & Salsa/Cha-Cha Social Rhythms',
+      figsRu: 'Плавный Вальс и Сальса/Ча-Ча',
+      goalKa: 'ახალი მხიარული კომბინაციების სწავლა',
+      goalEn: 'Learning new fun dance combinations',
+      goalRu: 'Изучение новых веселых комбинаций'
     }
   },
   '2027-02': {
@@ -282,13 +331,21 @@ export const MONTHLY_WDSF_CURRICULUM = {
       goalEn: 'Defending Adjara Champion title',
       goalRu: 'Защита титула Чемпиона Аджарии'
     },
-    couples_hobby: {
-      figsKa: 'Speed & Rhythm Acceleration',
-      figsEn: 'Speed & Rhythm Acceleration',
-      figsRu: 'Ускорение темпа и ритма',
-      goalKa: 'ტემპის აჩქარებისას წყვილის სტაბილურობის შენარჩუნება',
-      goalEn: 'Maintaining couple balance during speedup',
-      goalRu: 'Сохранение баланса пары при ускорении'
+    couples: {
+      figsKa: 'Adjara Open Championship Couples Routine',
+      figsEn: 'Adjara Open Championship Couples Routine',
+      figsRu: 'Чемпионат Аджарии - Конкурсная схема',
+      goalKa: 'აჭარის ჩემპიონატზე წყვილთა ოქროს თასის მოპოვება',
+      goalEn: 'Winning Couples Gold Trophy at Adjara Open',
+      goalRu: 'Завоевание золотого кубка пар'
+    },
+    hobby: {
+      figsKa: 'როკ-ენ-როლი & მხიარული ჯაივის მოძრაობები',
+      figsEn: 'Rock-n-Roll & Fun Jive Social Steps',
+      figsRu: 'Рок-н-Ролл и веселый Джайв',
+      goalKa: 'დიდი ენერგია და მხიარული განწყობა',
+      goalEn: 'High energy & cheerful social mood',
+      goalRu: 'Высокая энергия и позитивное настроение'
     }
   },
   '2027-03': {
@@ -316,13 +373,21 @@ export const MONTHLY_WDSF_CURRICULUM = {
       goalEn: 'Peak scoring across all 4 AJS judging pillars',
       goalRu: 'Пиковые оценки по всем 4 критериям AJS'
     },
-    couples_hobby: {
-      figsKa: 'Styling & Expression',
-      figsEn: 'Styling & Expression',
-      figsRu: 'Стилистика и эмоции',
-      goalKa: 'სცენური არტისტისტულობისა და ემოციის გაღრმავება',
-      goalEn: 'Deepening artistic expression & partnership',
-      goalRu: 'Углубление артистизма и эмоциональности'
+    couples: {
+      figsKa: 'Spring Dance Cup Couples Finals',
+      figsEn: 'Spring Dance Cup Couples Finals',
+      figsRu: 'Финалы пар на Весеннем кубке',
+      goalKa: 'საგაზაფხულო თასზე პირველი ადგილის დაკავება',
+      goalEn: 'Winning 1st Place at Spring Dance Cup',
+      goalRu: '1 место на Весеннем кубке'
+    },
+    hobby: {
+      figsKa: 'საგაზაფხულო ცეკვები (ვალსი, ჩა-ჩა & სალონური მიქსი)',
+      figsEn: 'Spring Social Dances (Waltz, Cha-Cha & Mix)',
+      figsRu: 'Весенние бальные танцы (Вальс, Ча-Ча)',
+      goalKa: 'საგაზაფხულო საცეკვაო იერი',
+      goalEn: 'Spring social dance grace',
+      goalRu: 'Весенняя грация в танце'
     }
   },
   '2027-04': {
@@ -350,13 +415,21 @@ export const MONTHLY_WDSF_CURRICULUM = {
       goalEn: 'Executing international open choreography',
       goalRu: 'Исполнение открытой хореографии международного уровня'
     },
-    couples_hobby: {
-      figsKa: 'Advanced Partnering',
-      figsEn: 'Advanced Partnering',
-      figsRu: 'Продвинутое взаимодействие в паре',
-      goalKa: 'წყვილში უსიტყვო გაგება და მსუბუქი სვლა',
-      goalEn: 'Effortless partner response and movement',
-      goalRu: 'Легкость и взаимопонимание в паре'
+    couples: {
+      figsKa: 'Tbilisi Away Tournament Couples Championship',
+      figsEn: 'Tbilisi Away Tournament Couples Championship',
+      figsRu: 'Выездной турнир пар в Тбилиси',
+      goalKa: 'თბილისის გასვლით ტურნირზე ჩემპიონის ტიტული',
+      goalEn: 'Winning Champion Title at Tbilisi Away Cup',
+      goalRu: 'Титул Чемпиона на выездном турнире'
+    },
+    hobby: {
+      figsKa: 'პოპულარული საცეკვაო სქემები',
+      figsEn: 'Popular Social Dance Patterns',
+      figsRu: 'Популярные социальные схемы',
+      goalKa: 'საცეკვაო სქემების იოლი და მსუბუქი შესრულება',
+      goalEn: 'Easy & light execution of social patterns',
+      goalRu: 'Легкое и непринужденное исполнение схем'
     }
   },
   '2027-05': {
@@ -384,13 +457,21 @@ export const MONTHLY_WDSF_CURRICULUM = {
       goalEn: 'Absolute 10-Dance Championship title',
       goalRu: 'Титул Абсолютного Чемпиона 10 танцев'
     },
-    couples_hobby: {
-      figsKa: 'Showcase Routine Finals',
-      figsEn: 'Showcase Routine Finals',
-      figsRu: 'Финальный шоу-прогон',
-      goalKa: 'კავკასიის თასის საპატიო შოუ-გამოსვლა',
-      goalEn: 'Honorary showcase performance at Caucasus Cup',
-      goalRu: 'Почетное шоу-выступление на Кубке Кавказа'
+    couples: {
+      figsKa: 'Caucasus Cup Grand Championship Finals',
+      figsEn: 'Caucasus Cup Grand Championship Finals',
+      figsRu: 'Гран-финал пар на Кубке Кавказа',
+      goalKa: 'კავკასიის თასზე 2027 წყვილთა აბსოლუტური ჩემპიონობა',
+      goalEn: 'Absolute Couples Championship at Caucasus Cup 2027',
+      goalRu: 'Абсолютное чемпионство пар на Кубке Кавказа 2027'
+    },
+    hobby: {
+      figsKa: 'საგაზაფხულო შოუ-პროგრამა',
+      figsEn: 'Spring Social Showcase',
+      figsRu: 'Весеннее шоу',
+      goalKa: 'სტუდიის საგაზაფხულო შოუზე მხიარული გამოსვლა',
+      goalEn: 'Fun performance at Spring Studio Gala',
+      goalRu: 'Выступление на весеннем гала-концерте'
     }
   },
   '2027-06': {
@@ -418,13 +499,21 @@ export const MONTHLY_WDSF_CURRICULUM = {
       goalEn: 'Securing top international WDSF ranking points',
       goalRu: 'Высокие позиции в мировом рейтинге WDSF'
     },
-    couples_hobby: {
-      figsKa: 'Grand Season Finale Routine',
-      figsEn: 'Grand Season Finale Routine',
-      figsRu: 'Финальная программа сезона',
-      goalKa: 'სეზონის გრანდიოზული დასკვნითი ნომრის მომზადება',
-      goalEn: 'Preparing grand season finale performance',
-      goalRu: 'Подготовка грандиозного номера к финалу'
+    couples: {
+      figsKa: 'Batumi Open 2027 WDSF Couples Finals Preparation',
+      figsEn: 'Batumi Open 2027 WDSF Couples Finals Preparation',
+      figsRu: 'Подготовка пар к Batumi Open 2027',
+      goalKa: 'Batumi Open 2027 საერთაშორისო თასის მზადება',
+      goalEn: 'International trophy preparation for Batumi Open',
+      goalRu: 'Подготовка к международному кубку Batumi Open'
+    },
+    hobby: {
+      figsKa: 'ზაფხულის სადღესასწაულო საცეკვაო პროგრამა',
+      figsEn: 'Summer Festival Social Dance Routine',
+      figsRu: 'Летняя праздничная программа',
+      goalKa: 'ზაფხულის სეზონის გახსნის მხიარული განწყობა',
+      goalEn: 'Festive summer season opening mood',
+      goalRu: 'Праздничное летнее настроение'
     }
   },
   '2027-07': {
@@ -452,7 +541,15 @@ export const MONTHLY_WDSF_CURRICULUM = {
       goalEn: 'July 15: Batumi Open 2027 WDSF International Trophy & Title!',
       goalRu: '15 Июля: Международный Кубок WDSF Batumi Open 2027!'
     },
-    couples_hobby: {
+    couples: {
+      figsKa: '🏆 Batumi Open 2027 (15 ივლისის გრანდიოზული ფინალი!)',
+      figsEn: '🏆 Batumi Open 2027 (July 15 Grand Finale!)',
+      figsRu: '🏆 Batumi Open 2027 (Грандиозный финал 15 июля!)',
+      goalKa: '15 ივლისი: Batumi Open 2027 წყვილთა საერთაშორისო ჩემპიონი!',
+      goalEn: 'July 15: Batumi Open 2027 International Couples Champion!',
+      goalRu: '15 Июля: Международный Чемпион Пар Batumi Open 2027!'
+    },
+    hobby: {
       figsKa: '🏆 Batumi Open 2027 (15 ივლისის გრანდიოზული ფინალი!)',
       figsEn: '🏆 Batumi Open 2027 (July 15 Grand Finale!)',
       figsRu: '🏆 Batumi Open 2027 (Грандиозный финал 15 июля!)',
@@ -473,8 +570,10 @@ export function isGroupTrainingDay(groupId, dayOfWeek) {
     return dayOfWeek === 1 || dayOfWeek === 3 || dayOfWeek === 5 // Mon, Wed, Fri
   } else if (groupId === 'golden') {
     return dayOfWeek === 1 || dayOfWeek === 3 || dayOfWeek === 5 || dayOfWeek === 6 // Mon, Wed, Fri, Sat
-  } else if (groupId === 'couples_hobby') {
-    return dayOfWeek === 1 || dayOfWeek === 2 || dayOfWeek === 3 || dayOfWeek === 4 || dayOfWeek === 5 // Mon - Fri
+  } else if (groupId === 'couples') {
+    return dayOfWeek === 1 || dayOfWeek === 3 || dayOfWeek === 5 // Mon, Wed, Fri (18:30)
+  } else if (groupId === 'hobby') {
+    return dayOfWeek === 2 || dayOfWeek === 4 // Tue, Thu (19:15)
   }
   return false
 }
@@ -691,15 +790,30 @@ export function getDailyLessonTask(dateStr, groupId, lang = 'ka') {
     }
   }
 
-  // 4. Couples & Hobby Class (Mon - Fri)
+  // 4. Couples Group (Mon, Wed, Fri)
+  if (groupId === 'couples') {
+    return {
+      phase,
+      danceName: lang === 'ka' ? '💃 წყვილების სატურნირო პარტნიორობა (WDSF Lead/Follow)' : lang === 'ru' ? '💃 Конкурсное партнерство пар' : '💃 Competitive Couples Partnering',
+      targetFigures: figuresText,
+      breakdown: [
+        { time: '15 წთ', text: lang === 'ka' ? 'წყვილში კავშირი (Contact, Lead & Follow)' : lang === 'ru' ? 'Контакт в паре и ведение' : 'Partner Connection & Lead/Follow' },
+        { time: '30 წთ', text: lang === 'ka' ? `WDSF სატურნირო სქემები: ${figuresText}` : lang === 'ru' ? `Турнирные схемы: ${figuresText}` : `Competition Routines: ${figuresText}` },
+        { time: '15 წთ', text: lang === 'ka' ? 'სატურნირო პრაგონები & წყვილთა სინქრონი' : lang === 'ru' ? 'Турнирные прогоны и синхрон' : 'Competition Runs & Synchronization' }
+      ],
+      dailyGoal: goalText
+    }
+  }
+
+  // 5. Hobby Class (Tue, Thu - Relaxed Social Dance Fun)
   return {
     phase,
-    danceName: lang === 'ka' ? 'წყვილების ჰარმონია & Hobby Class (Waltz & Cha-Cha)' : lang === 'ru' ? 'Группа Пар и Hobby Class (Вальс и Ча-Ча)' : 'Couples & Hobby Class',
+    danceName: lang === 'ka' ? '✨ Hobby Class — მოყვარულთა საცეკვაო კლასი (მხიარული მოძრაობები)' : lang === 'ru' ? '✨ Hobby Class — Любительский класс' : '✨ Hobby Class — Adult Social Dance',
     targetFigures: figuresText,
     breakdown: [
-      { time: '15 წთ', text: lang === 'ka' ? 'გახურება & წყვილში კავშირი (Contact & Lead)' : lang === 'ru' ? 'Разминка и контакт в паре' : 'Connection & Lead/Follow Warmup' },
-      { time: '30 წთ', text: lang === 'ka' ? `სალონური და სპორტული ფიგურები: ${figuresText}` : lang === 'ru' ? `Бальные фигуры: ${figuresText}` : `Ballroom Figures: ${figuresText}` },
-      { time: '15 წთ', text: lang === 'ka' ? 'სასიამოვნო მუსიკალური პრაქტიკა' : lang === 'ru' ? 'Практика под музыку' : 'Enjoyable Musical Practice' }
+      { time: '15 წთ', text: lang === 'ka' ? 'მხიარული გახურება & რიტმული განწყობა' : lang === 'ru' ? 'Разминка и позитивный настрой' : 'Fun Warmup & Social Rhythm' },
+      { time: '30 წთ', text: lang === 'ka' ? `პოპულარული საცეკვაო მოძრაობები: ${figuresText}` : lang === 'ru' ? `Популярные танцевальные движения: ${figuresText}` : `Popular Dance Moves: ${figuresText}` },
+      { time: '15 წთ', text: lang === 'ka' ? 'სასიამოვნო მუსიკალური პრაქტიკა & თავისუფალი ცეკვა' : lang === 'ru' ? 'Приятная практика под музыку' : 'Enjoyable Music Practice & Social Dance' }
     ],
     dailyGoal: goalText
   }

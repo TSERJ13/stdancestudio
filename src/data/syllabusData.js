@@ -100,17 +100,17 @@ export const syllabusData = {
       },
       {
         id: 'hobby',
-        name: 'Hobby კლასი',
-        level: '2 ცეკვა (Beginner / ზრდასრულები, კვირაში 2 დღე)',
-        dances: 'ნელი ვალსი (Waltz), ჩა-ჩა-ჩა (Cha-Cha-Cha)',
-        rotation: 'დღე 1: Waltz | დღე 2: Cha-Cha-Cha (პრაქტიკის დღე არ აქვთ)',
+        name: 'Hobby კლასი (ზრდასრულები / მოყვარულები)',
+        level: 'მოყვარულთა ჯგუფი (კვირაში 2 დღე: სამშაბათი & ხუთშაბათი 19:15)',
+        dances: 'სალონური ვალსი, ჩა-ჩა-ჩა, როკ-ენ-როლი & ლათინური მიქსი',
+        rotation: 'დღე 1 (სამშაბათი): სალონური ვალსი & ნელი ცეკვები | დღე 2 (ხუთშაბათი): მხიარული ჩა-ჩა, ჯაივი & ლათინო მიქსი',
         figuresAugJan: {
-          waltz: ['Closed Changes (Right & Left)', 'Natural Turn'],
-          ccc: ['Time Step', 'Basic Movement', 'New York']
+          waltz: ['სალონური ვალსის რიტმული ნაბიჯები', 'პოპულარული მოძრაობები'],
+          ccc: ['მხიარული ჩა-ჩა-ჩას ნიუ-იორკი', 'როკ-ენ-როლის რიტმები']
         },
         figuresFebJul: {
-          waltz: ['Reverse Turn', 'Hesitation Change'],
-          ccc: ['Spot Turn', 'Hand to Hand']
+          waltz: ['სალონური ვალსის მოხვევითი სვლა'],
+          ccc: ['ლათინური მხიარული მიქსი']
         }
       },
       {
