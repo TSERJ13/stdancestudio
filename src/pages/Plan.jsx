@@ -302,14 +302,12 @@ export default function Plan() {
                   <h4>28 რიცხვის ტესტის საგამოცდო კითხვა</h4>
                   <p><strong>❓ კითხვა:</strong> {activeLessonData.examQ}</p>
                   <p className="parent-exam-ans">✅ <strong>სწორი პასუხი:</strong> {activeLessonData.examA}</p>
-                  <a
-                    href={`/exam?group=${selectedGroup}&month=${activeMonthKey}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                  <Link
+                    to={`/exam?group=${selectedGroup}&month=${activeMonthKey}`}
                     className="parent-card-exam-link"
                   >
-                    📝 28 რიცხვის ონლაინ ტესტირების გახსნა ➔
-                  </a>
+                    📝 28 რიცხვის ონლაინ ტესტის შევსება ➔
+                  </Link>
                 </div>
 
               </div>

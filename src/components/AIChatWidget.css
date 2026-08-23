@@ -5,12 +5,13 @@
 /* 1. FLOATING LUXURY OBSIDIAN & GOLD BOT BUTTON */
 .std-bot-widget-container {
   position: fixed;
-  bottom: 7.2rem;
-  right: 2.5rem;
+  bottom: 2.5rem;
+  left: 2.5rem;
+  right: auto;
   z-index: 999999;
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
+  align-items: flex-start;
   gap: 10px;
   pointer-events: auto;
 }
