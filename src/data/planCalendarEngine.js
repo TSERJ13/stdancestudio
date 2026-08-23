@@ -144,7 +144,7 @@ export const MONTHLY_WDSF_CURRICULUM = {
       figsKa: 'Reverse Turn, Cha-Cha Basic Movement',
       figsEn: 'Reverse Turn, Cha-Cha Basic Movement',
       figsRu: 'Обратный поворот, Основное движение Ча-Ча',
-      goalKa: 'მოხვევითი მოძრაობებისა და თეძოს როტაციის განვითარება',
+      goalKa: 'ბრუნვითი მოძრაობებისა და თეძოს როტაციის განვითარება',
       goalEn: 'Developing turning actions & hip rotation',
       goalRu: 'Развитие вращений и ротации бедер'
     },
@@ -681,7 +681,7 @@ export function getDailyLessonTask(dateStr, groupId, lang = 'ka') {
   if (weekNum === 1) {
     weekFocusText = lang === 'ka' ? '📌 I კვირის ფოკუსი: ბაზისური დგომი (Posture), ტერფის იზოლაციები (Footwork) და ნელი ტემპის ბალანსი.' : '📌 Week 1 Focus: Base posture, footwork isolations, and slow tempo balance.'
   } else if (weekNum === 2) {
-    weekFocusText = lang === 'ka' ? '📌 II კვირის ფოკუსი: მოხვევითი ფიგურების როტაციები, თეძოს მუშაობა (Hip Action) და რიტმული სიზუსტე.' : '📌 Week 2 Focus: Turning figure rotations, Hip Action, and rhythm precision.'
+    weekFocusText = lang === 'ka' ? '📌 II კვირის ფოკუსი: ბრუნვითი ფიგურების როტაციები, თეძოს მუშაობა (Hip Action) და რიტმული სიზუსტე.' : '📌 Week 2 Focus: Turning figure rotations, Hip Action, and rhythm precision.'
   } else if (weekNum === 3) {
     weekFocusText = lang === 'ka' ? '📌 III კვირის ფოკუსი: სწრაფი ტემპის ჩასეები, პარკეტის ნავიგაცია (LOD) და WDSF ვარიაციები.' : '📌 Week 3 Focus: High-speed chasses, LOD floor navigation, and WDSF variations.'
   } else {
@@ -859,7 +859,7 @@ export function getWdsfTheoryNotes(danceName, figuresText, lang = 'ka') {
         '✅ ხერხემლის გამართულობა (Spine Line) და მხრების დაბლა დაჭერა',
         '✅ გოგონას თავის როტაცია მარცხნივ (Head Turn 15°)',
         '✅ 1-ელ თვლაზე ქუსლის რბილი კონტაქტი და 2-3-ზე Rise-ის შენარჩუნება',
-        '✅ ჩარჩოს (Frame) სიმტკიცე მოხვევითი ფიგურების დროს'
+        '✅ ჩარჩოს (Frame) სიმტკიცე ბრუნვითი ფიგურების დროს'
       ] : [
         '✅ Spine vertical alignment & relaxed shoulders',
         '✅ Follower head position 15° left',

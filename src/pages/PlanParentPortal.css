@@ -324,3 +324,58 @@
     text-align: center;
   }
 }
+
+/* ==========================================================================
+   PRISTINE GEORGIAN PRINT / PDF ENGINE FOR PARENTS
+   ========================================================================== */
+#printable-parent-sheet {
+  display: none;
+}
+
+@media print {
+  body * {
+    visibility: hidden !important;
+  }
+
+  #printable-parent-sheet,
+  #printable-parent-sheet * {
+    visibility: visible !important;
+  }
+
+  #printable-parent-sheet {
+    display: block !important;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    background: #ffffff !important;
+    color: #000000 !important;
+    padding: 24px;
+    font-family: system-ui, -apple-system, sans-serif;
+  }
+
+  .print-header h2 {
+    color: #b5832a !important;
+    margin: 0 0 6px 0;
+    font-size: 1.4rem;
+  }
+
+  .print-section {
+    margin-bottom: 16px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 12px;
+  }
+
+  .print-section h3 {
+    color: #8b6214 !important;
+    margin: 0 0 6px 0;
+    font-size: 1.1rem;
+  }
+
+  .print-exam {
+    background: #f4fbf4 !important;
+    border: 1px solid #4caf50 !important;
+    padding: 12px;
+    border-radius: 8px;
+  }
+}

@@ -24,11 +24,11 @@ function getParentDailyLessonData(groupId, dateKey) {
   const lessons = {
     baby: {
       dance: ' Slow Waltz (ნელი ვალსი) & 💃 Cha-Cha-Cha (ჩა-ჩა-ჩა)',
-      figures: ['Closed Changes (დახურული ცვლილებები)', 'Natural Turn (მარჯვენა მოხვევა)', 'Time Step (ტაიმ სტეპი)'],
-      posture: 'ზურგი გამართული, მხრები ჩაწეული, თავი ოდნავ მარცხნივ.',
+      figures: ['Closed Changes (დახურული ცვლილებები)', 'Natural Turn (მარჯვენა ბრუნი)', 'Time Step (ტაიმ სტეპი)'],
+      posture: 'დგომი (Posture): ზურგი გამართული, მხრები ჩაწეული, თავი ოდნავ მარცხნივ.',
       rhythm: 'ვალსი: 1-2-3 (1-ზე ჩაჯდომა, 2-3 აწევა). ჩა-ჩა: 2-3-4-&-1.',
-      homePractice: '10 წუთი სარკის წინ: 3-ჯერ Natural Turn და 3-ჯერ Time Step.',
-      examQ: 'რა ჰქვია ნელი ვალსის ძირითად მარჯვენა მოხვევას?',
+      homePractice: '10 წუთი სარკის წინ: 3-ჯერ Natural Turn (მარჯვენა ბრუნი) და 3-ჯერ Time Step.',
+      examQ: 'რა ჰქვია ნელი ვალსის ძირითად მარჯვენა ბრუნს?',
       examA: 'Natural Turn'
     },
     bronze: {
@@ -120,55 +120,9 @@ export default function Plan() {
 
   const activeLessonData = getParentDailyLessonData(selectedGroup, selectedDateKey)
 
-  // One-Click Clean PDF Print Generator for Parents
+  // One-Click Pristine Georgian Print / PDF Generator for Parents
   const handlePrintPdf = () => {
-    try {
-      const doc = new jsPDF()
-
-      // Header
-      doc.setFontSize(16)
-      doc.setTextColor(212, 166, 74) // Gold
-      doc.text('ST DANCE STUDIO - PARENT STUDY GUIDE SHEET', 14, 20)
-
-      doc.setFontSize(11)
-      doc.setTextColor(40, 40, 40)
-      doc.text(`Group: ${activeGroupObj.ka}`, 14, 30)
-      doc.text(`Lesson Date: ${activeLessonData.dateDisplay}`, 14, 36)
-      doc.text(`Head Coach: Sergi Tsivtsivadze | Contact: +995 514 19 99 66`, 14, 42)
-
-      doc.setLineWidth(0.5)
-      doc.setDrawColor(200, 200, 200)
-      doc.line(14, 46, 196, 46)
-
-      // Today's Lesson
-      doc.setFontSize(13)
-      doc.setTextColor(212, 166, 74)
-      doc.text('1. TODAY LESSON & WDSF FIGURES:', 14, 56)
-
-      doc.setFontSize(10)
-      doc.setTextColor(50, 50, 50)
-      doc.text(`Dance: ${activeLessonData.dance}`, 18, 64)
-      doc.text(`Figures: ${activeLessonData.figures.join(', ')}`, 18, 70)
-      doc.text(`Posture: ${activeLessonData.posture}`, 18, 76)
-      doc.text(`Rhythm: ${activeLessonData.rhythm}`, 18, 82)
-      doc.text(`Home Practice: ${activeLessonData.homePractice}`, 18, 88)
-
-      // Exam Prep Question
-      doc.setFontSize(13)
-      doc.setTextColor(212, 166, 74)
-      doc.text('2. EXAM PREP QUESTION (FOR 28TH EXAM):', 14, 102)
-
-      doc.setFontSize(10)
-      doc.setTextColor(50, 50, 50)
-      doc.text(`Question: ${activeLessonData.examQ}`, 18, 110)
-      doc.setTextColor(34, 139, 34)
-      doc.text(`Correct Answer: ${activeLessonData.examA}`, 18, 116)
-
-      // Download
-      doc.save(`ST_Dance_Parent_Sheet_${selectedGroup}_${selectedDateKey}.pdf`)
-    } catch (e) {
-      console.error('PDF Print Error:', e)
-    }
+    window.print()
   }
 
   return (
@@ -342,7 +296,7 @@ export default function Plan() {
                 {/* Box 2: Posture & Rhythm */}
                 <div className="parent-box">
                   <div className="parent-box-icon">✨</div>
-                  <h4>ტანსადგამი & რიტმი (რა უნდა იცოდეს ბავშვმა)</h4>
+                  <h4>დგომი & რიტმი (Posture & Rhythm)</h4>
                   <p><strong>🧍 დგომი (Posture):</strong> {activeLessonData.posture}</p>
                   <p><strong>🎵 რიტმი (Rhythm):</strong> {activeLessonData.rhythm}</p>
                 </div>
@@ -379,6 +333,52 @@ export default function Plan() {
           </div>
         </div>
       </section>
+
+      {/* 4. DEDICATED PRINTABLE GEORGIAN STUDY SHEET FOR WINDOW.PRINT() */}
+      <div id="printable-parent-sheet">
+        <div className="print-header">
+          <h2>ST DANCE STUDIO — მშობლის & მოსწავლის სასწავლო ფურცელი</h2>
+          <p><strong>ჯგუფი:</strong> {activeGroupObj.ka} | <strong>გაკვეთილის თარიღი:</strong> {activeLessonData.dateDisplay}</p>
+          <p><strong>მთავარი მწვრთნელი:</strong> სერგი წივწივაძე | <strong>ტელ / WhatsApp:</strong> +995 514 19 99 66</p>
+        </div>
+        <hr style={{ border: 'none', borderTop: '1px solid #ccc', margin: '14px 0' }} />
+
+        <div className="print-section">
+          <h3>💃 1. დღევანდელი ცეკვა & WDSF ფიგურები:</h3>
+          <p style={{ fontWeight: 'bold', fontSize: '1.1rem' }}>{activeLessonData.dance}</p>
+          <ul>
+            {activeLessonData.figures.map((fig, i) => (
+              <li key={i} style={{ marginBottom: '4px' }}>• {fig}</li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="print-section">
+          <h3>✨ 2. დგომი & რიტმი (რა უნდა იცოდეს ბავშვმა):</h3>
+          <p><strong>🧍 დგომი (Posture):</strong> {activeLessonData.posture}</p>
+          <p><strong>🎵 რიტმი (Rhythm):</strong> {activeLessonData.rhythm}</p>
+        </div>
+
+        <div className="print-section">
+          <h3>🏡 3. სახლის სავარჯიშო ინსტრუქცია მშობლისთვის:</h3>
+          <p style={{ background: '#f4f4f4', padding: '10px', borderRadius: '6px', fontWeight: '600' }}>
+            {activeLessonData.homePractice}
+          </p>
+          <p style={{ fontSize: '0.85rem', color: '#666' }}>
+            💡 საკმარისია 10-15 წუთი დღეში სარკის წინ დგომის დაცვით!
+          </p>
+        </div>
+
+        <div className="print-section print-exam" style={{ background: '#f4fbf4', border: '1px solid #4caf50', padding: '12px', borderRadius: '8px' }}>
+          <h3>📝 4. 28 რიცხვის ტესტის საგამოცდო კითხვა:</h3>
+          <p><strong>❓ კითხვა:</strong> {activeLessonData.examQ}</p>
+          <p style={{ color: '#2e7d32', fontWeight: 'bold' }}>✅ <strong>სწორი პასუხი:</strong> {activeLessonData.examA}</p>
+        </div>
+
+        <div className="print-footer" style={{ marginTop: '20px', fontSize: '0.82rem', color: '#777', textAlign: 'center' }}>
+          ოფიციალური ვებ-საიტი: https://stdance.ge | ონლაინ ტესტირება: https://stdance.ge/exam
+        </div>
+      </div>
     </div>
   )
 }
