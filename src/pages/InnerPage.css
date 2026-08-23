@@ -2,8 +2,8 @@
    PAGE HERO (used on all inner pages)
    =========================================== */
 .page-hero {
-  padding-top: clamp(8rem, 14vw, 12rem);
-  padding-bottom: clamp(3rem, 6vw, 5rem);
+  padding-top: clamp(6rem, 8vw, 8rem);
+  padding-bottom: clamp(1.5rem, 3vw, 2.5rem);
   background: linear-gradient(to bottom, var(--color-bg-soft), var(--color-bg));
   border-bottom: 1px solid var(--color-line);
   position: relative;
@@ -12,7 +12,7 @@
 
 @media (max-width: 768px) {
   .page-hero {
-    padding-top: 12rem;
+    padding-top: 7rem;
   }
 }
 
@@ -31,15 +31,15 @@
 }
 
 .page-hero__title {
-  font-size: clamp(2.5rem, 7vw, 5rem);
-  margin-block: 1.5rem;
+  font-size: clamp(2rem, 4.5vw, 3.2rem);
+  margin-block: 0.75rem 1rem;
 }
 
 .page-hero__lead {
-  max-width: 600px;
-  font-size: clamp(1rem, 1.4vw, 1.15rem);
+  max-width: 650px;
+  font-size: clamp(0.95rem, 1.2vw, 1.05rem);
   color: var(--color-text-muted);
-  line-height: 1.75;
+  line-height: 1.6;
 }
 
 .section--alt {
