@@ -197,7 +197,7 @@ export const translations = {
     },
     newsSection: {
       eyebrow: 'სიახლეები & განცხადებები',
-      title: 'ST Dance Studio — 2026-2027 წლის სატურნირო სეზონის გეგმა და სტუდიის წესები',
+      title: 'ST Dance Studio — 2026-2027 წლის სეზონის გახსნა და სტუდიის წესები',
       intro: 'ST Dance Studio იწყებს ახალ, 11-თვიან სასწავლო და სატურნირო სეზონს! სასწავლო პროცესი სრულად ეფუძნება WDSF (World DanceSport Federation)-ის სილაბუსს. წინ გველოდება დატვირთული წელი, ახალი მიზნები და საერთაშორისო ასპარეზობები. იმისათვის, რომ სასწავლო პროცესი იყოს მაქსიმალურად შედეგიანი, გთხოვთ ყურადღებით გაეცნოთ წლის გეგმასა და სტუდიის განახლებულ წესებს.',
       calendarTitle: 'სატურნირო კალენდარი (2026-2027)',
       calendarSubtitle: 'წლის განმავლობაში დაგეგმილია 10 ძირითადი ტურნირი:',
@@ -526,7 +526,7 @@ export const translations = {
     },
     newsSection: {
       eyebrow: 'News & Announcements',
-      title: 'ST Dance Studio — 2026-2027 Tournament Season Plan & Studio Rules',
+      title: 'ST Dance Studio — Season 2026-2027 Opening & Studio Rules',
       intro: 'ST Dance Studio begins a new 11-month academic and competition season! The training process is entirely based on the WDSF (World DanceSport Federation) syllabus. An intense year, new goals, and international performances lie ahead. To make the learning process as effective as possible, please read the annual plan and updated studio rules carefully.',
       calendarTitle: 'Tournament Calendar (2026-2027)',
       calendarSubtitle: '10 major tournaments are scheduled throughout the year:',
@@ -855,7 +855,7 @@ export const translations = {
     },
     newsSection: {
       eyebrow: 'Новости & Объявления',
-      title: 'ST Dance Studio — План турнирного сезона 2026-2027 и правила студии',
+      title: 'ST Dance Studio — Открытие сезона 2026-2027 и правила студии',
       intro: 'ST Dance Studio начинает новый 11-месячный учебный и турнирный сезон! Учебный процесс полностью основан на программе WDSF (World DanceSport Federation). Впереди нас ждет насыщенный год, новые цели и международные выступления. Чтобы учебный процесс был максимально эффективным, пожалуйста, внимательно ознакомьтесь с годовым планом и обновленными правилами студии.',
       calendarTitle: 'Турнирный календарь (2026-2027)',
       calendarSubtitle: 'В течение года запланировано 10 основных турниров:',
