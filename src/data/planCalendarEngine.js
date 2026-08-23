@@ -43,7 +43,8 @@ export const TOURNAMENTS_MAP = {
 }
 
 export const GROUPS_INFO = [
-  { id: 'baby_bronze', ka: '👶 Baby & ბრონზა (4.5 - 7 წ)', en: '👶 Baby & Bronze (4.5 - 7 yrs)', ru: '👶 Baby и Бронза (4.5 - 7 лет)', color: '#cd7f32' },
+  { id: 'baby', ka: '👶 Baby ჯგუფი (4.5 - 6 წ)', en: '👶 Baby Group (4.5 - 6 yrs)', ru: '👶 Baby Группа (4.5 - 6 лет)', color: '#ff9800' },
+  { id: 'bronze', ka: '🥉 Bronze ჯგუფი (დამწყებები)', en: '🥉 Bronze Group (Beginners)', ru: '🥉 Bronze Группа (Начинающие)', color: '#cd7f32' },
   { id: 'presilver_silver', ka: '🥈 Pre-Silver & Silver (H კლასი)', en: '🥈 Pre-Silver & Silver (H Class)', ru: '🥈 Pre-Silver и Silver (H Класс)', color: '#c0c0c0' },
   { id: 'golden', ka: '🏆 Golden (E, D, C კლასები)', en: '🏆 Golden (E, D, C Classes)', ru: '🏆 Golden (E, D, C Классы)', color: '#d4af37' },
   { id: 'couples', ka: '💃 წყვილების ჯგუფი (Couples)', en: '💃 Couples Group', ru: '💃 Группа Пар', color: '#e1306c' },
@@ -564,7 +565,7 @@ export const MONTHLY_WDSF_CURRICULUM = {
  * Returns true if the day of week is an official training day for the specified group
  */
 export function isGroupTrainingDay(groupId, dayOfWeek) {
-  if (groupId === 'baby_bronze') {
+  if (groupId === 'baby' || groupId === 'bronze' || groupId === 'baby_bronze') {
     return dayOfWeek === 2 || dayOfWeek === 4 || dayOfWeek === 6 // Tue, Thu, Sat
   } else if (groupId === 'presilver_silver') {
     return dayOfWeek === 1 || dayOfWeek === 3 || dayOfWeek === 5 // Mon, Wed, Fri
@@ -670,14 +671,13 @@ export function getDailyLessonTask(dateStr, groupId, lang = 'ka') {
     }
   }
 
-  const phase = getMacroCyclePhase(dateStr)
-  const monthData = (MONTHLY_WDSF_CURRICULUM[monthKey] && MONTHLY_WDSF_CURRICULUM[monthKey][groupId]) || MONTHLY_WDSF_CURRICULUM['2026-09'][groupId]
+  const monthData = (MONTHLY_WDSF_CURRICULUM[monthKey] && (MONTHLY_WDSF_CURRICULUM[monthKey][groupId] || MONTHLY_WDSF_CURRICULUM[monthKey]['baby_bronze'])) || MONTHLY_WDSF_CURRICULUM['2026-09']['baby_bronze']
 
-  const figuresText = monthData[lang === 'ru' ? 'figsRu' : lang === 'en' ? 'figsEn' : 'figsKa']
-  const goalText = monthData[lang === 'ru' ? 'goalRu' : lang === 'en' ? 'goalEn' : 'goalKa']
+  const figuresText = monthData ? (monthData[lang === 'ru' ? 'figsRu' : lang === 'en' ? 'figsEn' : 'figsKa'] || '') : ''
+  const goalText = monthData ? (monthData[lang === 'ru' ? 'goalRu' : lang === 'en' ? 'goalEn' : 'goalKa'] || '') : ''
 
-  // 1. Baby & Bronze (Tue, Thu, Sat)
-  if (groupId === 'baby_bronze') {
+  // 1. Baby / Bronze (Tue, Thu, Sat)
+  if (groupId === 'baby' || groupId === 'bronze' || groupId === 'baby_bronze') {
     if (dayOfWeek === 2) {
       return {
         phase,

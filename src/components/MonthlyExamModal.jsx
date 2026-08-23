@@ -164,13 +164,13 @@ ${answersBreakdown}
           'Referer': 'https://stdance.ge'
         },
         body: JSON.stringify({
-          name: 'ST Dance Studio Exam System',
+          name: 'ST Dance Studio',
           email: 'stdancegroupdue@gmail.com',
-          _subject: `📝 ტესტირების შედეგი: ${res.studentName} (${res.score10} / 10 ქულა)`,
+          _subject: `${res.studentName} - ონლაინ ტესტირება (${res.date})`,
           studentName: res.studentName,
           group: res.group,
           month: res.month,
-          score: `${res.score10} / 10 ქულა (${res.correctCount}/20 სწორი პასუხი - ${res.percentage}%)`,
+          score: `${res.score10} / 10 ქულა (20-დან ${res.correctCount} სწორი - ${res.percentage}%)`,
           details: bodyContent
         })
       })
