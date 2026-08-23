@@ -15,56 +15,19 @@ export default function NewsSection() {
 
   return (
     <section className="news-section section" id="news">
-      <div className="container">
-        <div className="news-card">
-          
+      <div className="container" style={{ display: 'flex', flexDirection: 'column', gap: '3rem' }}>
+        
+        {/* ===================== ARTICLE 1: SEASON OPENING & STUDIO RULES ===================== */}
+        <article className="news-card">
           {/* Season Opening Poster */}
           <div className="news-poster-wrapper">
             <img src={posterSrc} alt="ST Dance 2026/27 Season Opening" className="news-poster-img" />
           </div>
 
           <div className="news-header">
-            <span className="news-badge">{news.eyebrow}</span>
+            <span className="news-badge">📢 {news.eyebrow}</span>
             <h2 className="display news-title">{news.title}</h2>
             <p className="news-intro">{news.intro}</p>
-          </div>
-
-          {/* Tournament Schedule Block & Table */}
-          <div className="tournament-block">
-            <h3 className="display tournament-block__title">{news.calendarTitle}</h3>
-            <p className="tournament-block__subtitle">{news.calendarSubtitle}</p>
-
-            {/* Competition Calendar Poster */}
-            <div className="tournament-poster-wrapper">
-              <img src="/images/poster-calendar.jpg" alt="ST Dance Competition Calendar" className="tournament-poster-img" />
-            </div>
-
-            <div className="tournament-table-wrapper">
-              <table className="tournament-table">
-                <thead>
-                  <tr>
-                    <th>{news.tableHeaders.month}</th>
-                    <th>{news.tableHeaders.tournament}</th>
-                    <th>{news.tableHeaders.description}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {news.tournaments.map((item, idx) => (
-                    <tr key={idx}>
-                      <td><strong>{item.month}</strong></td>
-                      <td>{item.name}</td>
-                      <td>{item.desc}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-
-            {news.calendarNote && (
-              <div className="tournament-note">
-                {news.calendarNote}
-              </div>
-            )}
           </div>
 
           {/* Studio Rules & Dress Code */}
@@ -115,7 +78,7 @@ export default function NewsSection() {
                         </div>
 
                         {/* Girls Outfits */}
-                        <div className="outfit-group" style={{ marginTop: '1rem' }}>
+                        <div className="outfit-group">
                           <span className="outfit-label">{rule.girlsText}</span>
                           <div className="outfit-links-wrap">
                             {rule.girlsLinks.map((link, lIdx) => (
@@ -140,8 +103,55 @@ export default function NewsSection() {
               ))}
             </div>
           </div>
+        </article>
 
-        </div>
+        {/* ===================== ARTICLE 2: STANDALONE TOURNAMENT CALENDAR ===================== */}
+        <article className="news-card">
+          <div className="news-header" style={{ marginBottom: '1.75rem' }}>
+            <span className="news-badge" style={{ background: 'rgba(212, 166, 74, 0.2)' }}>
+              🏆 {lang === 'ka' ? 'სატურნირო სტატია & კალენდარი' : lang === 'ru' ? 'Турнирная Статья и Календарь' : 'Tournament Article & Calendar'}
+            </span>
+            <h2 className="display news-title">{news.calendarTitle}</h2>
+            <p className="news-intro" style={{ fontSize: '1.05rem', color: '#dbd6ca' }}>
+              {news.calendarSubtitle}
+            </p>
+          </div>
+
+          {/* Competition Calendar Poster */}
+          <div className="tournament-poster-wrapper">
+            <img src="/images/poster-calendar.jpg" alt="ST Dance Competition Calendar" className="tournament-poster-img" />
+          </div>
+
+          {/* Connecting Preparation Note */}
+          {news.calendarNote && (
+            <div className="tournament-note" style={{ marginBottom: '2rem' }}>
+              💡 <strong>{lang === 'ka' ? 'მომზადების წესი:' : lang === 'ru' ? 'Правило подготовки:' : 'Preparation Rule:'}</strong> {news.calendarNote}
+            </div>
+          )}
+
+          {/* Standalone Tournament Schedule Table */}
+          <div className="tournament-table-wrapper">
+            <table className="tournament-table">
+              <thead>
+                <tr>
+                  <th>{news.tableHeaders.month}</th>
+                  <th>{news.tableHeaders.tournament}</th>
+                  <th>{news.tableHeaders.description}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {news.tournaments.map((item, idx) => (
+                  <tr key={idx}>
+                    <td><strong>{item.month}</strong></td>
+                    <td>{item.name}</td>
+                    <td>{item.desc}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </article>
+
       </div>
     </section>
   )
