@@ -13,6 +13,7 @@ const GEMINI_KEY = atob('QVEuQWI4Uk42SnhSZVRtaWZfOEFCSHBnUWhLRS11dmhlUG5YMTdYSkh
 // Multi-language UI & Registration Form translations dictionary
 const botTranslations = {
   ka: {
+    botTitle: 'ST Dance AI ასისტენტი',
     tooltip: 'AI ასისტენტი • გაქვს კითხვები?',
     subtitle: 'ონლაინ ასისტენტი • 24/7',
     regBtn: 'რეგისტრაცია',
@@ -21,8 +22,8 @@ const botTranslations = {
     welcome: 'გამარჯობა! მე ვარ ST Dance Studio-ს AI ასისტენტი. რა გაინტერესებთ სტუდიის შესახებ?',
     pillPrice: '💰 რა ღირს აბონემენტი?',
     pillSchedule: '📅 განრიგი',
-    pillRules: '🏆 2026-2027 წესები & ტურნირები',
-    pillDressCode: 'ჩაცმულობა',
+    pillDressCode: '👗 ჩაცმულობა',
+    pillRules: '📜 წესები',
     pillRegister: '✨ რეგისტრაცია',
     pillAddress: '📍 მისამართი',
     regTitle: 'ონლაინ რეგისტრაცია',
@@ -48,6 +49,7 @@ const botTranslations = {
     ]
   },
   en: {
+    botTitle: 'ST Dance AI Assistant',
     tooltip: 'AI Assistant • Have questions?',
     subtitle: 'Online Assistant • 24/7',
     regBtn: 'Registration',
@@ -56,8 +58,8 @@ const botTranslations = {
     welcome: 'Hello! I am ST Dance Studio AI Assistant. How can I help you today?',
     pillPrice: '💰 Prices & Packages',
     pillSchedule: '📅 Schedule',
-    pillRules: '🏆 2026-2027 Rules & Tournaments',
-    pillDressCode: 'Dress Code',
+    pillDressCode: '👗 Dress Code',
+    pillRules: '📜 Rules',
     pillRegister: '✨ Register',
     pillAddress: '📍 Location',
     regTitle: 'Online Registration',
@@ -83,6 +85,7 @@ const botTranslations = {
     ]
   },
   ru: {
+    botTitle: 'ST Dance AI Помощник',
     tooltip: 'AI Помощник • Есть вопросы?',
     subtitle: 'Онлайн ассистент • 24/7',
     regBtn: 'Регистрация',
@@ -91,8 +94,8 @@ const botTranslations = {
     welcome: 'Здравствуйте! Я AI-помощник ST Dance Studio. Чем могу помочь?',
     pillPrice: '💰 Цены и абонементы',
     pillSchedule: '📅 Расписание',
-    pillRules: '🏆 2026-2027 Правила и турниры',
-    pillDressCode: 'Дресс-код',
+    pillDressCode: '👗 Дресс-код',
+    pillRules: '📜 Правила',
     pillRegister: '✨ Регистрация',
     pillAddress: '📍 Локация',
     regTitle: 'Онлайн регистрация',
@@ -956,7 +959,7 @@ USER QUESTION: ${query}`
                   <span>AI</span>
                 </div>
                 <div>
-                  <h3 className="std-bot-title">ST Dance AI</h3>
+                  <h3 className="std-bot-title">{t.botTitle}</h3>
                   <p className="std-bot-subtitle">{activeTrans.subtitle}</p>
                 </div>
               </div>

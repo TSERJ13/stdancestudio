@@ -15,24 +15,38 @@ const pills = {
   ka: [
     '💰 რა ღირს აბონემენტი?',
     '📅 განრიგი',
-    'ჩაცმულობა',
-    '🏆 2026-2027 წესები & ტურნირები',
+    '👗 ჩაცმულობა',
+    '📜 წესები',
     '📍 მისამართი & ლოკაცია'
   ],
   en: [
     '💰 Prices & Packages',
     '📅 Schedule',
-    'Dress Code',
-    '🏆 Rules & Tournaments',
+    '👗 Dress Code',
+    '📜 Rules',
     '📍 Location & Contact'
   ],
   ru: [
     '💰 Цены и абонементы',
     '📅 Расписание',
-    'Дресс-код',
-    '🏆 Правила и турниры',
-    '📍 Адрес и контакты'
+    '👗 Дресс-код',
+    '📜 Правила',
   ]
+}
+
+const botHeaders = {
+  ka: {
+    title: 'ST Dance AI ჭკვიანი ასისტენტი',
+    sub: '● ცოცხალი ცოდნის ბაზა (24/7)'
+  },
+  en: {
+    title: 'ST Dance AI Smart Assistant',
+    sub: '● Live Knowledge Base (24/7)'
+  },
+  ru: {
+    title: 'ST Dance AI Умный Помощник',
+    sub: '● База знаний онлайн (24/7)'
+  }
 }
 
 export default function FaqBotEmbed() {
@@ -98,6 +112,7 @@ User Question: ${query}`
   }
 
   const activePills = pills[lang] || pills.ka
+  const activeHeader = botHeaders[lang] || botHeaders.ka
 
   return (
     <div className="faq-bot-embed">
@@ -105,8 +120,8 @@ User Question: ${query}`
         <div className="faq-bot-embed__brand">
           <div className="faq-bot-embed__avatar">✨</div>
           <div className="faq-bot-embed__info">
-            <h4>ST Dance AI Smart Assistant</h4>
-            <p>● Live Knowledge Base (24/7)</p>
+            <h4>{activeHeader.title}</h4>
+            <p>{activeHeader.sub}</p>
           </div>
         </div>
       </div>
