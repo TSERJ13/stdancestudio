@@ -14,7 +14,7 @@ export function LanguageProvider({ children }) {
       setLang('ru')
     } else if (path.startsWith('/en/') || path === '/en') {
       setLang('en')
-    } else if (path.startsWith('/ka/') || path === '/ka') {
+    } else {
       setLang('ka')
     }
   }, [location.pathname])

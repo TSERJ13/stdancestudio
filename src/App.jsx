@@ -15,6 +15,7 @@ import Privacy from './pages/Privacy'
 import Terms from './pages/Terms'
 import Bio from './pages/Bio'
 import Plan from './pages/Plan'
+import FaqPage from './pages/FaqPage'
 import AdminLogin from './pages/admin/AdminLogin'
 import AdminDashboard from './pages/admin/AdminDashboard'
 import PortalLogin from './pages/portal/PortalLogin'
@@ -40,6 +41,7 @@ const AppRoutes = () => (
     <Route path="about" element={<About />} />
     <Route path="schedule" element={<Schedule />} />
     <Route path="plan" element={<Plan />} />
+    <Route path="faq" element={<FaqPage />} />
     <Route path="payment" element={<Payment />} />
     <Route path="success" element={<Success />} />
     <Route path="contact" element={<Contact />} />

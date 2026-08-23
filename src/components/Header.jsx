@@ -4,31 +4,41 @@ import { useLanguage } from '../context/LanguageContext'
 import './Header.css'
 
 const FloatingLangSwitcher = () => {
-  const { lang } = useLanguage()
+  const { lang, setLang } = useLanguage()
   const [expanded, setExpanded] = useState(false)
   const navigate = useNavigate()
   const location = useLocation()
 
+  const switchLanguage = (targetLang) => {
+    setLang(targetLang)
+    let path = location.pathname
+    
+    if (path.startsWith('/ru/') || path === '/ru') {
+      path = path.replace(/^\/ru/, '')
+    } else if (path.startsWith('/en/') || path === '/en') {
+      path = path.replace(/^\/en/, '')
+    } else if (path.startsWith('/ka/') || path === '/ka') {
+      path = path.replace(/^\/ka/, '')
+    }
+    
+    if (!path || path === '') path = '/'
+    
+    if (targetLang !== 'ka') {
+      path = `/${targetLang}${path === '/' ? '' : path}`
+    }
+    navigate(path)
+  }
+
   const handleLangClick = (newLang) => {
     if (!expanded) {
       setExpanded(true)
+      if (newLang !== lang) {
+        switchLanguage(newLang)
+      }
     } else {
       setExpanded(false)
       if (newLang !== lang) {
-        let path = location.pathname
-        
-        if (path.startsWith('/ru/') || path === '/ru') {
-          path = path.replace(/^\/ru/, '')
-        } else if (path.startsWith('/en/') || path === '/en') {
-          path = path.replace(/^\/en/, '')
-        }
-        
-        if (path === '') path = '/'
-        
-        if (newLang !== 'ka') {
-           path = `/${newLang}${path === '/' ? '' : path}`
-        }
-        navigate(path)
+        switchLanguage(newLang)
       }
     }
   }
@@ -85,6 +95,7 @@ export default function Header() {
     { label: t('nav.home'), to: `${basePath}/` },
     { label: t('nav.about'), to: `${basePath}/about` },
     { label: t('nav.schedule'), to: `${basePath}/schedule` },
+    { label: t('nav.faq'), to: `${basePath}/faq` },
     { label: t('nav.payment'), to: `${basePath}/payment` },
     { label: t('nav.contact'), to: `${basePath}/contact` },
   ]

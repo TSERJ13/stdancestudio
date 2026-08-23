@@ -4,6 +4,7 @@ export const translations = {
       home: 'მთავარი',
       about: 'ჩვენ შესახებ',
       schedule: 'განრიგი',
+      faq: 'FAQ',
       payment: 'გადახდა',
       contact: 'კონტაქტი',
       privacy: 'კონფიდენციალურობის პოლიტიკა',

@@ -1,3 +1,4 @@
+import React, { useState } from 'react'
 import { useLanguage } from '../context/LanguageContext'
 import SyllabusExplorer from '../components/SyllabusExplorer'
 import './InnerPage.css'
