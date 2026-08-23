@@ -440,25 +440,25 @@ Special ballroom dance training attire is mandatory.
     }
   }
 
-  // 6. Unknown / Un-answered Specific Query Handling — Email Forward to stdabcegroup@gmail.com
+  // 6. Unknown / Un-answered Specific Query Handling — Email Forward to stdancegroupdue@gmail.com
   sendUnansweredQuestionToAdminEmail(query, lang)
 
   if (lang === 'ka') {
     return `✨ გმადლობთ შეკითხვისთვის!
 
-თქვენი შეკითხვა ("${query}") წარმატებით გადაეგზავნა ადმინისტრაციის ოფიციალურ ელ-ფოსტას (stdabcegroup@gmail.com). ჩვენი მენეჯერი უმოკლეს დროში დაგიკავშირდებათ!
+თქვენი შეკითხვა ("${query}") წარმატებით გადაეგზავნა ადმინისტრაციის ოფიციალურ ელ-ფოსტას (stdancegroupdue@gmail.com). ჩვენი მენეჯერი უმოკლეს დროში დაგიკავშირდებათ!
 
 ასევე შეგიძლიათ პირდაპირ მოგვწეროთ WhatsApp-ზე: +995 514 19 99 66 ან Telegram-ზე: @STDance_Buchhalter.`
   } else if (lang === 'ru') {
     return `✨ Спасибо за ваш вопрос!
 
-Ваш запрос ("${query}") успешно перенаправлен на официальную почту администрации (stdabcegroup@gmail.com). Наш менеджер свяжется с вами в ближайшее время!
+Ваш запрос ("${query}") успешно перенаправлен на официальную почту администрации (stdancegroupdue@gmail.com). Наш менеджер свяжется с вами в ближайшее время!
 
 Вы также можете написать нам напрямую в WhatsApp: +995 514 19 99 66 или Telegram: @STDance_Buchhalter.`
   } else {
     return `✨ Thank you for your question!
 
-Your inquiry ("${query}") has been successfully forwarded to administration email (stdabcegroup@gmail.com). Our team will respond to you shortly!
+Your inquiry ("${query}") has been successfully forwarded to administration email (stdancegroupdue@gmail.com). Our team will respond to you shortly!
 
 You can also contact us on WhatsApp: +995 514 19 99 66 or Telegram: @STDance_Buchhalter.`
   }
