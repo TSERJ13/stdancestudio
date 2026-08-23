@@ -357,7 +357,7 @@ export default function Plan() {
             {questionList.map((q, idx) => {
               const correctChoice = q.optionsKa ? q.optionsKa[q.correct] : q.optionsEn[q.correct]
               return (
-                <div key={q.id} style={{ border: '1px solid #e0e0e0', borderRadius: '6px', padding: '8px 12px', background: '#fafafa', pageBreakInside: 'avoid' }}>
+                <div key={q.id} className="print-q-box">
                   <p style={{ margin: '0 0 4px 0', fontWeight: 'bold', fontSize: '0.95rem' }}>
                     {idx + 1}. {q.questionKa || q.questionEn}
                   </p>
