@@ -1,0 +1,176 @@
+.exam-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(8px);
+  z-index: 10000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+}
+
+.exam-modal-content {
+  background: linear-gradient(135deg, #16161a, #201e18);
+  border: 1.5px solid var(--color-gold, #d4a64a);
+  border-radius: 20px;
+  width: 100%;
+  max-width: 850px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.8);
+  overflow: hidden;
+}
+
+.exam-modal-header {
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.exam-modal-header h3 {
+  margin: 0;
+  color: #ffffff;
+  font-size: 1.2rem;
+}
+
+.exam-close-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: #ffffff;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1.1rem;
+  transition: all 0.2s ease;
+}
+
+.exam-close-btn:hover {
+  background: #f44336;
+}
+
+.exam-modal-body {
+  padding: 1.5rem;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.exam-student-form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(212, 166, 74, 0.3);
+  padding: 1.25rem;
+  border-radius: 14px;
+  margin-bottom: 1.5rem;
+}
+
+.exam-form-field label {
+  display: block;
+  font-size: 0.82rem;
+  color: 'var(--color-gold, #d4a64a)';
+  font-weight: 700;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+
+.exam-form-field input,
+.exam-form-field select {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 0.92rem;
+  box-sizing: border-box;
+}
+
+.exam-form-field input:focus,
+.exam-form-field select:focus {
+  border-color: var(--color-gold, #d4a64a);
+  outline: none;
+}
+
+.exam-questions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.exam-q-card {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 1.25rem;
+  border-radius: 12px;
+}
+
+.exam-q-text {
+  margin: 0 0 12px 0;
+  color: #ffffff;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.exam-options-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 8px;
+}
+
+.exam-option-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 10px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.88rem;
+  color: #d8d3c5;
+  transition: all 0.2s ease;
+}
+
+.exam-option-label:hover {
+  background: rgba(212, 166, 74, 0.1);
+  border-color: rgba(212, 166, 74, 0.4);
+}
+
+.exam-option-label.selected {
+  background: rgba(212, 166, 74, 0.2);
+  border-color: var(--color-gold, #d4a64a);
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.exam-submit-bar {
+  margin-top: 1.5rem;
+  text-align: center;
+}
+
+.exam-submit-btn {
+  background: linear-gradient(135deg, #d4a64a, #b5832a);
+  color: #000000;
+  border: none;
+  padding: 14px 32px;
+  border-radius: 30px;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(212, 166, 74, 0.3);
+  transition: transform 0.2s ease;
+}
+
+.exam-submit-btn:hover {
+  transform: translateY(-2px);
+}

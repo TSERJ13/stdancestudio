@@ -8,6 +8,7 @@ import {
   getMacroCyclePhase,
   getDailyLessonTask
 } from '../data/planCalendarEngine'
+import MonthlyExamModal from './MonthlyExamModal'
 import './PlanCalendar.css'
 
 const monthsData = [
@@ -30,6 +31,7 @@ export default function PlanCalendar() {
   const [activeMonthId, setActiveMonthId] = useState('2026-08')
   const [selectedGroup, setSelectedGroup] = useState('baby_bronze')
   const [selectedDateKey, setSelectedDateKey] = useState('2026-08-24')
+  const [isExamModalOpen, setIsExamModalOpen] = useState(false)
 
   const activeMonth = monthsData.find(m => m.id === activeMonthId) || monthsData[0]
   const weekHeaders = lang === 'ka' ? ['ორშ', 'სამ', 'ოთხ', 'ხუთ', 'პარ', 'შაბ', 'კვ'] : lang === 'ru' ? ['ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ', 'СБ', 'ВС'] : ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN']
@@ -57,30 +59,49 @@ export default function PlanCalendar() {
   const selectedPhase = getMacroCyclePhase(selectedDateKey)
   const activeGroupObj = GROUPS_INFO.find(g => g.id === selectedGroup) || GROUPS_INFO[0]
 
+  const isExamDay = selectedDateKey.endsWith('-28')
+
   return (
     <div className="plan-calendar">
-      <div className="plan-calendar__head">
+      <div className="plan-calendar__head" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
           <h3 className="plan-calendar__title">
             🗓️ {lang === 'ka' ? 'ინტერაქტიული საგანმანათლებლო კალენდარი (2026-2027)' : lang === 'ru' ? 'Интерактивный учебный календарь (2026-2027)' : 'Interactive Educational Calendar (2026-2027)'}
           </h3>
           <p style={{ margin: '4px 0 0 0', color: '#b0ab9f', fontSize: '0.88rem' }}>
-            {lang === 'ka' ? 'აირჩიეთ ჯგუფი. არასავარჯიშო დღეები და უქმეები ჩაკეტილია. დააჭირეთ მონიშნულ დღეს დავალების სანახავად.' : lang === 'ru' ? 'Выберите группу. Дни без занятий заблокированы. Нажмите на активный день.' : 'Select a group. Non-training days are locked. Click any active training day.'}
+            {lang === 'ka' ? 'აირჩიეთ ჯგუფი. არასავარჯიშო დღეები ჩაკეტილია. 28 რიცხვში ჩააბარეთ ყოველთვიური ონლაინ ტესტირება.' : 'Select group. Non-training days locked. Take 28th monthly online exam.'}
           </p>
         </div>
+
+        {/* Exam Trigger Button */}
+        <button
+          onClick={() => setIsExamModalOpen(true)}
+          style={{
+            background: 'linear-gradient(135deg, #d4a64a, #b5832a)',
+            color: '#000000',
+            border: 'none',
+            padding: '10px 20px',
+            borderRadius: '25px',
+            fontWeight: 'bold',
+            fontSize: '0.88rem',
+            cursor: 'pointer',
+            boxShadow: '0 4px 14px rgba(212,166,74,0.4)',
+            transition: 'all 0.2s ease'
+          }}
+        >
+          📝 {lang === 'ka' ? '28 რიცხვის ონლაინ ტესტირება (PDF & Email)' : '28th Monthly Exam (PDF & Email)'}
+        </button>
       </div>
 
       {/* Group Selector Bar */}
-      <div style={{ marginBottom: '1.25rem', display: 'flex', gap: '8px', flexWrap: 'wrap', alignItems: 'center' }}>
+      <div style={{ margin: '1.25rem 0', display: 'flex', gap: '8px', flexWrap: 'wrap', alignItems: 'center' }}>
         <span style={{ fontSize: '0.85rem', fontWeight: 'bold', color: 'var(--color-gold, #d4a64a)' }}>
           👥 {lang === 'ka' ? 'ჯგუფის არჩევა:' : lang === 'ru' ? 'Выбор группы:' : 'Select Group:'}
         </span>
         {GROUPS_INFO.map(g => (
           <button
             key={g.id}
-            onClick={() => {
-              setSelectedGroup(g.id)
-            }}
+            onClick={() => setSelectedGroup(g.id)}
             style={{
               background: selectedGroup === g.id ? g.color : 'rgba(255,255,255,0.04)',
               color: selectedGroup === g.id ? '#000' : '#d8d3c5',
@@ -129,6 +150,7 @@ export default function PlanCalendar() {
           const isSelected = selectedDateKey === fullDateKey
           const isHoliday = !!holiday
           const isTournament = !!tournament
+          const is28th = fullDateKey.endsWith('-28')
 
           // Day is locked if: out of season range OR official holiday OR NOT a training day for this group
           const isLocked = !isSeasonActive || isHoliday || !isGroupActive
@@ -147,12 +169,14 @@ export default function PlanCalendar() {
               style={{
                 cursor: 'pointer',
                 position: 'relative',
-                opacity: isLocked && !isHoliday ? 0.35 : 1
+                opacity: isLocked && !isHoliday ? 0.35 : 1,
+                border: is28th ? '1.5px solid #ffd180' : undefined
               }}
             >
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <span className="cal-cell-num">{day}</span>
-                {isLocked && <span style={{ fontSize: '0.68rem', opacity: 0.8 }}>🔒</span>}
+                {is28th && <span style={{ fontSize: '0.72rem' }}>📝</span>}
+                {isLocked && !is28th && <span style={{ fontSize: '0.68rem', opacity: 0.8 }}>🔒</span>}
                 {isTournament && !isHoliday && <span style={{ fontSize: '0.7rem' }}>🏆</span>}
               </div>
 
@@ -166,7 +190,12 @@ export default function PlanCalendar() {
                   {tournament[lang] || tournament.ka}
                 </span>
               )}
-              {!isLocked && !tournament && !holiday && (
+              {is28th && !holiday && (
+                <span className="cal-cell-badge" style={{ background: 'rgba(255,209,128,0.25)', color: '#ffd180', fontWeight: 'bold' }}>
+                  📝 ტესტირება
+                </span>
+              )}
+              {!isLocked && !tournament && !holiday && !is28th && (
                 <span className="cal-cell-badge badge-regular" style={{ background: 'rgba(76,175,80,0.2)', color: '#81c784' }}>
                   {lang === 'ka' ? '✓ გაკვეთილი' : lang === 'ru' ? '✓ Урок' : '✓ Training'}
                 </span>
@@ -180,19 +209,23 @@ export default function PlanCalendar() {
       <div className="cal-legend" style={{ marginTop: '1.25rem' }}>
         <div className="legend-item">
           <div className="legend-dot" style={{ background: '#4caf50' }}></div>
-          <span>{lang === 'ka' ? '✓ ჯგუფის აქტიური მეცადინეობა' : lang === 'ru' ? '✓ Активное занятие группы' : '✓ Active Group Class'}</span>
+          <span>{lang === 'ka' ? '✓ ჯგუფის აქტიური მეცადინეობა' : '✓ Active Group Class'}</span>
+        </div>
+        <div className="legend-item">
+          <div className="legend-dot" style={{ background: '#ffd180' }}></div>
+          <span>{lang === 'ka' ? '📝 28 რიცხვის ონლაინ ტესტირება' : '📝 28th Monthly Exam'}</span>
         </div>
         <div className="legend-item">
           <div className="legend-dot" style={{ background: 'var(--color-gold, #d4a64a)' }}></div>
-          <span>{lang === 'ka' ? '🏆 ტურნირები & სტარტი' : lang === 'ru' ? '🏆 Турниры и старт' : '🏆 Tournaments & Opening'}</span>
+          <span>{lang === 'ka' ? '🏆 ტურნირები & სტარტი' : '🏆 Tournaments'}</span>
         </div>
         <div className="legend-item">
           <div className="legend-dot" style={{ background: '#f44336' }}></div>
-          <span>{lang === 'ka' ? '🔒 ჩაკეტილი უქმე / არასავარჯიშო დღე' : lang === 'ru' ? '🔒 Заблокированный день' : '🔒 Locked / Non-Training Day'}</span>
+          <span>{lang === 'ka' ? '🔒 ჩაკეტილი უქმე / არასავარჯიშო დღე' : '🔒 Locked Off-Day'}</span>
         </div>
       </div>
 
-      {/* Day Inspector Card (Detailed Daily Lesson Plan & Target Goals) */}
+      {/* Day Inspector Card */}
       {selectedDateKey && (
         <div className="day-inspector-card" style={{
           marginTop: '1.75rem',
@@ -208,9 +241,7 @@ export default function PlanCalendar() {
                 📅 {selectedDateKey} • {activeGroupObj[lang] || activeGroupObj.ka}
               </span>
               <h4 style={{ margin: '4px 0 0 0', fontSize: '1.25rem', color: '#ffffff' }}>
-                {selectedTask.isLocked 
-                  ? selectedTask.title 
-                  : selectedTask.danceName}
+                {selectedTask.isLocked ? selectedTask.title : selectedTask.danceName}
               </h4>
             </div>
             {selectedPhase && !selectedTask.isLocked && (
@@ -220,15 +251,42 @@ export default function PlanCalendar() {
             )}
           </div>
 
-          {/* Locked / Non-Training Day Case */}
+          {/* 28th Monthly Exam Notification Banner */}
+          {isExamDay && (
+            <div style={{
+              background: 'linear-gradient(90deg, rgba(255,209,128,0.2), rgba(212,166,74,0.1))',
+              border: '1px solid #ffd180',
+              padding: '12px 16px',
+              borderRadius: '12px',
+              marginBottom: '16px',
+              display: 'flex',
+              justify: 'space-between',
+              alignItems: 'center',
+              flexWrap: 'wrap',
+              gap: '10px'
+            }}>
+              <div>
+                <span style={{ fontWeight: 'bold', color: '#ffd180', fontSize: '0.9rem' }}>
+                  📝 {lang === 'ka' ? 'დღეს 28 რიცხვია — ყოველთვიური ონლაინ ტესტირების დღე!' : 'Today is the 28th — Monthly Exam Day!'}
+                </span>
+                <p style={{ margin: '2px 0 0 0', color: '#ffffff', fontSize: '0.85rem' }}>
+                  {lang === 'ka' ? 'გაიარეთ 20-კითხვიანი ტესტირება. PDF რეპორტი ავტომატურად გაიგზავნება სტუდიის მეილზე.' : 'Take 20-question exam. PDF report emailed automatically.'}
+                </p>
+              </div>
+              <button
+                onClick={() => setIsExamModalOpen(true)}
+                style={{ background: '#ffd180', color: '#000', border: 'none', padding: '8px 16px', borderRadius: '20px', fontWeight: 'bold', cursor: 'pointer' }}
+              >
+                {lang === 'ka' ? 'ტესტირების დაწყება ➔' : 'Start Exam ➔'}
+              </button>
+            </div>
+          )}
+
+          {/* Locked Day Case */}
           {selectedTask.isLocked && (
             <div style={{ background: 'rgba(244,67,54,0.1)', border: '1px solid rgba(244,67,54,0.3)', padding: '14px', borderRadius: '12px', color: '#ff8a80' }}>
-              <p style={{ margin: 0, fontWeight: 'bold', fontSize: '0.95rem' }}>
-                {selectedTask.title}
-              </p>
-              <p style={{ margin: '6px 0 0 0', fontSize: '0.88rem', color: '#ffd180' }}>
-                {selectedTask.desc}
-              </p>
+              <p style={{ margin: 0, fontWeight: 'bold', fontSize: '0.95rem' }}>{selectedTask.title}</p>
+              <p style={{ margin: '6px 0 0 0', fontSize: '0.88rem', color: '#ffd180' }}>{selectedTask.desc}</p>
             </div>
           )}
 
@@ -237,16 +295,74 @@ export default function PlanCalendar() {
             <div>
               <div style={{ marginBottom: '14px', background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', padding: '12px', borderRadius: '10px' }}>
                 <p style={{ margin: '0 0 4px 0', fontSize: '0.85rem', color: '#a8a39a', fontWeight: 'bold' }}>
-                  🎯 {lang === 'ka' ? 'დღევანდელი WDSF სამიზნე ფიგურები:' : lang === 'ru' ? 'Целевые фигуры WDSF:' : 'Target WDSF Figures:'}
+                  🎯 {lang === 'ka' ? 'დღევანდელი WDSF სამიზნე ფიგურები:' : 'Target WDSF Figures:'}
                 </p>
                 <p style={{ margin: 0, color: '#f0c878', fontWeight: '600', fontSize: '0.95rem' }}>
                   {selectedTask.targetFigures}
                 </p>
               </div>
 
+              {/* Theoretical Instructor Reference Manual & Checklist */}
+              {selectedTask.theoryNotes && (
+                <div style={{ background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(212,166,74,0.25)', padding: '14px', borderRadius: '12px', marginBottom: '16px' }}>
+                  <h5 style={{ margin: '0 0 10px 0', color: 'var(--color-gold, #d4a64a)', fontSize: '0.95rem' }}>
+                    📖 {lang === 'ka' ? 'მწვრთნელის თეორიული სახელმძღვანელო & ინსტრუქცია:' : 'Instructor WDSF Theoretical Guide:'}
+                  </h5>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '10px', fontSize: '0.85rem', color: '#ffffff' }}>
+                    <div style={{ background: 'rgba(255,255,255,0.03)', padding: '10px', borderRadius: '8px' }}>
+                      <strong style={{ color: '#f0c878', display: 'block', marginBottom: '4px' }}>
+                        💃 {lang === 'ka' ? 'რომელ ცეკვას ეხება:' : 'Target Dance:'}
+                      </strong>
+                      <span>{selectedTask.theoryNotes.dance}</span>
+                    </div>
+
+                    <div style={{ background: 'rgba(255,255,255,0.03)', padding: '10px', borderRadius: '8px' }}>
+                      <strong style={{ color: '#f0c878', display: 'block', marginBottom: '4px' }}>
+                        👫 {lang === 'ka' ? 'პოზიცია და დგომი:' : 'Hold & Position:'}
+                      </strong>
+                      <span>{selectedTask.theoryNotes.hold}</span>
+                    </div>
+
+                    <div style={{ background: 'rgba(255,255,255,0.03)', padding: '10px', borderRadius: '8px' }}>
+                      <strong style={{ color: '#f0c878', display: 'block', marginBottom: '4px' }}>
+                        ⏱️ {lang === 'ka' ? 'რიტმი და თვლა:' : 'Rhythm & Timing:'}
+                      </strong>
+                      <span>{selectedTask.theoryNotes.rhythm}</span>
+                    </div>
+
+                    <div style={{ background: 'rgba(255,255,255,0.03)', padding: '10px', borderRadius: '8px' }}>
+                      <strong style={{ color: '#f0c878', display: 'block', marginBottom: '4px' }}>
+                        🧭 {lang === 'ka' ? 'მიმართულება (Alignment):' : 'Alignment:'}
+                      </strong>
+                      <span>{selectedTask.theoryNotes.alignment}</span>
+                    </div>
+
+                    <div style={{ background: 'rgba(255,255,255,0.03)', padding: '10px', borderRadius: '8px' }}>
+                      <strong style={{ color: '#f0c878', display: 'block', marginBottom: '4px' }}>
+                        🦶 {lang === 'ka' ? 'ტერფის მუშაობა (Footwork):' : 'Footwork:'}
+                      </strong>
+                      <span>{selectedTask.theoryNotes.footwork}</span>
+                    </div>
+                  </div>
+
+                  {/* Verification Checklist */}
+                  <div style={{ marginTop: '12px', background: 'rgba(76,175,80,0.08)', border: '1px solid rgba(76,175,80,0.2)', padding: '10px 14px', borderRadius: '8px' }}>
+                    <strong style={{ color: '#81c784', display: 'block', marginBottom: '6px', fontSize: '0.85rem' }}>
+                      🔍 {lang === 'ka' ? 'რა უნდა შეამოწმოს მწვრთნელმა (Checklist):' : 'Teacher Verification Checklist:'}
+                    </strong>
+                    <ul style={{ margin: 0, paddingLeft: '1.2rem', fontSize: '0.84rem', color: '#d8d3c5', lineHeight: '1.5' }}>
+                      {selectedTask.theoryNotes.checkList.map((item, idx) => (
+                        <li key={idx}>{item}</li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              )}
+
               {/* Minute Breakdown */}
               <p style={{ margin: '0 0 8px 0', fontSize: '0.85rem', color: '#a8a39a', fontWeight: 'bold' }}>
-                ⏱️ {lang === 'ka' ? 'გაკვეთილის წუთობრივი ალგორითმი:' : lang === 'ru' ? 'Поминутный алгоритм урока:' : 'Lesson Minute Breakdown:'}
+                ⏱️ {lang === 'ka' ? 'გაკვეთილის წუთობრივი ალგორითმი:' : 'Lesson Minute Breakdown:'}
               </p>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '8px', marginBottom: '14px' }}>
                 {selectedTask.breakdown.map((b, idx) => (
@@ -264,7 +380,7 @@ export default function PlanCalendar() {
               {/* Daily Goal towards July 15 */}
               <div style={{ background: 'linear-gradient(90deg, rgba(212,166,74,0.2), rgba(212,166,74,0.05))', borderLeft: '4px solid var(--color-gold, #d4a64a)', padding: '10px 14px', borderRadius: '0 10px 10px 0' }}>
                 <span style={{ fontSize: '0.82rem', fontWeight: 'bold', color: '#d4a64a', textTransform: 'uppercase' }}>
-                  🚩 {lang === 'ka' ? 'დღის მიზანი 15 ივლისის პიკური ფორმისთვის:' : lang === 'ru' ? 'Цель дня к 15 июля:' : 'Daily Goal for July 15 Peak Form:'}
+                  🚩 {lang === 'ka' ? 'დღის მიზანი 15 ივლისის პიკური ფორმისთვის:' : 'Daily Goal for July 15 Peak Form:'}
                 </span>
                 <p style={{ margin: '4px 0 0 0', fontSize: '0.9rem', color: '#ffffff', fontWeight: '600' }}>
                   {selectedTask.dailyGoal}
@@ -274,6 +390,14 @@ export default function PlanCalendar() {
           )}
         </div>
       )}
+
+      {/* Monthly Exam Modal */}
+      <MonthlyExamModal
+        isOpen={isExamModalOpen}
+        onClose={() => setIsExamModalOpen(false)}
+        initialMonth={activeMonthId}
+        initialGroup={selectedGroup}
+      />
     </div>
   )
 }

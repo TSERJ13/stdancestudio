@@ -815,6 +815,112 @@ export function getDailyLessonTask(dateStr, groupId, lang = 'ka') {
       { time: '30 წთ', text: lang === 'ka' ? `პოპულარული საცეკვაო მოძრაობები: ${figuresText}` : lang === 'ru' ? `Популярные танцевальные движения: ${figuresText}` : `Popular Dance Moves: ${figuresText}` },
       { time: '15 წთ', text: lang === 'ka' ? 'სასიამოვნო მუსიკალური პრაქტიკა & თავისუფალი ცეკვა' : lang === 'ru' ? 'Приятная практика под музыку' : 'Enjoyable Music Practice & Social Dance' }
     ],
-    dailyGoal: goalText
+    dailyGoal: goalText,
+    theoryNotes: getWdsfTheoryNotes(lang === 'ka' ? '✨ Hobby Class — მოყვარულთა საცეკვაო კლასი' : 'Hobby Class', figuresText, lang)
   }
 }
+
+export function getWdsfTheoryNotes(danceName, figuresText, lang = 'ka') {
+  const isWaltz = danceName.includes('Waltz') || danceName.includes('ვალსი') || danceName.includes('Вальс')
+  const isChaCha = danceName.includes('Cha') || danceName.includes('ჩა-ჩა') || danceName.includes('Ча-Ча')
+  const isQuickstep = danceName.includes('Quickstep') || danceName.includes('ქვიქსტეპი') || danceName.includes('Квикстеп')
+  const isJive = danceName.includes('Jive') || danceName.includes('ჯაივი') || danceName.includes('Джайв')
+
+  if (isWaltz) {
+    return {
+      dance: '👑 Slow Waltz (ნელი ვალსი)',
+      hold: lang === 'ka' ? 'ბიჭი: მარცხენა მკლავი 90°-ზე, მარჯვენა ხელი გოგონას მარცხენა ბეჭზე. გოგო: კორპუსის მსუბუქი გადახრა მარცხნივ (Left Stretch).' : lang === 'ru' ? 'Партнер: Рамка 90°, правая рука на лопатке. Партнерша: Легкий растяг влево.' : 'Lead: Left arm 90°, Right hand on Follower left shoulder blade. Follower: Left stretch.',
+      rhythm: lang === 'ka' ? '3/4 ტაქტი (1-2-3). 1-ზე წონის დაწევა (Lowering), 2-3-ზე აწევა (Rise & Sway).' : lang === 'ru' ? '3/4 Размер (1-2-3). Опускание на 1, подъем на 2-3.' : '3/4 Time (1-2-3). Lowering on 1, Rise on 2-3.',
+      alignment: lang === 'ka' ? 'LOD (ცეკვის ხაზი), DW (დიაგონალურად კედლისკენ), DC (დიაგონალურად ცენტრისკენ).' : 'LOD, DW (Diagonal Wall), DC (Diagonal Center).',
+      footwork: lang === 'ka' ? '1: HT (ქუსლი-წვერი), 2: T (წვერი), 3: TH (წვერი-ქუსლი).' : '1: HT (Heel-Toe), 2: T (Toe), 3: TH (Toe-Heel).',
+      checkList: lang === 'ka' ? [
+        '✅ ხერხემლის გამართულობა (Spine Line) და მხრების დაბლა დაჭერა',
+        '✅ გოგონას თავის როტაცია მარცხნივ (Head Turn 15°)',
+        '✅ 1-ელ თვლაზე ქუსლის რბილი კონტაქტი და 2-3-ზე Rise-ის შენარჩუნება',
+        '✅ ჩარჩოს (Frame) სიმტკიცე მოხვევითი ფიგურების დროს'
+      ] : [
+        '✅ Spine vertical alignment & relaxed shoulders',
+        '✅ Follower head position 15° left',
+        '✅ Soft heel contact on 1 and rise maintenance on 2-3',
+        '✅ Frame stability during turning actions'
+      ]
+    }
+  } else if (isChaCha) {
+    return {
+      dance: '💃 Cha-Cha-Cha (ჩა-ჩა-ჩა)',
+      hold: lang === 'ka' ? 'ღია/დახურული ლათინური პოზიცია. ბიჭი და გოგო თვალის კონტაქტში. მუხლების ჩაკეტვა (Knee Lock).' : 'Open/Closed Latin hold. Eye contact. Knee Lock action.',
+      rhythm: lang === 'ka' ? '4/4 ტაქტი (2 - 3 - 4-&-1). 2-3-ზე წონის გადატანა & თეძო, 4-&-1-ზე სწრაფი ჩასე (Chasse).' : '4/4 Time (2 - 3 - 4-&-1). Weight transfer on 2-3, fast Chasse on 4-&-1.',
+      alignment: lang === 'ka' ? 'ადგილზე (Spot) ან LOD-ის გასწვრივ. 90°-იანი როტაცია New York & Hand to Hand-ში.' : 'Spot or along LOD. 90° rotation in New York.',
+      footwork: lang === 'ka' ? 'Ball-Flat (ტაფჩა) 2-3 თვლაზე, Ball-Toe-Ball 4-&-1 ჩასეში.' : 'Ball-Flat on 2-3, Ball-Toe-Ball on 4-&-1 Chasse.',
+      checkList: lang === 'ka' ? [
+        '✅ თეძოს იზოლაცია (Hip Settling) 2 და 3 თვლაზე',
+        '✅ უკანა მუხლის სრული ჩაკეტვა (Straight Back Knee)',
+        '✅ ჩასეს სისწრაფე და რიტმული სიზუსტე 4-&-1',
+        '✅ სცენური ექსპრესია და ღიმილი'
+      ] : [
+        '✅ Hip Settling on counts 2 and 3',
+        '✅ Straight back knee lock',
+        '✅ Chasse speed and rhythm precision 4-&-1',
+        '✅ Stage expression and smile'
+      ]
+    }
+  } else if (isQuickstep) {
+    return {
+      dance: '⚡ Quickstep (ქვიქსტეპი)',
+      hold: lang === 'ka' ? 'მჭიდრო სტანდარტის ჩარჩო. კორპუსის მაღალი აწევა (High Body Lift).' : 'Compact Standard Hold. High Body Lift.',
+      rhythm: lang === 'ka' ? '4/4 ტაქტი (S-S-Q-Q-S). Slow = 2 თვლა, Quick = 1 თვლა.' : '4/4 Time (S-S-Q-Q-S). Slow = 2 beats, Quick = 1 beat.',
+      alignment: lang === 'ka' ? 'LOD, Progressive Chasse-ს დროს Wall-იდან DC-ისკენ.' : 'LOD, Progressive Chasse from Wall to DC.',
+      footwork: lang === 'ka' ? 'SQQSS: HT (Slow), T (Quick), T (Quick), TH (Slow).' : 'SQQSS: HT (Slow), T (Quick), T (Quick), TH (Slow).',
+      checkList: lang === 'ka' ? [
+        '✅ სხეულის სიმსუბუქე და სწრაფი ტემპის დაჭერა',
+        '✅ ჩარჩოს უძრაობა სწრაფი გადაადგილებისას',
+        '✅ Lock Step-ის სისუფთავე',
+        '✅ სუნთქვისა და ენერგიის მართვა'
+      ] : [
+        '✅ Body lightness & tempo control',
+        '✅ Frame stability during fast motion',
+        '✅ Clean Lock Step execution',
+        '✅ Stamina & energy control'
+      ]
+    }
+  } else if (isJive) {
+    return {
+      dance: '🔥 Jive (ჯაივი)',
+      hold: lang === 'ka' ? 'მსუბუქი ლათინური ჩაჭიდება. მოხრილი მუხლები & დაბალი სიმძიმის ცენტრი.' : 'Light Latin hold. Flexed knees & low center of gravity.',
+      rhythm: lang === 'ka' ? '4/4 ტაქტი (1-2 Rock Step, 3-&-4 Chasse left, 5-&-6 Chasse right).' : '4/4 Time (1-2 Rock Step, 3-&-4 Chasse left, 5-&-6 Chasse right).',
+      alignment: lang === 'ka' ? 'ადგილზე და ბიჭის გარშემო 360° როტაციით.' : 'On spot & around Lead 360°.',
+      footwork: lang === 'ka' ? 'Ball-Flat (Rock Step), Ball-Toe-Ball (Chasse).' : 'Ball-Flat (Rock Step), Ball-Toe-Ball (Chasse).',
+      checkList: lang === 'ka' ? [
+        '✅ მუხლების ზამბაროსებრი მუშაობა (Spring Action)',
+        '✅ Rock Step-ზე წონის არ გადაგდება უკან',
+        '✅ Chasse-ს კომპაქტურობა და სიჩქარე',
+        '✅ მაღალი ენერგია და როკ-ენ-როლის დინამიკა'
+      ] : [
+        '✅ Springy knee action',
+        '✅ Controlling weight on Rock Step',
+        '✅ Compact fast chasses',
+        '✅ High Rock-n-Roll energy'
+      ]
+    }
+  }
+
+  return {
+    dance: danceName,
+    hold: lang === 'ka' ? 'სტანდარტული WDSF პოზიცია & ჩარჩოს (Frame) სტაბილურობა.' : 'Standard WDSF Hold & Frame Stability.',
+    rhythm: lang === 'ka' ? 'ზუსტი მუსიკალური დათვლა & რიტმული აქცენტები.' : 'Precise musical timing & rhythmic accents.',
+    alignment: lang === 'ka' ? 'LOD (ცეკვის ხაზი) & დარბაზის ნავიგაცია.' : 'LOD & Floor Navigation.',
+    footwork: lang === 'ka' ? 'სწორი ტერფის კონტაქტი (Heel / Toe / Flat).' : 'Correct foot contact (Heel / Toe / Flat).',
+    checkList: lang === 'ka' ? [
+      '✅ Posture Check & ხერხემლის ვერტიკალი',
+      '✅ რიტმული დათვლის სიზუსტე',
+      '✅ ტერფის მუშაობის კონტროლი',
+      '✅ საცენო არტისტისტულობა'
+    ] : [
+      '✅ Posture & Spine Alignment',
+      '✅ Timing accuracy',
+      '✅ Footwork control',
+      '✅ Stage artistry'
+    ]
+  }
+}
+
