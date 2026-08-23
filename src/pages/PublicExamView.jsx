@@ -11,7 +11,6 @@ export default function PublicExamView() {
 
   const urlGroup = searchParams.get('group') || 'baby'
   const urlMonth = searchParams.get('month') || '2026-08'
-  const isTeacherViewParam = searchParams.get('preview') === 'true'
 
   const [studentName, setStudentName] = useState('')
   const [selectedGroup, setSelectedGroup] = useState(urlGroup)
@@ -19,7 +18,7 @@ export default function PublicExamView() {
   const [answers, setAnswers] = useState({})
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [scoreResult, setScoreResult] = useState(null)
-  const [isTeacherMode, setIsTeacherMode] = useState(isTeacherViewParam)
+  const [isTeacherMode, setIsTeacherMode] = useState(false)
   const [copiedLink, setCopiedLink] = useState(false)
 
   useEffect(() => {

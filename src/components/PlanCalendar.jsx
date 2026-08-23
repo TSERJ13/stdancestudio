@@ -87,7 +87,7 @@ export default function PlanCalendar() {
         </button>
 
         <a
-          href={`/exam?group=${selectedGroup}&month=${activeMonthId}&preview=true`}
+          href={`/exam?group=${selectedGroup}&month=${activeMonthId}`}
           target="_blank"
           rel="noopener noreferrer"
           className="btn btn--gold"
