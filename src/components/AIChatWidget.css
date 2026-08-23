@@ -5,8 +5,8 @@
 /* 1. FLOATING LUXURY OBSIDIAN & GOLD BOT BUTTON */
 .std-bot-widget-container {
   position: fixed;
-  bottom: 2rem;
-  right: 2rem;
+  bottom: 7.2rem;
+  right: 2.5rem;
   z-index: 999999;
   display: flex;
   flex-direction: column;
@@ -737,10 +737,10 @@ body.mobile-menu-open .std-bot-widget-container {
 /* 4. MOBILE FULL-SCREEN RESPONSIVE STYLING (< 768px) */
 @media (max-width: 768px) {
   .std-bot-widget-container {
-    bottom: 1.2rem !important;
-    right: 1.2rem !important;
-    left: auto !important;
-    align-items: flex-end !important;
+    bottom: 1.5rem !important;
+    left: 1.5rem !important;
+    right: auto !important;
+    align-items: flex-start !important;
   }
 
   .std-bot-overlay {

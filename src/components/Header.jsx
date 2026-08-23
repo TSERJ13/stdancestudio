@@ -63,6 +63,16 @@ const FloatingLangSwitcher = () => {
       >
         RU
       </button>
+      <button 
+        onClick={(e) => {
+          e.stopPropagation()
+          window.dispatchEvent(new CustomEvent('open-ai-chat'))
+        }} 
+        title="AI Chat"
+        style={{ cursor: 'pointer', fontSize: '1rem', padding: '0.6rem 0.8rem' }}
+      >
+        🤖
+      </button>
     </div>
   )
 }
