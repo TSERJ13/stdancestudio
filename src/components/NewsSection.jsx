@@ -1,6 +1,7 @@
 import React from 'react'
 import { useLanguage } from '../context/LanguageContext'
 import { translations } from '../data/translations'
+import { renderTextWithTelegramLinks } from '../utils/linkify'
 import './NewsSection.css'
 
 export default function NewsSection() {
@@ -83,7 +84,7 @@ export default function NewsSection() {
                     {rule.points && (
                       <ul>
                         {rule.points.map((pt, pIdx) => (
-                          <li key={pIdx}>{pt}</li>
+                          <li key={pIdx}>{renderTextWithTelegramLinks(pt)}</li>
                         ))}
                       </ul>
                     )}

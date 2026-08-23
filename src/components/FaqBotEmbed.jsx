@@ -113,7 +113,7 @@ User Question: ${query}`
       <div className="faq-bot-embed__body" ref={chatBodyRef}>
         {messages.map((msg, idx) => (
           <div key={idx} className={`faq-chat-msg ${msg.sender}`}>
-            <div className="faq-msg-bubble">{msg.text}</div>
+            <div className="faq-msg-bubble">{renderTextWithTelegramLinks(msg.text)}</div>
           </div>
         ))}
         {loading && (

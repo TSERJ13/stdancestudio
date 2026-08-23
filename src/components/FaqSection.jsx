@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { useLanguage } from '../context/LanguageContext'
 import { translations } from '../data/translations'
+import { renderTextWithTelegramLinks } from '../utils/linkify'
 import './FaqSection.css'
 
 export default function FaqSection() {
@@ -50,7 +51,7 @@ export default function FaqSection() {
 
                 <div className="faq-answer">
                   <div className="faq-answer__inner">
-                    {item.a}
+                    {renderTextWithTelegramLinks(item.a)}
                   </div>
                 </div>
               </div>

@@ -4,6 +4,7 @@ import { translations } from '../data/translations'
 import { submitRegistration } from '../data/classcore'
 import { studioKnowledgeBase } from '../data/aiKnowledge'
 import { trackAnalyticsEvent } from '../utils/analytics'
+import { renderTextWithTelegramLinks } from '../utils/linkify'
 import './AIChatWidget.css'
 
 const GEMINI_KEY = atob('QVEuQWI4Uk42SnhSZVRtaWZfOEFCSHBnUWhLRS11dmhlUG5YMTdYSkhBaTZNQjZQQm9ZUg==')
@@ -873,7 +874,7 @@ USER QUESTION: ${query}`
                 <div className="std-bot-messages-viewport">
                   {messages.map((m, i) => (
                     <div key={i} className={`std-bot-msg-row ${m.role}`}>
-                      <div className="std-bot-msg-bubble">{m.text}</div>
+                      <div className="std-bot-msg-bubble">{renderTextWithTelegramLinks(m.text)}</div>
                     </div>
                   ))}
                   {isTyping && (
@@ -891,9 +892,6 @@ USER QUESTION: ${query}`
                   <div className="std-bot-pills-row">
                     <button className="std-bot-pill" onClick={() => handleSend(activeTrans.pillPrice)}>
                       {activeTrans.pillPrice}
-                    </button>
-                    <button className="std-bot-pill" onClick={() => handleSend(activeTrans.pillSyllabus)}>
-                      {activeTrans.pillSyllabus}
                     </button>
                     <button className="std-bot-pill" onClick={() => handleSend(activeTrans.pillRules)}>
                       {activeTrans.pillRules}
