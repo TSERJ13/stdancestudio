@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { User, ShieldCheck, CheckCircle2, IdCard, LogIn, KeyRound, Loader2, Sparkles, X, Trophy, Flame, PlayCircle, Crown, Users, Radio, RefreshCw, BarChart2, Plus, Minus, Edit2, Trash2, Search, Check, AlertCircle, Save } from 'lucide-react';
-import { fetchStudioData, getStudentName, fetchCloudLeaderboard, submitFormAnswer, adminUpdatePlayerScore } from '../../data/classcore';
+import { fetchStudioData, getStudentName, fetchCloudLeaderboard, submitFormAnswer, adminUpdatePlayerScore, updateWinnerPrizeDeliveryStatus } from '../../data/classcore';
 
 const STUDENT_ID_MAP = {
   '101': 'სერგო წივწივაძე (Head Coach)',
@@ -138,9 +138,9 @@ export default function LoginModal({ isOpen, onClose, currentUser, onLogin, lang
 
   const [claimToast, setClaimToast] = useState(null);
 
-  const handleTogglePrizeClaim = (playerId, playerName) => {
+  const handleTogglePrizeClaim = async (playerId, playerName) => {
+    const nextState = !claimedPrizes[playerId];
     setClaimedPrizes(prev => {
-      const nextState = !prev[playerId];
       const updated = {
         ...prev,
         [playerId]: nextState,
@@ -148,8 +148,16 @@ export default function LoginModal({ isOpen, onClose, currentUser, onLogin, lang
         [playerName.toLowerCase()]: nextState
       };
       localStorage.setItem('dancing_bricks_claimed_prizes', JSON.stringify(updated));
-      setClaimToast(nextState ? `✅ ${playerName}-ის საჩუქარი გაცემულად მოინიშნა!` : `🎁 ${playerName}-ის საჩუქარი გაუცემელზე დაბრუნდა.`);
-      setTimeout(() => setClaimToast(null), 3500);
+      return updated;
+    });
+
+    setClaimToast(nextState ? `✅ ${playerName}-ის საჩუქარი გაცემულად მოინიშნა!` : `⏳ ${playerName}-ის საჩუქარი მოლოდინში დაბრუნდა.`);
+    setTimeout(() => setClaimToast(null), 3500);
+
+    // Sync delivery status with Supabase cloud
+    await updateWinnerPrizeDeliveryStatus('2026-09', nextState);
+    window.dispatchEvent(new CustomEvent('dancing_bricks_delivery_updated', { detail: { monthKey: '2026-09', delivered: nextState } }));
+    window.dispatchEvent(new CustomEvent('dancing_bricks_claim_updated', { detail: { playerId, playerName, isClaimed: nextState } }));
 
       // Auto-generate voucher in user prizes list if claimed
       if (nextState) {
@@ -258,9 +266,6 @@ export default function LoginModal({ isOpen, onClose, currentUser, onLogin, lang
       try {
         window.dispatchEvent(new Event('dancing_bricks_claim_updated'));
       } catch (e) {}
-
-      return updated;
-    });
   };
   const [showAdminDashboard, setShowAdminDashboard] = useState(false);
   const [adminLoading, setAdminLoading] = useState(false);

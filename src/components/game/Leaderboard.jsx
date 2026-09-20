@@ -1,13 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { Trophy, Gift, Ticket, History, Copy, Check, Clock, Crown } from 'lucide-react';
+import { Trophy, Gift, Ticket, History, Copy, Check, Clock, Crown, Sparkles, Loader2 } from 'lucide-react';
 import { useLanguage } from '../../context/LanguageContext';
-import SpinModal, { getCurrentDrawMonthKey } from './SpinModal';
-import { fetchCloudLeaderboard, syncCloudScore, fetchCloudWinnersHistory } from '../../data/classcore';
+import SpinModal, { getCurrentDrawMonthKey, PRIZES } from './SpinModal';
+import { fetchCloudLeaderboard, syncCloudScore, fetchCloudWinnersHistory, updateWinnerPrizeDeliveryStatus } from '../../data/classcore';
 
 const TEST_LEADERBOARD = [];
 
 const WINNERS_HISTORY = [];
+
+function getLocalizedPrizeName(prizeName, lang) {
+  if (!prizeName) return '';
+  const found = PRIZES.find(p =>
+    p.name.toLowerCase() === prizeName.toLowerCase() ||
+    p.nameEn.toLowerCase() === prizeName.toLowerCase() ||
+    p.nameRu.toLowerCase() === prizeName.toLowerCase() ||
+    prizeName.toLowerCase().includes(p.name.toLowerCase())
+  );
+  if (!found) return prizeName;
+  if (lang === 'ru') return found.nameRu || found.name;
+  if (lang === 'en') return found.nameEn || found.name;
+  return found.name;
+}
 
 const lbTranslations = {
   ka: {
@@ -21,7 +35,10 @@ const lbTranslations = {
     highScoreLbl: 'ჯამური ქულა: ',
     collectBtn: 'პრიზი',
     activeBadge: 'აქტიური',
-    deliveredBadge: 'გადაცემული',
+    pendingBadge: 'მოლოდინში',
+    deliveredBadge: 'გადაცემულია',
+    markDeliveredBtn: 'გადაცემა',
+    markPendingBtn: 'მოლოდინში დაბრუნება',
     emptyVouchers: 'დაიკავე #1 ადგილი 20 რიცხვში და დაატრიალე ST Dance-ის პრიზები!',
     copyCode: 'კოდის კოპირება',
     copiedText: 'დაკოპირდა!',
@@ -41,7 +58,10 @@ const lbTranslations = {
     highScoreLbl: 'Total Score: ',
     collectBtn: 'Collect',
     activeBadge: 'ACTIVE',
+    pendingBadge: 'Pending',
     deliveredBadge: 'Delivered',
+    markDeliveredBtn: 'Mark Delivered',
+    markPendingBtn: 'Set Pending',
     emptyVouchers: 'Secure #1 rank on the 20th to spin exclusive ST Dance prizes!',
     copyCode: 'Copy Code',
     copiedText: 'Copied!',
@@ -61,7 +81,10 @@ const lbTranslations = {
     highScoreLbl: 'Общ. счет: ',
     collectBtn: 'Забрать',
     activeBadge: 'АКТИВЕН',
+    pendingBadge: 'В ожидании',
     deliveredBadge: 'Выдано',
+    markDeliveredBtn: 'Выдать',
+    markPendingBtn: 'В ожидание',
     emptyVouchers: 'Займите 1-е место 20-го числа и выиграйте призы ST Dance!',
     copyCode: 'Скопировать код',
     copiedText: 'Скопировано!',
@@ -316,6 +339,8 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
         } else {
           timeLeftText = `🎉 Open! (${remH}h)`;
         }
+        setCountdownState({ isUnlocked, timeLeftText, monthName: drawNamesKa[activeDrawMonth], drawName: drawNamesKa[activeDrawMonth], remHours: remH });
+        return;
       } else {
         // Active draw ended, target next month 20th 22:00
         isUnlocked = false;
@@ -364,13 +389,35 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
         timeLeftText = timeStr;
       }
 
-      setCountdownState({ isUnlocked, timeLeftText, monthName, drawName });
+      setCountdownState({ isUnlocked, timeLeftText, monthName, drawName, remHours: 0 });
     };
     
     updateCountdown();
     const interval = setInterval(updateCountdown, 1000);
     return () => clearInterval(interval);
   }, [lang]);
+
+  const [updatingDeliveryMonth, setUpdatingDeliveryMonth] = useState(null);
+
+  const isUserAdmin = Boolean(
+    (typeof localStorage !== 'undefined' && localStorage.getItem('dancing_bricks_is_admin') === 'true') ||
+    userId === '99999' ||
+    userId === 'TG-stdancestudio' ||
+    String(userId || '').toLowerCase() === 'tg-stdancestudio'
+  );
+
+  const handleToggleDelivery = async (monthKey, targetStatus) => {
+    setUpdatingDeliveryMonth(monthKey);
+    const ok = await updateWinnerPrizeDeliveryStatus(monthKey, targetStatus);
+    if (ok) {
+      const updated = await fetchCloudWinnersHistory();
+      if (Array.isArray(updated) && updated.length > 0) {
+        setCloudWinnersHistory(updated);
+      }
+      window.dispatchEvent(new CustomEvent('dancing_bricks_delivery_updated', { detail: { monthKey, delivered: targetStatus } }));
+    }
+    setUpdatingDeliveryMonth(null);
+  };
 
   const [claimedPrizesMap, setClaimedPrizesMap] = useState(() => {
     try {
@@ -470,40 +517,63 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
 
   return (
     <div className="leaderboard-container glass animate-in">
-      <div className="lb-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-        <div className="lb-title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <Trophy size={20} color="#d4a64a" />
-          <h2 style={{ fontSize: '15px', margin: 0, fontWeight: '900', color: 'white' }}>{t.title}</h2>
+      <div className="lb-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', gap: '8px' }}>
+        <div className="lb-title" style={{ display: 'flex', alignItems: 'center', gap: '6px', minWidth: 0, flex: 1 }}>
+          <Trophy size={18} color="#d4a64a" style={{ flexShrink: 0 }} />
+          <h2 style={{ fontSize: '14px', margin: 0, fontWeight: '900', color: 'white', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{t.title}</h2>
           {onOpenAdmin && (
             <button
               onClick={onOpenAdmin}
               style={{
                 background: 'rgba(212,166,74,0.15)',
                 border: '1px solid rgba(212,166,74,0.4)',
-                borderRadius: '8px',
+                borderRadius: '7px',
                 color: '#F0D9A8',
-                fontSize: '10.5px',
+                fontSize: '10px',
                 fontWeight: '800',
-                padding: '3px 8px',
+                padding: '2px 7px',
                 cursor: 'pointer',
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: '4px'
+                gap: '3px',
+                flexShrink: 0
               }}
               title="ქულების მართვა & ადმინ პანელი"
             >
-              <Crown size={12} color="#d4a64a" />
+              <Crown size={11} color="#d4a64a" />
               <span>ადმინი</span>
             </button>
           )}
         </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
-          <span style={{ fontSize: '12px', color: '#F0D9A8', fontWeight: '900', letterSpacing: '0.5px' }}>
-            <Clock size={10} style={{ display: 'inline', marginRight: '4px', verticalAlign: 'middle', color: '#d4a64a', marginTop: '-2px' }} />
-            {countdownState.timeLeftText || '00:00:00'}
-          </span>
-          <span style={{ fontSize: '9px', color: '#a1a1aa', fontWeight: '600', marginTop: '2px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', flexShrink: 0 }}>
+          {countdownState.isUnlocked ? (
+            <div
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '4px',
+                padding: '3px 8px',
+                borderRadius: '10px',
+                background: 'rgba(34, 197, 94, 0.15)',
+                border: '1px solid rgba(34, 197, 94, 0.4)',
+                color: '#4ADE80',
+                fontSize: '11px',
+                fontWeight: '900',
+                whiteSpace: 'nowrap',
+                boxShadow: '0 0 10px rgba(34, 197, 94, 0.2)'
+              }}
+            >
+              <Sparkles size={11} color="#4ADE80" />
+              <span>{lang === 'ka' ? `გახსნილია · ${countdownState.remHours || 47}სთ` : lang === 'ru' ? `Открыт · ${countdownState.remHours || 47}ч` : `Open · ${countdownState.remHours || 47}h`}</span>
+            </div>
+          ) : (
+            <span style={{ fontSize: '11.5px', color: '#F0D9A8', fontWeight: '900', letterSpacing: '0.3px', whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
+              <Clock size={11} color="#d4a64a" />
+              {countdownState.timeLeftText || '00:00:00'}
+            </span>
+          )}
+          <span style={{ fontSize: '9px', color: '#a1a1aa', fontWeight: '700', marginTop: '2px', whiteSpace: 'nowrap' }}>
             {lang === 'ka' ? `${countdownState.drawName} გათამაშება` : lang === 'ru' ? `Розыгрыш ${countdownState.drawName}` : `${countdownState.drawName} Draw`}
           </span>
         </div>
@@ -852,20 +922,16 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
 
       {activeTab === 'history' && (() => {
         let historyList = [];
-        try {
-          const raw = localStorage.getItem('dancing_bricks_winners_history');
-          const customHist = raw ? JSON.parse(raw) : [];
-          if (Array.isArray(customHist)) {
-            historyList = [...customHist];
-          }
-        } catch (e) {}
-
         if (cloudWinnersHistory && cloudWinnersHistory.length > 0) {
-          cloudWinnersHistory.forEach(ch => {
-            if (!historyList.some(lh => (lh.monthKey && lh.monthKey === ch.monthKey) || (lh.code && lh.code === ch.code))) {
-              historyList.push(ch);
+          historyList = [...cloudWinnersHistory];
+        } else {
+          try {
+            const raw = localStorage.getItem('dancing_bricks_winners_history');
+            const customHist = raw ? JSON.parse(raw) : [];
+            if (Array.isArray(customHist)) {
+              historyList = [...customHist];
             }
-          });
+          } catch (e) {}
         }
 
         if (historyList.length === 0) {
@@ -886,32 +952,88 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
 
         return (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            {historyList.map((h, idx) => (
-              <div
-                key={idx}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  padding: '12px 16px',
-                  background: 'rgba(255,255,255,0.03)',
-                  borderRadius: '12px',
-                  border: '1px solid rgba(255,255,255,0.06)'
-                }}
-              >
-                <div>
-                  <div style={{ fontSize: '11px', color: '#a1a1aa', fontWeight: '700' }}>{h.month}</div>
-                  <div style={{ fontSize: '14px', fontWeight: '900', color: 'white' }}>{h.winner}</div>
-                  <div style={{ fontSize: '12px', color: '#d4a64a', fontWeight: '800' }}>{t.prizeLbl}{h.prize}</div>
+            {historyList.map((h, idx) => {
+              const isDelivered = Boolean(h.delivered);
+              const mKey = h.monthKey || '2026-09';
+              const isUpdatingThis = updatingDeliveryMonth === mKey || updatingDeliveryMonth === h.code;
+
+              return (
+                <div
+                  key={idx}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    padding: '12px 14px',
+                    background: 'rgba(255,255,255,0.03)',
+                    borderRadius: '14px',
+                    border: '1px solid rgba(255,255,255,0.06)',
+                    gap: '10px'
+                  }}
+                >
+                  <div style={{ minWidth: 0, flex: 1 }}>
+                    <div style={{ fontSize: '11px', color: '#a1a1aa', fontWeight: '700' }}>{h.month}</div>
+                    <div style={{ fontSize: '14px', fontWeight: '900', color: 'white', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{h.winner}</div>
+                    <div style={{ fontSize: '12px', color: '#d4a64a', fontWeight: '800' }}>
+                      {t.prizeLbl}{getLocalizedPrizeName(h.prize, lang)}
+                    </div>
+                  </div>
+
+                  <div style={{ textAlign: 'right', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '4px', flexShrink: 0 }}>
+                    <span style={{
+                      fontSize: '11px',
+                      color: isDelivered ? '#4ADE80' : '#FBBF24',
+                      fontWeight: '800',
+                      background: isDelivered ? 'rgba(34,197,94,0.15)' : 'rgba(245,158,11,0.15)',
+                      border: isDelivered ? '1px solid rgba(34,197,94,0.35)' : '1px solid rgba(245,158,11,0.35)',
+                      padding: '3px 8px',
+                      borderRadius: '8px',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '4px',
+                      whiteSpace: 'nowrap'
+                    }}>
+                      {isDelivered ? `✅ ${t.deliveredBadge}` : `⏳ ${t.pendingBadge}`}
+                    </span>
+
+                    {/* Admin Direct Action Button */}
+                    {isUserAdmin && (
+                      <button
+                        type="button"
+                        disabled={isUpdatingThis}
+                        onClick={() => handleToggleDelivery(mKey, !isDelivered)}
+                        style={{
+                          padding: '3px 8px',
+                          borderRadius: '6px',
+                          background: isDelivered ? 'rgba(255,255,255,0.06)' : 'linear-gradient(135deg, #22c55e, #16a34a)',
+                          border: isDelivered ? '1px solid rgba(255,255,255,0.15)' : 'none',
+                          color: isDelivered ? '#a1a1aa' : '#ffffff',
+                          fontSize: '10px',
+                          fontWeight: '900',
+                          cursor: 'pointer',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '3px',
+                          whiteSpace: 'nowrap',
+                          boxShadow: isDelivered ? 'none' : '0 2px 6px rgba(34,197,94,0.3)'
+                        }}
+                        title={isDelivered ? 'მოლოდინში დაბრუნება' : 'მონიშნე გადაცემულად'}
+                      >
+                        {isUpdatingThis ? (
+                          <Loader2 size={11} className="animate-spin" />
+                        ) : isDelivered ? (
+                          <>↩ {t.markPendingBtn}</>
+                        ) : (
+                          <>🎁 {t.markDeliveredBtn}</>
+                        )}
+                      </button>
+                    )}
+
+                    <div style={{ fontSize: '10px', color: '#71717a', marginTop: '1px', fontVariantNumeric: 'tabular-nums' }}>{h.code}</div>
+                  </div>
                 </div>
-                <div style={{ textAlign: 'right' }}>
-                  <span style={{ fontSize: '11px', color: '#22c55e', fontWeight: '800', background: 'rgba(34,197,94,0.15)', padding: '2px 8px', borderRadius: '8px' }}>
-                    ✅ {t.deliveredBadge}
-                  </span>
-                  <div style={{ fontSize: '10px', color: '#71717a', marginTop: '4px' }}>{h.code}</div>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         );
       })()}

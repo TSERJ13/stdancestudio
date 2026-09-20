@@ -9,13 +9,14 @@ const translations = {
     modalSub: 'ოფიციალური ყოველთვიური გათამაშება',
     winnerBadge: '#1 ადგილი & ჩემპიონი',
     scoreLbl: 'გამარჯვებული ქულა:',
+    ptsUnit: 'ქულა',
     prizeWon: '🎁 მოგებული საჩუქარი:',
     notSpunYet: '👑 გამარჯვებული მალე დაატრიალებს ბორბალს და გამოვლინდება მოგებული პრიზი!',
     youAreWinnerTitle: '🎉 გილოცავთ! თქვენ ხართ #1 გამარჯვებული!',
     youAreWinnerSub: 'დაატრიალეთ ბორბალი ახლავე და მიიღეთ თქვენი ექსკლუზიური პრიზი!',
     spinNowBtn: '🎰 დაატრიალე პრიზი ახლავე',
     voucherCodeLbl: 'ვაუჩერის კოდი:',
-    startNextMonthBtn: 'დაიწყე შემდეგი თვის გათამაშება',
+    startNextMonthBtn: 'ახალი სეზონის დაწყება',
     close: 'დახურვა'
   },
   en: {
@@ -23,13 +24,14 @@ const translations = {
     modalSub: 'Official Monthly Draw Results',
     winnerBadge: '#1 Rank & Champion',
     scoreLbl: 'Winning Score:',
+    ptsUnit: 'pts',
     prizeWon: '🎁 Won Prize:',
     notSpunYet: '👑 The winner will spin the wheel soon to claim their prize!',
     youAreWinnerTitle: '🎉 Congratulations! You are the #1 Winner!',
     youAreWinnerSub: 'Spin the wheel now to collect your exclusive prize!',
     spinNowBtn: '🎰 Spin for Prize Now',
     voucherCodeLbl: 'Voucher Code:',
-    startNextMonthBtn: 'Start Next Month\'s Competition',
+    startNextMonthBtn: 'Start New Season',
     close: 'Close'
   },
   ru: {
@@ -37,13 +39,14 @@ const translations = {
     modalSub: 'Официальные результаты розыгрыша',
     winnerBadge: '#1 Место и Чемпион',
     scoreLbl: 'Победный счет:',
+    ptsUnit: 'очков',
     prizeWon: '🎁 Выигранный приз:',
     notSpunYet: '👑 Победитель скоро прокрутит колесо и определит свой приз!',
     youAreWinnerTitle: '🎉 Поздравляем! Вы победитель #1!',
     youAreWinnerSub: 'Вращайте колесо сейчас и заберите эксклюзивный приз!',
     spinNowBtn: '🎰 Вращать колесо сейчас',
     voucherCodeLbl: 'Код ваучера:',
-    startNextMonthBtn: 'Начать розыгрыш следующего месяца',
+    startNextMonthBtn: 'Начать новый сезон',
     close: 'Закрыть'
   }
 };
@@ -57,6 +60,20 @@ function getPrizeImage(prizeName) {
     prizeName.toLowerCase().includes(p.name.toLowerCase())
   );
   return found ? found.img : '/images/prizes/water_bottle.png';
+}
+
+function getLocalizedPrize(prizeName, lang) {
+  if (!prizeName) return '';
+  const found = PRIZES.find(p =>
+    p.name.toLowerCase() === prizeName.toLowerCase() ||
+    p.nameEn.toLowerCase() === prizeName.toLowerCase() ||
+    p.nameRu.toLowerCase() === prizeName.toLowerCase() ||
+    prizeName.toLowerCase().includes(p.name.toLowerCase())
+  );
+  if (!found) return prizeName;
+  if (lang === 'ru') return found.nameRu || found.name;
+  if (lang === 'en') return found.nameEn || found.name;
+  return found.name;
 }
 
 export default function MonthlyWinnerModal({
@@ -121,7 +138,7 @@ export default function MonthlyWinnerModal({
             style={{ height: '36px', width: 'auto', objectFit: 'contain' }}
           />
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', background: 'rgba(212,166,74,0.16)', border: '1px solid rgba(212,166,74,0.4)', padding: '3px 12px', borderRadius: '12px', color: '#F0D9A8', fontSize: '11px', fontWeight: '800' }}>
-            <Sparkles size={12} color="#FFD700" /> {drawInfo?.monthName || '20 სექტემბერი'}
+            <Sparkles size={12} color="#FFD700" /> {drawInfo?.monthName || (lang === 'ka' ? '20 სექტემბერი' : lang === 'ru' ? '20 Сентября' : 'Sept 20')}
           </div>
         </div>
 
@@ -170,7 +187,7 @@ export default function MonthlyWinnerModal({
             {t.winnerBadge}
           </span>
           <div style={{ fontSize: '12px', color: '#d4a64a', fontWeight: '800' }}>
-            {t.scoreLbl} <strong style={{ color: '#F0D9A8', fontSize: '14px' }}>{(winner.score || 0).toLocaleString()}</strong> ქულა
+            {t.scoreLbl} <strong style={{ color: '#F0D9A8', fontSize: '14px' }}>{(winner.score || 0).toLocaleString()}</strong> {t.ptsUnit}
           </div>
         </div>
 
@@ -195,7 +212,7 @@ export default function MonthlyWinnerModal({
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{ fontSize: '10.5px', color: '#a1a1aa', fontWeight: '700' }}>{t.prizeWon}</div>
               <div style={{ fontSize: '14px', fontWeight: '900', color: '#F0D9A8', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                {drawInfo.prizeName}
+                {getLocalizedPrize(drawInfo.prizeName, lang)}
               </div>
               {drawInfo.voucherCode && (
                 <div style={{ fontSize: '11px', color: '#4ADE80', fontWeight: '800', display: 'flex', alignItems: 'center', gap: '4px', marginTop: '2px' }}>

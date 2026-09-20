@@ -362,10 +362,17 @@ export default function PrizesPage() {
                   <span>{w.month || (lang === 'ka' ? 'გათამაშება' : lang === 'ru' ? 'Розыгрыш' : 'Draw')}</span>
                 </div>
 
-                <span style={{ fontSize: '10px', color: '#4ADE80', background: 'rgba(34,197,94,0.18)', border: '1px solid #22c55e', padding: '3px 8px', borderRadius: '8px', fontWeight: '900', display: 'inline-flex', alignItems: 'center', gap: '4px', whiteSpace: 'nowrap' }}>
-                  <CheckCircle2 size={11} color="#4ADE80" />
-                  {lang === 'ka' ? 'გადაცემულია' : lang === 'ru' ? 'Выдано' : 'Delivered'}
-                </span>
+                {w.delivered ? (
+                  <span style={{ fontSize: '10px', color: '#4ADE80', background: 'rgba(34,197,94,0.18)', border: '1px solid #22c55e', padding: '3px 8px', borderRadius: '8px', fontWeight: '900', display: 'inline-flex', alignItems: 'center', gap: '4px', whiteSpace: 'nowrap' }}>
+                    <CheckCircle2 size={11} color="#4ADE80" />
+                    {lang === 'ka' ? 'გადაცემულია' : lang === 'ru' ? 'Выдано' : 'Delivered'}
+                  </span>
+                ) : (
+                  <span style={{ fontSize: '10px', color: '#FBBF24', background: 'rgba(245,158,11,0.18)', border: '1px solid rgba(245,158,11,0.35)', padding: '3px 8px', borderRadius: '8px', fontWeight: '900', display: 'inline-flex', alignItems: 'center', gap: '4px', whiteSpace: 'nowrap' }}>
+                    <Clock size={11} color="#FBBF24" />
+                    {lang === 'ka' ? 'მოლოდინში' : lang === 'ru' ? 'В ожидании' : 'Pending'}
+                  </span>
+                )}
               </div>
 
               {/* Winner Name & Score Row */}

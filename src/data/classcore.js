@@ -625,14 +625,20 @@ export async function fetchCloudWinnersHistory() {
     const list = await getRes.json();
     if (!list || list.length === 0) return [];
     const staffData = list[0].staff_data || {};
-
-    if (Array.isArray(staffData.game_winners_history) && staffData.game_winners_history.length > 0) {
-      return staffData.game_winners_history;
-    }
-
     const monthlyDraws = staffData.monthly_draws || {};
     const monthNames = ["იანვარი", "თებერვალი", "მარტი", "აპრილი", "მაისი", "ივნისი", "ივლისი", "აგვისტო", "სექტემბერი", "ოქტომბერი", "ნოემბერი", "დეკემბერი"];
-    
+
+    if (Array.isArray(staffData.game_winners_history) && staffData.game_winners_history.length > 0) {
+      return staffData.game_winners_history.map(h => {
+        const mDraw = (h.monthKey && monthlyDraws[h.monthKey]) || {};
+        return {
+          ...h,
+          delivered: Boolean(h.delivered || mDraw.delivered),
+          deliveredAt: h.deliveredAt || mDraw.deliveredAt || null
+        };
+      });
+    }
+
     return Object.entries(monthlyDraws).map(([monthKey, draw]) => {
       const [y, m] = monthKey.split('-');
       const mIdx = Number(m) - 1;
@@ -642,12 +648,89 @@ export async function fetchCloudWinnersHistory() {
         monthKey,
         winner: draw.winnerName,
         prize: draw.prizeName,
-        code: draw.voucherCode
+        code: draw.voucherCode,
+        delivered: Boolean(draw.delivered),
+        deliveredAt: draw.deliveredAt || null
       };
     });
   } catch (e) {
     console.warn('Failed to fetch cloud winners history:', e);
     return [];
+  }
+}
+
+/**
+ * Update winner prize delivery status in cloud
+ */
+export async function updateWinnerPrizeDeliveryStatus(monthKey, isDelivered) {
+  try {
+    const settingsUrl = `${SUPABASE_URL}/rest/v1/studio_settings?studio_slug=eq.${STUDIO_SLUG}`;
+    const getRes = await fetch(settingsUrl, {
+      headers: {
+        'apikey': ANON_KEY,
+        'Authorization': `Bearer ${ANON_KEY}`
+      }
+    });
+    if (!getRes.ok) return false;
+    const list = await getRes.json();
+    if (!list || list.length === 0) return false;
+    const settings = list[0];
+    const staffData = settings.staff_data || {};
+    const monthlyDraws = { ...(staffData.monthly_draws || {}) };
+    const existingHistory = Array.isArray(staffData.game_winners_history) ? [...staffData.game_winners_history] : [];
+
+    if (monthlyDraws[monthKey]) {
+      monthlyDraws[monthKey] = {
+        ...monthlyDraws[monthKey],
+        delivered: isDelivered,
+        deliveredAt: isDelivered ? new Date().toISOString() : null
+      };
+    }
+
+    const updatedHistory = existingHistory.map(h => {
+      if (h.monthKey === monthKey || (h.code && monthlyDraws[monthKey]?.voucherCode && h.code === monthlyDraws[monthKey]?.voucherCode)) {
+        return {
+          ...h,
+          delivered: isDelivered,
+          deliveredAt: isDelivered ? new Date().toISOString() : null
+        };
+      }
+      return h;
+    });
+
+    const updatedStaffData = {
+      ...staffData,
+      monthly_draws: monthlyDraws,
+      game_winners_history: updatedHistory
+    };
+
+    const patchRes = await fetch(`${SUPABASE_URL}/rest/v1/studio_settings?studio_slug=eq.${STUDIO_SLUG}`, {
+      method: 'PATCH',
+      headers: {
+        'apikey': ANON_KEY,
+        'Authorization': `Bearer ${ANON_KEY}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ staff_data: updatedStaffData })
+    });
+
+    if (!patchRes.ok) return false;
+
+    try {
+      localStorage.setItem('dancing_bricks_winners_history', JSON.stringify(updatedHistory));
+      const rawClaimed = localStorage.getItem('dancing_bricks_claimed_prizes');
+      const claimedMap = rawClaimed ? JSON.parse(rawClaimed) : {};
+      const winnerName = monthlyDraws[monthKey]?.winnerName;
+      if (winnerName) {
+        claimedMap[winnerName] = isDelivered;
+      }
+      localStorage.setItem('dancing_bricks_claimed_prizes', JSON.stringify(claimedMap));
+    } catch (e) {}
+
+    return true;
+  } catch (e) {
+    console.warn('Failed to update winner prize delivery status:', e);
+    return false;
   }
 }
 
