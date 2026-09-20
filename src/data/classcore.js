@@ -343,6 +343,31 @@ export async function fetchCloudLeaderboard() {
       });
     }
 
+    if (staffData.active_season_key && typeof localStorage !== 'undefined') {
+      const storedSeasonKey = localStorage.getItem('dancing_bricks_active_season_key');
+      if (storedSeasonKey !== staffData.active_season_key) {
+        localStorage.setItem('dancing_bricks_active_season_key', staffData.active_season_key);
+        try {
+          const rawProfile = localStorage.getItem('dancing_bricks_user_profile');
+          if (rawProfile) {
+            const p = JSON.parse(rawProfile);
+            const resetP = {
+              ...p,
+              seasonKey: staffData.active_season_key,
+              highScore: 0,
+              totalScore: 0,
+              totalGames: 0,
+              monthlyHighScore: 0,
+              monthlyTotalScore: 0,
+              monthlyGames: 0
+            };
+            localStorage.setItem('dancing_bricks_user_profile', JSON.stringify(resetP));
+          }
+        } catch (e) {}
+        window.dispatchEvent(new CustomEvent('dancing_bricks_season_reset', { detail: { activeSeasonKey: staffData.active_season_key } }));
+      }
+    }
+
     return cloudList;
   } catch (err) {
     console.error('❌ Error fetching cloud leaderboard:', err);
@@ -379,8 +404,8 @@ export async function syncCloudScore(userEntry) {
     const randomColor = colors[Math.abs(userId.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0)) % colors.length];
 
     if (existingIdx >= 0) {
-      const updatedScore = Math.max(cloudList[existingIdx].score || 0, userEntry.score || 0);
-      const rawGames = Math.max(cloudList[existingIdx].games || 0, userEntry.games || 0);
+      const updatedScore = typeof userEntry.score === 'number' ? userEntry.score : (cloudList[existingIdx].score || 0);
+      const rawGames = typeof userEntry.games === 'number' ? userEntry.games : (cloudList[existingIdx].games || 0);
       const updatedGames = updatedScore > 0 ? Math.max(1, rawGames) : rawGames;
 
       cloudList[existingIdx] = {
@@ -1375,6 +1400,10 @@ export async function fetchFormSubmissions(slug) {
 
 /* ── Monthly Season Helpers (Resets on 20th at 22:00 Georgia Time) ── */
 export function getCurrentSeasonKey() {
+  if (typeof localStorage !== 'undefined') {
+    const cloudKey = localStorage.getItem('dancing_bricks_active_season_key');
+    if (cloudKey) return cloudKey;
+  }
   const now = new Date();
   const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
   const georgiaTime = new Date(utc + (3600000 * 4));
@@ -1392,7 +1421,7 @@ export function getCurrentSeasonKey() {
     }
   }
 
-  return `season_${year}_${month}_v2`;
+  return `season_${year}_${month}_v3`;
 }
 
 export function sanitizeSeasonalProfile(prevProfile) {

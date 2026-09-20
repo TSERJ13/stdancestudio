@@ -241,13 +241,54 @@ export default function Game() {
             setShowWinnerModal(true);
           }
         }
+        if (Array.isArray(cloudLb)) {
+          const currentId = userProfile?.studentId || (window.Telegram?.WebApp?.initDataUnsafe?.user?.id ? `TG-${window.Telegram.WebApp.initDataUnsafe.user.id}` : null);
+          const currentName = userProfile?.name;
+          const meInCloud = cloudLb.find(p => (currentId && p.id === currentId) || (currentName && p.name === currentName));
+          if (meInCloud && typeof meInCloud.score === 'number' && meInCloud.score > (userProfile?.totalScore || 0)) {
+            setUserProfile(prev => {
+              const updated = {
+                ...prev,
+                totalScore: meInCloud.score,
+                monthlyTotalScore: meInCloud.score,
+                highScore: Math.max(prev.highScore || 0, meInCloud.score),
+                totalGames: meInCloud.games || prev.totalGames || 1,
+                monthlyGames: meInCloud.games || prev.monthlyGames || 1
+              };
+              try { localStorage.setItem('dancing_bricks_user_profile', JSON.stringify(updated)); } catch (e) {}
+              return updated;
+            });
+          }
+        }
       } catch (e) {
         console.warn('Failed to check monthly winner:', e);
       }
     };
 
     checkMonthlyWinner();
-    return () => { isMounted = false; };
+
+    const handleSeasonReset = (e) => {
+      setUserProfile(prev => {
+        const updated = {
+          ...prev,
+          seasonKey: e?.detail?.activeSeasonKey,
+          totalScore: 0,
+          monthlyTotalScore: 0,
+          highScore: 0,
+          monthlyHighScore: 0,
+          totalGames: 0,
+          monthlyGames: 0
+        };
+        try { localStorage.setItem('dancing_bricks_user_profile', JSON.stringify(updated)); } catch (e) {}
+        return updated;
+      });
+    };
+    window.addEventListener('dancing_bricks_season_reset', handleSeasonReset);
+
+    return () => {
+      isMounted = false;
+      window.removeEventListener('dancing_bricks_season_reset', handleSeasonReset);
+    };
   }, []);
 
   // Preload critical assets once on mount to ensure 0-lag tab switching
