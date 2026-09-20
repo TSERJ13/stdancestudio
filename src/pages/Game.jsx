@@ -485,34 +485,21 @@ export default function Game() {
     });
   };
 
-  const handleScoreUpdate = (score) => {
+  const handleScoreUpdate = (currentRoundScore) => {
+    // Live in-game score update: ONLY update personal record if current game score beats highScore.
+    // NEVER increment totalGames or add currentRoundScore to totalScore per round,
+    // because totalScore and games are ONLY credited ONCE per game upon handleGameOver!
     setUserProfile(prev => {
       const sanitized = sanitizeSeasonalProfile(prev);
-      const newHigh = Math.max(sanitized.highScore || 0, score);
-      const newTotal = (sanitized.totalScore || 0) + score;
-      const newGames = (sanitized.totalGames || 0) + 1;
-
+      const roundScore = Math.max(0, Number(currentRoundScore) || 0);
+      const newHigh = Math.max(sanitized.highScore || 0, roundScore);
+      if (newHigh === sanitized.highScore) return prev;
       const updated = {
         ...sanitized,
         highScore: newHigh,
-        totalScore: newTotal,
-        totalGames: newGames,
-        monthlyHighScore: newHigh,
-        monthlyTotalScore: newTotal,
-        monthlyGames: newGames
+        monthlyHighScore: newHigh
       };
-      localStorage.setItem('dancing_bricks_user_profile', JSON.stringify(updated));
-
-      if (updated.studentId && (updated.studentId.startsWith('TG-') || updated.studentId.startsWith('ST-'))) {
-        syncCloudScore({
-          id: updated.studentId,
-          name: updated.name,
-          photoUrl: updated.photoUrl || '',
-          score: updated.totalScore,
-          games: updated.totalGames
-        }).catch(() => {});
-      }
-
+      try { localStorage.setItem('dancing_bricks_user_profile', JSON.stringify(updated)); } catch (e) {}
       return updated;
     });
   };

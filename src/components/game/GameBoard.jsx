@@ -46,6 +46,15 @@ export default function GameBoard({ tGame, lang = 'ka', availableLives, onSpendL
   const canvasRef = useRef(null);
   const containerRef = useRef(null);
   const stLogoImgRef = useRef(null);
+  const gameOverHandledRef = useRef(false);
+
+  const triggerGameOver = (finalScore) => {
+    if (gameOverHandledRef.current) return;
+    gameOverHandledRef.current = true;
+    if (typeof onGameOver === 'function') {
+      onGameOver(finalScore);
+    }
+  };
 
   const t = tGame || {
     fastForward: 'FAST FORWARD',
@@ -245,6 +254,7 @@ export default function GameBoard({ tGame, lang = 'ka', availableLives, onSpendL
 
   const startGame = () => {
     soundFx.init();
+    gameOverHandledRef.current = false;
     onSpendLife();
 
     const engine = engineRef.current;
@@ -363,7 +373,7 @@ export default function GameBoard({ tGame, lang = 'ka', availableLives, onSpendL
       soundFx.playGameOver();
       engine.state = 'GAMEOVER';
       setGameState('GAMEOVER');
-      onGameOver(engine.score);
+      triggerGameOver(engine.score);
       return;
     }
 
@@ -835,22 +845,17 @@ export default function GameBoard({ tGame, lang = 'ka', availableLives, onSpendL
     const handleExitSave = () => {
       const engine = engineRef.current;
       if ((engine.state === 'AIM' || engine.state === 'SHOOT') && engine.score > 0) {
-        onGameOver(engine.score);
+        triggerGameOver(engine.score);
         engine.state = 'GAMEOVER';
       }
     };
 
     window.addEventListener('beforeunload', handleExitSave);
     window.addEventListener('pagehide', handleExitSave);
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === 'hidden') handleExitSave();
-    };
-    document.addEventListener('visibilitychange', handleVisibilityChange);
 
     return () => {
       window.removeEventListener('beforeunload', handleExitSave);
       window.removeEventListener('pagehide', handleExitSave);
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
   }, [onGameOver]);
 
