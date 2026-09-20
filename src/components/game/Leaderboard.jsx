@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import { Trophy, Gift, Ticket, History, Copy, Check, Clock, Crown } from 'lucide-react';
 import { useLanguage } from '../../context/LanguageContext';
 import SpinModal, { getCurrentDrawMonthKey } from './SpinModal';
-import { fetchCloudLeaderboard, syncCloudScore } from '../../data/classcore';
+import { fetchCloudLeaderboard, syncCloudScore, fetchCloudWinnersHistory } from '../../data/classcore';
 
 const TEST_LEADERBOARD = [];
 
@@ -249,6 +249,26 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
     window.addEventListener('dancing_bricks_draw_spun', handleDrawSpun);
     return () => window.removeEventListener('dancing_bricks_draw_spun', handleDrawSpun);
   }, [currentDrawMonthKey]);
+
+  const [cloudWinnersHistory, setCloudWinnersHistory] = useState([]);
+
+  useEffect(() => {
+    fetchCloudWinnersHistory().then(hist => {
+      if (Array.isArray(hist) && hist.length > 0) {
+        setCloudWinnersHistory(hist);
+      }
+    });
+
+    const handleDrawSpunHistory = () => {
+      fetchCloudWinnersHistory().then(hist => {
+        if (Array.isArray(hist) && hist.length > 0) {
+          setCloudWinnersHistory(hist);
+        }
+      });
+    };
+    window.addEventListener('dancing_bricks_draw_spun', handleDrawSpunHistory);
+    return () => window.removeEventListener('dancing_bricks_draw_spun', handleDrawSpunHistory);
+  }, []);
 
   useEffect(() => {
     const updateCountdown = () => {
@@ -825,14 +845,38 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
       )}
 
       {activeTab === 'history' && (() => {
-        let historyList = WINNERS_HISTORY;
+        let historyList = [];
         try {
           const raw = localStorage.getItem('dancing_bricks_winners_history');
           const customHist = raw ? JSON.parse(raw) : [];
-          if (Array.isArray(customHist) && customHist.length > 0) {
-            historyList = [...customHist, ...WINNERS_HISTORY];
+          if (Array.isArray(customHist)) {
+            historyList = [...customHist];
           }
         } catch (e) {}
+
+        if (cloudWinnersHistory && cloudWinnersHistory.length > 0) {
+          cloudWinnersHistory.forEach(ch => {
+            if (!historyList.some(lh => (lh.monthKey && lh.monthKey === ch.monthKey) || (lh.code && lh.code === ch.code))) {
+              historyList.push(ch);
+            }
+          });
+        }
+
+        if (historyList.length === 0) {
+          return (
+            <div style={{ padding: '36px 16px', textAlign: 'center', background: 'rgba(212,166,74,0.06)', borderRadius: '16px', border: '1px solid rgba(212,166,74,0.2)' }}>
+              <History size={40} color="#d4a64a" style={{ margin: '0 auto 12px' }} />
+              <h4 style={{ color: '#F0D9A8', fontSize: '15px', fontWeight: '900', margin: '0 0 6px' }}>
+                {lang === 'ka' ? 'გათამაშების ისტორია' : 'Draw History'}
+              </h4>
+              <p style={{ color: '#a1a1aa', fontSize: '12px', margin: 0, lineHeight: '1.5' }}>
+                {lang === 'ka' 
+                  ? 'დღეს, 20 სექტემბერს 22:00 საათზე გაიმართება პირველი ოფიციალური გათამაშება! #1 გამარჯვებული და მოგებული პრიზი გამოჩნდება აქ.' 
+                  : 'The first official monthly draw is today, Sept 20 at 22:00! The winner and their prize will appear here.'}
+              </p>
+            </div>
+          );
+        }
 
         return (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>

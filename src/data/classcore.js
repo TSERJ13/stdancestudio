@@ -550,6 +550,24 @@ export async function recordMonthlyDrawClaim({ monthKey, winnerId, winnerName, p
     const staffData = settings.staff_data || {};
     const monthlyDraws = staffData.monthly_draws || {};
 
+    const [y, m] = (monthKey || '').split('-');
+    const monthNames = ["იანვარი", "თებერვალი", "მარტი", "აპრილი", "მაისი", "ივნისი", "ივლისი", "აგვისტო", "სექტემბერი", "ოქტომბერი", "ნოემბერი", "დეკემბერი"];
+    const mIdx = Number(m) - 1;
+    const formattedMonth = mIdx >= 0 ? `20 ${monthNames[mIdx]} ${y}` : monthKey;
+
+    const newHistoryEntry = {
+      month: formattedMonth,
+      monthKey,
+      winner: winnerName || 'Winner',
+      prize: prizeName,
+      code: voucherCode,
+      date: new Date().toLocaleDateString('ka-GE'),
+      claimedAt: new Date().toISOString()
+    };
+
+    const existingHistory = Array.isArray(staffData.game_winners_history) ? [...staffData.game_winners_history] : [];
+    const updatedHistory = [newHistoryEntry, ...existingHistory.filter(h => h.monthKey !== monthKey)];
+
     const updatedMonthlyDraws = {
       ...monthlyDraws,
       [monthKey]: {
@@ -565,7 +583,8 @@ export async function recordMonthlyDrawClaim({ monthKey, winnerId, winnerName, p
 
     const updatedStaffData = {
       ...staffData,
-      monthly_draws: updatedMonthlyDraws
+      monthly_draws: updatedMonthlyDraws,
+      game_winners_history: updatedHistory
     };
 
     await fetch(`${SUPABASE_URL}/rest/v1/studio_settings?studio_slug=eq.${STUDIO_SLUG}`, {
@@ -580,12 +599,55 @@ export async function recordMonthlyDrawClaim({ monthKey, winnerId, winnerName, p
 
     try {
       localStorage.setItem(`dancing_bricks_spun_${monthKey}`, 'true');
+      localStorage.setItem('dancing_bricks_winners_history', JSON.stringify(updatedHistory));
     } catch (e) {}
 
     return true;
   } catch (e) {
     console.warn('Failed to record monthly draw claim in cloud:', e);
     return false;
+  }
+}
+
+/**
+ * Fetch winners history from Supabase Cloud
+ */
+export async function fetchCloudWinnersHistory() {
+  try {
+    const settingsUrl = `${SUPABASE_URL}/rest/v1/studio_settings?studio_slug=eq.${STUDIO_SLUG}`;
+    const getRes = await fetch(settingsUrl, {
+      headers: {
+        'apikey': ANON_KEY,
+        'Authorization': `Bearer ${ANON_KEY}`
+      }
+    });
+    if (!getRes.ok) return [];
+    const list = await getRes.json();
+    if (!list || list.length === 0) return [];
+    const staffData = list[0].staff_data || {};
+
+    if (Array.isArray(staffData.game_winners_history) && staffData.game_winners_history.length > 0) {
+      return staffData.game_winners_history;
+    }
+
+    const monthlyDraws = staffData.monthly_draws || {};
+    const monthNames = ["იანვარი", "თებერვალი", "მარტი", "აპრილი", "მაისი", "ივნისი", "ივლისი", "აგვისტო", "სექტემბერი", "ოქტომბერი", "ნოემბერი", "დეკემბერი"];
+    
+    return Object.entries(monthlyDraws).map(([monthKey, draw]) => {
+      const [y, m] = monthKey.split('-');
+      const mIdx = Number(m) - 1;
+      const formattedMonth = mIdx >= 0 ? `20 ${monthNames[mIdx]} ${y}` : monthKey;
+      return {
+        month: formattedMonth,
+        monthKey,
+        winner: draw.winnerName,
+        prize: draw.prizeName,
+        code: draw.voucherCode
+      };
+    });
+  } catch (e) {
+    console.warn('Failed to fetch cloud winners history:', e);
+    return [];
   }
 }
 

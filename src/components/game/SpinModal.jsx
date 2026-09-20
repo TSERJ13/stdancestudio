@@ -425,6 +425,28 @@ export default function SpinModal({ isOpen, onClose, winnerName = 'ჩემპ�
 
         if (onClaimPrize) onClaimPrize(newVoucher);
 
+        const [histY, histM] = currentDrawMonthKey.split('-');
+        const histMonthNames = ["იანვარი", "თებერვალი", "მარტი", "აპრილი", "მაისი", "ივნისი", "ივლისი", "აგვისტო", "სექტემბერი", "ოქტომბერი", "ნოემბერი", "დეკემბერი"];
+        const histMIdx = Number(histM) - 1;
+        const formattedMonth = histMIdx >= 0 ? `20 ${histMonthNames[histMIdx]} ${histY}` : currentDrawMonthKey;
+
+        const newHistoryItem = {
+          month: formattedMonth,
+          monthKey: currentDrawMonthKey,
+          winner: winnerName,
+          prize: prize.name,
+          code: randomCode,
+          date: new Date().toLocaleDateString('ka-GE')
+        };
+
+        try {
+          const rawHist = localStorage.getItem('dancing_bricks_winners_history');
+          let hist = rawHist ? JSON.parse(rawHist) : [];
+          if (!Array.isArray(hist)) hist = [];
+          const filtered = [newHistoryItem, ...hist.filter(h => h.monthKey !== currentDrawMonthKey)];
+          localStorage.setItem('dancing_bricks_winners_history', JSON.stringify(filtered));
+        } catch (e) {}
+
         recordMonthlyDrawClaim({
           monthKey: currentDrawMonthKey,
           winnerId: userId || 'GUEST',
