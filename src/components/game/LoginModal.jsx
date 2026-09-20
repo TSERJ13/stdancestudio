@@ -15,8 +15,7 @@ const STUDENT_ID_MAP = {
   '105': 'გიორგი (Jive Champ)',
   'ST-105': 'გიორგი (Jive Champ)',
   '106': 'ელენე (Waltz Master)',
-  'ST-106': 'ელენე (Waltz Master)',
-  '99999': 'TEST ADMIN (Infinite Lives)'
+  'ST-106': 'ელენე (Waltz Master)'
 };
 
 const loginTranslations = {
