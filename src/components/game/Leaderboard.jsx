@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import { Trophy, Gift, Ticket, History, Copy, Check, Clock, Crown, Sparkles, Loader2 } from 'lucide-react';
 import { useLanguage } from '../../context/LanguageContext';
@@ -489,6 +489,31 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
     });
   };
 
+  // Merge cloud-sourced wins into My Prizes so winner sees their code
+  // even if they never spun the wheel on their device / localStorage was cleared
+  const allMyVouchers = useMemo(() => {
+    const cloudWins = (cloudWinnersHistory || []).filter(h => {
+      if (!h.code) return false;
+      const isWinner = (userId && (h.winnerId === userId || h.id === userId)) ||
+        (playerName && h.winner && h.winner.trim().toLowerCase() === playerName.trim().toLowerCase());
+      return isWinner;
+    }).map(h => ({
+      id: `cloud-${h.monthKey || h.month}`,
+      code: h.code,
+      prizeName: h.prize || '',
+      prizeDesc: '',
+      prizeImg: h.prizeImg || (PRIZES.find(p => p.name === h.prize || p.nameEn === h.prize)?.img || ''),
+      winnerName: h.winner || playerName || '',
+      drawMonth: h.monthKey || '',
+      date: h.date || h.month || ''
+    }));
+
+    // Merge: local vouchers take priority (dedup by monthKey / id)
+    const localMonthKeys = new Set(myVouchers.map(v => v.drawMonth).filter(Boolean));
+    const newCloudWins = cloudWins.filter(cv => !localMonthKeys.has(cv.drawMonth));
+    return [...myVouchers, ...newCloudWins];
+  }, [myVouchers, cloudWinnersHistory, userId, playerName]);
+
   const copyVoucherCode = (code) => {
     navigator.clipboard.writeText(code);
     setCopiedCode(code);
@@ -720,7 +745,7 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
 
       {activeTab === 'my_prizes' && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-          {myVouchers.length === 0 ? (
+          {allMyVouchers.length === 0 ? (
             <div style={{ padding: '24px 16px', textAlign: 'center', background: 'rgba(212,166,74,0.08)', borderRadius: '16px', border: '1px solid rgba(212,166,74,0.25)' }}>
               <Gift size={36} color="#d4a64a" style={{ margin: '0 auto 10px' }} />
               {isUserFirstPlace ? (
@@ -776,7 +801,7 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
               )}
             </div>
           ) : (
-            myVouchers.map((v) => (
+            allMyVouchers.map((v) => (
               <div
                 key={v.id}
                 style={{
