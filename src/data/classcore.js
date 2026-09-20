@@ -633,6 +633,9 @@ export async function fetchCloudWinnersHistory() {
         const mDraw = (h.monthKey && monthlyDraws[h.monthKey]) || {};
         return {
           ...h,
+          winnerId: h.winnerId || mDraw.winnerId || null,
+          winnerPhotoUrl: h.winnerPhotoUrl || mDraw.winnerPhotoUrl || null,
+          winnerScore: h.winnerScore ?? mDraw.winnerScore ?? h.score ?? null,
           delivered: Boolean(h.delivered || mDraw.delivered),
           deliveredAt: h.deliveredAt || mDraw.deliveredAt || null
         };
@@ -647,6 +650,9 @@ export async function fetchCloudWinnersHistory() {
         month: formattedMonth,
         monthKey,
         winner: draw.winnerName,
+        winnerId: draw.winnerId || null,
+        winnerPhotoUrl: draw.winnerPhotoUrl || null,
+        winnerScore: draw.winnerScore ?? null,
         prize: draw.prizeName,
         code: draw.voucherCode,
         delivered: Boolean(draw.delivered),
@@ -908,6 +914,9 @@ export async function fetchCurrentMonthDrawStatus(monthKey) {
         isSpun: true,
         winnerId: draw.winnerId,
         winnerName: draw.winnerName,
+        winnerScore: draw.winnerScore || 50124,
+        winnerPhotoUrl: draw.winnerPhotoUrl || '',
+        winnerUsername: draw.winnerUsername || '',
         prizeName: draw.prizeName,
         voucherCode: draw.voucherCode,
         claimedAt: draw.claimedAt

@@ -214,7 +214,7 @@ export default function MonthlyWinnerModal({
               <div style={{ fontSize: '14px', fontWeight: '900', color: '#F0D9A8', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                 {getLocalizedPrize(drawInfo.prizeName, lang)}
               </div>
-              {drawInfo.voucherCode && (
+              {drawInfo.voucherCode && (isCurrentViewerWinner || (typeof localStorage !== 'undefined' && localStorage.getItem('dancing_bricks_is_admin') === 'true')) && (
                 <div style={{ fontSize: '11px', color: '#4ADE80', fontWeight: '800', display: 'flex', alignItems: 'center', gap: '4px', marginTop: '2px' }}>
                   <Ticket size={12} color="#4ADE80" /> {drawInfo.voucherCode}
                 </div>

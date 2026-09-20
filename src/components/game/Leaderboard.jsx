@@ -316,88 +316,41 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
       const now = new Date();
       const georgiaTime = new Date(now.getTime() + (now.getTimezoneOffset() * 60000) + (4 * 3600000));
       
-      const year = georgiaTime.getFullYear();
-      const month = georgiaTime.getMonth();
+      let targetYear = georgiaTime.getFullYear();
+      let targetMonth = georgiaTime.getMonth();
       
-      // Draw occurs on 20th at 22:00 Georgia Time.
-      // Active draw window is 48 hours (from 20th 22:00 to 22nd 22:00).
-      const drawStart = new Date(year, month, 20, 22, 0, 0);
-      const drawEnd = new Date(drawStart.getTime() + (48 * 3600 * 1000));
-      
-      let isUnlocked = false;
-      let activeDrawMonth = month;
-      let targetDate;
-      let diff = 0;
-      let timeLeftText = '';
+      // Monthly draw is on the 20th at 22:00 Georgia Time
+      const thisMonthDraw = new Date(targetYear, targetMonth, 20, 22, 0, 0);
 
-      if (georgiaTime.getTime() < drawStart.getTime()) {
-        // Before tonight's 22:00 draw
-        isUnlocked = false;
-        activeDrawMonth = month;
-        targetDate = drawStart;
-        diff = targetDate.getTime() - georgiaTime.getTime();
-      } else if (georgiaTime.getTime() >= drawStart.getTime() && georgiaTime.getTime() < drawEnd.getTime()) {
-        // Active Draw Window (20th 22:00 - 22nd 22:00)
-        isUnlocked = true;
-        activeDrawMonth = month;
-        const remMs = drawEnd.getTime() - georgiaTime.getTime();
-        const remH = Math.floor(remMs / (1000 * 60 * 60));
-
-        if (lang === 'ka') {
-          timeLeftText = `🎉 გახსნილია! (${remH}სთ)`;
-        } else if (lang === 'ru') {
-          timeLeftText = `🎉 Открыт! (${remH}ч)`;
-        } else {
-          timeLeftText = `🎉 Open! (${remH}h)`;
+      if (georgiaTime.getTime() >= thisMonthDraw.getTime()) {
+        // This month's 20th 22:00 draw has already occurred; target is the 20th of NEXT month!
+        targetMonth += 1;
+        if (targetMonth > 11) {
+          targetMonth = 0;
+          targetYear += 1;
         }
-
-        let drawName = drawNamesKa[activeDrawMonth];
-        if (lang === 'en') drawName = drawNamesEn[activeDrawMonth];
-        else if (lang === 'ru') drawName = drawNamesRu[activeDrawMonth];
-
-        setCountdownState({ isUnlocked, timeLeftText, monthName: drawName, drawName, remHours: remH });
-        return;
-      } else {
-        // Active draw ended, target next month 20th 22:00
-        isUnlocked = false;
-        let nextMonth = month + 1;
-        let nextYear = year;
-        if (nextMonth > 11) {
-          nextMonth = 0;
-          nextYear++;
-        }
-        activeDrawMonth = nextMonth;
-        targetDate = new Date(nextYear, nextMonth, 20, 22, 0, 0);
-        diff = targetDate.getTime() - georgiaTime.getTime();
       }
-      
-      let monthName = monthNamesKa[activeDrawMonth];
-      let drawName = drawNamesKa[activeDrawMonth];
 
+      const targetDate = new Date(targetYear, targetMonth, 20, 22, 0, 0);
+      const diff = Math.max(0, targetDate.getTime() - georgiaTime.getTime());
+
+      const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
+      const m = Math.floor((diff / 1000 / 60) % 60);
+      const s = Math.floor((diff / 1000) % 60);
+
+      let timeLeftText = `${d}დ ${h}სთ ${m}წთ ${s}წმ`;
       if (lang === 'en') {
-        monthName = monthNamesEn[activeDrawMonth];
-        drawName = drawNamesEn[activeDrawMonth];
+        timeLeftText = `${d}d ${h}h ${m}m ${s}s`;
       } else if (lang === 'ru') {
-        monthName = monthNamesRu[activeDrawMonth];
-        drawName = drawNamesRu[activeDrawMonth];
+        timeLeftText = `${d}д ${h}ч ${m}мин ${s}сек`;
       }
 
-      if (!isUnlocked && diff > 0) {
-        const d = Math.floor(diff / (1000 * 60 * 60 * 24));
-        const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
-        const m = Math.floor((diff / 1000 / 60) % 60);
-        const s = Math.floor((diff / 1000) % 60);
+      let drawName = drawNamesKa[targetMonth];
+      if (lang === 'en') drawName = drawNamesEn[targetMonth];
+      else if (lang === 'ru') drawName = drawNamesRu[targetMonth];
 
-        let timeStr = `${d}დ ${h}სთ ${m}წთ ${s}წმ`;
-        if (lang === 'en') {
-          timeStr = `${d}d ${h}h ${m}m ${s}s`;
-        } else if (lang === 'ru') {
-          timeStr = `${d}д ${h}ч ${m}мин ${s}сек`;
-        }
-        timeLeftText = timeStr;
-      }
-
-      setCountdownState({ isUnlocked, timeLeftText, monthName, drawName, remHours: 0 });
+      setCountdownState({ isUnlocked: false, timeLeftText, monthName: drawName, drawName });
     };
     
     updateCountdown();
@@ -597,35 +550,13 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
           )}
         </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', flexShrink: 0 }}>
-          {countdownState.isUnlocked ? (
-            <div
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '4px',
-                padding: '3px 8px',
-                borderRadius: '10px',
-                background: 'rgba(34, 197, 94, 0.15)',
-                border: '1px solid rgba(34, 197, 94, 0.4)',
-                color: '#4ADE80',
-                fontSize: '11px',
-                fontWeight: '900',
-                whiteSpace: 'nowrap',
-                boxShadow: '0 0 10px rgba(34, 197, 94, 0.2)'
-              }}
-            >
-              <Sparkles size={11} color="#4ADE80" />
-              <span>{lang === 'ka' ? `გახსნილია · ${countdownState.remHours || 47}სთ` : lang === 'ru' ? `Открыт · ${countdownState.remHours || 47}ч` : `Open · ${countdownState.remHours || 47}h`}</span>
-            </div>
-          ) : (
-            <span style={{ fontSize: '11.5px', color: '#F0D9A8', fontWeight: '900', letterSpacing: '0.3px', whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
-              <Clock size={11} color="#d4a64a" />
-              {countdownState.timeLeftText || '00:00:00'}
-            </span>
-          )}
-          <span style={{ fontSize: '9px', color: '#a1a1aa', fontWeight: '700', marginTop: '2px', whiteSpace: 'nowrap' }}>
-            {lang === 'ka' ? `${countdownState.drawName} გათამაშება` : lang === 'ru' ? `Розыгрыш ${countdownState.drawName}` : `${countdownState.drawName} Draw`}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', flexShrink: 0, textAlign: 'right' }}>
+          <span style={{ fontSize: '11px', color: '#F0D9A8', fontWeight: '900', letterSpacing: '0.2px', whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+            <Clock size={12} color="#d4a64a" />
+            {countdownState.timeLeftText || '00:00:00'}
+          </span>
+          <span style={{ fontSize: '9.5px', color: '#a1a1aa', fontWeight: '700', marginTop: '2px', whiteSpace: 'nowrap' }}>
+            {lang === 'ka' ? `${countdownState.drawName || '20 ოქტომბრის'} გათამაშება` : lang === 'ru' ? `Розыгрыш ${countdownState.drawName || '20 Октября'}` : `${countdownState.drawName || 'Oct 20th'} Draw`}
           </span>
         </div>
       </div>
@@ -1080,7 +1011,18 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
                       </button>
                     )}
 
-                    <div style={{ fontSize: '10px', color: '#71717a', marginTop: '1px', fontVariantNumeric: 'tabular-nums' }}>{h.code}</div>
+                    {(() => {
+                      const canSeeCode = isUserAdmin || Boolean(
+                        (userId && (h.winnerId === userId || h.id === userId)) ||
+                        (playerName && h.winner && h.winner.trim().toLowerCase() === playerName.trim().toLowerCase())
+                      );
+                      if (!canSeeCode || !h.code) return null;
+                      return (
+                        <div style={{ fontSize: '10px', color: '#71717a', marginTop: '1px', fontVariantNumeric: 'tabular-nums', display: 'flex', alignItems: 'center', gap: '3px' }}>
+                          <Ticket size={10} /> {h.code}
+                        </div>
+                      );
+                    })()}
                   </div>
                 </div>
               );

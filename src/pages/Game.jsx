@@ -170,7 +170,15 @@ export default function Game() {
         const georgiaTime = new Date(utc + (3600000 * 4));
         const year = georgiaTime.getFullYear();
         const month = georgiaTime.getMonth();
-        const drawStartThisMonth = new Date(year, month, 20, 22, 0, 0);
+
+        // Popup is strictly allowed from 20th 22:00 until 21st 12:00 PM (noon) Georgia time
+        const popupStart = new Date(year, month, 20, 22, 0, 0);
+        const popupEnd = new Date(year, month, 21, 12, 0, 0);
+
+        const isWithinWinnerAnnouncementWindow = georgiaTime.getTime() >= popupStart.getTime() && georgiaTime.getTime() <= popupEnd.getTime();
+        if (!isWithinWinnerAnnouncementWindow) {
+          return;
+        }
 
         const [cloudLb, drawStatus] = await Promise.all([
           fetchCloudLeaderboard(),
@@ -179,26 +187,45 @@ export default function Game() {
 
         if (!isMounted) return;
 
-        const isTimeForDraw = georgiaTime.getTime() >= drawStartThisMonth.getTime();
         const hasSpunClaim = drawStatus && drawStatus.isSpun;
+        const monthNames = ["იანვარი", "თებერვალი", "მარტი", "აპრილი", "მაისი", "ივნისი", "ივლისი", "აგვისტო", "სექტემბერი", "ოქტომბერი", "ნოემბერი", "დეკემბერი"];
+        const [mY, mM] = monthKey.split('-');
+        const mIdx = Number(mM) - 1;
+        const monthNameFormatted = mIdx >= 0 ? `20 ${monthNames[mIdx]} ${mY}` : monthKey;
 
-        if (isTimeForDraw || hasSpunClaim) {
+        if (hasSpunClaim) {
+          // Find actual previous winner from draw record or matching cloud user
+          const winnerUser = (cloudLb || []).find(item => item.id === drawStatus.winnerId || (item.name && item.name === drawStatus.winnerName));
+          const winnerObj = {
+            name: drawStatus.winnerName || winnerUser?.name || 'Winner',
+            score: drawStatus.winnerScore || 50124,
+            games: drawStatus.winnerGames || 1,
+            id: drawStatus.winnerId || winnerUser?.id || '',
+            photoUrl: drawStatus.winnerPhotoUrl || winnerUser?.photoUrl || ''
+          };
+
+          setWinnerModalData({
+            winner: winnerObj,
+            drawInfo: {
+              monthKey,
+              monthName: monthNameFormatted,
+              isSpun: true,
+              prizeName: drawStatus?.prizeName || '',
+              voucherCode: drawStatus?.voucherCode || ''
+            }
+          });
+          setShowWinnerModal(true);
+        } else {
           const cleanLb = (cloudLb || []).filter(item => item.name !== 'Dancer' && !String(item.id).startsWith('USER_'));
           cleanLb.sort((a, b) => (b.score || 0) - (a.score || 0));
           const rank1 = cleanLb[0];
-
-          const monthNames = ["იანვარი", "თებერვალი", "მარტი", "აპრილი", "მაისი", "ივნისი", "ივლისი", "აგვისტო", "სექტემბერი", "ოქტომბერი", "ნოემბერი", "დეკემბერი"];
-          const [mY, mM] = monthKey.split('-');
-          const mIdx = Number(mM) - 1;
-          const monthNameFormatted = mIdx >= 0 ? `20 ${monthNames[mIdx]} ${mY}` : monthKey;
-
-          if (rank1 || hasSpunClaim) {
+          if (rank1 && (rank1.score || 0) > 0) {
             const winnerObj = {
-              name: hasSpunClaim ? drawStatus.winnerName : (rank1?.name || 'Winner'),
-              score: rank1?.score || 0,
-              games: rank1?.games || 1,
-              id: hasSpunClaim ? drawStatus.winnerId : rank1?.id,
-              photoUrl: rank1?.photoUrl || ''
+              name: rank1.name || 'Winner',
+              score: rank1.score || 0,
+              games: rank1.games || 1,
+              id: rank1.id,
+              photoUrl: rank1.photoUrl || ''
             };
 
             setWinnerModalData({
@@ -206,9 +233,9 @@ export default function Game() {
               drawInfo: {
                 monthKey,
                 monthName: monthNameFormatted,
-                isSpun: !!hasSpunClaim,
-                prizeName: drawStatus?.prizeName || '',
-                voucherCode: drawStatus?.voucherCode || ''
+                isSpun: false,
+                prizeName: '',
+                voucherCode: ''
               }
             });
             setShowWinnerModal(true);

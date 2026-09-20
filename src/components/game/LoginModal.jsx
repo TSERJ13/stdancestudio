@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { User, ShieldCheck, CheckCircle2, IdCard, LogIn, KeyRound, Loader2, Sparkles, X, Trophy, Flame, PlayCircle, Crown, Users, Radio, RefreshCw, BarChart2, Plus, Minus, Edit2, Trash2, Search, Check, AlertCircle, Save } from 'lucide-react';
-import { fetchStudioData, getStudentName, fetchCloudLeaderboard, submitFormAnswer, adminUpdatePlayerScore, updateWinnerPrizeDeliveryStatus, startNewSeasonInCloud } from '../../data/classcore';
+import { fetchStudioData, getStudentName, fetchCloudLeaderboard, submitFormAnswer, adminUpdatePlayerScore, updateWinnerPrizeDeliveryStatus, startNewSeasonInCloud, fetchCloudWinnersHistory } from '../../data/classcore';
 
 const STUDENT_ID_MAP = {
   '101': 'სერგო წივწივაძე (Head Coach)',
@@ -44,7 +44,8 @@ const loginTranslations = {
     activeOnline: 'ახლა ონლაინში / თამაშობს',
     totalGamesPlayed: 'სულ ნათამაშები თამაშები',
     topLeader: '#1 მიმდინარე ლიდერი',
-    playersListHeader: '🏆 #1 ადგილზე გასული მოთამაშე (საჩუქრის გაცემა)',
+    playersListHeader: '👥 მიმდინარე სეზონის მოთამაშეები',
+    prevWinnerCardTitle: '🏆 წინა თვის გამარჯვებული & საჩუქრის გადაცემა',
     refreshBtn: 'განახლება'
   },
   en: {
@@ -72,7 +73,8 @@ const loginTranslations = {
     activeOnline: 'Active Online / Playing Now',
     totalGamesPlayed: 'Total Games Played',
     topLeader: '#1 Current Leader',
-    playersListHeader: '🎮 Players & Prize Delivery Status',
+    playersListHeader: '👥 Current Season Players',
+    prevWinnerCardTitle: '🏆 Previous Month Winner & Prize Handout',
     refreshBtn: 'Refresh'
   },
   ru: {
@@ -100,7 +102,8 @@ const loginTranslations = {
     activeOnline: 'Онлайн / Играют сейчас',
     totalGamesPlayed: 'Всего сыграно игр',
     topLeader: '#1 Текущий лидер',
-    playersListHeader: '🎮 Игроки и статус выдачи призов',
+    playersListHeader: '👥 Игроки текущего сезона',
+    prevWinnerCardTitle: '🏆 Победитель прошлого месяца и выдача приза',
     refreshBtn: 'Обновить'
   }
 };
@@ -312,6 +315,20 @@ export default function LoginModal({ isOpen, onClose, currentUser, onLogin, lang
     topLeaderName: '—',
     players: []
   });
+  const [cloudWinnersHistory, setCloudWinnersHistory] = useState([]);
+  const [updatingDeliveryMonth, setUpdatingDeliveryMonth] = useState(null);
+
+  const handleToggleWinnerDelivery = async (monthKey, targetStatus) => {
+    setUpdatingDeliveryMonth(monthKey);
+    const ok = await updateWinnerPrizeDeliveryStatus(monthKey, targetStatus);
+    if (ok) {
+      const updated = await fetchCloudWinnersHistory();
+      if (Array.isArray(updated) && updated.length > 0) {
+        setCloudWinnersHistory(updated);
+      }
+    }
+    setUpdatingDeliveryMonth(null);
+  };
 
   const handleVerifyPin = (e) => {
     e.preventDefault();
@@ -397,7 +414,13 @@ export default function LoginModal({ isOpen, onClose, currentUser, onLogin, lang
   const loadAdminAnalytics = async () => {
     setAdminLoading(true);
     try {
-      const list = await fetchCloudLeaderboard();
+      const [list, winners] = await Promise.all([
+        fetchCloudLeaderboard(),
+        fetchCloudWinnersHistory()
+      ]);
+      if (Array.isArray(winners) && winners.length > 0) {
+        setCloudWinnersHistory(winners);
+      }
       let playersList = Array.isArray(list) ? [...list] : [];
 
       // Sort strictly by score descending (highest score first)
@@ -976,6 +999,111 @@ export default function LoginModal({ isOpen, onClose, currentUser, onLogin, lang
                   </button>
                 </div>
 
+                {/* Previous Winner Prize Delivery Card */}
+                {cloudWinnersHistory.length > 0 && (() => {
+                  const prevWinner = cloudWinnersHistory[0];
+                  const mKey = prevWinner.monthKey || '2026-09';
+                  const isDelivered = Boolean(prevWinner.delivered);
+                  const isUpdating = updatingDeliveryMonth === mKey;
+
+                  return (
+                    <div style={{
+                      background: 'linear-gradient(135deg, rgba(212,166,74,0.12) 0%, rgba(26,20,12,0.6) 100%)',
+                      border: '1.5px solid rgba(212,166,74,0.45)',
+                      borderRadius: '16px',
+                      padding: '14px',
+                      marginBottom: '14px',
+                      boxShadow: '0 6px 20px rgba(0,0,0,0.35)'
+                    }}>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                          <Trophy size={16} color="#d4a64a" />
+                          <span style={{ fontSize: '12px', fontWeight: '900', color: '#F0D9A8', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                            {t.prevWinnerCardTitle || '🏆 წინა თვის გამარჯვებული & საჩუქრის გადაცემა'}
+                          </span>
+                        </div>
+                        <span style={{
+                          fontSize: '10.5px',
+                          fontWeight: '800',
+                          color: isDelivered ? '#4ADE80' : '#FBBF24',
+                          background: isDelivered ? 'rgba(34,197,94,0.18)' : 'rgba(245,158,11,0.18)',
+                          border: isDelivered ? '1px solid rgba(34,197,94,0.4)' : '1px solid rgba(245,158,11,0.4)',
+                          padding: '3px 8px',
+                          borderRadius: '8px'
+                        }}>
+                          {isDelivered ? '✅ გადაცემულია' : '⏳ მოლოდინში'}
+                        </span>
+                      </div>
+
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px', background: 'rgba(0,0,0,0.3)', padding: '10px 12px', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.06)' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0 }}>
+                          <div style={{ width: '38px', height: '38px', borderRadius: '50%', overflow: 'hidden', border: '1.5px solid #d4a64a', flexShrink: 0, background: '#18181b', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            {prevWinner.winnerPhotoUrl ? (
+                              <img src={prevWinner.winnerPhotoUrl} alt={prevWinner.winner} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                            ) : (
+                              <span style={{ fontWeight: '900', color: '#d4a64a', fontSize: '15px' }}>
+                                {(prevWinner.winner || 'W').charAt(0).toUpperCase()}
+                              </span>
+                            )}
+                          </div>
+                          <div style={{ minWidth: 0, textAlign: 'left' }}>
+                            <div style={{ fontSize: '13px', fontWeight: '900', color: 'white', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                              {prevWinner.winner}
+                            </div>
+                            <div style={{ fontSize: '10.5px', color: '#a1a1aa' }}>
+                              {prevWinner.month} {prevWinner.winnerScore ? `· ${Number(prevWinner.winnerScore).toLocaleString()} ქ` : ''}
+                            </div>
+                          </div>
+                        </div>
+
+                        <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                          <div style={{ fontSize: '11.5px', fontWeight: '800', color: '#F0D9A8' }}>
+                            🎁 {prevWinner.prize || 'პრიზი'}
+                          </div>
+                          {prevWinner.code && (
+                            <div style={{ fontSize: '10px', color: '#4ADE80', fontWeight: '800', fontVariantNumeric: 'tabular-nums' }}>
+                              კოდი: {prevWinner.code}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      <div style={{ marginTop: '10px', display: 'flex', justifyContent: 'flex-end' }}>
+                        <button
+                          type="button"
+                          disabled={isUpdating}
+                          onClick={() => handleToggleWinnerDelivery(mKey, !isDelivered)}
+                          style={{
+                            padding: '7px 14px',
+                            borderRadius: '10px',
+                            background: isDelivered ? 'rgba(255,255,255,0.08)' : 'linear-gradient(135deg, #22c55e, #16a34a)',
+                            border: isDelivered ? '1px solid rgba(255,255,255,0.2)' : 'none',
+                            color: isDelivered ? '#e4e4e7' : '#ffffff',
+                            fontSize: '11.5px',
+                            fontWeight: '900',
+                            cursor: 'pointer',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '6px',
+                            boxShadow: isDelivered ? 'none' : '0 3px 10px rgba(34,197,94,0.35)'
+                          }}
+                        >
+                          {isUpdating ? (
+                            <>
+                              <Loader2 size={13} className="animate-spin" />
+                              მიმდინარეობს...
+                            </>
+                          ) : isDelivered ? (
+                            <>↩ მოლოდინში დაბრუნება</>
+                          ) : (
+                            <>🎁 საჩუქრის გადაცემა</>
+                          )}
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })()}
+
                 {/* Scrollable Player List Table with Manual Score Editing */}
                 <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '14px', padding: '12px' }}>
                   <div style={{ fontSize: '11.5px', fontWeight: '900', color: '#F0D9A8', marginBottom: '8px', textTransform: 'uppercase', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -1007,15 +1135,15 @@ export default function LoginModal({ isOpen, onClose, currentUser, onLogin, lang
                       .map((pl, idx) => {
                         const pKey = pl.id || pl.name;
                         const isClaimed = !!claimedPrizes[pKey];
-                        const isWinner = idx === 0 && !searchQuery.trim();
+                        const isFirstRank = idx === 0 && !searchQuery.trim();
                         const isEditing = editingPlayerId === pKey;
                         const currentScore = Number(pl.score ?? pl.high_score ?? 0);
 
                         return (
-                          <div key={idx} style={{ display: 'flex', flexDirection: 'column', gap: '6px', padding: '10px 11px', background: isWinner ? 'rgba(212,166,74,0.15)' : 'rgba(255,255,255,0.02)', borderRadius: '12px', border: isWinner ? '1px solid rgba(212,166,74,0.4)' : '1px solid rgba(255,255,255,0.05)' }}>
+                          <div key={idx} style={{ display: 'flex', flexDirection: 'column', gap: '6px', padding: '10px 11px', background: isFirstRank ? 'rgba(212,166,74,0.08)' : 'rgba(255,255,255,0.02)', borderRadius: '12px', border: isFirstRank ? '1px solid rgba(212,166,74,0.25)' : '1px solid rgba(255,255,255,0.05)' }}>
                             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', gap: '6px' }}>
                               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0, flex: 1 }}>
-                                <span style={{ fontSize: '12px', fontWeight: '900', color: isWinner ? '#FFD700' : '#a1a1aa', width: '22px', flexShrink: 0 }}>#{idx + 1}</span>
+                                <span style={{ fontSize: '12px', fontWeight: '900', color: isFirstRank ? '#FFD700' : '#a1a1aa', width: '22px', flexShrink: 0 }}>#{idx + 1}</span>
                                 <div style={{ textAlign: 'left', minWidth: 0 }}>
                                   <div style={{ fontSize: '13px', fontWeight: '800', color: 'white', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{pl.name}</div>
                                   <span style={{ fontSize: '9.5px', color: '#a1a1aa' }}>ID: {pl.id}</span>
