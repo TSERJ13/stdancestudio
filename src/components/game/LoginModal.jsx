@@ -112,6 +112,18 @@ export default function LoginModal({ isOpen, onClose, currentUser, onLogin, lang
     return localStorage.getItem('dancing_bricks_is_admin') === 'true';
   });
 
+  const [shieldTaps, setShieldTaps] = useState(0);
+  const handleShieldTap = () => {
+    setShieldTaps(prev => {
+      const next = prev + 1;
+      if (next >= 5) {
+        setShowPinPrompt(true);
+        return 0;
+      }
+      return next;
+    });
+  };
+
   const isAdmin = currentUser?.studentId === '99999' ||
     currentUser?.studentId === 'TG-stdancestudio' ||
     currentUser?.username?.toLowerCase() === 'stdancestudio' ||
@@ -518,7 +530,22 @@ export default function LoginModal({ isOpen, onClose, currentUser, onLogin, lang
           </div>
         ) : currentUser?.isLoggedIn ? (
           <div className="login-profile-body" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: '10px' }}>
-            <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: 'rgba(212,166,74,0.15)', border: '2px solid rgba(212,166,74,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div
+              onClick={handleShieldTap}
+              title={isAdmin ? 'ადმინ რეჟიმი აქტიურია' : ''}
+              style={{
+                width: '64px',
+                height: '64px',
+                borderRadius: '50%',
+                background: 'rgba(212,166,74,0.15)',
+                border: '2px solid rgba(212,166,74,0.4)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                userSelect: 'none'
+              }}
+            >
               <ShieldCheck size={36} color="#d4a64a" />
             </div>
 
@@ -572,56 +599,52 @@ export default function LoginModal({ isOpen, onClose, currentUser, onLogin, lang
               </div>
             </div>
 
-            {/* Admin Dashboard Button or PIN trigger */}
-            {isAdmin ? (
-              <button
-                type="button"
-                onClick={() => setShowAdminDashboard(true)}
-                style={{
-                  width: '100%',
-                  padding: '11px 14px',
-                  borderRadius: '12px',
-                  background: 'linear-gradient(135deg, #d4a64a 0%, #a3762b 100%)',
-                  color: '#05060a',
-                  fontWeight: '900',
-                  fontSize: '13px',
-                  border: 'none',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '8px',
-                  marginTop: '10px',
-                  boxShadow: '0 4px 14px rgba(212,166,74,0.45)'
-                }}
-              >
-                <Crown size={17} color="#05060a" />
-                {t.adminBtnText}
-              </button>
-            ) : (
-              <button
-                type="button"
-                onClick={() => setShowPinPrompt(true)}
-                style={{
-                  width: '100%',
-                  padding: '9px 12px',
-                  borderRadius: '12px',
-                  background: 'rgba(212,166,74,0.08)',
-                  color: '#F0D9A8',
-                  fontWeight: '800',
-                  fontSize: '11.5px',
-                  border: '1px solid rgba(212,166,74,0.25)',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '6px',
-                  marginTop: '10px'
-                }}
-              >
-                <Crown size={14} color="#d4a64a" />
-                🔐 ადმინ რეჟიმი (PIN: 99999)
-              </button>
+            {/* Admin Dashboard Button only for Admin */}
+            {isAdmin && (
+              <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '10px' }}>
+                <button
+                  type="button"
+                  onClick={() => setShowAdminDashboard(true)}
+                  style={{
+                    width: '100%',
+                    padding: '11px 14px',
+                    borderRadius: '12px',
+                    background: 'linear-gradient(135deg, #d4a64a 0%, #a3762b 100%)',
+                    color: '#05060a',
+                    fontWeight: '900',
+                    fontSize: '13px',
+                    border: 'none',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '8px',
+                    boxShadow: '0 4px 14px rgba(212,166,74,0.45)'
+                  }}
+                >
+                  <Crown size={17} color="#05060a" />
+                  {t.adminBtnText}
+                </button>
+                {isManualAdmin && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      localStorage.removeItem('dancing_bricks_is_admin');
+                      setIsManualAdmin(false);
+                    }}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      color: '#a1a1aa',
+                      fontSize: '11px',
+                      cursor: 'pointer',
+                      padding: '4px'
+                    }}
+                  >
+                    🔒 ადმინ რეჟიმიდან გამოსვლა
+                  </button>
+                )}
+              </div>
             )}
           </div>
         ) : (
@@ -664,7 +687,7 @@ export default function LoginModal({ isOpen, onClose, currentUser, onLogin, lang
                 {t.testIdsLabel}
               </span>
               <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
-                {['101', '102', '103', '104', '99999'].map(testId => (
+                {['101', '102', '103', '104'].map(testId => (
                   <button
                     key={testId}
                     type="button"
@@ -1200,7 +1223,7 @@ export default function LoginModal({ isOpen, onClose, currentUser, onLogin, lang
               <Crown size={36} color="#d4a64a" />
             </div>
             <h3 style={{ color: '#F0D9A8', fontSize: '15px', fontWeight: '900', margin: '0 0 6px' }}>ადმინ რეჟიმის განბლოკვა</h3>
-            <p style={{ color: '#a1a1aa', fontSize: '11px', margin: '0 0 14px' }}>შეიყვანეთ ადმინისტრატორის PIN კოდი (99999):</p>
+            <p style={{ color: '#a1a1aa', fontSize: '11px', margin: '0 0 14px' }}>შეიყვანეთ ადმინისტრატორის PIN კოდი:</p>
             <form onSubmit={handleVerifyPin} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
               <input
                 type="password"
