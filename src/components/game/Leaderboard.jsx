@@ -116,7 +116,7 @@ function AvatarImage({ src, alt, fallbackChar }) {
 
 let LEADERBOARD_MEMORY_CACHE = null;
 
-export default function Leaderboard({ currentTotalScore, totalGames, playerName, userId, photoUrl, onUpdatePlayerName }) {
+export default function Leaderboard({ currentTotalScore, totalGames, playerName, userId, photoUrl, onUpdatePlayerName, onOpenAdmin }) {
   const { lang } = useLanguage();
   const t = lbTranslations[lang] || lbTranslations.ka;
   const [cloudList, setCloudList] = useState(() => {
@@ -165,9 +165,18 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
 
     initialSync();
 
+    const handleScoreSync = (e) => {
+      if (e?.detail?.updatedList && Array.isArray(e.detail.updatedList)) {
+        LEADERBOARD_MEMORY_CACHE = e.detail.updatedList;
+        setCloudList(e.detail.updatedList);
+      }
+    };
+    window.addEventListener('dancing_bricks_score_synced', handleScoreSync);
+
     const interval = setInterval(refreshCloudData, 5000);
     return () => {
       isMounted = false;
+      window.removeEventListener('dancing_bricks_score_synced', handleScoreSync);
       clearInterval(interval);
     };
   }, [userId]);
@@ -226,20 +235,54 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
       const now = new Date();
       const georgiaTime = new Date(now.getTime() + (now.getTimezoneOffset() * 60000) + (4 * 3600000));
       
-      let targetYear = georgiaTime.getFullYear();
-      let targetMonth = georgiaTime.getMonth();
+      const year = georgiaTime.getFullYear();
+      const month = georgiaTime.getMonth();
       
-      const thisMonthTarget = new Date(targetYear, targetMonth, 20, 22, 0, 0);
-      if (georgiaTime.getTime() >= thisMonthTarget.getTime()) {
-        targetMonth++;
-        if (targetMonth > 11) {
-          targetMonth = 0;
-          targetYear++;
+      // Draw occurs on 20th at 22:00 Georgia Time.
+      // Active draw window is 48 hours (from 20th 22:00 to 22nd 22:00).
+      const drawStart = new Date(year, month, 20, 22, 0, 0);
+      const drawEnd = new Date(drawStart.getTime() + (48 * 3600 * 1000));
+      
+      let isUnlocked = false;
+      let activeDrawMonth = month;
+      let targetDate;
+      let diff = 0;
+      let timeLeftText = '';
+
+      if (georgiaTime.getTime() < drawStart.getTime()) {
+        // Before tonight's 22:00 draw
+        isUnlocked = false;
+        activeDrawMonth = month;
+        targetDate = drawStart;
+        diff = targetDate.getTime() - georgiaTime.getTime();
+      } else if (georgiaTime.getTime() >= drawStart.getTime() && georgiaTime.getTime() < drawEnd.getTime()) {
+        // Active Draw Window (20th 22:00 - 22nd 22:00)
+        isUnlocked = true;
+        activeDrawMonth = month;
+        const remMs = drawEnd.getTime() - georgiaTime.getTime();
+        const remH = Math.floor(remMs / (1000 * 60 * 60));
+        const remM = Math.floor((remMs / 1000 / 60) % 60);
+
+        if (lang === 'ka') {
+          timeLeftText = `🎉 გახსნილია! (${remH}სთ)`;
+        } else if (lang === 'ru') {
+          timeLeftText = `🎉 Открыт! (${remH}ч)`;
+        } else {
+          timeLeftText = `🎉 Open! (${remH}h)`;
         }
+      } else {
+        // Active draw ended, target next month 20th 22:00
+        isUnlocked = false;
+        let nextMonth = month + 1;
+        let nextYear = year;
+        if (nextMonth > 11) {
+          nextMonth = 0;
+          nextYear++;
+        }
+        activeDrawMonth = nextMonth;
+        targetDate = new Date(nextYear, nextMonth, 20, 22, 0, 0);
+        diff = targetDate.getTime() - georgiaTime.getTime();
       }
-      
-      const targetDate = new Date(targetYear, targetMonth, 20, 22, 0, 0);
-      const diff = targetDate.getTime() - georgiaTime.getTime();
       
       const monthNamesKa = ["იანვრამდე", "თებერვლამდე", "მარტამდე", "აპრილამდე", "მაისამდე", "ივნისამდე", "ივლისამდე", "აგვისტომდე", "სექტემბრამდე", "ოქტომბრამდე", "ნოემბრამდე", "დეკემბრამდე"];
       const monthNamesEn = ["Until Jan", "Until Feb", "Until Mar", "Until Apr", "Until May", "Until Jun", "Until Jul", "Until Aug", "Until Sept", "Until Oct", "Until Nov", "Until Dec"];
@@ -249,20 +292,18 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
       const drawNamesEn = ["Jan 20th", "Feb 20th", "Mar 20th", "Apr 20th", "May 20th", "Jun 20th", "Jul 20th", "Aug 20th", "Sept 20th", "Oct 20th", "Nov 20th", "Dec 20th"];
       const drawNamesRu = ["20 Января", "20 Февраля", "20 Марта", "20 Апреля", "20 Мая", "20 Июня", "20 Июля", "20 Августа", "20 Сентября", "20 Октября", "20 Ноября", "20 Декабря"];
 
-      let monthName = monthNamesKa[targetMonth];
-      let drawName = drawNamesKa[targetMonth];
+      let monthName = monthNamesKa[activeDrawMonth];
+      let drawName = drawNamesKa[activeDrawMonth];
 
       if (lang === 'en') {
-        monthName = monthNamesEn[targetMonth];
-        drawName = drawNamesEn[targetMonth];
+        monthName = monthNamesEn[activeDrawMonth];
+        drawName = drawNamesEn[activeDrawMonth];
       } else if (lang === 'ru') {
-        monthName = monthNamesRu[targetMonth];
-        drawName = drawNamesRu[targetMonth];
+        monthName = monthNamesRu[activeDrawMonth];
+        drawName = drawNamesRu[activeDrawMonth];
       }
 
-      if (diff <= 0) {
-        setCountdownState({ isUnlocked: true, timeLeftText: '', monthName, drawName });
-      } else {
+      if (!isUnlocked && diff > 0) {
         const d = Math.floor(diff / (1000 * 60 * 60 * 24));
         const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
         const m = Math.floor((diff / 1000 / 60) % 60);
@@ -274,9 +315,10 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
         } else if (lang === 'ru') {
           timeStr = `${d}д ${h}ч ${m}мин ${s}сек`;
         }
-
-        setCountdownState({ isUnlocked: false, timeLeftText: timeStr, monthName, drawName });
+        timeLeftText = timeStr;
       }
+
+      setCountdownState({ isUnlocked, timeLeftText, monthName, drawName });
     };
     
     updateCountdown();
@@ -344,12 +386,15 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
       (playerName && currentWinner.name && currentWinner.name.trim().toLowerCase() === playerName.trim().toLowerCase())
     );
 
-    if (!isUserFirstPlace) {
+    const isAdminUser = localStorage.getItem('dancing_bricks_is_admin') === 'true' ||
+      userId === '99999' || userId === 'TG-stdancestudio';
+
+    if (!isUserFirstPlace && !isAdminUser) {
       alert(lang === 'ka' ? 'მხოლოდ 1-ელ ადგილზე გასულ მოთამაშეს შეუძლია პრიზის დატრიალება!' : lang === 'ru' ? 'Только игрок на 1-м месте может вращать колесо!' : 'Only the 1st place winner can spin the wheel!');
       return;
     }
 
-    if (countdownState.isUnlocked) {
+    if (countdownState.isUnlocked || isAdminUser) {
       setSelectedWinner(currentWinner ? currentWinner.name : (name || playerName));
       setShowSpinModal(true);
     } else {
@@ -377,6 +422,28 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
         <div className="lb-title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <Trophy size={20} color="#d4a64a" />
           <h2 style={{ fontSize: '15px', margin: 0, fontWeight: '900', color: 'white' }}>{t.title}</h2>
+          {onOpenAdmin && (
+            <button
+              onClick={onOpenAdmin}
+              style={{
+                background: 'rgba(212,166,74,0.15)',
+                border: '1px solid rgba(212,166,74,0.4)',
+                borderRadius: '8px',
+                color: '#F0D9A8',
+                fontSize: '10.5px',
+                fontWeight: '800',
+                padding: '3px 8px',
+                cursor: 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '4px'
+              }}
+              title="ქულების მართვა & ადმინ პანელი"
+            >
+              <Crown size={12} color="#d4a64a" />
+              <span>ადმინი</span>
+            </button>
+          )}
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>

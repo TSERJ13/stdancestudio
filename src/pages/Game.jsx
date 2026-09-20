@@ -612,6 +612,7 @@ export default function Game() {
                     userId={userProfile.studentId}
                     photoUrl={userProfile.photoUrl}
                     onUpdatePlayerName={handleUpdateName}
+                    onOpenAdmin={() => setShowLoginModal(true)}
                   />
                 </ErrorBoundary>
               </div>

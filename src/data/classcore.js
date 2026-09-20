@@ -431,6 +431,106 @@ export async function syncCloudScore(userEntry) {
   }
 }
 
+/**
+ * Admin: Manually add points or set score for any player in cloud leaderboard
+ */
+export async function adminUpdatePlayerScore({ playerId, playerName, newScore, deltaScore, newGames, deletePlayer }) {
+  try {
+    const settingsUrl = `${SUPABASE_URL}/rest/v1/studio_settings?studio_slug=eq.${STUDIO_SLUG}`;
+    const getRes = await fetch(settingsUrl, {
+      headers: {
+        'apikey': ANON_KEY,
+        'Authorization': `Bearer ${ANON_KEY}`
+      }
+    });
+    if (!getRes.ok) throw new Error('Failed to fetch studio settings');
+    const settingsList = await getRes.json();
+    if (!settingsList || settingsList.length === 0) throw new Error('Studio settings not found');
+    const settings = settingsList[0];
+    const currentStaffData = settings.staff_data || {};
+    let cloudList = Array.isArray(currentStaffData.game_leaderboard) ? [...currentStaffData.game_leaderboard] : [];
+
+    if (deletePlayer) {
+      cloudList = cloudList.filter(item => item.id !== playerId && item.name !== playerName);
+    } else {
+      const existingIdx = cloudList.findIndex(item => (playerId && item.id === playerId) || (playerName && item.name && item.name.toLowerCase() === playerName.toLowerCase()));
+
+      if (existingIdx >= 0) {
+        let finalScore = Number(cloudList[existingIdx].score ?? cloudList[existingIdx].high_score ?? 0);
+        if (typeof newScore === 'number') {
+          finalScore = Math.max(0, Math.round(newScore));
+        } else if (typeof deltaScore === 'number') {
+          finalScore = Math.max(0, Math.round(finalScore + deltaScore));
+        }
+
+        let finalGames = Number(cloudList[existingIdx].games ?? cloudList[existingIdx].total_games ?? 1);
+        if (typeof newGames === 'number') {
+          finalGames = Math.max(1, Math.round(newGames));
+        }
+
+        cloudList[existingIdx] = {
+          ...cloudList[existingIdx],
+          score: finalScore,
+          high_score: finalScore,
+          total_score: finalScore,
+          games: finalGames,
+          updatedAt: new Date().toISOString()
+        };
+      } else {
+        // Add new player manually
+        let finalScore = 0;
+        if (typeof newScore === 'number') finalScore = Math.max(0, Math.round(newScore));
+        else if (typeof deltaScore === 'number') finalScore = Math.max(0, Math.round(deltaScore));
+
+        const newPlayer = {
+          id: playerId || `TG-MANUAL-${Date.now()}`,
+          name: playerName || 'ახალი მოთამაშე',
+          photoUrl: '',
+          score: finalScore,
+          high_score: finalScore,
+          total_score: finalScore,
+          games: typeof newGames === 'number' ? Math.max(1, newGames) : 1,
+          avatarBg: '#d4a64a',
+          updatedAt: new Date().toISOString()
+        };
+        cloudList.push(newPlayer);
+      }
+    }
+
+    // Sort descending by score
+    cloudList.sort((a, b) => Number(b.score ?? b.high_score ?? 0) - Number(a.score ?? a.high_score ?? 0));
+
+    const updatedStaffData = {
+      ...currentStaffData,
+      game_leaderboard: cloudList
+    };
+
+    const patchRes = await fetch(`${SUPABASE_URL}/rest/v1/studio_settings?studio_slug=eq.${STUDIO_SLUG}`, {
+      method: 'PATCH',
+      headers: {
+        'apikey': ANON_KEY,
+        'Authorization': `Bearer ${ANON_KEY}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ staff_data: updatedStaffData })
+    });
+
+    if (!patchRes.ok) throw new Error('Failed to update leaderboard in cloud');
+
+    // Update local cache and notify listeners
+    try {
+      localStorage.setItem('dancing_bricks_lb_cache', JSON.stringify(cloudList));
+      window.dispatchEvent(new Event('dancing_bricks_claim_updated'));
+      window.dispatchEvent(new CustomEvent('dancing_bricks_score_synced', { detail: cloudList }));
+    } catch (e) {}
+
+    return { success: true, leaderboard: cloudList };
+  } catch (err) {
+    console.error('❌ Error updating player score in admin:', err);
+    return { success: false, error: err.message };
+  }
+}
+
 /* ── Student helpers ────────────────────────────── */
 
 /**

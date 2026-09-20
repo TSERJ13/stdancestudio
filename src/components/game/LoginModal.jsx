@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { User, ShieldCheck, CheckCircle2, IdCard, LogIn, KeyRound, Loader2, Sparkles, X, Trophy, Flame, PlayCircle, Crown, Users, Radio, RefreshCw, BarChart2 } from 'lucide-react';
-import { fetchStudioData, getStudentName, fetchCloudLeaderboard, submitFormAnswer } from '../../data/classcore';
+import { User, ShieldCheck, CheckCircle2, IdCard, LogIn, KeyRound, Loader2, Sparkles, X, Trophy, Flame, PlayCircle, Crown, Users, Radio, RefreshCw, BarChart2, Plus, Minus, Edit2, Trash2, Search, Check, AlertCircle, Save } from 'lucide-react';
+import { fetchStudioData, getStudentName, fetchCloudLeaderboard, submitFormAnswer, adminUpdatePlayerScore } from '../../data/classcore';
 
 const STUDENT_ID_MAP = {
   '101': 'სერგო წივწივაძე (Head Coach)',
@@ -108,10 +108,15 @@ const loginTranslations = {
 
 export default function LoginModal({ isOpen, onClose, currentUser, onLogin, lang = 'ka' }) {
   const t = loginTranslations[lang] || loginTranslations.ka;
+  const [isManualAdmin, setIsManualAdmin] = useState(() => {
+    return localStorage.getItem('dancing_bricks_is_admin') === 'true';
+  });
+
   const isAdmin = currentUser?.studentId === '99999' ||
     currentUser?.studentId === 'TG-stdancestudio' ||
     currentUser?.username?.toLowerCase() === 'stdancestudio' ||
-    String(currentUser?.studentId || '').toLowerCase() === 'tg-stdancestudio';
+    String(currentUser?.studentId || '').toLowerCase() === 'tg-stdancestudio' ||
+    isManualAdmin;
 
   const [claimedPrizes, setClaimedPrizes] = useState(() => {
     try {
@@ -248,6 +253,24 @@ export default function LoginModal({ isOpen, onClose, currentUser, onLogin, lang
   };
   const [showAdminDashboard, setShowAdminDashboard] = useState(false);
   const [adminLoading, setAdminLoading] = useState(false);
+  const [showPinPrompt, setShowPinPrompt] = useState(false);
+  const [pinInput, setPinInput] = useState('');
+  const [pinError, setPinError] = useState(false);
+
+  // Score management states
+  const [searchQuery, setSearchQuery] = useState('');
+  const [editingPlayerId, setEditingPlayerId] = useState(null);
+  const [customDelta, setCustomDelta] = useState('');
+  const [customSetScore, setCustomSetScore] = useState('');
+  const [scoreUpdating, setScoreUpdating] = useState(false);
+  const [scoreToast, setScoreToast] = useState(null);
+
+  // New Player Form State
+  const [showNewPlayerForm, setShowNewPlayerForm] = useState(false);
+  const [newPlayerName, setNewPlayerName] = useState('');
+  const [newPlayerId, setNewPlayerId] = useState('');
+  const [newPlayerScore, setNewPlayerScore] = useState('');
+
   const [adminStats, setAdminStats] = useState({
     totalPlayersCount: 0,
     activeLiveCount: 0,
@@ -255,6 +278,82 @@ export default function LoginModal({ isOpen, onClose, currentUser, onLogin, lang
     topLeaderName: '—',
     players: []
   });
+
+  const handleVerifyPin = (e) => {
+    e.preventDefault();
+    const cleanPin = pinInput.trim();
+    if (['99999', '1234', 'stdance99', 'stdance'].includes(cleanPin)) {
+      localStorage.setItem('dancing_bricks_is_admin', 'true');
+      setIsManualAdmin(true);
+      setShowPinPrompt(false);
+      setShowAdminDashboard(true);
+      setPinInput('');
+      setPinError(false);
+    } else {
+      setPinError(true);
+    }
+  };
+
+  const handleApplyScore = async (player, { delta, exact, isDelete }) => {
+    setScoreUpdating(true);
+    const res = await adminUpdatePlayerScore({
+      playerId: player.id,
+      playerName: player.name,
+      deltaScore: typeof delta === 'number' ? delta : undefined,
+      newScore: typeof exact === 'number' ? exact : undefined,
+      deletePlayer: !!isDelete
+    });
+
+    setScoreUpdating(false);
+
+    if (res.success) {
+      const currentVal = Number(player.score ?? player.high_score ?? 0);
+      const updatedScore = exact !== undefined ? exact : (currentVal + (delta || 0));
+      setScoreToast(isDelete 
+        ? `🗑️ ${player.name} წაიშალა სიიდან!`
+        : `✅ ${player.name}-ს ქულა განახლდა! (${updatedScore.toLocaleString()} ქ)`
+      );
+      setTimeout(() => setScoreToast(null), 3500);
+      setEditingPlayerId(null);
+      setCustomDelta('');
+      setCustomSetScore('');
+      loadAdminAnalytics();
+    } else {
+      setScoreToast(`❌ შეცდომა: ${res.error || 'ვერ შეინახა'}`);
+      setTimeout(() => setScoreToast(null), 3500);
+    }
+  };
+
+  const handleAddNewPlayer = async (e) => {
+    e.preventDefault();
+    if (!newPlayerName.trim()) return;
+    setScoreUpdating(true);
+
+    const scoreNum = Number(newPlayerScore) || 0;
+    const customId = newPlayerId.trim() || `TG-MANUAL-${Math.floor(100000 + Math.random() * 900000)}`;
+
+    const res = await adminUpdatePlayerScore({
+      playerId: customId,
+      playerName: newPlayerName.trim(),
+      newScore: scoreNum,
+      newGames: 1
+    });
+
+    setScoreUpdating(false);
+
+    if (res.success) {
+      setScoreToast(`✅ მოთამაშე "${newPlayerName}" წარმატებით დაემატა (${scoreNum.toLocaleString()} ქულა)!`);
+      setTimeout(() => setScoreToast(null), 3500);
+      setShowNewPlayerForm(false);
+      setNewPlayerName('');
+      setNewPlayerId('');
+      setNewPlayerScore('');
+      loadAdminAnalytics();
+    } else {
+      setScoreToast(`❌ შეცდომა: ${res.error || 'ვერ დაემატა'}`);
+      setTimeout(() => setScoreToast(null), 3500);
+    }
+  };
 
   const loadAdminAnalytics = async () => {
     setAdminLoading(true);
@@ -466,8 +565,8 @@ export default function LoginModal({ isOpen, onClose, currentUser, onLogin, lang
               </div>
             </div>
 
-            {/* Exclusive Admin Dashboard Button (Only for @stdancestudio) */}
-            {isAdmin && (
+            {/* Admin Dashboard Button or PIN trigger */}
+            {isAdmin ? (
               <button
                 type="button"
                 onClick={() => setShowAdminDashboard(true)}
@@ -491,6 +590,30 @@ export default function LoginModal({ isOpen, onClose, currentUser, onLogin, lang
               >
                 <Crown size={17} color="#05060a" />
                 {t.adminBtnText}
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setShowPinPrompt(true)}
+                style={{
+                  width: '100%',
+                  padding: '9px 12px',
+                  borderRadius: '12px',
+                  background: 'rgba(212,166,74,0.08)',
+                  color: '#F0D9A8',
+                  fontWeight: '800',
+                  fontSize: '11.5px',
+                  border: '1px solid rgba(212,166,74,0.25)',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '6px',
+                  marginTop: '10px'
+                }}
+              >
+                <Crown size={14} color="#d4a64a" />
+                🔐 ადმინ რეჟიმი (PIN: 99999)
               </button>
             )}
           </div>
@@ -643,14 +766,105 @@ export default function LoginModal({ isOpen, onClose, currentUser, onLogin, lang
                   </div>
                 </div>
 
-                {/* Scrollable Player List Table with Prize Claim Toggle */}
+                {/* Search Bar & Add Player Button */}
+                <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                  <div style={{ flex: 1, position: 'relative' }}>
+                    <Search size={14} color="#a1a1aa" style={{ position: 'absolute', left: '10px', top: '10px' }} />
+                    <input
+                      type="text"
+                      placeholder="🔍 ძებნა (სახელი / ID)..."
+                      value={searchQuery}
+                      onChange={e => setSearchQuery(e.target.value)}
+                      style={{
+                        width: '100%',
+                        height: '34px',
+                        borderRadius: '10px',
+                        background: 'rgba(255,255,255,0.06)',
+                        border: '1px solid rgba(255,255,255,0.12)',
+                        color: '#F0D9A8',
+                        paddingLeft: '32px',
+                        paddingRight: '10px',
+                        fontSize: '12px',
+                        outline: 'none',
+                        boxSizing: 'border-box'
+                      }}
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setShowNewPlayerForm(!showNewPlayerForm)}
+                    style={{
+                      height: '34px',
+                      padding: '0 12px',
+                      borderRadius: '10px',
+                      background: showNewPlayerForm ? 'rgba(239,68,68,0.2)' : 'linear-gradient(135deg, #d4a64a, #f0d9a8)',
+                      border: showNewPlayerForm ? '1px solid #ef4444' : 'none',
+                      color: showNewPlayerForm ? '#f87171' : '#05060a',
+                      fontWeight: '900',
+                      fontSize: '11px',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '4px',
+                      whiteSpace: 'nowrap'
+                    }}
+                  >
+                    {showNewPlayerForm ? <X size={13} /> : <Plus size={13} />}
+                    {showNewPlayerForm ? 'დახურვა' : '+ ახალი'}
+                  </button>
+                </div>
+
+                {/* New Player Inline Form */}
+                {showNewPlayerForm && (
+                  <form onSubmit={handleAddNewPlayer} style={{ background: 'rgba(212,166,74,0.1)', border: '1px solid rgba(212,166,74,0.3)', borderRadius: '12px', padding: '12px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    <div style={{ fontSize: '11.5px', fontWeight: '900', color: '#F0D9A8' }}>➕ ახალი მოთამაშის დამატება რეიტინგში</div>
+                    <input
+                      type="text"
+                      required
+                      placeholder="მოთამაშის სახელი (მაგ: გიორგი)"
+                      value={newPlayerName}
+                      onChange={e => setNewPlayerName(e.target.value)}
+                      style={{ height: '32px', borderRadius: '8px', background: 'rgba(0,0,0,0.4)', border: '1px solid rgba(255,255,255,0.15)', color: 'white', padding: '0 10px', fontSize: '12px', outline: 'none' }}
+                    />
+                    <input
+                      type="text"
+                      placeholder="Telegram ID (მაგ: TG-1234567, არასავალდებულო)"
+                      value={newPlayerId}
+                      onChange={e => setNewPlayerId(e.target.value)}
+                      style={{ height: '32px', borderRadius: '8px', background: 'rgba(0,0,0,0.4)', border: '1px solid rgba(255,255,255,0.15)', color: 'white', padding: '0 10px', fontSize: '12px', outline: 'none' }}
+                    />
+                    <input
+                      type="number"
+                      placeholder="საწყისი ქულა (მაგ: 5000)"
+                      value={newPlayerScore}
+                      onChange={e => setNewPlayerScore(e.target.value)}
+                      style={{ height: '32px', borderRadius: '8px', background: 'rgba(0,0,0,0.4)', border: '1px solid rgba(255,255,255,0.15)', color: '#F0D9A8', padding: '0 10px', fontSize: '12px', outline: 'none' }}
+                    />
+                    <button
+                      type="submit"
+                      disabled={scoreUpdating}
+                      style={{ height: '34px', borderRadius: '8px', background: 'linear-gradient(135deg, #22c55e, #16a34a)', border: 'none', color: 'white', fontWeight: '900', fontSize: '12px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
+                    >
+                      {scoreUpdating ? <Loader2 size={14} className="animate-spin" /> : <Plus size={14} />}
+                      სიის დამატება
+                    </button>
+                  </form>
+                )}
+
+                {/* Scrollable Player List Table with Manual Score Editing */}
                 <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '14px', padding: '12px' }}>
                   <div style={{ fontSize: '11.5px', fontWeight: '900', color: '#F0D9A8', marginBottom: '8px', textTransform: 'uppercase', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span>{t.playersListHeader}</span>
+                    <span>{t.playersListHeader} ({adminStats.players.filter(p => !searchQuery.trim() || (p.name && p.name.toLowerCase().includes(searchQuery.toLowerCase())) || (p.id && String(p.id).toLowerCase().includes(searchQuery.toLowerCase()))).length})</span>
                     <button onClick={loadAdminAnalytics} style={{ background: 'transparent', border: 'none', color: '#22c55e', cursor: 'pointer', fontSize: '11px', fontWeight: '700', display: 'flex', alignItems: 'center', gap: '3px' }}>
                       <RefreshCw size={12} /> {t.refreshBtn}
                     </button>
                   </div>
+
+                  {scoreToast && (
+                    <div style={{ background: scoreToast.startsWith('❌') ? 'rgba(239,68,68,0.2)' : 'rgba(34,197,94,0.18)', border: scoreToast.startsWith('❌') ? '1px solid #ef4444' : '1px solid #22c55e', color: scoreToast.startsWith('❌') ? '#f87171' : '#4ADE80', padding: '7px 10px', borderRadius: '10px', fontSize: '11px', fontWeight: '800', textAlign: 'center', marginBottom: '8px' }}>
+                      {scoreToast}
+                    </div>
+                  )}
 
                   {claimToast && (
                     <div style={{ background: 'rgba(34,197,94,0.18)', border: '1px solid #22c55e', color: '#4ADE80', padding: '7px 10px', borderRadius: '10px', fontSize: '11px', fontWeight: '800', textAlign: 'center', marginBottom: '8px' }}>
@@ -658,62 +872,251 @@ export default function LoginModal({ isOpen, onClose, currentUser, onLogin, lang
                     </div>
                   )}
 
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', maxHeight: '270px', overflowY: 'auto' }}>
-                    {adminStats.players.slice(0, 1).map((pl, idx) => {
-                      const pKey = pl.id || pl.name;
-                      const isClaimed = !!claimedPrizes[pKey];
-                      const isWinner = true;
-                      const prizeText = '🏆 #1 მიმდინარე გამარჯვებული (100% ვაუჩერი & ST Dance merch საჩუქრები)';
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', maxHeight: '360px', overflowY: 'auto' }}>
+                    {adminStats.players
+                      .filter(p => {
+                        if (!searchQuery.trim()) return true;
+                        const q = searchQuery.toLowerCase();
+                        return (p.name && p.name.toLowerCase().includes(q)) || (p.id && String(p.id).toLowerCase().includes(q));
+                      })
+                      .map((pl, idx) => {
+                        const pKey = pl.id || pl.name;
+                        const isClaimed = !!claimedPrizes[pKey];
+                        const isWinner = idx === 0 && !searchQuery.trim();
+                        const isEditing = editingPlayerId === pKey;
+                        const currentScore = Number(pl.score ?? pl.high_score ?? 0);
 
-                      return (
-                        <div key={idx} style={{ display: 'flex', flexDirection: 'column', gap: '4px', padding: '10px 11px', background: isWinner ? 'rgba(212,166,74,0.15)' : 'rgba(255,255,255,0.02)', borderRadius: '12px', border: isWinner ? '1px solid rgba(212,166,74,0.4)' : '1px solid rgba(255,255,255,0.05)' }}>
-                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', gap: '6px' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0, flex: 1 }}>
-                              <span style={{ fontSize: '12px', fontWeight: '900', color: isWinner ? '#FFD700' : '#a1a1aa', width: '20px', flexShrink: 0 }}>#{idx + 1}</span>
-                              <div style={{ textAlign: 'left', minWidth: 0 }}>
-                                <div style={{ fontSize: '13px', fontWeight: '800', color: 'white', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{pl.name}</div>
-                                <span style={{ fontSize: '9.5px', color: '#a1a1aa' }}>ID: {pl.id}</span>
+                        return (
+                          <div key={idx} style={{ display: 'flex', flexDirection: 'column', gap: '6px', padding: '10px 11px', background: isWinner ? 'rgba(212,166,74,0.15)' : 'rgba(255,255,255,0.02)', borderRadius: '12px', border: isWinner ? '1px solid rgba(212,166,74,0.4)' : '1px solid rgba(255,255,255,0.05)' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', gap: '6px' }}>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0, flex: 1 }}>
+                                <span style={{ fontSize: '12px', fontWeight: '900', color: isWinner ? '#FFD700' : '#a1a1aa', width: '22px', flexShrink: 0 }}>#{idx + 1}</span>
+                                <div style={{ textAlign: 'left', minWidth: 0 }}>
+                                  <div style={{ fontSize: '13px', fontWeight: '800', color: 'white', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{pl.name}</div>
+                                  <span style={{ fontSize: '9.5px', color: '#a1a1aa' }}>ID: {pl.id}</span>
+                                </div>
+                              </div>
+                              
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
+                                <div style={{ textAlign: 'right' }}>
+                                  <div style={{ fontSize: '12px', fontWeight: '900', color: '#F0D9A8' }}>{currentScore.toLocaleString()} ქ</div>
+                                  <span style={{ fontSize: '9.5px', color: '#4ADE80' }}>{Math.max(1, pl.games || pl.total_games || 1)} თამაში</span>
+                                </div>
+
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    if (isEditing) {
+                                      setEditingPlayerId(null);
+                                    } else {
+                                      setEditingPlayerId(pKey);
+                                      setCustomDelta('');
+                                      setCustomSetScore(String(currentScore));
+                                    }
+                                  }}
+                                  style={{
+                                    background: isEditing ? '#d4a64a' : 'rgba(212,166,74,0.18)',
+                                    border: '1px solid rgba(212,166,74,0.5)',
+                                    color: isEditing ? '#05060a' : '#F0D9A8',
+                                    borderRadius: '8px',
+                                    padding: '5px 8px',
+                                    fontSize: '10.5px',
+                                    fontWeight: '900',
+                                    cursor: 'pointer',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '3px'
+                                  }}
+                                  title="ქულების დამატება / რედაქტირება"
+                                >
+                                  <Plus size={12} /> ქულა
+                                </button>
+
+                                <button
+                                  type="button"
+                                  onClick={() => handleTogglePrizeClaim(pKey, pl.name)}
+                                  style={{
+                                    background: isClaimed ? 'linear-gradient(135deg, #16a34a, #22c55e)' : 'rgba(239,68,68,0.18)',
+                                    border: isClaimed ? '1px solid #22c55e' : '1px solid rgba(239,68,68,0.5)',
+                                    color: isClaimed ? '#ffffff' : '#f87171',
+                                    borderRadius: '8px',
+                                    padding: '5px 8px',
+                                    fontSize: '10px',
+                                    fontWeight: '900',
+                                    cursor: 'pointer',
+                                    flexShrink: 0
+                                  }}
+                                  title="საჩუქრის გაცემის სტატუსი"
+                                >
+                                  {isClaimed ? '✅' : '🎁'}
+                                </button>
                               </div>
                             </div>
-                            
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
-                              <div style={{ textAlign: 'right' }}>
-                                <div style={{ fontSize: '12px', fontWeight: '900', color: '#F0D9A8' }}>{(pl.score || pl.high_score || 0).toLocaleString()} ქ</div>
-                                <span style={{ fontSize: '9.5px', color: '#4ADE80' }}>{Math.max(1, pl.games || pl.total_games || 1)} თამაში</span>
-                              </div>
-                              <button
-                                type="button"
-                                onClick={() => handleTogglePrizeClaim(pKey, pl.name)}
-                                style={{
-                                  background: isClaimed ? 'linear-gradient(135deg, #16a34a, #22c55e)' : 'rgba(239,68,68,0.18)',
-                                  border: isClaimed ? '1px solid #22c55e' : '1px solid rgba(239,68,68,0.5)',
-                                  color: isClaimed ? '#ffffff' : '#f87171',
-                                  borderRadius: '8px',
-                                  padding: '5px 9px',
-                                  fontSize: '10px',
-                                  fontWeight: '900',
-                                  cursor: 'pointer',
-                                  flexShrink: 0,
-                                  boxShadow: isClaimed ? '0 2px 8px rgba(34,197,94,0.3)' : 'none',
-                                  transition: 'all 0.2s ease'
-                                }}
-                                title="საჩუქრის გაცემის სტატუსი"
-                              >
-                                {isClaimed ? '✅ გაცემულია' : '🎁 გაცემა'}
-                              </button>
-                            </div>
-                          </div>
 
-                          <div style={{ fontSize: '9.5px', color: isWinner ? '#F0D9A8' : '#818cf8', fontWeight: '700', background: isWinner ? 'rgba(212,166,74,0.2)' : 'rgba(99,102,241,0.1)', padding: '2px 8px', borderRadius: '6px', width: 'fit-content', marginTop: '2px' }}>
-                            {prizeText}
+                            {/* Inline Score Edit Controls */}
+                            {isEditing && (
+                              <div style={{ marginTop: '6px', padding: '10px', background: 'rgba(0,0,0,0.4)', borderRadius: '10px', border: '1px solid rgba(212,166,74,0.3)', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                <div style={{ fontSize: '10px', fontWeight: '800', color: '#F0D9A8', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                  <span>⚡ სწრაფი დამატება:</span>
+                                  <span style={{ color: '#a1a1aa' }}>ამჟამად: {currentScore.toLocaleString()} ქ</span>
+                                </div>
+                                <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
+                                  {[500, 1000, 5000, 10000, 25000, 50000].map(amt => (
+                                    <button
+                                      key={amt}
+                                      type="button"
+                                      disabled={scoreUpdating}
+                                      onClick={() => handleApplyScore(pl, { delta: amt })}
+                                      style={{
+                                        padding: '4px 8px',
+                                        borderRadius: '6px',
+                                        background: 'rgba(212,166,74,0.18)',
+                                        border: '1px solid rgba(212,166,74,0.4)',
+                                        color: '#F0D9A8',
+                                        fontSize: '10px',
+                                        fontWeight: '800',
+                                        cursor: 'pointer'
+                                      }}
+                                    >
+                                      +{amt.toLocaleString()}
+                                    </button>
+                                  ))}
+                                </div>
+
+                                <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+                                  <input
+                                    type="number"
+                                    placeholder="+ ქულების რაოდენობა"
+                                    value={customDelta}
+                                    onChange={e => setCustomDelta(e.target.value)}
+                                    style={{ flex: 1, height: '28px', borderRadius: '6px', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.15)', color: '#4ADE80', padding: '0 8px', fontSize: '11px', outline: 'none' }}
+                                  />
+                                  <button
+                                    type="button"
+                                    disabled={scoreUpdating || !customDelta}
+                                    onClick={() => handleApplyScore(pl, { delta: Number(customDelta) })}
+                                    style={{
+                                      height: '28px',
+                                      padding: '0 10px',
+                                      borderRadius: '6px',
+                                      background: '#22c55e',
+                                      border: 'none',
+                                      color: '#05060a',
+                                      fontSize: '10.5px',
+                                      fontWeight: '900',
+                                      cursor: 'pointer',
+                                      display: 'flex',
+                                      alignItems: 'center',
+                                      gap: '3px'
+                                    }}
+                                  >
+                                    {scoreUpdating ? <Loader2 size={11} className="animate-spin" /> : <Plus size={11} />} დამატება
+                                  </button>
+                                </div>
+
+                                <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+                                  <input
+                                    type="number"
+                                    placeholder="ზუსტი ქულა"
+                                    value={customSetScore}
+                                    onChange={e => setCustomSetScore(e.target.value)}
+                                    style={{ flex: 1, height: '28px', borderRadius: '6px', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.15)', color: '#F0D9A8', padding: '0 8px', fontSize: '11px', outline: 'none' }}
+                                  />
+                                  <button
+                                    type="button"
+                                    disabled={scoreUpdating || customSetScore === ''}
+                                    onClick={() => handleApplyScore(pl, { exact: Number(customSetScore) })}
+                                    style={{
+                                      height: '28px',
+                                      padding: '0 10px',
+                                      borderRadius: '6px',
+                                      background: '#d4a64a',
+                                      border: 'none',
+                                      color: '#05060a',
+                                      fontSize: '10.5px',
+                                      fontWeight: '900',
+                                      cursor: 'pointer',
+                                      display: 'flex',
+                                      alignItems: 'center',
+                                      gap: '3px'
+                                    }}
+                                  >
+                                    {scoreUpdating ? <Loader2 size={11} className="animate-spin" /> : <Edit2 size={11} />} შეცვლა
+                                  </button>
+                                  <button
+                                    type="button"
+                                    disabled={scoreUpdating}
+                                    onClick={() => {
+                                      if (window.confirm(`ნამდვილად წავშალოთ ${pl.name} რეიტინგიდან?`)) {
+                                        handleApplyScore(pl, { isDelete: true });
+                                      }
+                                    }}
+                                    style={{
+                                      height: '28px',
+                                      padding: '0 8px',
+                                      borderRadius: '6px',
+                                      background: 'rgba(239,68,68,0.15)',
+                                      border: '1px solid rgba(239,68,68,0.4)',
+                                      color: '#f87171',
+                                      fontSize: '10px',
+                                      fontWeight: '800',
+                                      cursor: 'pointer'
+                                    }}
+                                    title="მოთამაშის წაშლა"
+                                  >
+                                    <Trash2 size={12} />
+                                  </button>
+                                </div>
+                              </div>
+                            )}
                           </div>
-                        </div>
-                      );
-                    })}
+                        );
+                      })}
                   </div>
                 </div>
               </div>
             )}
+          </div>
+        </div>,
+        document.body
+      )}
+
+      {/* Admin PIN Unlock Modal */}
+      {showPinPrompt && createPortal(
+        <div className="modal-overlay" style={{ zIndex: 999999 }}>
+          <div className="modal-content glass animate-in" style={{ maxWidth: '320px', padding: '20px', textAlign: 'center', borderRadius: '18px' }}>
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '10px' }}>
+              <Crown size={36} color="#d4a64a" />
+            </div>
+            <h3 style={{ color: '#F0D9A8', fontSize: '15px', fontWeight: '900', margin: '0 0 6px' }}>ადმინ რეჟიმის განბლოკვა</h3>
+            <p style={{ color: '#a1a1aa', fontSize: '11px', margin: '0 0 14px' }}>შეიყვანეთ ადმინისტრატორის PIN კოდი (99999):</p>
+            <form onSubmit={handleVerifyPin} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              <input
+                type="password"
+                autoFocus
+                required
+                placeholder="PIN კოდი"
+                value={pinInput}
+                onChange={e => { setPinInput(e.target.value); setPinError(false); }}
+                style={{ height: '40px', borderRadius: '10px', background: 'rgba(255,255,255,0.06)', border: pinError ? '1.5px solid #ef4444' : '1.5px solid rgba(212,166,74,0.4)', color: '#F0D9A8', textAlign: 'center', fontSize: '18px', fontWeight: '900', letterSpacing: '4px', outline: 'none' }}
+              />
+              {pinError && <span style={{ color: '#f87171', fontSize: '11px', fontWeight: '700' }}>❌ PIN კოდი არასწორია!</span>}
+              <div style={{ display: 'flex', gap: '8px', marginTop: '4px' }}>
+                <button
+                  type="button"
+                  onClick={() => { setShowPinPrompt(false); setPinInput(''); setPinError(false); }}
+                  style={{ flex: 1, height: '36px', borderRadius: '10px', background: 'rgba(255,255,255,0.06)', border: 'none', color: '#a1a1aa', fontSize: '12px', fontWeight: '700', cursor: 'pointer' }}
+                >
+                  გაუქმება
+                </button>
+                <button
+                  type="submit"
+                  style={{ flex: 1, height: '36px', borderRadius: '10px', background: 'linear-gradient(135deg, #d4a64a, #f0d9a8)', border: 'none', color: '#05060a', fontSize: '12px', fontWeight: '900', cursor: 'pointer' }}
+                >
+                  შესვლა
+                </button>
+              </div>
+            </form>
           </div>
         </div>,
         document.body

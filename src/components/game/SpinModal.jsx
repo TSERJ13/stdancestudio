@@ -64,9 +64,14 @@ export function getScheduledPrizeIndexForCurrentMonth() {
   let year = georgiaTime.getFullYear();
   let month = georgiaTime.getMonth(); // 0 = Jan, 8 = Sept, 11 = Dec
 
-  // Cutoff is 20th of month at 22:00
-  const cutoffThisMonth = new Date(year, month, 20, 22, 0, 0);
-  if (georgiaTime >= cutoffThisMonth) {
+  // Draw begins on 20th of month at 22:00 Georgia Time.
+  // The active draw period lasts 48 hours (from 20th 22:00 until 22nd 22:00).
+  // During these 48 hours, the prize MUST still be THIS month's scheduled prize!
+  // Only AFTER the 48-hour draw window ends (22nd 22:00) does the cycle switch to next month.
+  const drawStartThisMonth = new Date(year, month, 20, 22, 0, 0);
+  const drawEndThisMonth = new Date(drawStartThisMonth.getTime() + (48 * 3600 * 1000));
+
+  if (georgiaTime.getTime() >= drawEndThisMonth.getTime()) {
     month++;
     if (month > 11) month = 0;
   }
