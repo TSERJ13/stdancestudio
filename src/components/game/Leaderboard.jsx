@@ -213,6 +213,12 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
   combinedList.sort((a, b) => b.score - a.score);
   const rankedList = combinedList.map((item, index) => ({ ...item, rank: index + 1 }));
 
+  const currentWinner = rankedList.find(item => item.rank === 1);
+  const isUserFirstPlace = Boolean(currentWinner && (
+    (userId && currentWinner.id === userId) ||
+    (playerName && currentWinner.name && currentWinner.name.trim().toLowerCase() === playerName.trim().toLowerCase())
+  ));
+
   const myCloudItem = combinedList.find(m =>
     (userId && m.id === userId) ||
     (playerName && m.name && m.name.trim().toLowerCase() === playerName.trim().toLowerCase())
@@ -626,17 +632,17 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
                         <Crown size={20} color="#FFD700" fill="#FFD700" />
                       </div>
                     )}
-                    <AvatarImage src={item.photoUrl} alt={item.name} fallbackChar={item.name.charAt(0)} />
+                    <AvatarImage src={item.photoUrl} alt={item.name} fallbackChar={item.name ? item.name.charAt(0) : 'D'} />
                   </div>
 
                   <div className="lb-user-info">
-                    <span className="lb-name" style={{ color: isWinner ? '#F0D9A8' : 'white', fontWeight: isWinner ? '900' : '700' }}>{item.name}</span>
+                    <span className="lb-name" style={{ color: isWinner ? '#F0D9A8' : 'white', fontWeight: isWinner ? '900' : '700' }}>{item.name || 'Dancer'}</span>
                     <span className="lb-badge">ID: {item.id}</span>
                   </div>
 
                   <div className="lb-score-col" style={{ zIndex: 1, display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '4px' }}>
                     <span className="lb-score" style={{ color: isWinner ? '#d4a64a' : 'white', fontWeight: '900' }}>
-                      {item.score.toLocaleString()} {t.pts}
+                      {(item.score || 0).toLocaleString()} {t.pts}
                     </span>
                     {isWinner ? (
                       (isUserFirstPlace || (localStorage.getItem('dancing_bricks_is_admin') === 'true' || userId === '99999' || userId === 'TG-stdancestudio')) ? (
@@ -697,7 +703,7 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
                         </span>
                       )
                     ) : (
-                      <span className="lb-games">{item.games} {t.games}</span>
+                      <span className="lb-games">{item.games || 0} {t.games}</span>
                     )}
                   </div>
                 </div>
