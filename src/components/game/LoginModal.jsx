@@ -750,7 +750,13 @@ export default function LoginModal({ isOpen, onClose, currentUser, onLogin, lang
           <div className="modal-content glass animate-in" style={{ maxWidth: '450px', width: '94%', maxHeight: '88vh', overflowY: 'auto', padding: '16px', borderRadius: '20px', boxSizing: 'border-box' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px', borderBottom: '1px solid rgba(212,166,74,0.3)', paddingBottom: '10px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <Crown size={22} color="#d4a64a" />
+                <img
+                  src="/images/dancing_bricks_logo.png?v=5"
+                  alt="Dancing Bricks"
+                  onError={(e) => { e.currentTarget.src = '/images/logo-transparent.png'; }}
+                  style={{ height: '30px', width: 'auto', objectFit: 'contain' }}
+                />
+                <Crown size={20} color="#d4a64a" />
                 <div style={{ textAlign: 'left' }}>
                   <h3 style={{ fontSize: '16px', fontWeight: '900', color: '#F0D9A8', margin: 0 }}>{t.adminTitle}</h3>
                   <span style={{ fontSize: '10.5px', color: '#4ADE80', fontWeight: '700' }}>{t.adminSubTitle}</span>

@@ -901,10 +901,14 @@ export default function GameBoard({ tGame, lang = 'ka', availableLives, onSpendL
               <img
                 src="/images/dancing_bricks_logo.png?v=5"
                 alt="Dancing Bricks"
+                onError={(e) => {
+                  if (e.currentTarget.src.indexOf('logo-transparent') === -1) {
+                    e.currentTarget.src = '/images/logo-transparent.png';
+                  }
+                }}
                 style={{
-                  width: '145px',
-                  height: 'auto',
-                  maxHeight: '145px',
+                  width: '135px',
+                  height: '135px',
                   objectFit: 'contain',
                   marginBottom: '2px',
                   display: 'block',

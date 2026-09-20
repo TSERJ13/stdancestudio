@@ -9,7 +9,9 @@ import SocialShareModal from '../components/game/SocialShareModal';
 import Leaderboard from '../components/game/Leaderboard';
 import PrizesPage from '../components/game/PrizesPage';
 import LoginModal from '../components/game/LoginModal';
-import { syncCloudScore, fetchCloudLeaderboard, sanitizeSeasonalProfile } from '../data/classcore';
+import MonthlyWinnerModal from '../components/game/MonthlyWinnerModal';
+import SpinModal, { getCurrentDrawMonthKey } from '../components/game/SpinModal';
+import { syncCloudScore, fetchCloudLeaderboard, sanitizeSeasonalProfile, fetchCurrentMonthDrawStatus } from '../data/classcore';
 import { loadLivesData, saveLivesData, calculateAvailableLives, formatTimeUntilReset, getGeorgiaResetTime } from '../utils/livesManager';
 import './Game.css';
 
@@ -141,6 +143,10 @@ export default function Game() {
   const [showShareModal, setShowShareModal] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
 
+  const [showWinnerModal, setShowWinnerModal] = useState(false);
+  const [winnerModalData, setWinnerModalData] = useState(null);
+  const [showWinnerSpinModal, setShowWinnerSpinModal] = useState(false);
+
   const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
   const isTestAccount =
     userProfile?.studentId === '99999' ||
@@ -149,6 +155,73 @@ export default function Game() {
     (userProfile?.username && userProfile.username.toLowerCase() === 'stdancestudio');
 
   const availableLives = isTestAccount ? 999 : calculateAvailableLives(livesData);
+
+  // Check on app load if monthly draw has started and show winner to all players
+  useEffect(() => {
+    let isMounted = true;
+    const checkMonthlyWinner = async () => {
+      try {
+        const monthKey = getCurrentDrawMonthKey();
+        const dismissedKey = `dancing_bricks_dismissed_winner_${monthKey}`;
+        if (sessionStorage.getItem(dismissedKey)) return;
+
+        const now = new Date();
+        const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+        const georgiaTime = new Date(utc + (3600000 * 4));
+        const year = georgiaTime.getFullYear();
+        const month = georgiaTime.getMonth();
+        const drawStartThisMonth = new Date(year, month, 20, 22, 0, 0);
+
+        const [cloudLb, drawStatus] = await Promise.all([
+          fetchCloudLeaderboard(),
+          fetchCurrentMonthDrawStatus(monthKey)
+        ]);
+
+        if (!isMounted) return;
+
+        const isTimeForDraw = georgiaTime.getTime() >= drawStartThisMonth.getTime();
+        const hasSpunClaim = drawStatus && drawStatus.isSpun;
+
+        if (isTimeForDraw || hasSpunClaim) {
+          const cleanLb = (cloudLb || []).filter(item => item.name !== 'Dancer' && !String(item.id).startsWith('USER_'));
+          cleanLb.sort((a, b) => (b.score || 0) - (a.score || 0));
+          const rank1 = cleanLb[0];
+
+          const monthNames = ["იანვარი", "თებერვალი", "მარტი", "აპრილი", "მაისი", "ივნისი", "ივლისი", "აგვისტო", "სექტემბერი", "ოქტომბერი", "ნოემბერი", "დეკემბერი"];
+          const [mY, mM] = monthKey.split('-');
+          const mIdx = Number(mM) - 1;
+          const monthNameFormatted = mIdx >= 0 ? `20 ${monthNames[mIdx]} ${mY}` : monthKey;
+
+          if (rank1 || hasSpunClaim) {
+            const winnerObj = {
+              name: hasSpunClaim ? drawStatus.winnerName : (rank1?.name || 'Winner'),
+              score: rank1?.score || 0,
+              games: rank1?.games || 1,
+              id: hasSpunClaim ? drawStatus.winnerId : rank1?.id,
+              photoUrl: rank1?.photoUrl || ''
+            };
+
+            setWinnerModalData({
+              winner: winnerObj,
+              drawInfo: {
+                monthKey,
+                monthName: monthNameFormatted,
+                isSpun: !!hasSpunClaim,
+                prizeName: drawStatus?.prizeName || '',
+                voucherCode: drawStatus?.voucherCode || ''
+              }
+            });
+            setShowWinnerModal(true);
+          }
+        }
+      } catch (e) {
+        console.warn('Failed to check monthly winner:', e);
+      }
+    };
+
+    checkMonthlyWinner();
+    return () => { isMounted = false; };
+  }, []);
 
   // Preload critical assets once on mount to ensure 0-lag tab switching
   useEffect(() => {
@@ -453,14 +526,20 @@ export default function Game() {
               {/* Left: Logo + Login button */}
               <div className="compact-header-left">
                 <img
-                  src="/images/dancing_bricks_logo.png?v=5"
+                  src="/images/dancing_bricks_logo.png?v=6"
                   alt="Dancing Bricks"
+                  onError={(e) => {
+                    if (e.currentTarget.src.indexOf('logo-transparent') === -1) {
+                      e.currentTarget.src = '/images/logo-transparent.png';
+                    }
+                  }}
                   style={{
-                    height: '40px',
+                    height: '28px',
                     width: 'auto',
-                    maxHeight: '40px',
+                    maxWidth: '44px',
                     objectFit: 'contain',
-                    display: 'block'
+                    display: 'block',
+                    flexShrink: 0
                   }}
                 />
                 <button
@@ -696,6 +775,50 @@ export default function Game() {
               onLogout={handleLogout}
               lang={lang}
             />
+
+            {/* Auto Monthly Winner Announcement Modal */}
+            <MonthlyWinnerModal
+              isOpen={showWinnerModal}
+              onClose={() => {
+                const monthKey = getCurrentDrawMonthKey();
+                sessionStorage.setItem(`dancing_bricks_dismissed_winner_${monthKey}`, 'true');
+                setShowWinnerModal(false);
+              }}
+              winner={winnerModalData?.winner}
+              drawInfo={winnerModalData?.drawInfo}
+              isCurrentViewerWinner={Boolean(
+                winnerModalData?.winner && (
+                  (userProfile.studentId && winnerModalData.winner.id === userProfile.studentId) ||
+                  (userProfile.name && winnerModalData.winner.name && winnerModalData.winner.name.trim().toLowerCase() === userProfile.name.trim().toLowerCase())
+                )
+              )}
+              onOpenSpin={() => {
+                setShowWinnerModal(false);
+                setShowWinnerSpinModal(true);
+              }}
+              lang={lang}
+            />
+
+            {/* Direct Spin Modal if winner triggered spin from Winner Announcement */}
+            {showWinnerSpinModal && (
+              <SpinModal
+                isOpen={showWinnerSpinModal}
+                onClose={() => setShowWinnerSpinModal(false)}
+                winnerName={winnerModalData?.winner?.name || userProfile.name}
+                userId={userProfile.studentId}
+                onClaimPrize={(voucher) => {
+                  setWinnerModalData(prev => prev ? ({
+                    ...prev,
+                    drawInfo: {
+                      ...prev.drawInfo,
+                      isSpun: true,
+                      prizeName: voucher.prizeName,
+                      voucherCode: voucher.code
+                    }
+                  }) : null);
+                }}
+              />
+            )}
           </div>
         </div>
       </div>

@@ -651,6 +651,41 @@ export async function fetchCloudWinnersHistory() {
   }
 }
 
+/**
+ * Fetch draw status for a specific monthKey (e.g. '2026-09')
+ */
+export async function fetchCurrentMonthDrawStatus(monthKey) {
+  try {
+    const settingsUrl = `${SUPABASE_URL}/rest/v1/studio_settings?studio_slug=eq.${STUDIO_SLUG}`;
+    const getRes = await fetch(settingsUrl, {
+      headers: {
+        'apikey': ANON_KEY,
+        'Authorization': `Bearer ${ANON_KEY}`
+      }
+    });
+    if (!getRes.ok) return null;
+    const list = await getRes.json();
+    if (!list || list.length === 0) return null;
+    const staffData = list[0].staff_data || {};
+    const monthlyDraws = staffData.monthly_draws || {};
+    const draw = monthlyDraws[monthKey];
+    if (draw) {
+      return {
+        isSpun: true,
+        winnerId: draw.winnerId,
+        winnerName: draw.winnerName,
+        prizeName: draw.prizeName,
+        voucherCode: draw.voucherCode,
+        claimedAt: draw.claimedAt
+      };
+    }
+    return { isSpun: false };
+  } catch (e) {
+    console.warn('Failed to fetch draw status:', e);
+    return null;
+  }
+}
+
 /* ── Student helpers ────────────────────────────── */
 
 /**
