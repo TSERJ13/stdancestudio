@@ -262,6 +262,7 @@ export default function LoginModal({ isOpen, onClose, currentUser, onLogin, lang
   const [editingPlayerId, setEditingPlayerId] = useState(null);
   const [customDelta, setCustomDelta] = useState('');
   const [customSetScore, setCustomSetScore] = useState('');
+  const [customSetGames, setCustomSetGames] = useState('');
   const [scoreUpdating, setScoreUpdating] = useState(false);
   const [scoreToast, setScoreToast] = useState(null);
 
@@ -270,6 +271,7 @@ export default function LoginModal({ isOpen, onClose, currentUser, onLogin, lang
   const [newPlayerName, setNewPlayerName] = useState('');
   const [newPlayerId, setNewPlayerId] = useState('');
   const [newPlayerScore, setNewPlayerScore] = useState('');
+  const [newPlayerGames, setNewPlayerGames] = useState('1');
 
   const [adminStats, setAdminStats] = useState({
     totalPlayersCount: 0,
@@ -294,13 +296,14 @@ export default function LoginModal({ isOpen, onClose, currentUser, onLogin, lang
     }
   };
 
-  const handleApplyScore = async (player, { delta, exact, isDelete }) => {
+  const handleApplyScore = async (player, { delta, exact, games, isDelete }) => {
     setScoreUpdating(true);
     const res = await adminUpdatePlayerScore({
       playerId: player.id,
       playerName: player.name,
       deltaScore: typeof delta === 'number' ? delta : undefined,
       newScore: typeof exact === 'number' ? exact : undefined,
+      newGames: typeof games === 'number' ? games : undefined,
       deletePlayer: !!isDelete
     });
 
@@ -309,14 +312,16 @@ export default function LoginModal({ isOpen, onClose, currentUser, onLogin, lang
     if (res.success) {
       const currentVal = Number(player.score ?? player.high_score ?? 0);
       const updatedScore = exact !== undefined ? exact : (currentVal + (delta || 0));
+      const updatedGames = games !== undefined ? games : (player.games || 1);
       setScoreToast(isDelete 
         ? `🗑️ ${player.name} წაიშალა სიიდან!`
-        : `✅ ${player.name}-ს ქულა განახლდა! (${updatedScore.toLocaleString()} ქ)`
+        : `✅ ${player.name}-ს მონაცემები განახლდა! (${updatedScore.toLocaleString()} ქ | ${updatedGames} თამ)`
       );
       setTimeout(() => setScoreToast(null), 3500);
       setEditingPlayerId(null);
       setCustomDelta('');
       setCustomSetScore('');
+      setCustomSetGames('');
       loadAdminAnalytics();
     } else {
       setScoreToast(`❌ შეცდომა: ${res.error || 'ვერ შეინახა'}`);
@@ -330,24 +335,26 @@ export default function LoginModal({ isOpen, onClose, currentUser, onLogin, lang
     setScoreUpdating(true);
 
     const scoreNum = Number(newPlayerScore) || 0;
+    const gamesNum = Math.max(0, Number(newPlayerGames) || 1);
     const customId = newPlayerId.trim() || `TG-MANUAL-${Math.floor(100000 + Math.random() * 900000)}`;
 
     const res = await adminUpdatePlayerScore({
       playerId: customId,
       playerName: newPlayerName.trim(),
       newScore: scoreNum,
-      newGames: 1
+      newGames: gamesNum
     });
 
     setScoreUpdating(false);
 
     if (res.success) {
-      setScoreToast(`✅ მოთამაშე "${newPlayerName}" წარმატებით დაემატა (${scoreNum.toLocaleString()} ქულა)!`);
+      setScoreToast(`✅ მოთამაშე "${newPlayerName}" დაემატა (${scoreNum.toLocaleString()} ქ | ${gamesNum} თამ)!`);
       setTimeout(() => setScoreToast(null), 3500);
       setShowNewPlayerForm(false);
       setNewPlayerName('');
       setNewPlayerId('');
       setNewPlayerScore('');
+      setNewPlayerGames('1');
       loadAdminAnalytics();
     } else {
       setScoreToast(`❌ შეცდომა: ${res.error || 'ვერ დაემატა'}`);
@@ -833,13 +840,22 @@ export default function LoginModal({ isOpen, onClose, currentUser, onLogin, lang
                       onChange={e => setNewPlayerId(e.target.value)}
                       style={{ height: '32px', borderRadius: '8px', background: 'rgba(0,0,0,0.4)', border: '1px solid rgba(255,255,255,0.15)', color: 'white', padding: '0 10px', fontSize: '12px', outline: 'none' }}
                     />
-                    <input
-                      type="number"
-                      placeholder="საწყისი ქულა (მაგ: 5000)"
-                      value={newPlayerScore}
-                      onChange={e => setNewPlayerScore(e.target.value)}
-                      style={{ height: '32px', borderRadius: '8px', background: 'rgba(0,0,0,0.4)', border: '1px solid rgba(255,255,255,0.15)', color: '#F0D9A8', padding: '0 10px', fontSize: '12px', outline: 'none' }}
-                    />
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+                      <input
+                        type="number"
+                        placeholder="საწყისი ქულა (მაგ: 5000)"
+                        value={newPlayerScore}
+                        onChange={e => setNewPlayerScore(e.target.value)}
+                        style={{ height: '32px', borderRadius: '8px', background: 'rgba(0,0,0,0.4)', border: '1px solid rgba(255,255,255,0.15)', color: '#F0D9A8', padding: '0 10px', fontSize: '12px', outline: 'none' }}
+                      />
+                      <input
+                        type="number"
+                        placeholder="თამაშები (მაგ: 10)"
+                        value={newPlayerGames}
+                        onChange={e => setNewPlayerGames(e.target.value)}
+                        style={{ height: '32px', borderRadius: '8px', background: 'rgba(0,0,0,0.4)', border: '1px solid rgba(255,255,255,0.15)', color: '#93C5FD', padding: '0 10px', fontSize: '12px', outline: 'none' }}
+                      />
+                    </div>
                     <button
                       type="submit"
                       disabled={scoreUpdating}
@@ -912,6 +928,7 @@ export default function LoginModal({ isOpen, onClose, currentUser, onLogin, lang
                                       setEditingPlayerId(pKey);
                                       setCustomDelta('');
                                       setCustomSetScore(String(currentScore));
+                                      setCustomSetGames(String(pl.games ?? pl.total_games ?? 1));
                                     }
                                   }}
                                   style={{
@@ -925,11 +942,12 @@ export default function LoginModal({ isOpen, onClose, currentUser, onLogin, lang
                                     cursor: 'pointer',
                                     display: 'flex',
                                     alignItems: 'center',
-                                    gap: '3px'
+                                    gap: '3px',
+                                    whiteSpace: 'nowrap'
                                   }}
                                   title="ქულების დამატება / რედაქტირება"
                                 >
-                                  <Plus size={12} /> ქულა
+                                  <Plus size={12} /> {isEditing ? 'დახურვა' : 'ქულა'}
                                 </button>
 
                                 <button
@@ -953,119 +971,212 @@ export default function LoginModal({ isOpen, onClose, currentUser, onLogin, lang
                               </div>
                             </div>
 
-                            {/* Inline Score Edit Controls */}
+                            {/* Inline Score & Games Edit Controls */}
                             {isEditing && (
-                              <div style={{ marginTop: '6px', padding: '10px', background: 'rgba(0,0,0,0.4)', borderRadius: '10px', border: '1px solid rgba(212,166,74,0.3)', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                                <div style={{ fontSize: '10px', fontWeight: '800', color: '#F0D9A8', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                  <span>⚡ სწრაფი დამატება:</span>
-                                  <span style={{ color: '#a1a1aa' }}>ამჟამად: {currentScore.toLocaleString()} ქ</span>
+                              <div style={{ marginTop: '8px', padding: '12px', background: 'rgba(10, 10, 20, 0.75)', borderRadius: '12px', border: '1.5px solid rgba(212,166,74,0.35)', display: 'flex', flexDirection: 'column', gap: '10px', boxSizing: 'border-box' }}>
+                                <div style={{ fontSize: '11px', fontWeight: '900', color: '#F0D9A8', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.08)', paddingBottom: '6px' }}>
+                                  <span>⚡ რედაქტირება: {pl.name}</span>
+                                  <span style={{ color: '#a1a1aa', fontSize: '10px' }}>{currentScore.toLocaleString()} ქ | {pl.games || 1} თამ.</span>
                                 </div>
-                                <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
-                                  {[500, 1000, 5000, 10000, 25000, 50000].map(amt => (
-                                    <button
-                                      key={amt}
-                                      type="button"
-                                      disabled={scoreUpdating}
-                                      onClick={() => handleApplyScore(pl, { delta: amt })}
+
+                                {/* Quick Add Buttons */}
+                                <div>
+                                  <div style={{ fontSize: '9.5px', fontWeight: '800', color: '#a1a1aa', marginBottom: '5px', textTransform: 'uppercase' }}>
+                                    სწრაფი მიმატება:
+                                  </div>
+                                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '4px' }}>
+                                    {[500, 1000, 5000, 10000, 25000, 50000].map(amt => (
+                                      <button
+                                        key={amt}
+                                        type="button"
+                                        disabled={scoreUpdating}
+                                        onClick={() => handleApplyScore(pl, { delta: amt })}
+                                        style={{
+                                          padding: '6px 2px',
+                                          borderRadius: '6px',
+                                          background: 'rgba(212,166,74,0.14)',
+                                          border: '1px solid rgba(212,166,74,0.35)',
+                                          color: '#F0D9A8',
+                                          fontSize: '11px',
+                                          fontWeight: '900',
+                                          cursor: 'pointer',
+                                          textAlign: 'center',
+                                          whiteSpace: 'nowrap'
+                                        }}
+                                      >
+                                        +{amt.toLocaleString()}
+                                      </button>
+                                    ))}
+                                  </div>
+                                </div>
+
+                                {/* Custom Delta Points Addition */}
+                                <div>
+                                  <div style={{ fontSize: '9.5px', fontWeight: '800', color: '#a1a1aa', marginBottom: '4px', textTransform: 'uppercase' }}>
+                                    ქულის მიმატება (+):
+                                  </div>
+                                  <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+                                    <input
+                                      type="number"
+                                      placeholder="მაგ: 3500"
+                                      value={customDelta}
+                                      onChange={e => setCustomDelta(e.target.value)}
                                       style={{
-                                        padding: '4px 8px',
-                                        borderRadius: '6px',
-                                        background: 'rgba(212,166,74,0.18)',
-                                        border: '1px solid rgba(212,166,74,0.4)',
-                                        color: '#F0D9A8',
-                                        fontSize: '10px',
+                                        flex: 1,
+                                        minWidth: 0,
+                                        height: '34px',
+                                        borderRadius: '8px',
+                                        background: 'rgba(255,255,255,0.06)',
+                                        border: '1px solid rgba(255,255,255,0.18)',
+                                        color: '#4ADE80',
+                                        padding: '0 10px',
+                                        fontSize: '12px',
                                         fontWeight: '800',
-                                        cursor: 'pointer'
+                                        outline: 'none',
+                                        boxSizing: 'border-box'
+                                      }}
+                                    />
+                                    <button
+                                      type="button"
+                                      disabled={scoreUpdating || !customDelta}
+                                      onClick={() => handleApplyScore(pl, { delta: Number(customDelta) })}
+                                      style={{
+                                        height: '34px',
+                                        padding: '0 14px',
+                                        borderRadius: '8px',
+                                        background: 'linear-gradient(135deg, #22c55e, #16a34a)',
+                                        border: 'none',
+                                        color: '#ffffff',
+                                        fontSize: '11.5px',
+                                        fontWeight: '900',
+                                        cursor: 'pointer',
+                                        display: 'inline-flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        gap: '4px',
+                                        whiteSpace: 'nowrap',
+                                        flexShrink: 0
                                       }}
                                     >
-                                      +{amt.toLocaleString()}
+                                      {scoreUpdating ? <Loader2 size={12} className="animate-spin" /> : <Plus size={12} />} დამატება
                                     </button>
-                                  ))}
+                                  </div>
                                 </div>
 
-                                <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
-                                  <input
-                                    type="number"
-                                    placeholder="+ ქულების რაოდენობა"
-                                    value={customDelta}
-                                    onChange={e => setCustomDelta(e.target.value)}
-                                    style={{ flex: 1, height: '28px', borderRadius: '6px', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.15)', color: '#4ADE80', padding: '0 8px', fontSize: '11px', outline: 'none' }}
-                                  />
-                                  <button
-                                    type="button"
-                                    disabled={scoreUpdating || !customDelta}
-                                    onClick={() => handleApplyScore(pl, { delta: Number(customDelta) })}
-                                    style={{
-                                      height: '28px',
-                                      padding: '0 10px',
-                                      borderRadius: '6px',
-                                      background: '#22c55e',
-                                      border: 'none',
-                                      color: '#05060a',
-                                      fontSize: '10.5px',
-                                      fontWeight: '900',
-                                      cursor: 'pointer',
-                                      display: 'flex',
-                                      alignItems: 'center',
-                                      gap: '3px'
-                                    }}
-                                  >
-                                    {scoreUpdating ? <Loader2 size={11} className="animate-spin" /> : <Plus size={11} />} დამატება
-                                  </button>
-                                </div>
+                                {/* Exact Score & Games Count Settings */}
+                                <div>
+                                  <div style={{ fontSize: '9.5px', fontWeight: '800', color: '#a1a1aa', marginBottom: '4px', textTransform: 'uppercase' }}>
+                                    ზუსტი მონაცემების შეცვლა:
+                                  </div>
+                                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px' }}>
+                                    <div>
+                                      <span style={{ fontSize: '9px', color: '#F0D9A8', fontWeight: '800', display: 'block', marginBottom: '2px' }}>
+                                        🎯 ქულა
+                                      </span>
+                                      <input
+                                        type="number"
+                                        placeholder="ქულა"
+                                        value={customSetScore}
+                                        onChange={e => setCustomSetScore(e.target.value)}
+                                        style={{
+                                          width: '100%',
+                                          height: '34px',
+                                          borderRadius: '8px',
+                                          background: 'rgba(255,255,255,0.06)',
+                                          border: '1px solid rgba(212,166,74,0.35)',
+                                          color: '#F0D9A8',
+                                          padding: '0 8px',
+                                          fontSize: '12px',
+                                          fontWeight: '900',
+                                          outline: 'none',
+                                          boxSizing: 'border-box'
+                                        }}
+                                      />
+                                    </div>
 
-                                <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
-                                  <input
-                                    type="number"
-                                    placeholder="ზუსტი ქულა"
-                                    value={customSetScore}
-                                    onChange={e => setCustomSetScore(e.target.value)}
-                                    style={{ flex: 1, height: '28px', borderRadius: '6px', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.15)', color: '#F0D9A8', padding: '0 8px', fontSize: '11px', outline: 'none' }}
-                                  />
-                                  <button
-                                    type="button"
-                                    disabled={scoreUpdating || customSetScore === ''}
-                                    onClick={() => handleApplyScore(pl, { exact: Number(customSetScore) })}
-                                    style={{
-                                      height: '28px',
-                                      padding: '0 10px',
-                                      borderRadius: '6px',
-                                      background: '#d4a64a',
-                                      border: 'none',
-                                      color: '#05060a',
-                                      fontSize: '10.5px',
-                                      fontWeight: '900',
-                                      cursor: 'pointer',
-                                      display: 'flex',
-                                      alignItems: 'center',
-                                      gap: '3px'
-                                    }}
-                                  >
-                                    {scoreUpdating ? <Loader2 size={11} className="animate-spin" /> : <Edit2 size={11} />} შეცვლა
-                                  </button>
-                                  <button
-                                    type="button"
-                                    disabled={scoreUpdating}
-                                    onClick={() => {
-                                      if (window.confirm(`ნამდვილად წავშალოთ ${pl.name} რეიტინგიდან?`)) {
-                                        handleApplyScore(pl, { isDelete: true });
-                                      }
-                                    }}
-                                    style={{
-                                      height: '28px',
-                                      padding: '0 8px',
-                                      borderRadius: '6px',
-                                      background: 'rgba(239,68,68,0.15)',
-                                      border: '1px solid rgba(239,68,68,0.4)',
-                                      color: '#f87171',
-                                      fontSize: '10px',
-                                      fontWeight: '800',
-                                      cursor: 'pointer'
-                                    }}
-                                    title="მოთამაშის წაშლა"
-                                  >
-                                    <Trash2 size={12} />
-                                  </button>
+                                    <div>
+                                      <span style={{ fontSize: '9px', color: '#60A5FA', fontWeight: '800', display: 'block', marginBottom: '2px' }}>
+                                        🎮 თამაშები
+                                      </span>
+                                      <input
+                                        type="number"
+                                        placeholder="თამაშები"
+                                        value={customSetGames}
+                                        onChange={e => setCustomSetGames(e.target.value)}
+                                        style={{
+                                          width: '100%',
+                                          height: '34px',
+                                          borderRadius: '8px',
+                                          background: 'rgba(255,255,255,0.06)',
+                                          border: '1px solid rgba(96,165,250,0.35)',
+                                          color: '#93C5FD',
+                                          padding: '0 8px',
+                                          fontSize: '12px',
+                                          fontWeight: '900',
+                                          outline: 'none',
+                                          boxSizing: 'border-box'
+                                        }}
+                                      />
+                                    </div>
+                                  </div>
+
+                                  <div style={{ display: 'flex', gap: '6px', marginTop: '8px' }}>
+                                    <button
+                                      type="button"
+                                      disabled={scoreUpdating || (customSetScore === '' && customSetGames === '')}
+                                      onClick={() => handleApplyScore(pl, {
+                                        exact: customSetScore !== '' ? Number(customSetScore) : undefined,
+                                        games: customSetGames !== '' ? Number(customSetGames) : undefined
+                                      })}
+                                      style={{
+                                        flex: 1,
+                                        height: '34px',
+                                        borderRadius: '8px',
+                                        background: 'linear-gradient(135deg, #d4a64a, #f0d9a8)',
+                                        border: 'none',
+                                        color: '#05060a',
+                                        fontSize: '11.5px',
+                                        fontWeight: '900',
+                                        cursor: 'pointer',
+                                        display: 'inline-flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        gap: '5px',
+                                        whiteSpace: 'nowrap'
+                                      }}
+                                    >
+                                      {scoreUpdating ? <Loader2 size={12} className="animate-spin" /> : <Edit2 size={12} />} შეცვლა (შენახვა)
+                                    </button>
+
+                                    <button
+                                      type="button"
+                                      disabled={scoreUpdating}
+                                      onClick={() => {
+                                        if (window.confirm(`ნამდვილად წავშალოთ ${pl.name} რეიტინგიდან?`)) {
+                                          handleApplyScore(pl, { isDelete: true });
+                                        }
+                                      }}
+                                      style={{
+                                        height: '34px',
+                                        padding: '0 10px',
+                                        borderRadius: '8px',
+                                        background: 'rgba(239,68,68,0.15)',
+                                        border: '1px solid rgba(239,68,68,0.4)',
+                                        color: '#f87171',
+                                        fontSize: '10.5px',
+                                        fontWeight: '800',
+                                        cursor: 'pointer',
+                                        display: 'inline-flex',
+                                        alignItems: 'center',
+                                        gap: '3px',
+                                        whiteSpace: 'nowrap',
+                                        flexShrink: 0
+                                      }}
+                                      title="მოთამაშის წაშლა"
+                                    >
+                                      <Trash2 size={12} /> წაშლა
+                                    </button>
+                                  </div>
                                 </div>
                               </div>
                             )}

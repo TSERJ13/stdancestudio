@@ -465,7 +465,7 @@ export async function adminUpdatePlayerScore({ playerId, playerName, newScore, d
 
         let finalGames = Number(cloudList[existingIdx].games ?? cloudList[existingIdx].total_games ?? 1);
         if (typeof newGames === 'number') {
-          finalGames = Math.max(1, Math.round(newGames));
+          finalGames = Math.max(0, Math.round(newGames));
         }
 
         cloudList[existingIdx] = {
