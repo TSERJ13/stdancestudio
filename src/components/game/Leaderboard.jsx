@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { Trophy, Gift, Ticket, History, Copy, Check, Clock, Crown } from 'lucide-react';
 import { useLanguage } from '../../context/LanguageContext';
-import SpinModal from './SpinModal';
+import SpinModal, { getCurrentDrawMonthKey } from './SpinModal';
 import { fetchCloudLeaderboard, syncCloudScore } from '../../data/classcore';
 
 const TEST_LEADERBOARD = [];
@@ -230,6 +230,26 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
   const [showCountdownModal, setShowCountdownModal] = useState(false);
   const [countdownState, setCountdownState] = useState({ isUnlocked: false, timeLeftText: '', monthName: '' });
 
+  const currentDrawMonthKey = getCurrentDrawMonthKey();
+  const [hasAlreadySpun, setHasAlreadySpun] = useState(() => {
+    try {
+      if (localStorage.getItem(`dancing_bricks_spun_${currentDrawMonthKey}`) === 'true') return true;
+      const raw = localStorage.getItem('dancing_bricks_my_prizes');
+      const list = raw ? JSON.parse(raw) : [];
+      return list.some(v => v.drawMonth === currentDrawMonthKey);
+    } catch (e) { return false; }
+  });
+
+  useEffect(() => {
+    const handleDrawSpun = (e) => {
+      if (e?.detail?.drawMonth === currentDrawMonthKey) {
+        setHasAlreadySpun(true);
+      }
+    };
+    window.addEventListener('dancing_bricks_draw_spun', handleDrawSpun);
+    return () => window.removeEventListener('dancing_bricks_draw_spun', handleDrawSpun);
+  }, [currentDrawMonthKey]);
+
   useEffect(() => {
     const updateCountdown = () => {
       const now = new Date();
@@ -391,6 +411,12 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
 
     if (!isUserFirstPlace && !isAdminUser) {
       alert(lang === 'ka' ? 'მხოლოდ 1-ელ ადგილზე გასულ მოთამაშეს შეუძლია პრიზის დატრიალება!' : lang === 'ru' ? 'Только игрок на 1-м месте может вращать колесо!' : 'Only the 1st place winner can spin the wheel!');
+      return;
+    }
+
+    if (hasAlreadySpun && !isAdminUser) {
+      alert(lang === 'ka' ? 'თქვენ უკვე დაატრიალეთ ამ თვის პრიზი! თქვენი ვაუჩერი ინახება "საჩუქრების" განყოფილებაში.' : 'You have already spun this month\'s prize! Your voucher is saved in the Prizes tab.');
+      setActiveTab('my_prizes');
       return;
     }
 
@@ -593,30 +619,61 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
                       {item.score.toLocaleString()} {t.pts}
                     </span>
                     {isWinner ? (
-                      countdownState.isUnlocked ? (
-                        <button
-                          onClick={() => openSpinForWinner(item.name)}
-                          style={{
-                            padding: '5px 12px',
-                            borderRadius: '8px',
-                            background: 'linear-gradient(135deg, #d4a64a 0%, #22c55e 100%)',
-                            border: 'none',
-                            color: '#05060a',
-                            fontWeight: '900',
-                            fontSize: '11px',
-                            cursor: 'pointer',
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '4px',
-                            boxShadow: '0 3px 10px rgba(34, 197, 94, 0.45)'
-                          }}
-                        >
-                          <Trophy size={13} color="#05060a" />
-                          {lang === 'ka' ? 'დაატრიალე' : lang === 'ru' ? 'Колесо' : 'Spin Wheel'}
-                        </button>
+                      (isUserFirstPlace || (localStorage.getItem('dancing_bricks_is_admin') === 'true' || userId === '99999' || userId === 'TG-stdancestudio')) ? (
+                        countdownState.isUnlocked ? (
+                          hasAlreadySpun ? (
+                            <button
+                              onClick={() => setActiveTab('my_prizes')}
+                              style={{
+                                padding: '5px 10px',
+                                borderRadius: '8px',
+                                background: 'rgba(34,197,94,0.18)',
+                                border: '1px solid rgba(34,197,94,0.4)',
+                                color: '#4ADE80',
+                                fontWeight: '900',
+                                fontSize: '11px',
+                                cursor: 'pointer',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '4px',
+                                whiteSpace: 'nowrap'
+                              }}
+                              title="პრიზი მიღებულია! იხილეთ ვაუჩერი"
+                            >
+                              <Check size={13} color="#22c55e" />
+                              {lang === 'ka' ? 'ვაუჩერი' : lang === 'ru' ? 'Ваучер' : 'Voucher'}
+                            </button>
+                          ) : (
+                            <button
+                              onClick={() => openSpinForWinner(item.name)}
+                              style={{
+                                padding: '5px 12px',
+                                borderRadius: '8px',
+                                background: 'linear-gradient(135deg, #d4a64a 0%, #22c55e 100%)',
+                                border: 'none',
+                                color: '#05060a',
+                                fontWeight: '900',
+                                fontSize: '11px',
+                                cursor: 'pointer',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '4px',
+                                boxShadow: '0 3px 10px rgba(34, 197, 94, 0.45)',
+                                whiteSpace: 'nowrap'
+                              }}
+                            >
+                              <Trophy size={13} color="#05060a" />
+                              {lang === 'ka' ? 'დაატრიალე' : lang === 'ru' ? 'Колесо' : 'Spin Wheel'}
+                            </button>
+                          )
+                        ) : (
+                          <span style={{ fontSize: '10.5px', color: '#F0D9A8', background: 'rgba(212,166,74,0.12)', border: '1px solid rgba(212,166,74,0.3)', padding: '2.5px 8px', borderRadius: '8px', fontWeight: '800', whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
+                            {t.prizeSpot}
+                          </span>
+                        )
                       ) : (
-                        <span style={{ fontSize: '10.5px', color: '#F0D9A8', background: 'rgba(212,166,74,0.12)', border: '1px solid rgba(212,166,74,0.3)', padding: '2.5px 8px', borderRadius: '8px', fontWeight: '800', whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
-                          {t.prizeSpot}
+                        <span style={{ fontSize: '10.5px', color: '#FFD700', background: 'rgba(255,215,0,0.1)', border: '1px solid rgba(255,215,0,0.3)', padding: '2.5px 8px', borderRadius: '8px', fontWeight: '800', whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
+                          👑 {lang === 'ka' ? 'გამარჯვებული' : lang === 'ru' ? 'Лидер' : 'Leader'}
                         </span>
                       )
                     ) : (
@@ -635,32 +692,57 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
           {myVouchers.length === 0 ? (
             <div style={{ padding: '24px 16px', textAlign: 'center', background: 'rgba(212,166,74,0.08)', borderRadius: '16px', border: '1px solid rgba(212,166,74,0.25)' }}>
               <Gift size={36} color="#d4a64a" style={{ margin: '0 auto 10px' }} />
-              <h4 style={{ color: '#F0D9A8', fontSize: '15px', fontWeight: '900', margin: '0 0 6px' }}>
-                {lang === 'ka' ? 'შენი პრიზი ელოდება დატრიალებას!' : 'Your Prize is Waiting to be Spun!'}
-              </h4>
-              <p style={{ color: '#a1a1aa', fontSize: '12px', margin: '0 0 16px', lineHeight: '1.4' }}>
-                {t.emptyVouchers}
-              </p>
-              <button
-                onClick={() => openSpinForWinner(playerName)}
-                style={{
-                  padding: '10px 20px',
-                  borderRadius: '12px',
-                  background: 'linear-gradient(135deg, #d4a64a 0%, #22c55e 100%)',
-                  border: 'none',
-                  color: '#05060a',
-                  fontWeight: '900',
-                  fontSize: '13px',
-                  cursor: 'pointer',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  boxShadow: '0 4px 14px rgba(34, 197, 94, 0.4)'
-                }}
-              >
-                <Trophy size={16} color="#05060a" />
-                {lang === 'ka' ? 'დაატრიალე პრიზი' : 'Spin Wheel Now'}
-              </button>
+              {isUserFirstPlace ? (
+                <>
+                  <h4 style={{ color: '#F0D9A8', fontSize: '15px', fontWeight: '900', margin: '0 0 6px' }}>
+                    {lang === 'ka' ? 'შენი პრიზი ელოდება დატრიალებას!' : 'Your Prize is Waiting to be Spun!'}
+                  </h4>
+                  <p style={{ color: '#a1a1aa', fontSize: '12px', margin: '0 0 16px', lineHeight: '1.4' }}>
+                    {lang === 'ka' ? 'გილოცავთ! თქვენ დაიკავეთ #1 ადგილი და შეგიძლიათ დაატრიალოთ ST Dance-ის პრიზი!' : 'Congratulations! You secured #1 place and can spin for your prize!'}
+                  </p>
+                  {countdownState.isUnlocked ? (
+                    !hasAlreadySpun ? (
+                      <button
+                        onClick={() => openSpinForWinner(playerName)}
+                        style={{
+                          padding: '10px 20px',
+                          borderRadius: '12px',
+                          background: 'linear-gradient(135deg, #d4a64a 0%, #22c55e 100%)',
+                          border: 'none',
+                          color: '#05060a',
+                          fontWeight: '900',
+                          fontSize: '13px',
+                          cursor: 'pointer',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '8px',
+                          boxShadow: '0 4px 14px rgba(34, 197, 94, 0.4)'
+                        }}
+                      >
+                        <Trophy size={16} color="#05060a" />
+                        {lang === 'ka' ? 'დაატრიალე პრიზი' : 'Spin Wheel Now'}
+                      </button>
+                    ) : (
+                      <span style={{ color: '#4ADE80', fontSize: '13px', fontWeight: '800' }}>
+                        ✅ {lang === 'ka' ? 'თქვენ უკვე მიიღეთ ამ თვის პრიზი!' : 'Prize already collected!'}
+                      </span>
+                    )
+                  ) : (
+                    <p style={{ color: '#F0D9A8', fontSize: '13px', fontWeight: '800' }}>
+                      ⏳ {lang === 'ka' ? 'გათამაშება გაიხსნება 22:00 საათზე!' : 'Draw opens at 22:00!'}
+                    </p>
+                  )}
+                </>
+              ) : (
+                <>
+                  <h4 style={{ color: '#F0D9A8', fontSize: '15px', fontWeight: '900', margin: '0 0 6px' }}>
+                    {lang === 'ka' ? 'მოიგე ST Dance-ის პრიზები!' : 'Win ST Dance Prizes!'}
+                  </h4>
+                  <p style={{ color: '#a1a1aa', fontSize: '12px', margin: '0', lineHeight: '1.4' }}>
+                    {t.emptyVouchers}
+                  </p>
+                </>
+              )}
             </div>
           ) : (
             myVouchers.map((v) => (

@@ -531,6 +531,64 @@ export async function adminUpdatePlayerScore({ playerId, playerName, newScore, d
   }
 }
 
+/**
+ * Record monthly draw winner claim to Supabase Cloud so winner cannot spin multiple times
+ */
+export async function recordMonthlyDrawClaim({ monthKey, winnerId, winnerName, prizeId, prizeName, voucherCode }) {
+  try {
+    const settingsUrl = `${SUPABASE_URL}/rest/v1/studio_settings?studio_slug=eq.${STUDIO_SLUG}`;
+    const getRes = await fetch(settingsUrl, {
+      headers: {
+        'apikey': ANON_KEY,
+        'Authorization': `Bearer ${ANON_KEY}`
+      }
+    });
+    if (!getRes.ok) return false;
+    const list = await getRes.json();
+    if (!list || list.length === 0) return false;
+    const settings = list[0];
+    const staffData = settings.staff_data || {};
+    const monthlyDraws = staffData.monthly_draws || {};
+
+    const updatedMonthlyDraws = {
+      ...monthlyDraws,
+      [monthKey]: {
+        winnerId: winnerId || 'GUEST',
+        winnerName: winnerName || 'Winner',
+        prizeId,
+        prizeName,
+        voucherCode,
+        claimedAt: new Date().toISOString(),
+        georgiaTime: new Date(Date.now() + 4 * 3600000).toISOString()
+      }
+    };
+
+    const updatedStaffData = {
+      ...staffData,
+      monthly_draws: updatedMonthlyDraws
+    };
+
+    await fetch(`${SUPABASE_URL}/rest/v1/studio_settings?studio_slug=eq.${STUDIO_SLUG}`, {
+      method: 'PATCH',
+      headers: {
+        'apikey': ANON_KEY,
+        'Authorization': `Bearer ${ANON_KEY}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ staff_data: updatedStaffData })
+    });
+
+    try {
+      localStorage.setItem(`dancing_bricks_spun_${monthKey}`, 'true');
+    } catch (e) {}
+
+    return true;
+  } catch (e) {
+    console.warn('Failed to record monthly draw claim in cloud:', e);
+    return false;
+  }
+}
+
 /* ── Student helpers ────────────────────────────── */
 
 /**

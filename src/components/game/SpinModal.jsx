@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import { Gift, Sparkles, Trophy, Award, RotateCw, Ticket, Copy, Check } from 'lucide-react';
 import { useLanguage } from '../../context/LanguageContext';
 
-import { submitFormAnswer } from '../../data/classcore';
+import { submitFormAnswer, recordMonthlyDrawClaim } from '../../data/classcore';
 
 export const PRIZES = [
   {
@@ -55,6 +55,26 @@ export const PRIZES = [
     img: '/images/prizes/voucher_100.png', color: '#FF4444'
   }
 ];
+
+export function getCurrentDrawMonthKey() {
+  const now = new Date();
+  const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+  const georgiaTime = new Date(utc + (3600000 * 4));
+  let year = georgiaTime.getFullYear();
+  let month = georgiaTime.getMonth();
+
+  const drawStartThisMonth = new Date(year, month, 20, 22, 0, 0);
+  const drawEndThisMonth = new Date(drawStartThisMonth.getTime() + (48 * 3600 * 1000));
+
+  if (georgiaTime.getTime() >= drawEndThisMonth.getTime()) {
+    month++;
+    if (month > 11) {
+      month = 0;
+      year++;
+    }
+  }
+  return `${year}-${String(month + 1).padStart(2, '0')}`;
+}
 
 export function getScheduledPrizeIndexForCurrentMonth() {
   const now = new Date();
@@ -331,6 +351,15 @@ export default function SpinModal({ isOpen, onClose, winnerName = 'ჩემპ�
   const handleSpin = () => {
     if (spinning) return;
 
+    const currentDrawMonthKey = getCurrentDrawMonthKey();
+    const isAdminUser = localStorage.getItem('dancing_bricks_is_admin') === 'true' ||
+      userId === '99999' || userId === 'TG-stdancestudio';
+
+    if (!isAdminUser && localStorage.getItem(`dancing_bricks_spun_${currentDrawMonthKey}`)) {
+      alert(lang === 'ka' ? 'თქვენ უკვე დაატრიალეთ ამ თვის პრიზი! თქვენი ვაუჩერი ინახება "საჩუქრებში".' : 'You have already spun this month\'s prize! Your voucher is saved in Prizes.');
+      return;
+    }
+
     setSpinning(true);
     setWonPrize(null);
 
@@ -361,6 +390,10 @@ export default function SpinModal({ isOpen, onClose, winnerName = 'ჩემპ�
         setWonPrize(prize);
         setVoucherCode(randomCode);
 
+        try {
+          localStorage.setItem(`dancing_bricks_spun_${currentDrawMonthKey}`, 'true');
+        } catch (e) {}
+
         let tgUsername = 'არ არის მითითებული';
         try {
           const twaUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
@@ -386,10 +419,22 @@ export default function SpinModal({ isOpen, onClose, winnerName = 'ჩემპ�
           prizeDesc: prize.desc,
           prizeImg: prize.img,
           winnerName,
+          drawMonth: currentDrawMonthKey,
           date: new Date().toLocaleDateString('ka-GE')
         };
 
         if (onClaimPrize) onClaimPrize(newVoucher);
+
+        recordMonthlyDrawClaim({
+          monthKey: currentDrawMonthKey,
+          winnerId: userId || 'GUEST',
+          winnerName,
+          prizeId: prize.id,
+          prizeName: prize.name,
+          voucherCode: randomCode
+        });
+
+        window.dispatchEvent(new CustomEvent('dancing_bricks_draw_spun', { detail: { drawMonth: currentDrawMonthKey, voucher: newVoucher } }));
 
         // 1. Log to Supabase Cloud audit table
         submitFormAnswer({
