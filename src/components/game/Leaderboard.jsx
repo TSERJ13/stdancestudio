@@ -178,12 +178,12 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
 
     async function initialSync() {
       await refreshCloudData();
-      if (playerName && userId && (String(userId).startsWith('TG-') || String(userId).startsWith('ST-'))) {
+      if (playerName && userId && (String(userId).startsWith('TG-') || String(userId).startsWith('ST-')) && (currentTotalScore || 0) > 0) {
         const synced = await syncCloudScore({
           id: userId,
           name: playerName,
           photoUrl: photoUrl || '',
-          score: currentTotalScore || 0,
+          score: currentTotalScore,
           games: Math.max(1, totalGames || 1)
         });
         if (isMounted && Array.isArray(synced) && synced.length > 0) {

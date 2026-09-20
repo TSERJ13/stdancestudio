@@ -404,9 +404,14 @@ export async function syncCloudScore(userEntry) {
     const randomColor = colors[Math.abs(userId.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0)) % colors.length];
 
     if (existingIdx >= 0) {
-      const updatedScore = typeof userEntry.score === 'number' ? userEntry.score : (cloudList[existingIdx].score || 0);
+      const incomingScore = typeof userEntry.score === 'number' ? userEntry.score : (cloudList[existingIdx].score || 0);
+      const updatedScore = (incomingScore === 0 && (cloudList[existingIdx].score || 0) > 0)
+        ? cloudList[existingIdx].score
+        : incomingScore;
       const rawGames = typeof userEntry.games === 'number' ? userEntry.games : (cloudList[existingIdx].games || 0);
-      const updatedGames = updatedScore > 0 ? Math.max(1, rawGames) : rawGames;
+      const updatedGames = (rawGames === 0 && (cloudList[existingIdx].games || 0) > 0)
+        ? cloudList[existingIdx].games
+        : (updatedScore > 0 ? Math.max(1, rawGames) : rawGames);
 
       cloudList[existingIdx] = {
         ...cloudList[existingIdx],
