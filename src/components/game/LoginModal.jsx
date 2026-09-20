@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { User, ShieldCheck, CheckCircle2, IdCard, LogIn, KeyRound, Loader2, Sparkles, X, Trophy, Flame, PlayCircle, Crown, Users, Radio, RefreshCw, BarChart2, Plus, Minus, Edit2, Trash2, Search, Check, AlertCircle, Save } from 'lucide-react';
-import { fetchStudioData, getStudentName, fetchCloudLeaderboard, submitFormAnswer, adminUpdatePlayerScore, updateWinnerPrizeDeliveryStatus } from '../../data/classcore';
+import { fetchStudioData, getStudentName, fetchCloudLeaderboard, submitFormAnswer, adminUpdatePlayerScore, updateWinnerPrizeDeliveryStatus, startNewSeasonInCloud } from '../../data/classcore';
 
 const STUDENT_ID_MAP = {
   '101': 'სერგო წივწივაძე (Head Coach)',
@@ -281,6 +281,22 @@ export default function LoginModal({ isOpen, onClose, currentUser, onLogin, lang
   const [customSetGames, setCustomSetGames] = useState('');
   const [scoreUpdating, setScoreUpdating] = useState(false);
   const [scoreToast, setScoreToast] = useState(null);
+  const [isResettingSeason, setIsResettingSeason] = useState(false);
+
+  const handleStartNewSeason = async () => {
+    if (!window.confirm("🚀 ნამდვილად გსურთ ახალი სეზონის დაწყება?\n\nCloud ბაზაში ყველა მოთამაშის ქულა განულდება 0-მდე და დაიწყება ახალი თვის გათამაშება!\nწინა თვის გამარჯვებული უკვე დაცულია ისტორიაში.")) {
+      return;
+    }
+    setIsResettingSeason(true);
+    const res = await startNewSeasonInCloud();
+    setIsResettingSeason(false);
+    if (res.success) {
+      alert("✅ ახალი სეზონი წარმატებით დაიწყო! ყველა მოთამაშის ქულა განულდა Cloud ბაზაში.");
+      loadAdminAnalytics();
+    } else {
+      alert("❌ შეცდომა: " + (res.error || "ვერ მოხერხდა განულება"));
+    }
+  };
 
   // New Player Form State
   const [showNewPlayerForm, setShowNewPlayerForm] = useState(false);
@@ -899,6 +915,66 @@ export default function LoginModal({ isOpen, onClose, currentUser, onLogin, lang
                     </button>
                   </form>
                 )}
+
+                {/* Admin Season Control Banner */}
+                <div style={{
+                  background: 'linear-gradient(135deg, rgba(212,166,74,0.18) 0%, rgba(20,20,30,0.85) 100%)',
+                  border: '1.5px solid rgba(212,166,74,0.45)',
+                  borderRadius: '14px',
+                  padding: '12px 14px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '8px',
+                  marginBottom: '12px'
+                }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <Sparkles size={16} color="#FFD700" />
+                      <span style={{ fontSize: '13px', fontWeight: '900', color: '#F0D9A8' }}>
+                        სეზონის მართვა (Cloud DB)
+                      </span>
+                    </div>
+                    <span style={{ fontSize: '10px', color: '#4ADE80', fontWeight: '800', background: 'rgba(34,197,94,0.15)', padding: '2px 7px', borderRadius: '6px' }}>
+                      ახალი სეზონი
+                    </span>
+                  </div>
+                  <p style={{ fontSize: '11px', color: '#a1a1aa', margin: 0, lineHeight: '1.4' }}>
+                    ახალი სეზონის დაწყებისას Cloud ბაზაში ყველა მოთამაშის ქულა განულდება 0-მდე. წინა თვის გამარჯვებული დაცულია ისტორიაში.
+                  </p>
+                  <button
+                    type="button"
+                    disabled={isResettingSeason}
+                    onClick={handleStartNewSeason}
+                    style={{
+                      width: '100%',
+                      padding: '10px 14px',
+                      borderRadius: '10px',
+                      background: 'linear-gradient(135deg, #d4a64a 0%, #f0d9a8 100%)',
+                      border: 'none',
+                      color: '#05060a',
+                      fontSize: '12.5px',
+                      fontWeight: '900',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '6px',
+                      boxShadow: '0 4px 14px rgba(212,166,74,0.35)'
+                    }}
+                  >
+                    {isResettingSeason ? (
+                      <>
+                        <Loader2 size={14} className="animate-spin" />
+                        მიმდინარეობს განულება...
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles size={14} color="#05060a" />
+                        🚀 ახალი სეზონის დაწყება (ყველა ქულის განულება)
+                      </>
+                    )}
+                  </button>
+                </div>
 
                 {/* Scrollable Player List Table with Manual Score Editing */}
                 <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '14px', padding: '12px' }}>

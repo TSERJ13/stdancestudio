@@ -11,7 +11,7 @@ import PrizesPage from '../components/game/PrizesPage';
 import LoginModal from '../components/game/LoginModal';
 import MonthlyWinnerModal from '../components/game/MonthlyWinnerModal';
 import SpinModal, { getCurrentDrawMonthKey } from '../components/game/SpinModal';
-import { syncCloudScore, fetchCloudLeaderboard, sanitizeSeasonalProfile, fetchCurrentMonthDrawStatus } from '../data/classcore';
+import { syncCloudScore, fetchCloudLeaderboard, sanitizeSeasonalProfile, fetchCurrentMonthDrawStatus, syncTelegramUserLanguage, fetchTelegramUserLanguage } from '../data/classcore';
 import { loadLivesData, saveLivesData, calculateAvailableLives, formatTimeUntilReset, getGeorgiaResetTime } from '../utils/livesManager';
 import './Game.css';
 
@@ -283,7 +283,7 @@ export default function Game() {
           const customName = localStorage.getItem(`dancing_bricks_custom_name_${tgUserId}`) || localStorage.getItem('dancing_bricks_player_name') || freshSaved.name;
           const finalName = (customName && customName !== 'Dancer') ? customName : fullName;
 
-          const updated = sanitizeSeasonalProfile({
+          const updated = {
             ...freshSaved,
             ...prev,
             studentId: tgUserId,
@@ -292,21 +292,28 @@ export default function Game() {
             photoUrl: tgUserObj.photo_url || prev.photoUrl || freshSaved.photoUrl || '',
             isLoggedIn: true,
             isTelegram: true,
-            highScore: Math.max(freshSaved.highScore || 0, prev.highScore || 0, 0),
-            totalScore: Math.max(freshSaved.totalScore || 0, prev.totalScore || 0, 0),
-            totalGames: Math.max(freshSaved.totalGames || 0, prev.totalGames || 0, 0),
-            monthlyHighScore: Math.max(freshSaved.monthlyHighScore || 0, prev.monthlyHighScore || 0, 0),
-            monthlyTotalScore: Math.max(freshSaved.monthlyTotalScore || 0, prev.monthlyTotalScore || 0, 0),
-            monthlyGames: Math.max(freshSaved.monthlyGames || 0, prev.monthlyGames || 0, 0)
-          });
+            highScore: 0,
+            totalScore: 0,
+            totalGames: 0,
+            monthlyHighScore: 0,
+            monthlyTotalScore: 0,
+            monthlyGames: 0
+          };
           localStorage.setItem('dancing_bricks_user_profile', JSON.stringify(updated));
           localStorage.setItem('dancing_bricks_player_name', updated.name);
           return updated;
         });
 
-        // Fetch user profile from Supabase Cloud to sync custom name across all devices
+        // Load language preference from Cloud for Telegram user
+        fetchTelegramUserLanguage(tgUserId).then(savedLang => {
+          if (savedLang && ['ka', 'en', 'ru'].includes(savedLang) && setLang) {
+            setLang(savedLang);
+          }
+        }).catch(() => {});
+
+        // Fetch user profile from Supabase Cloud: Cloud is the single source of truth for Telegram user!
         fetchCloudLeaderboard().then(cloudData => {
-          if (cloudData && cloudData.length > 0) {
+          if (cloudData && Array.isArray(cloudData)) {
             const found = cloudData.find(item => item.id === tgUserId);
             if (found) {
               const cloudSavedName = found.name;
@@ -316,18 +323,35 @@ export default function Game() {
               }
 
               setUserProfile(curr => {
-                const merged = sanitizeSeasonalProfile({
+                const cloudScore = Number(found.score ?? found.high_score ?? 0);
+                const cloudGames = Number(found.games ?? found.total_games ?? 0);
+                const merged = {
                   ...curr,
                   name: (cloudSavedName && cloudSavedName !== 'Dancer') ? cloudSavedName : curr.name,
-                  highScore: found.high_score || 0,
-                  totalScore: found.total_score || 0,
-                  totalGames: found.total_games || 0,
-                  monthlyHighScore: found.score || 0,
-                  monthlyTotalScore: found.score || 0,
-                  monthlyGames: found.games || 0
-                });
+                  highScore: cloudScore,
+                  totalScore: cloudScore,
+                  totalGames: cloudGames,
+                  monthlyHighScore: cloudScore,
+                  monthlyTotalScore: cloudScore,
+                  monthlyGames: cloudGames
+                };
                 localStorage.setItem('dancing_bricks_user_profile', JSON.stringify(merged));
                 return merged;
+              });
+            } else {
+              // Not in cloud yet (or season reset): score is strictly 0!
+              setUserProfile(curr => {
+                const zeroed = {
+                  ...curr,
+                  highScore: 0,
+                  totalScore: 0,
+                  totalGames: 0,
+                  monthlyHighScore: 0,
+                  monthlyTotalScore: 0,
+                  monthlyGames: 0
+                };
+                localStorage.setItem('dancing_bricks_user_profile', JSON.stringify(zeroed));
+                return zeroed;
               });
             }
           }
@@ -336,25 +360,33 @@ export default function Game() {
     }
   }, []);
 
+  // Listen for admin season reset event
+  useEffect(() => {
+    const handleSeasonReset = () => {
+      setUserProfile(curr => {
+        const resetProf = {
+          ...curr,
+          highScore: 0,
+          totalScore: 0,
+          totalGames: 0,
+          monthlyHighScore: 0,
+          monthlyTotalScore: 0,
+          monthlyGames: 0
+        };
+        localStorage.setItem('dancing_bricks_user_profile', JSON.stringify(resetProf));
+        return resetProf;
+      });
+    };
+    window.addEventListener('dancing_bricks_season_reset', handleSeasonReset);
+    return () => window.removeEventListener('dancing_bricks_season_reset', handleSeasonReset);
+  }, []);
+
   // Reload user-scoped lives when studentId becomes available
   useEffect(() => {
     if (userProfile?.studentId) {
       setLivesData(loadLivesData(userProfile.studentId));
     }
   }, [userProfile.studentId]);
-
-  // Automatically sync current user score & profile to Supabase Cloud on load/change
-  useEffect(() => {
-    if (userProfile?.studentId && (userProfile.studentId.startsWith('TG-') || userProfile.studentId.startsWith('ST-'))) {
-      syncCloudScore({
-        id: userProfile.studentId,
-        name: userProfile.name,
-        photoUrl: userProfile.photoUrl || '',
-        score: userProfile.totalScore || userProfile.highScore || 0,
-        games: userProfile.totalGames || 0
-      }).catch(() => {});
-    }
-  }, [userProfile.studentId, userProfile.name, userProfile.photoUrl, userProfile.highScore, userProfile.totalGames, userProfile.totalScore]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -388,12 +420,31 @@ export default function Game() {
   const handleScoreUpdate = (score) => {
     setUserProfile(prev => {
       const sanitized = sanitizeSeasonalProfile(prev);
+      const newHigh = Math.max(sanitized.highScore || 0, score);
+      const newTotal = (sanitized.totalScore || 0) + score;
+      const newGames = (sanitized.totalGames || 0) + 1;
+
       const updated = {
         ...sanitized,
-        highScore: Math.max(sanitized.highScore || 0, score),
-        monthlyHighScore: Math.max(sanitized.monthlyHighScore || 0, score)
+        highScore: newHigh,
+        totalScore: newTotal,
+        totalGames: newGames,
+        monthlyHighScore: newHigh,
+        monthlyTotalScore: newTotal,
+        monthlyGames: newGames
       };
       localStorage.setItem('dancing_bricks_user_profile', JSON.stringify(updated));
+
+      if (updated.studentId && (updated.studentId.startsWith('TG-') || updated.studentId.startsWith('ST-'))) {
+        syncCloudScore({
+          id: updated.studentId,
+          name: updated.name,
+          photoUrl: updated.photoUrl || '',
+          score: updated.totalScore,
+          games: updated.totalGames
+        }).catch(() => {});
+      }
+
       return updated;
     });
   };
@@ -605,7 +656,11 @@ export default function Game() {
                   onClick={() => {
                     const langs = ['ka', 'en', 'ru'];
                     const nextIndex = (langs.indexOf(lang || 'ka') + 1) % langs.length;
-                    if (setLang) setLang(langs[nextIndex]);
+                    const nextLang = langs[nextIndex];
+                    if (setLang) setLang(nextLang);
+                    if (userProfile?.studentId && userProfile.studentId.startsWith('TG-')) {
+                      syncTelegramUserLanguage(userProfile.studentId, nextLang).catch(() => {});
+                    }
                   }}
                   title="Change Language"
                   style={{ background: 'rgba(255, 255, 255, 0.05)', border: '1px solid rgba(255, 255, 255, 0.1)', color: '#d4a64a', cursor: 'pointer', padding: '2px 6px', display: 'flex', alignItems: 'center', gap: '4px', borderRadius: '6px', fontSize: '9px', fontWeight: 'bold' }}

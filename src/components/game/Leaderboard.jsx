@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import { Trophy, Gift, Ticket, History, Copy, Check, Clock, Crown, Sparkles, Loader2 } from 'lucide-react';
 import { useLanguage } from '../../context/LanguageContext';
 import SpinModal, { getCurrentDrawMonthKey, PRIZES } from './SpinModal';
-import { fetchCloudLeaderboard, syncCloudScore, fetchCloudWinnersHistory, updateWinnerPrizeDeliveryStatus } from '../../data/classcore';
+import { fetchCloudLeaderboard, syncCloudScore, fetchCloudWinnersHistory, updateWinnerPrizeDeliveryStatus, startNewSeasonInCloud } from '../../data/classcore';
 
 const TEST_LEADERBOARD = [];
 
@@ -22,6 +22,14 @@ function getLocalizedPrizeName(prizeName, lang) {
   if (lang === 'en') return found.nameEn || found.name;
   return found.name;
 }
+
+const monthNamesKa = ["იანვრამდე", "თებერვლამდე", "მარტამდე", "აპრილამდე", "მაისამდე", "ივნისამდე", "ივლისამდე", "აგვისტომდე", "სექტემბრამდე", "ოქტომბრამდე", "ნოემბრამდე", "დეკემბრამდე"];
+const monthNamesEn = ["Until Jan", "Until Feb", "Until Mar", "Until Apr", "Until May", "Until Jun", "Until Jul", "Until Aug", "Until Sept", "Until Oct", "Until Nov", "Until Dec"];
+const monthNamesRu = ["До Января", "До Февраля", "До Марта", "До Апреля", "До Мая", "До Июня", "До Июля", "До Августа", "До Сентября", "До Октября", "До Ноября", "До Декабря"];
+
+const drawNamesKa = ["20 იანვრის", "20 თებერვლის", "20 მარტის", "20 აპრილის", "20 მაისის", "20 ივნისის", "20 ივლისის", "20 აგვისტოს", "20 სექტემბრის", "20 ოქტომბრის", "20 ნოემბრის", "20 დეკემბრის"];
+const drawNamesEn = ["Jan 20th", "Feb 20th", "Mar 20th", "Apr 20th", "May 20th", "Jun 20th", "Jul 20th", "Aug 20th", "Sept 20th", "Oct 20th", "Nov 20th", "Dec 20th"];
+const drawNamesRu = ["20 Января", "20 Февраля", "20 Марта", "20 Апреля", "20 Мая", "20 Июня", "20 Июля", "20 Августа", "20 Сентября", "20 Октября", "20 Ноября", "20 Декабря"];
 
 const lbTranslations = {
   ka: {
@@ -296,7 +304,11 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
       });
     };
     window.addEventListener('dancing_bricks_draw_spun', handleDrawSpunHistory);
-    return () => window.removeEventListener('dancing_bricks_draw_spun', handleDrawSpunHistory);
+    window.addEventListener('dancing_bricks_delivery_updated', handleDrawSpunHistory);
+    return () => {
+      window.removeEventListener('dancing_bricks_draw_spun', handleDrawSpunHistory);
+      window.removeEventListener('dancing_bricks_delivery_updated', handleDrawSpunHistory);
+    };
   }, []);
 
   useEffect(() => {
@@ -330,7 +342,6 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
         activeDrawMonth = month;
         const remMs = drawEnd.getTime() - georgiaTime.getTime();
         const remH = Math.floor(remMs / (1000 * 60 * 60));
-        const remM = Math.floor((remMs / 1000 / 60) % 60);
 
         if (lang === 'ka') {
           timeLeftText = `🎉 გახსნილია! (${remH}სთ)`;
@@ -339,7 +350,12 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
         } else {
           timeLeftText = `🎉 Open! (${remH}h)`;
         }
-        setCountdownState({ isUnlocked, timeLeftText, monthName: drawNamesKa[activeDrawMonth], drawName: drawNamesKa[activeDrawMonth], remHours: remH });
+
+        let drawName = drawNamesKa[activeDrawMonth];
+        if (lang === 'en') drawName = drawNamesEn[activeDrawMonth];
+        else if (lang === 'ru') drawName = drawNamesRu[activeDrawMonth];
+
+        setCountdownState({ isUnlocked, timeLeftText, monthName: drawName, drawName, remHours: remH });
         return;
       } else {
         // Active draw ended, target next month 20th 22:00
@@ -355,14 +371,6 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
         diff = targetDate.getTime() - georgiaTime.getTime();
       }
       
-      const monthNamesKa = ["იანვრამდე", "თებერვლამდე", "მარტამდე", "აპრილამდე", "მაისამდე", "ივნისამდე", "ივლისამდე", "აგვისტომდე", "სექტემბრამდე", "ოქტომბრამდე", "ნოემბრამდე", "დეკემბრამდე"];
-      const monthNamesEn = ["Until Jan", "Until Feb", "Until Mar", "Until Apr", "Until May", "Until Jun", "Until Jul", "Until Aug", "Until Sept", "Until Oct", "Until Nov", "Until Dec"];
-      const monthNamesRu = ["До Января", "До Февраля", "До Марта", "До Апреля", "До Мая", "До Июня", "До Июля", "До Августа", "До Сентября", "До Октября", "До Ноября", "До Декабря"];
-
-      const drawNamesKa = ["20 იანვრის", "20 თებერვლის", "20 მარტის", "20 აპრილის", "20 მაისის", "20 ივნისის", "20 ივლისის", "20 აგვისტოს", "20 სექტემბრის", "20 ოქტომბრის", "20 ნოემბრის", "20 დეკემბრის"];
-      const drawNamesEn = ["Jan 20th", "Feb 20th", "Mar 20th", "Apr 20th", "May 20th", "Jun 20th", "Jul 20th", "Aug 20th", "Sept 20th", "Oct 20th", "Nov 20th", "Dec 20th"];
-      const drawNamesRu = ["20 Января", "20 Февраля", "20 Марта", "20 Апреля", "20 Мая", "20 Июня", "20 Июля", "20 Августа", "20 Сентября", "20 Октября", "20 Ноября", "20 Декабря"];
-
       let monthName = monthNamesKa[activeDrawMonth];
       let drawName = drawNamesKa[activeDrawMonth];
 
@@ -417,6 +425,25 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
       window.dispatchEvent(new CustomEvent('dancing_bricks_delivery_updated', { detail: { monthKey, delivered: targetStatus } }));
     }
     setUpdatingDeliveryMonth(null);
+  };
+
+  const [isResettingSeason, setIsResettingSeason] = useState(false);
+
+  const handleAdminStartNewSeason = async () => {
+    if (!window.confirm("🚀 ნამდვილად გსურთ ახალი სეზონის დაწყება?\n\nCloud ბაზაში ყველა მოთამაშის ქულა განულდება 0-მდე და დაიწყება ახალი თვის გათამაშება!\nწინა თვის გამარჯვებული დაცულია ისტორიაში.")) {
+      return;
+    }
+    setIsResettingSeason(true);
+    const res = await startNewSeasonInCloud();
+    setIsResettingSeason(false);
+    if (res.success) {
+      alert("✅ ახალი სეზონი წარმატებით დაიწყო! ყველა მოთამაშის ქულა განულდა Cloud ბაზაში.");
+      fetchCloudLeaderboard().then(list => {
+        if (Array.isArray(list)) setCloudList(list);
+      });
+    } else {
+      alert("❌ შეცდომა სეზონის განულებისას: " + (res.error || "უცნობი შეცდომა"));
+    }
   };
 
   const [claimedPrizesMap, setClaimedPrizesMap] = useState(() => {
@@ -542,6 +569,30 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
             >
               <Crown size={11} color="#d4a64a" />
               <span>ადმინი</span>
+            </button>
+          )}
+          {isUserAdmin && (
+            <button
+              onClick={handleAdminStartNewSeason}
+              disabled={isResettingSeason}
+              style={{
+                background: 'linear-gradient(135deg, rgba(212,166,74,0.3) 0%, rgba(34,197,94,0.2) 100%)',
+                border: '1px solid rgba(212,166,74,0.5)',
+                borderRadius: '7px',
+                color: '#F0D9A8',
+                fontSize: '10px',
+                fontWeight: '900',
+                padding: '2px 7px',
+                cursor: 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '3px',
+                flexShrink: 0
+              }}
+              title="ახალი სეზონის დაწყება და ყველა მოთამაშის ქულის განულება Cloud ბაზაში"
+            >
+              {isResettingSeason ? <Loader2 size={11} className="animate-spin" /> : <Sparkles size={11} color="#FFD700" />}
+              <span>ახალი სეზონი</span>
             </button>
           )}
         </div>

@@ -64,8 +64,32 @@ export function LanguageProvider({ children }) {
       try {
         localStorage.setItem('lang', newLang);
       } catch (e) {}
+      try {
+        const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
+        if (tgUser?.id) {
+          import('../data/classcore').then(({ syncTelegramUserLanguage }) => {
+            syncTelegramUserLanguage(`TG-${tgUser.id}`, newLang).catch(() => {});
+          }).catch(() => {});
+        }
+      } catch (e) {}
     }
   };
+
+  useEffect(() => {
+    try {
+      const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
+      if (tgUser?.id) {
+        import('../data/classcore').then(({ fetchTelegramUserLanguage }) => {
+          fetchTelegramUserLanguage(`TG-${tgUser.id}`).then(savedLang => {
+            if (savedLang && ['ka', 'en', 'ru'].includes(savedLang)) {
+              setLangState(savedLang);
+              try { localStorage.setItem('lang', savedLang); } catch (e) {}
+            }
+          }).catch(() => {});
+        }).catch(() => {});
+      }
+    } catch (e) {}
+  }, []);
 
   useEffect(() => {
     try {

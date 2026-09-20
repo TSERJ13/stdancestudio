@@ -727,10 +727,161 @@ export async function updateWinnerPrizeDeliveryStatus(monthKey, isDelivered) {
       localStorage.setItem('dancing_bricks_claimed_prizes', JSON.stringify(claimedMap));
     } catch (e) {}
 
+    window.dispatchEvent(new CustomEvent('dancing_bricks_delivery_updated', { detail: { monthKey, isDelivered } }));
+
     return true;
   } catch (e) {
     console.warn('Failed to update winner prize delivery status:', e);
     return false;
+  }
+}
+
+/**
+ * Admin: Start New Season in Supabase Cloud
+ * - Resets all player scores to 0 in Supabase Cloud leaderboard
+ * - Sets last_score_reset_ms to now
+ * - Sets active_season_key
+ * - Resets local cached scores
+ */
+export async function startNewSeasonInCloud() {
+  try {
+    const settingsUrl = `${SUPABASE_URL}/rest/v1/studio_settings?studio_slug=eq.${STUDIO_SLUG}`;
+    const getRes = await fetch(settingsUrl, {
+      headers: {
+        'apikey': ANON_KEY,
+        'Authorization': `Bearer ${ANON_KEY}`
+      }
+    });
+    if (!getRes.ok) throw new Error('Failed to fetch studio settings');
+    const settingsList = await getRes.json();
+    if (!settingsList || settingsList.length === 0) throw new Error('Studio settings not found');
+    const settings = settingsList[0];
+    const staffData = settings.staff_data || {};
+    const currentLeaderboard = Array.isArray(staffData.game_leaderboard) ? staffData.game_leaderboard : [];
+
+    const now = new Date();
+    const nowMs = now.getTime();
+    const newSeasonKey = `season_${now.getFullYear()}_${now.getMonth() + 1}_${nowMs}`;
+
+    // Reset all player scores in cloud leaderboard to 0, keeping their names, photos, and IDs
+    const resetLeaderboard = currentLeaderboard.map(player => ({
+      ...player,
+      score: 0,
+      high_score: 0,
+      total_score: 0,
+      games: 0,
+      total_games: 0,
+      updatedAt: new Date().toISOString()
+    }));
+
+    const updatedStaffData = {
+      ...staffData,
+      game_leaderboard: resetLeaderboard,
+      last_score_reset_ms: nowMs,
+      active_season_key: newSeasonKey
+    };
+
+    const patchRes = await fetch(`${SUPABASE_URL}/rest/v1/studio_settings?studio_slug=eq.${STUDIO_SLUG}`, {
+      method: 'PATCH',
+      headers: {
+        'apikey': ANON_KEY,
+        'Authorization': `Bearer ${ANON_KEY}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ staff_data: updatedStaffData })
+    });
+
+    if (!patchRes.ok) throw new Error('Failed to update studio settings in cloud');
+
+    // Reset local caches
+    try {
+      localStorage.setItem('dancing_bricks_active_season', newSeasonKey);
+      localStorage.setItem('dancing_bricks_last_reset_ms', String(nowMs));
+      localStorage.setItem('dancing_bricks_lb_cache', JSON.stringify(resetLeaderboard));
+
+      const rawProf = localStorage.getItem('dancing_bricks_user_profile');
+      if (rawProf) {
+        const prof = JSON.parse(rawProf);
+        const resetProf = {
+          ...prof,
+          seasonKey: newSeasonKey,
+          highScore: 0,
+          totalScore: 0,
+          totalGames: 0,
+          monthlyHighScore: 0,
+          monthlyTotalScore: 0,
+          monthlyGames: 0,
+          lastResetMs: nowMs
+        };
+        localStorage.setItem('dancing_bricks_user_profile', JSON.stringify(resetProf));
+      }
+    } catch (e) {}
+
+    // Dispatch global events
+    window.dispatchEvent(new CustomEvent('dancing_bricks_season_reset', { detail: { seasonKey: newSeasonKey, resetMs: nowMs } }));
+    window.dispatchEvent(new CustomEvent('dancing_bricks_score_synced', { detail: resetLeaderboard }));
+    window.dispatchEvent(new Event('dancing_bricks_claim_updated'));
+
+    return { success: true, leaderboard: resetLeaderboard };
+  } catch (err) {
+    console.error('❌ Error starting new season in cloud:', err);
+    return { success: false, error: err.message };
+  }
+}
+
+/**
+ * Save user language to Supabase Cloud tied to Telegram User ID
+ */
+export async function syncTelegramUserLanguage(tgUserId, lang) {
+  if (!tgUserId || !lang) return;
+  try {
+    const settingsUrl = `${SUPABASE_URL}/rest/v1/studio_settings?studio_slug=eq.${STUDIO_SLUG}`;
+    const getRes = await fetch(settingsUrl, {
+      headers: { 'apikey': ANON_KEY, 'Authorization': `Bearer ${ANON_KEY}` }
+    });
+    if (!getRes.ok) return;
+    const list = await getRes.json();
+    if (!list || list.length === 0) return;
+    const staffData = list[0].staff_data || {};
+    const telegramLanguages = { ...(staffData.telegram_languages || {}) };
+    telegramLanguages[tgUserId] = lang;
+
+    await fetch(settingsUrl, {
+      method: 'PATCH',
+      headers: {
+        'apikey': ANON_KEY,
+        'Authorization': `Bearer ${ANON_KEY}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        staff_data: {
+          ...staffData,
+          telegram_languages: telegramLanguages
+        }
+      })
+    });
+  } catch (e) {
+    console.warn('Failed to sync user language to cloud:', e);
+  }
+}
+
+/**
+ * Fetch user language from Supabase Cloud by Telegram User ID
+ */
+export async function fetchTelegramUserLanguage(tgUserId) {
+  if (!tgUserId) return null;
+  try {
+    const settingsUrl = `${SUPABASE_URL}/rest/v1/studio_settings?studio_slug=eq.${STUDIO_SLUG}`;
+    const getRes = await fetch(settingsUrl, {
+      headers: { 'apikey': ANON_KEY, 'Authorization': `Bearer ${ANON_KEY}` }
+    });
+    if (!getRes.ok) return null;
+    const list = await getRes.json();
+    if (!list || list.length === 0) return null;
+    const staffData = list[0].staff_data || {};
+    return staffData.telegram_languages?.[tgUserId] || null;
+  } catch (e) {
+    return null;
   }
 }
 
