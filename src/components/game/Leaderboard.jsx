@@ -501,53 +501,6 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
         <div className="lb-title" style={{ display: 'flex', alignItems: 'center', gap: '6px', minWidth: 0, flex: 1 }}>
           <Trophy size={18} color="#d4a64a" style={{ flexShrink: 0 }} />
           <h2 style={{ fontSize: '14px', margin: 0, fontWeight: '900', color: 'white', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{t.title}</h2>
-          {onOpenAdmin && (
-            <button
-              onClick={onOpenAdmin}
-              style={{
-                background: 'rgba(212,166,74,0.15)',
-                border: '1px solid rgba(212,166,74,0.4)',
-                borderRadius: '7px',
-                color: '#F0D9A8',
-                fontSize: '10px',
-                fontWeight: '800',
-                padding: '2px 7px',
-                cursor: 'pointer',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '3px',
-                flexShrink: 0
-              }}
-              title="ქულების მართვა & ადმინ პანელი"
-            >
-              <Crown size={11} color="#d4a64a" />
-              <span>ადმინი</span>
-            </button>
-          )}
-          {isUserAdmin && (
-            <button
-              onClick={handleAdminStartNewSeason}
-              disabled={isResettingSeason}
-              style={{
-                background: 'linear-gradient(135deg, rgba(212,166,74,0.3) 0%, rgba(34,197,94,0.2) 100%)',
-                border: '1px solid rgba(212,166,74,0.5)',
-                borderRadius: '7px',
-                color: '#F0D9A8',
-                fontSize: '10px',
-                fontWeight: '900',
-                padding: '2px 7px',
-                cursor: 'pointer',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '3px',
-                flexShrink: 0
-              }}
-              title="ახალი სეზონის დაწყება და ყველა მოთამაშის ქულის განულება Cloud ბაზაში"
-            >
-              {isResettingSeason ? <Loader2 size={11} className="animate-spin" /> : <Sparkles size={11} color="#FFD700" />}
-              <span>ახალი სეზონი</span>
-            </button>
-          )}
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', flexShrink: 0, textAlign: 'right' }}>
