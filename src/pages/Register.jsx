@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react'
 import { submitRegistration } from '../data/classcore'
 import { useLanguage } from '../context/LanguageContext'
 import { translations } from '../data/translations'
+import { Sparkles, Trophy, Calendar, Check, Zap, User, Phone, Clock } from 'lucide-react'
 import './InnerPage.css'
 
 export default function Register() {
@@ -51,6 +52,34 @@ export default function Register() {
   const isAdult = calculatedAge !== null && calculatedAge >= 18
   const isMinor = calculatedAge !== null && calculatedAge < 18
 
+  // Available experience tiers filtered by age
+  const availableExpTiers = useMemo(() => {
+    if (calculatedAge === null) return []
+    const tiers = []
+
+    // Pre-Silver (6+ years old, 1 year experience)
+    if (calculatedAge >= 5.5) {
+      tiers.push({ id: '1year', label: t('register.expYears1') || '1 წელი (Pre-Silver)', groupId: 'Pre-Silver (1 წლ გამოცდილება)' })
+    }
+
+    // Couples (6+ years old, 2 years experience with partner)
+    if (calculatedAge >= 6) {
+      tiers.push({ id: 'couples', label: t('register.expYearsCouples') || '2 წელი წყვილი (Couples)', groupId: 'Couples (2 წლ გამოცდილება)' })
+    }
+
+    // Silver (7+ years old, 2-3 years experience)
+    if (calculatedAge >= 6.5) {
+      tiers.push({ id: '2-3years', label: t('register.expYears23') || '2-3 წელი (Silver)', groupId: 'Silver (2-3 წლ გამოცდილება)' })
+    }
+
+    // Golden (8+ years old, 5+ years experience)
+    if (calculatedAge >= 7.5) {
+      tiers.push({ id: '5years', label: t('register.expYears5Plus') || '5+ წელი (Golden)', groupId: 'Golden (5+ წლ გამოცდილება)' })
+    }
+
+    return tiers
+  }, [calculatedAge, t])
+
   // Recommend best group based on Age, Experience Choice & Exp Level
   const recommendedGroupId = useMemo(() => {
     if (calculatedAge === null) return null
@@ -74,14 +103,13 @@ export default function Register() {
     return null
   }, [calculatedAge, form.experience, form.exp_level])
 
-  // Filter groups dynamically so mobile users only see the matched/relevant group(s)
+  // Filter groups dynamically so only the matched single group card appears
   const displayGroups = useMemo(() => {
-    // Before birthdate or experience selection, don't overwhelm with all 8 groups
     if (calculatedAge === null || !form.experience) {
       return []
     }
 
-    // If Beginner (0-dan): ONLY show the age-matched beginner group
+    // If Beginner (0-დან): ONLY show the age-matched beginner group
     if (form.experience === 'zero') {
       if (calculatedAge < 6) {
         return groups.filter(g => g.id.includes('Baby'))
@@ -94,7 +122,7 @@ export default function Register() {
       }
     }
 
-    // If Experienced: show matching tier group
+    // If Experienced: ONLY show the exact chosen level group
     if (form.experience === 'has') {
       if (form.exp_level === '1year') {
         return groups.filter(g => g.id.includes('Pre-Silver'))
@@ -105,12 +133,12 @@ export default function Register() {
       } else if (form.exp_level === '5years') {
         return groups.filter(g => g.id.includes('Golden'))
       } else {
-        // User clicked "has experience" but hasn't picked years yet: show experience tier options
-        return groups.filter(g => !['Baby (4-5 წელი)', 'Bronze (6-10 წელი)', 'Starter (11-15 წელი)', 'Hobby Class (15-60 წელი)'].includes(g.id))
+        // Not chosen yet, don't show any until user clicks one of the experience tier buttons
+        return []
       }
     }
 
-    return groups
+    return []
   }, [calculatedAge, form.experience, form.exp_level, groups])
 
   // Active selected group
@@ -119,7 +147,6 @@ export default function Register() {
 
   const handleBirthDateChange = (val) => {
     setForm(prev => {
-      // recalculate
       let nextExp = prev.experience
       let nextLevel = prev.exp_level
       let autoGroup = ''
@@ -136,6 +163,11 @@ export default function Register() {
             else if (age <= 10.9) autoGroup = 'Bronze (6-10 წელი)'
             else if (age <= 15.9) autoGroup = 'Starter (11-15 წელი)'
             else autoGroup = 'Hobby Class (15-60 წელი)'
+          } else if (nextExp === 'has' && nextLevel) {
+            if (nextLevel === '1year') autoGroup = 'Pre-Silver (1 წლ გამოცდილება)'
+            else if (nextLevel === '2-3years') autoGroup = 'Silver (2-3 წლ გამოცდილება)'
+            else if (nextLevel === 'couples') autoGroup = 'Couples (2 წლ გამოცდილება)'
+            else if (nextLevel === '5years') autoGroup = 'Golden (5+ წლ გამოცდილება)'
           }
         }
       }
@@ -151,20 +183,28 @@ export default function Register() {
   const handleExperienceChange = (expType) => {
     setForm(prev => {
       let autoGroup = ''
+      let autoLevel = null
+
       if (calculatedAge !== null) {
         if (expType === 'zero') {
           if (calculatedAge < 6) autoGroup = 'Baby (4-5 წელი)'
           else if (calculatedAge <= 10.9) autoGroup = 'Bronze (6-10 წელი)'
           else if (calculatedAge <= 15.9) autoGroup = 'Starter (11-15 წელი)'
           else autoGroup = 'Hobby Class (15-60 წელი)'
+        } else if (expType === 'has') {
+          // Auto-select first suitable experience tier for their age
+          if (availableExpTiers.length > 0) {
+            autoLevel = availableExpTiers[0].id
+            autoGroup = availableExpTiers[0].groupId
+          }
         }
       }
 
       return {
         ...prev,
         experience: expType,
-        exp_level: expType === 'zero' ? null : prev.exp_level,
-        group: autoGroup || (expType === 'zero' ? '' : prev.group)
+        exp_level: autoLevel,
+        group: autoGroup
       }
     })
   }
@@ -191,15 +231,22 @@ export default function Register() {
     }
 
     if (!form.experience) {
-      setError(lang === 'ka' ? 'გთხოვთ მიუთითოთ გამოცდილება (0-დან სწავლა თუ გამოცდილი)' : 'Please select your dance experience')
+      setError(lang === 'ka' ? 'გთხოვთ მიუთითოთ გამოცდილება' : 'Please select your dance experience')
+      return
+    }
+
+    if (form.experience === 'has' && !form.exp_level) {
+      setError(lang === 'ka' ? 'გთხოვთ აირჩიოთ გამოცდილების ხანგრძლივობა' : 'Please specify years of experience')
+      return
+    }
+
+    // For minors, parent name is mandatory
+    if (isMinor && !form.parent_name) {
+      setError(lang === 'ka' ? 'გთხოვთ შეავსოთ მშობლის სახელი და გვარი' : 'Please enter parent full name')
       return
     }
 
     const finalParentName = form.parent_name || (isAdult ? form.student_name : '')
-    if (isMinor && !finalParentName) {
-      setError(t('register.error'))
-      return
-    }
     
     setLoading(true)
     setError('')
@@ -239,8 +286,8 @@ export default function Register() {
   }
 
   return (
-    <div className="inner-page" style={{ padding: '90px 12px 70px', minHeight: '85vh', display: 'flex', justifyContent: 'center', alignItems: 'center', background: 'radial-gradient(circle at center, #1c1a17 0%, #0a0908 100%)' }}>
-      <div className="register-form-card" style={{ maxWidth: '580px', width: '100%', position: 'relative', padding: 'clamp(20px, 4vw, 36px)' }}>
+    <div className="inner-page" style={{ padding: '90px 14px 70px', minHeight: '85vh', display: 'flex', justifyContent: 'center', alignItems: 'center', background: 'radial-gradient(circle at center, #1c1a17 0%, #0a0908 100%)' }}>
+      <div className="register-form-card" style={{ maxWidth: '560px', width: '100%', position: 'relative', padding: 'clamp(22px, 4.5vw, 36px)', borderRadius: '14px', background: 'rgba(15, 14, 12, 0.95)', border: '1px solid rgba(212, 166, 74, 0.3)', boxShadow: '0 25px 60px rgba(0, 0, 0, 0.85)' }}>
         {/* Subtle Luxury Top Accent Line */}
         <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '3px', background: 'linear-gradient(90deg, transparent 0%, var(--color-gold, #d4a64a) 50%, transparent 100%)' }}></div>
         
@@ -364,9 +411,9 @@ export default function Register() {
                     color: '#fff', 
                     colorScheme: 'dark',
                     fontSize: '14px', 
-                    outline: 'none',
-                    minHeight: '46px',
-                    transition: 'all 0.3s'
+                    outline: 'none', 
+                    minHeight: '46px', 
+                    transition: 'all 0.3s' 
                   }}
                   onFocus={e => {
                     e.target.style.borderColor = 'var(--color-gold, #d4a64a)'
@@ -380,7 +427,7 @@ export default function Register() {
                 />
               </div>
 
-              {/* 3. Dance Experience Question (Clear Choice Buttons) */}
+              {/* 3. Dance Experience Question */}
               {form.birth_date && (
                 <div style={{ 
                   background: 'rgba(212, 166, 74, 0.05)', 
@@ -399,54 +446,59 @@ export default function Register() {
                       type="button"
                       onClick={() => handleExperienceChange('zero')}
                       style={{
-                        padding: '12px 8px',
+                        padding: '12px 10px',
                         borderRadius: '8px',
                         cursor: 'pointer',
-                        fontSize: '12.5px',
+                        fontSize: '13px',
                         fontWeight: '600',
                         transition: 'all 0.25s ease',
                         background: form.experience === 'zero' ? 'linear-gradient(135deg, rgba(212,166,74,0.3) 0%, rgba(212,166,74,0.15) 100%)' : 'rgba(255,255,255,0.03)',
                         border: form.experience === 'zero' ? '1.5px solid var(--color-gold, #d4a64a)' : '1px solid rgba(255,255,255,0.1)',
                         color: form.experience === 'zero' ? 'var(--color-gold, #d4a64a)' : '#cfcbc4',
-                        boxShadow: form.experience === 'zero' ? '0 0 15px rgba(212,166,74,0.2)' : 'none'
+                        boxShadow: form.experience === 'zero' ? '0 0 15px rgba(212,166,74,0.2)' : 'none',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '7px'
                       }}
                     >
-                      🌱 {t('register.expZero')}
+                      <Sparkles size={16} strokeWidth={2.2} color="var(--color-gold, #d4a64a)" />
+                      <span>{t('register.expZero')}</span>
                     </button>
                     
                     <button
                       type="button"
                       onClick={() => handleExperienceChange('has')}
                       style={{
-                        padding: '12px 8px',
+                        padding: '12px 10px',
                         borderRadius: '8px',
                         cursor: 'pointer',
-                        fontSize: '12.5px',
+                        fontSize: '13px',
                         fontWeight: '600',
                         transition: 'all 0.25s ease',
                         background: form.experience === 'has' ? 'linear-gradient(135deg, rgba(212,166,74,0.3) 0%, rgba(212,166,74,0.15) 100%)' : 'rgba(255,255,255,0.03)',
                         border: form.experience === 'has' ? '1.5px solid var(--color-gold, #d4a64a)' : '1px solid rgba(255,255,255,0.1)',
                         color: form.experience === 'has' ? 'var(--color-gold, #d4a64a)' : '#cfcbc4',
-                        boxShadow: form.experience === 'has' ? '0 0 15px rgba(212,166,74,0.2)' : 'none'
+                        boxShadow: form.experience === 'has' ? '0 0 15px rgba(212,166,74,0.2)' : 'none',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '7px'
                       }}
                     >
-                      🏆 {t('register.expHas')}
+                      <Trophy size={16} strokeWidth={2.2} color="var(--color-gold, #d4a64a)" />
+                      <span>{t('register.expHas')}</span>
                     </button>
                   </div>
 
-                  {/* Sub-buttons: If Experienced, specify years */}
-                  {form.experience === 'has' && (
+                  {/* Sub-buttons: If Experienced, filter tiers specifically matching candidate age */}
+                  {form.experience === 'has' && availableExpTiers.length > 0 && (
                     <div style={{ marginTop: '12px', borderTop: '1px solid rgba(212,166,74,0.15)', paddingTop: '10px' }}>
                       <span style={{ display: 'block', fontSize: '12px', color: '#a8a39a', marginBottom: '8px' }}>
                         {t('register.expYearsTitle')}
                       </span>
-                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '6px' }}>
-                        {[
-                          { id: '1year', label: '1 წელი (Pre-Silver)' },
-                          { id: '2-3years', label: '2-3 წელი (Silver)' },
-                          { id: 'couples', label: '2 წელი წყვილი (Couples)' },
-                          { id: '5years', label: '5+ წელი (Golden)' }
-                        ].map(tier => (
+                      <div style={{ display: 'grid', gridTemplateColumns: `repeat(${availableExpTiers.length > 2 ? 2 : availableExpTiers.length}, 1fr)`, gap: '6px' }}>
+                        {availableExpTiers.map(tier => (
                           <button
                             key={tier.id}
                             type="button"
@@ -471,15 +523,16 @@ export default function Register() {
                 </div>
               )}
 
-              {/* 4. Filtered Group Presentation (No scrollbar! Only the matched group appears as a nice clean button card) */}
+              {/* 4. Single Matched Group Card (Clean, elegant, NO scrollbar) */}
               {displayGroups.length > 0 && (
                 <div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
                     <label style={{ color: '#a8a39a', fontSize: '13px', fontWeight: '500' }}>
                       {t('register.groupTitle')}
                     </label>
-                    <span style={{ fontSize: '11px', color: 'var(--color-gold, #d4a64a)', background: 'rgba(212,166,74,0.12)', padding: '2px 8px', borderRadius: '10px', border: '1px solid rgba(212,166,74,0.3)' }}>
-                      ⚡ {lang === 'ka' ? 'შერჩეული ჯგუფი' : 'Selected Group'}
+                    <span style={{ fontSize: '11px', color: 'var(--color-gold, #d4a64a)', background: 'rgba(212,166,74,0.12)', padding: '3px 8px', borderRadius: '10px', border: '1px solid rgba(212,166,74,0.3)', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                      <Zap size={12} strokeWidth={2.5} />
+                      {lang === 'ka' ? 'შერჩეული ჯგუფი' : 'Selected Group'}
                     </span>
                   </div>
 
@@ -512,8 +565,9 @@ export default function Register() {
                               {g.age}
                             </span>
                           </div>
-                          <div style={{ fontSize: '12.5px', color: '#e0dedb', lineHeight: '1.4' }}>
-                            📅 {g.schedule}
+                          <div style={{ fontSize: '12.5px', color: '#e0dedb', lineHeight: '1.4', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            <Calendar size={13} color="var(--color-gold, #d4a64a)" strokeWidth={2} style={{ flexShrink: 0 }} />
+                            <span>{g.schedule}</span>
                           </div>
                         </div>
                       )
@@ -523,7 +577,7 @@ export default function Register() {
               )}
 
               {/* 5. School Shift (for kids & teens) */}
-              {(!calculatedAge || calculatedAge < 18) && (
+              {isMinor && (
                 <div>
                   <label style={{ display: 'block', color: '#a8a39a', fontSize: '13px', marginBottom: '8px', fontWeight: '500' }}>
                     {t('register.shiftTitle')}
@@ -554,8 +608,8 @@ export default function Register() {
                 </div>
               )}
 
-              {/* 6. Parent Name (For minors under 18) */}
-              {(!calculatedAge || calculatedAge < 18) && (
+              {/* 6. Parent Name & Surname (Mandatory for minors, placed right above Parent Phone) */}
+              {isMinor && (
                 <div>
                   <label style={{ display: 'block', color: '#a8a39a', fontSize: '13px', marginBottom: '7px', fontWeight: '500' }}>
                     {t('register.parentName')}
