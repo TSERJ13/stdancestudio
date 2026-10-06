@@ -8,6 +8,7 @@ import Contact from './pages/Contact'
 import Schedule from './pages/Schedule'
 import Payment from './pages/Payment'
 import Success from './pages/Success'
+import Decline from './pages/Decline'
 import NotFound from './pages/NotFound'
 import Register from './pages/Register'
 import CustomFormView from './pages/CustomFormView'
@@ -63,6 +64,7 @@ const AppRoutes = () => (
     <Route path="faq" element={<FaqPage />} />
     <Route path="payment" element={<Payment />} />
     <Route path="success" element={<Success />} />
+    <Route path="decline" element={<Decline />} />
     <Route path="contact" element={<Contact />} />
     <Route path="register" element={<Register />} />
     <Route path="promo" element={<Promo />} />
