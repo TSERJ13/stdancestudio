@@ -43,7 +43,6 @@ export default function Register() {
     if (m < 0 || (m === 0 && now.getDate() < birth.getDate())) {
       age -= 1
     }
-    // fractional precision for 4.5
     const monthDiff = (now.getFullYear() - birth.getFullYear()) * 12 + (now.getMonth() - birth.getMonth())
     const preciseAge = monthDiff / 12
     return preciseAge >= 0 ? preciseAge : null
@@ -56,7 +55,7 @@ export default function Register() {
   const recommendedGroupId = useMemo(() => {
     if (calculatedAge === null) return null
 
-    // If Beginner (0-dan swavla)
+    // If Beginner (0-დან სწავლა)
     if (form.experience === 'zero') {
       if (calculatedAge < 6) return 'Baby (4-5 წელი)'
       if (calculatedAge <= 10.9) return 'Bronze (6-10 წელი)'
@@ -75,20 +74,85 @@ export default function Register() {
     return null
   }, [calculatedAge, form.experience, form.exp_level])
 
-  // Current active group object
-  const activeSelectedGroupId = form.group || recommendedGroupId || (groups[0]?.id || '')
+  // Filter groups dynamically so mobile users only see the matched/relevant group(s)
+  const displayGroups = useMemo(() => {
+    // Before birthdate or experience selection, don't overwhelm with all 8 groups
+    if (calculatedAge === null || !form.experience) {
+      return []
+    }
+
+    // If Beginner (0-dan): ONLY show the age-matched beginner group
+    if (form.experience === 'zero') {
+      if (calculatedAge < 6) {
+        return groups.filter(g => g.id.includes('Baby'))
+      } else if (calculatedAge <= 10.9) {
+        return groups.filter(g => g.id.includes('Bronze'))
+      } else if (calculatedAge <= 15.9) {
+        return groups.filter(g => g.id.includes('Starter'))
+      } else {
+        return groups.filter(g => g.id.includes('Hobby'))
+      }
+    }
+
+    // If Experienced: show matching tier group
+    if (form.experience === 'has') {
+      if (form.exp_level === '1year') {
+        return groups.filter(g => g.id.includes('Pre-Silver'))
+      } else if (form.exp_level === '2-3years') {
+        return groups.filter(g => g.id.includes('Silver') && !g.id.includes('Pre-Silver'))
+      } else if (form.exp_level === 'couples') {
+        return groups.filter(g => g.id.includes('Couples'))
+      } else if (form.exp_level === '5years') {
+        return groups.filter(g => g.id.includes('Golden'))
+      } else {
+        // User clicked "has experience" but hasn't picked years yet: show experience tier options
+        return groups.filter(g => !['Baby (4-5 წელი)', 'Bronze (6-10 წელი)', 'Starter (11-15 წელი)', 'Hobby Class (15-60 წელი)'].includes(g.id))
+      }
+    }
+
+    return groups
+  }, [calculatedAge, form.experience, form.exp_level, groups])
+
+  // Active selected group
+  const activeSelectedGroupId = form.group || recommendedGroupId || (displayGroups[0]?.id || '')
   const selectedGroupObj = groups.find(g => g.id === activeSelectedGroupId) || groups[0]
 
-  // When experience or level changes, sync default selection if user hasn't explicitly picked a divergent one
+  const handleBirthDateChange = (val) => {
+    setForm(prev => {
+      // recalculate
+      let nextExp = prev.experience
+      let nextLevel = prev.exp_level
+      let autoGroup = ''
+
+      if (val) {
+        const birth = new Date(val)
+        if (!isNaN(birth.getTime())) {
+          const now = new Date()
+          const monthDiff = (now.getFullYear() - birth.getFullYear()) * 12 + (now.getMonth() - birth.getMonth())
+          const age = monthDiff / 12
+
+          if (nextExp === 'zero') {
+            if (age < 6) autoGroup = 'Baby (4-5 წელი)'
+            else if (age <= 10.9) autoGroup = 'Bronze (6-10 წელი)'
+            else if (age <= 15.9) autoGroup = 'Starter (11-15 წელი)'
+            else autoGroup = 'Hobby Class (15-60 წელი)'
+          }
+        }
+      }
+
+      return {
+        ...prev,
+        birth_date: val,
+        group: autoGroup || (prev.group ? prev.group : '')
+      }
+    })
+  }
+
   const handleExperienceChange = (expType) => {
     setForm(prev => {
-      const nextExp = expType
-      let nextLevel = prev.exp_level
-      if (nextExp === 'zero') nextLevel = null
-
       let autoGroup = ''
       if (calculatedAge !== null) {
-        if (nextExp === 'zero') {
+        if (expType === 'zero') {
           if (calculatedAge < 6) autoGroup = 'Baby (4-5 წელი)'
           else if (calculatedAge <= 10.9) autoGroup = 'Bronze (6-10 წელი)'
           else if (calculatedAge <= 15.9) autoGroup = 'Starter (11-15 წელი)'
@@ -98,9 +162,9 @@ export default function Register() {
 
       return {
         ...prev,
-        experience: nextExp,
-        exp_level: nextLevel,
-        group: autoGroup || prev.group
+        experience: expType,
+        exp_level: expType === 'zero' ? null : prev.exp_level,
+        group: autoGroup || (expType === 'zero' ? '' : prev.group)
       }
     })
   }
@@ -115,7 +179,7 @@ export default function Register() {
     setForm(prev => ({
       ...prev,
       exp_level: level,
-      group: autoGroup || prev.group
+      group: autoGroup
     }))
   }
 
@@ -126,7 +190,11 @@ export default function Register() {
       return
     }
 
-    // For minors require parent name or fall back to student name
+    if (!form.experience) {
+      setError(lang === 'ka' ? 'გთხოვთ მიუთითოთ გამოცდილება (0-დან სწავლა თუ გამოცდილი)' : 'Please select your dance experience')
+      return
+    }
+
     const finalParentName = form.parent_name || (isAdult ? form.student_name : '')
     if (isMinor && !finalParentName) {
       setError(t('register.error'))
@@ -171,49 +239,49 @@ export default function Register() {
   }
 
   return (
-    <div className="inner-page" style={{ padding: '100px 14px 80px', minHeight: '85vh', display: 'flex', justifyContent: 'center', alignItems: 'center', background: 'radial-gradient(circle at center, #1c1a17 0%, #0a0908 100%)' }}>
-      <div className="register-form-card" style={{ maxWidth: '640px', width: '100%', position: 'relative' }}>
+    <div className="inner-page" style={{ padding: '90px 12px 70px', minHeight: '85vh', display: 'flex', justifyContent: 'center', alignItems: 'center', background: 'radial-gradient(circle at center, #1c1a17 0%, #0a0908 100%)' }}>
+      <div className="register-form-card" style={{ maxWidth: '580px', width: '100%', position: 'relative', padding: 'clamp(20px, 4vw, 36px)' }}>
         {/* Subtle Luxury Top Accent Line */}
         <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '3px', background: 'linear-gradient(90deg, transparent 0%, var(--color-gold, #d4a64a) 50%, transparent 100%)' }}></div>
         
         {success ? (
           <div style={{ textAlign: 'center', padding: '20px 0' }}>
             <div style={{ 
-              width: '80px', 
-              height: '80px', 
+              width: '76px', 
+              height: '76px', 
               borderRadius: '50%', 
               background: 'rgba(212, 166, 74, 0.1)', 
               border: '2px solid var(--color-gold, #d4a64a)', 
               display: 'flex', 
               alignItems: 'center', 
               justifyContent: 'center', 
-              margin: '0 auto 25px',
+              margin: '0 auto 20px',
               color: 'var(--color-gold, #d4a64a)',
-              fontSize: '36px',
+              fontSize: '34px',
               fontWeight: 'bold',
               boxShadow: '0 0 20px rgba(212, 166, 74, 0.2)'
             }}>✓</div>
-            <h2 style={{ fontFamily: 'var(--font-title, "Times New Roman", serif)', color: '#fff', fontSize: '24px', marginBottom: '15px', letterSpacing: '0.5px' }}>
+            <h2 style={{ fontFamily: 'var(--font-title, "Times New Roman", serif)', color: '#fff', fontSize: '22px', marginBottom: '12px' }}>
               {t('register.successTitle')}
             </h2>
-            <p style={{ color: '#a8a39a', fontSize: '14.5px', lineHeight: '1.7', maxWidth: '420px', margin: '0 auto' }}>
+            <p style={{ color: '#a8a39a', fontSize: '14px', lineHeight: '1.6', maxWidth: '400px', margin: '0 auto' }}>
               {t('register.successDesc')}
             </p>
             <button 
               onClick={() => setSuccess(false)} 
               className="btn btn-primary"
-              style={{ marginTop: '35px', padding: '12px 35px', textTransform: 'uppercase', letterSpacing: '1px', fontSize: '13px' }}
+              style={{ marginTop: '30px', padding: '12px 35px', textTransform: 'uppercase', letterSpacing: '1px', fontSize: '13px' }}
             >
               OK
             </button>
           </div>
         ) : (
           <form onSubmit={handleSubmit}>
-            <div style={{ textAlign: 'center', marginBottom: '28px' }}>
+            <div style={{ textAlign: 'center', marginBottom: '24px' }}>
               <h1 style={{ 
                 fontFamily: 'var(--font-display, "Cormorant Garamond", serif)', 
                 color: '#fff', 
-                fontSize: 'clamp(22px, 5.5vw, 32px)', 
+                fontSize: 'clamp(22px, 5vw, 30px)', 
                 marginBottom: '6px', 
                 letterSpacing: '1px',
                 fontWeight: '500',
@@ -229,16 +297,16 @@ export default function Register() {
             </div>
 
             {error && (
-              <div style={{ background: 'rgba(220,53,69,0.08)', border: '1px solid rgba(220,53,69,0.3)', color: '#ff6b7b', padding: '12px', borderRadius: '6px', marginBottom: '20px', fontSize: '13.5px', textAlign: 'center' }}>
+              <div style={{ background: 'rgba(220,53,69,0.1)', border: '1px solid rgba(220,53,69,0.35)', color: '#ff6b7b', padding: '11px', borderRadius: '6px', marginBottom: '18px', fontSize: '13px', textAlign: 'center' }}>
                 {error}
               </div>
             )}
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '22px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
               
               {/* 1. Student / Member Name */}
               <div>
-                <label style={{ display: 'block', color: '#a8a39a', fontSize: '13.5px', marginBottom: '8px', fontWeight: '500' }}>
+                <label style={{ display: 'block', color: '#a8a39a', fontSize: '13px', marginBottom: '7px', fontWeight: '500' }}>
                   {isAdult ? t('register.studentNameAdult') : isMinor ? t('register.studentNameChild') : t('register.studentName')}
                 </label>
                 <input 
@@ -249,12 +317,12 @@ export default function Register() {
                   style={{ 
                     width: '100%', 
                     boxSizing: 'border-box',
-                    padding: '13px 16px', 
+                    padding: '12px 15px', 
                     background: 'rgba(255,255,255,0.02)', 
-                    border: '1px solid rgba(212, 166, 74, 0.2)', 
+                    border: '1px solid rgba(212, 166, 74, 0.25)', 
                     borderRadius: '8px', 
                     color: '#fff', 
-                    fontSize: '14.5px', 
+                    fontSize: '14px', 
                     outline: 'none', 
                     transition: 'all 0.3s' 
                   }}
@@ -263,7 +331,7 @@ export default function Register() {
                     e.target.style.boxShadow = '0 0 10px rgba(212,166,74,0.15)'
                   }}
                   onBlur={e => {
-                    e.target.style.borderColor = 'rgba(212, 166, 74, 0.2)'
+                    e.target.style.borderColor = 'rgba(212, 166, 74, 0.25)'
                     e.target.style.boxShadow = 'none'
                   }}
                   required
@@ -272,32 +340,32 @@ export default function Register() {
 
               {/* 2. Date of Birth */}
               <div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                  <label style={{ color: '#a8a39a', fontSize: '13.5px', fontWeight: '500' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '7px' }}>
+                  <label style={{ color: '#a8a39a', fontSize: '13px', fontWeight: '500' }}>
                     {t('register.birthDate')}
                   </label>
                   {calculatedAge !== null && (
-                    <span style={{ fontSize: '12px', color: 'var(--color-gold, #d4a64a)', fontWeight: '600' }}>
-                      {calculatedAge >= 1 ? `${Math.floor(calculatedAge)} ${lang === 'ka' ? 'წლის' : lang === 'ru' ? 'лет' : 'years old'}` : ''}
+                    <span style={{ fontSize: '12px', color: 'var(--color-gold, #d4a64a)', fontWeight: '600', background: 'rgba(212,166,74,0.12)', padding: '2px 8px', borderRadius: '10px' }}>
+                      {Math.floor(calculatedAge)} {lang === 'ka' ? 'წლის' : lang === 'ru' ? 'лет' : 'years old'}
                     </span>
                   )}
                 </div>
                 <input 
                   type="date" 
                   value={form.birth_date}
-                  onChange={e => setForm({ ...form, birth_date: e.target.value })}
+                  onChange={e => handleBirthDateChange(e.target.value)}
                   style={{ 
                     width: '100%', 
                     boxSizing: 'border-box',
-                    padding: '13px 16px', 
+                    padding: '12px 15px', 
                     background: 'rgba(255,255,255,0.02)', 
-                    border: '1px solid rgba(212, 166, 74, 0.2)', 
+                    border: '1px solid rgba(212, 166, 74, 0.25)', 
                     borderRadius: '8px', 
                     color: '#fff', 
                     colorScheme: 'dark',
-                    fontSize: '14.5px', 
+                    fontSize: '14px', 
                     outline: 'none',
-                    minHeight: '48px',
+                    minHeight: '46px',
                     transition: 'all 0.3s'
                   }}
                   onFocus={e => {
@@ -305,36 +373,36 @@ export default function Register() {
                     e.target.style.boxShadow = '0 0 10px rgba(212,166,74,0.15)'
                   }}
                   onBlur={e => {
-                    e.target.style.borderColor = 'rgba(212, 166, 74, 0.2)'
+                    e.target.style.borderColor = 'rgba(212, 166, 74, 0.25)'
                     e.target.style.boxShadow = 'none'
                   }}
                   required
                 />
               </div>
 
-              {/* 3. Dance Experience Question (Shows clearly once birth date is entered) */}
+              {/* 3. Dance Experience Question (Clear Choice Buttons) */}
               {form.birth_date && (
                 <div style={{ 
-                  background: 'rgba(212, 166, 74, 0.04)', 
-                  border: '1px solid rgba(212, 166, 74, 0.25)', 
+                  background: 'rgba(212, 166, 74, 0.05)', 
+                  border: '1px solid rgba(212, 166, 74, 0.3)', 
                   borderRadius: '10px', 
-                  padding: '16px 18px',
+                  padding: '14px 16px',
                   animation: 'fadeIn 0.3s ease'
                 }}>
-                  <label style={{ display: 'block', color: '#fff', fontSize: '13.5px', fontWeight: '600', marginBottom: '12px', letterSpacing: '0.2px' }}>
-                    ✨ {isAdult ? t('register.expQuestionAdult') : t('register.expQuestionChild')}
+                  <label style={{ display: 'block', color: '#fff', fontSize: '13px', fontWeight: '600', marginBottom: '10px', lineHeight: '1.4' }}>
+                    {isAdult ? t('register.expQuestionAdult') : t('register.expQuestionChild')}
                   </label>
                   
-                  {/* Two Buttons: 0-Dan (Beginner) OR Has Experience */}
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '10px', marginBottom: form.experience === 'has' ? '14px' : '0' }}>
+                  {/* Two Main Choice Buttons: 0-იდან vs გამოცდილი */}
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '8px' }}>
                     <button
                       type="button"
                       onClick={() => handleExperienceChange('zero')}
                       style={{
-                        padding: '12px 14px',
+                        padding: '12px 8px',
                         borderRadius: '8px',
                         cursor: 'pointer',
-                        fontSize: '13px',
+                        fontSize: '12.5px',
                         fontWeight: '600',
                         transition: 'all 0.25s ease',
                         background: form.experience === 'zero' ? 'linear-gradient(135deg, rgba(212,166,74,0.3) 0%, rgba(212,166,74,0.15) 100%)' : 'rgba(255,255,255,0.03)',
@@ -350,10 +418,10 @@ export default function Register() {
                       type="button"
                       onClick={() => handleExperienceChange('has')}
                       style={{
-                        padding: '12px 14px',
+                        padding: '12px 8px',
                         borderRadius: '8px',
                         cursor: 'pointer',
-                        fontSize: '13px',
+                        fontSize: '12.5px',
                         fontWeight: '600',
                         transition: 'all 0.25s ease',
                         background: form.experience === 'has' ? 'linear-gradient(135deg, rgba(212,166,74,0.3) 0%, rgba(212,166,74,0.15) 100%)' : 'rgba(255,255,255,0.03)',
@@ -366,28 +434,28 @@ export default function Register() {
                     </button>
                   </div>
 
-                  {/* If user selected "Has Experience", show experience tier pills */}
+                  {/* Sub-buttons: If Experienced, specify years */}
                   {form.experience === 'has' && (
-                    <div style={{ marginTop: '12px', borderTop: '1px solid rgba(212,166,74,0.15)', paddingTop: '12px' }}>
-                      <span style={{ display: 'block', fontSize: '12.5px', color: '#a8a39a', marginBottom: '8px' }}>
+                    <div style={{ marginTop: '12px', borderTop: '1px solid rgba(212,166,74,0.15)', paddingTop: '10px' }}>
+                      <span style={{ display: 'block', fontSize: '12px', color: '#a8a39a', marginBottom: '8px' }}>
                         {t('register.expYearsTitle')}
                       </span>
-                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '8px' }}>
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '6px' }}>
                         {[
-                          { id: '1year', label: t('register.expYears1') },
-                          { id: '2-3years', label: t('register.expYears23') },
-                          { id: 'couples', label: 'Couples (2 წელი წყვილში)' },
-                          { id: '5years', label: t('register.expYears5Plus') }
+                          { id: '1year', label: '1 წელი (Pre-Silver)' },
+                          { id: '2-3years', label: '2-3 წელი (Silver)' },
+                          { id: 'couples', label: '2 წელი წყვილი (Couples)' },
+                          { id: '5years', label: '5+ წელი (Golden)' }
                         ].map(tier => (
                           <button
                             key={tier.id}
                             type="button"
                             onClick={() => handleExpLevelChange(tier.id)}
                             style={{
-                              padding: '10px 8px',
+                              padding: '9px 6px',
                               borderRadius: '6px',
                               cursor: 'pointer',
-                              fontSize: '12px',
+                              fontSize: '11.5px',
                               fontWeight: form.exp_level === tier.id ? '600' : '400',
                               background: form.exp_level === tier.id ? 'rgba(212,166,74,0.25)' : 'rgba(255,255,255,0.02)',
                               border: form.exp_level === tier.id ? '1px solid var(--color-gold, #d4a64a)' : '1px solid rgba(255,255,255,0.08)',
@@ -403,83 +471,76 @@ export default function Register() {
                 </div>
               )}
 
-              {/* 4. Elegant Group Selection Grid (No scrolling dropdown - luxury cards) */}
-              <div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-                  <label style={{ color: '#a8a39a', fontSize: '13.5px', fontWeight: '500' }}>
-                    {t('register.groupTitle')}
-                  </label>
-                  {recommendedGroupId && (
-                    <span style={{ fontSize: '11px', color: 'var(--color-gold, #d4a64a)', background: 'rgba(212,166,74,0.1)', padding: '2px 8px', borderRadius: '10px', border: '1px solid rgba(212,166,74,0.3)' }}>
-                      ⚡ {lang === 'ka' ? 'ავტო-შერჩეული' : 'Auto Selected'}
+              {/* 4. Filtered Group Presentation (No scrollbar! Only the matched group appears as a nice clean button card) */}
+              {displayGroups.length > 0 && (
+                <div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                    <label style={{ color: '#a8a39a', fontSize: '13px', fontWeight: '500' }}>
+                      {t('register.groupTitle')}
+                    </label>
+                    <span style={{ fontSize: '11px', color: 'var(--color-gold, #d4a64a)', background: 'rgba(212,166,74,0.12)', padding: '2px 8px', borderRadius: '10px', border: '1px solid rgba(212,166,74,0.3)' }}>
+                      ⚡ {lang === 'ka' ? 'შერჩეული ჯგუფი' : 'Selected Group'}
                     </span>
-                  )}
-                </div>
+                  </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '10px' }}>
-                  {groups.map((g) => {
-                    const isSelected = activeSelectedGroupId === g.id
-                    const isRecommended = recommendedGroupId === g.id
-                    const gColor = g.color || '#d4a64a'
-                    return (
-                      <div
-                        key={g.id}
-                        onClick={() => setForm({ ...form, group: g.id })}
-                        style={{
-                          padding: '13px 15px',
-                          background: isSelected ? `${gColor}22` : 'rgba(255,255,255,0.02)',
-                          border: isSelected ? `1.5px solid ${gColor}` : isRecommended ? `1px dashed ${gColor}88` : '1px solid rgba(255, 255, 255, 0.08)',
-                          borderRadius: '8px',
-                          cursor: 'pointer',
-                          transition: 'all 0.25s ease',
-                          boxShadow: isSelected ? `0 4px 18px ${gColor}33` : 'none',
-                          display: 'flex',
-                          flexDirection: 'column',
-                          gap: '6px',
-                          position: 'relative'
-                        }}
-                      >
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '6px' }}>
-                          <span style={{ fontWeight: '600', color: isSelected ? gColor : '#ffffff', fontSize: '14px', letterSpacing: '0.01em' }}>
-                            {g.name}
-                          </span>
-                          <span style={{ fontSize: '10.5px', background: `${gColor}22`, color: gColor, border: `1px solid ${gColor}55`, padding: '2px 7px', borderRadius: '10px', fontWeight: '600', whiteSpace: 'nowrap' }}>
-                            {g.age}
-                          </span>
-                        </div>
-                        <div style={{ fontSize: '12px', color: '#a8a39a', lineHeight: '1.4' }}>
-                          {g.schedule}
-                        </div>
-                        {isRecommended && (
-                          <div style={{ fontSize: '10px', color: 'var(--color-gold, #d4a64a)', fontWeight: '600', marginTop: '2px' }}>
-                            ✓ {lang === 'ka' ? 'რეკომენდებული ჯგუფი' : 'Recommended'}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    {displayGroups.map((g) => {
+                      const isSelected = activeSelectedGroupId === g.id
+                      const gColor = g.color || '#d4a64a'
+                      return (
+                        <div
+                          key={g.id}
+                          onClick={() => setForm({ ...form, group: g.id })}
+                          style={{
+                            padding: '14px 16px',
+                            background: isSelected ? `${gColor}22` : 'rgba(255,255,255,0.02)',
+                            border: isSelected ? `2px solid ${gColor}` : '1px solid rgba(255, 255, 255, 0.1)',
+                            borderRadius: '10px',
+                            cursor: 'pointer',
+                            transition: 'all 0.25s ease',
+                            boxShadow: isSelected ? `0 4px 18px ${gColor}33` : 'none',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: '6px'
+                          }}
+                        >
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px' }}>
+                            <span style={{ fontWeight: '700', color: isSelected ? gColor : '#ffffff', fontSize: '15px' }}>
+                              {g.name}
+                            </span>
+                            <span style={{ fontSize: '11px', background: `${gColor}25`, color: gColor, border: `1px solid ${gColor}55`, padding: '2px 8px', borderRadius: '10px', fontWeight: '600' }}>
+                              {g.age}
+                            </span>
                           </div>
-                        )}
-                      </div>
-                    )
-                  })}
+                          <div style={{ fontSize: '12.5px', color: '#e0dedb', lineHeight: '1.4' }}>
+                            📅 {g.schedule}
+                          </div>
+                        </div>
+                      )
+                    })}
+                  </div>
                 </div>
-              </div>
+              )}
 
-              {/* 5. School Shift (shown mainly for kids/teens, optional for adults) */}
+              {/* 5. School Shift (for kids & teens) */}
               {(!calculatedAge || calculatedAge < 18) && (
                 <div>
-                  <label style={{ display: 'block', color: '#a8a39a', fontSize: '13.5px', marginBottom: '10px', fontWeight: '500' }}>
+                  <label style={{ display: 'block', color: '#a8a39a', fontSize: '13px', marginBottom: '8px', fontWeight: '500' }}>
                     {t('register.shiftTitle')}
                   </label>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '10px' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '8px' }}>
                     {shifts.map(s => (
                       <button
                         key={s.id}
                         type="button"
                         onClick={() => setForm({ ...form, shift: s.id })}
                         style={{ 
-                          padding: '12px 10px', 
-                          background: form.shift === s.id ? 'rgba(212,166,74,0.14)' : 'rgba(255,255,255,0.01)', 
-                          border: form.shift === s.id ? '1px solid var(--color-gold, #d4a64a)' : '1px solid rgba(255,255,255,0.06)', 
-                          borderRadius: '6px', 
+                          padding: '11px 8px', 
+                          background: form.shift === s.id ? 'rgba(212,166,74,0.18)' : 'rgba(255,255,255,0.02)', 
+                          border: form.shift === s.id ? '1.5px solid var(--color-gold, #d4a64a)' : '1px solid rgba(255,255,255,0.08)', 
+                          borderRadius: '8px', 
                           color: form.shift === s.id ? 'var(--color-gold, #d4a64a)' : '#a8a39a', 
-                          fontSize: '13px', 
+                          fontSize: '12.5px', 
                           cursor: 'pointer', 
                           transition: 'all 0.25s ease',
                           fontWeight: form.shift === s.id ? '600' : '400',
@@ -496,7 +557,7 @@ export default function Register() {
               {/* 6. Parent Name (For minors under 18) */}
               {(!calculatedAge || calculatedAge < 18) && (
                 <div>
-                  <label style={{ display: 'block', color: '#a8a39a', fontSize: '13.5px', marginBottom: '8px', fontWeight: '500' }}>
+                  <label style={{ display: 'block', color: '#a8a39a', fontSize: '13px', marginBottom: '7px', fontWeight: '500' }}>
                     {t('register.parentName')}
                   </label>
                   <input 
@@ -507,12 +568,12 @@ export default function Register() {
                     style={{ 
                       width: '100%', 
                       boxSizing: 'border-box',
-                      padding: '13px 16px', 
+                      padding: '12px 15px', 
                       background: 'rgba(255,255,255,0.02)', 
-                      border: '1px solid rgba(212, 166, 74, 0.2)', 
+                      border: '1px solid rgba(212, 166, 74, 0.25)', 
                       borderRadius: '8px', 
                       color: '#fff', 
-                      fontSize: '14.5px', 
+                      fontSize: '14px', 
                       outline: 'none', 
                       transition: 'all 0.3s' 
                     }}
@@ -521,7 +582,7 @@ export default function Register() {
                       e.target.style.boxShadow = '0 0 10px rgba(212,166,74,0.15)'
                     }}
                     onBlur={e => {
-                      e.target.style.borderColor = 'rgba(212, 166, 74, 0.2)'
+                      e.target.style.borderColor = 'rgba(212, 166, 74, 0.25)'
                       e.target.style.boxShadow = 'none'
                     }}
                     required={isMinor}
@@ -531,7 +592,7 @@ export default function Register() {
 
               {/* 7. Phone Number (WhatsApp) */}
               <div>
-                <label style={{ display: 'block', color: '#a8a39a', fontSize: '13.5px', marginBottom: '8px', fontWeight: '500' }}>
+                <label style={{ display: 'block', color: '#a8a39a', fontSize: '13px', marginBottom: '7px', fontWeight: '500' }}>
                   {isAdult ? `${lang === 'ka' ? 'თქვენი ტელეფონის ნომერი (WhatsApp) *' : lang === 'ru' ? 'Ваш номер телефона (WhatsApp) *' : 'Your Phone Number (WhatsApp) *'}` : t('register.parentPhone')}
                 </label>
                 <input 
@@ -542,12 +603,12 @@ export default function Register() {
                   style={{ 
                     width: '100%', 
                     boxSizing: 'border-box',
-                    padding: '13px 16px', 
+                    padding: '12px 15px', 
                     background: 'rgba(255,255,255,0.02)', 
-                    border: '1px solid rgba(212, 166, 74, 0.2)', 
+                    border: '1px solid rgba(212, 166, 74, 0.25)', 
                     borderRadius: '8px', 
                     color: '#fff', 
-                    fontSize: '14.5px', 
+                    fontSize: '14px', 
                     outline: 'none', 
                     transition: 'all 0.3s' 
                   }}
@@ -556,7 +617,7 @@ export default function Register() {
                     e.target.style.boxShadow = '0 0 10px rgba(212,166,74,0.15)'
                   }}
                   onBlur={e => {
-                    e.target.style.borderColor = 'rgba(212, 166, 74, 0.2)'
+                    e.target.style.borderColor = 'rgba(212, 166, 74, 0.25)'
                     e.target.style.boxShadow = 'none'
                   }}
                   required
@@ -571,9 +632,9 @@ export default function Register() {
               className="btn btn-primary"
               style={{ 
                 width: '100%', 
-                marginTop: '32px', 
-                padding: '15px 0', 
-                fontSize: '14px', 
+                marginTop: '28px', 
+                padding: '14px 0', 
+                fontSize: '13.5px', 
                 fontWeight: '600', 
                 letterSpacing: '2px', 
                 textTransform: 'uppercase', 
