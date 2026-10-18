@@ -302,14 +302,23 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
   transition: all 0.2s ease;
   box-shadow: 0 4px 16px rgba(16, 185, 129, 0.35);
   flex-shrink: 0;
 }
 
-.btn-download-direct:hover {
+.btn-download-direct:hover:not(:disabled) {
   transform: translateY(-2px);
   box-shadow: 0 6px 22px rgba(16, 185, 129, 0.5);
+}
+
+.btn-download-direct:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
 }
 
 /* Error Box */

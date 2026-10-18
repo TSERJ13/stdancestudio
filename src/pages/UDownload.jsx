@@ -35,8 +35,10 @@ export default function UDownload() {
   const [error, setError] = useState(null);
   const [result, setResult] = useState(null);
   const [history, setHistory] = useState([]);
+  const [downloadingFile, setDownloadingFile] = useState(false);
 
   const pollIntervalRef = useRef(null);
+  const isDownloadingRef = useRef(false);
 
   useEffect(() => {
     try {
@@ -69,6 +71,51 @@ export default function UDownload() {
     }
   };
 
+  // Direct Ad-Free Blob Download into browser without opening ad tabs
+  const triggerDirectDownload = async (directUrl, songTitle, songFmt = 'mp3') => {
+    if (!directUrl || isDownloadingRef.current) return;
+    isDownloadingRef.current = true;
+    setDownloadingFile(true);
+
+    const safeFilename = `${(songTitle || 'YouTube_Audio')
+      .replace(/[/\\?%*:|"<>]/g, '_')
+      .trim()}.${(songFmt || 'mp3').toLowerCase()}`;
+
+    try {
+      // 1. Fetch direct binary stream via client fetch (Zero popups, zero tabs, zero ads)
+      const res = await fetch(directUrl);
+      if (!res.ok) throw new Error(`Direct fetch returned ${res.status}`);
+
+      const blob = await res.blob();
+      const blobUrl = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = blobUrl;
+      link.download = safeFilename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      setTimeout(() => window.URL.revokeObjectURL(blobUrl), 25000);
+    } catch (err) {
+      console.warn('Direct blob download failed, trying server proxy stream...', err);
+      // 2. Fallback: stream through our own Vercel API endpoint
+      try {
+        const proxyUrl = `/api/yt-download?action=file&fileUrl=${encodeURIComponent(directUrl)}&filename=${encodeURIComponent(safeFilename)}`;
+        const link = document.createElement('a');
+        link.href = proxyUrl;
+        link.download = safeFilename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      } catch (fallbackErr) {
+        console.error('All download methods failed', fallbackErr);
+        setError('ფაილის გადმოწერა ვერ მოხერხდა. გთხოვთ სცადოთ ხელახლა.');
+      }
+    } finally {
+      isDownloadingRef.current = false;
+      setDownloadingFile(false);
+    }
+  };
+
   const handleConvert = async (overrideUrl) => {
     const targetUrl = (overrideUrl || url).trim();
     if (!targetUrl) {
@@ -94,7 +141,6 @@ export default function UDownload() {
       try {
         res = await fetch(apiEndpoint);
       } catch (networkErr) {
-        // Fallback directly to loader.to if local dev or proxy unavailable
         res = await fetch(`https://loader.to/ajax/download.php?button=1&start=1&end=1&format=${format}&url=${encodeURIComponent(targetUrl)}`);
       }
 
@@ -146,7 +192,7 @@ export default function UDownload() {
           if (pollData.download_url && (pollData.success === 1 || pollData.progress === 1000)) {
             clearInterval(pollIntervalRef.current);
             setProgress(100);
-            setStatusText('მზადაა!');
+            setStatusText('მზადაა! ფაილი ავტომატურად იწერება...');
             setLoading(false);
 
             const resultObj = {
@@ -160,6 +206,9 @@ export default function UDownload() {
 
             setResult(resultObj);
             saveToHistory(resultObj);
+
+            // Automatically download file directly into browser (Zero ads)
+            triggerDirectDownload(pollData.download_url, resultObj.title, format);
           }
         } catch (pollErr) {
           console.warn('Poll error, retrying...', pollErr);
@@ -184,7 +233,7 @@ export default function UDownload() {
           </span>
           <h1 className="udownload-title">YouTube to MP3 Downloader</h1>
           <p className="udownload-subtitle">
-            ჩამოტვირთეთ ნებისმიერი საცეკვაო მუსიკა და ტრეკი YouTube-იდან უმაღლესი ხარისხით, რეკლამების და ლიმიტების გარეშე.
+            ჩამოტვირთეთ ნებისმიერი საცეკვაო მუსიკა და ტრეკი YouTube-იდან უმაღლესი ხარისხით, პირდაპირ მოწყობილობაში რეკლამების გარეშე.
           </p>
         </div>
 
@@ -250,7 +299,7 @@ export default function UDownload() {
             >
               {loading ? (
                 <>
-                  <Loader2 size={18} className="spinner" />
+                  <Loader2 size={18} className="spinner" style={{ margin: 0 }} />
                   <span>მუშავდება...</span>
                 </>
               ) : (
@@ -296,18 +345,28 @@ export default function UDownload() {
                 <div className="result-info">
                   <span className="result-badge">✓ {result.format} Ready</span>
                   <h3 className="result-title" title={result.title}>{result.title}</h3>
-                  <p style={{ margin: 0, fontSize: '12px', color: '#94a3b8' }}>მაღალი ხარისხის აუდიო ფაილი</p>
+                  <p style={{ margin: 0, fontSize: '12px', color: downloadingFile ? '#4ade80' : '#94a3b8' }}>
+                    {downloadingFile ? '⏳ ფაილი პირდაპირ იწერება მოწყობილობაში...' : 'ფაილი მზადაა (რეკლამების გარეშე)'}
+                  </p>
                 </div>
-                <a 
-                  href={result.downloadUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  download
+                <button 
+                  type="button"
+                  onClick={() => triggerDirectDownload(result.downloadUrl, result.title, result.format)}
+                  disabled={downloadingFile}
                   className="btn-download-direct"
                 >
-                  <Download size={18} />
-                  <span>Download MP3</span>
-                </a>
+                  {downloadingFile ? (
+                    <>
+                      <Loader2 size={18} className="spinner" style={{ margin: 0 }} />
+                      <span>იწერება...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Download size={18} />
+                      <span>Download {result.format}</span>
+                    </>
+                  )}
+                </button>
               </div>
             </div>
           )}
@@ -323,7 +382,7 @@ export default function UDownload() {
           <div className="feature-item">
             <ShieldCheck className="feature-icon" size={24} />
             <h4 className="feature-title">სუფთა &amp; უსაფრთხო</h4>
-            <p className="feature-desc">არანაირი ამომხტარი რეკლამები, სპამი ან ვირუსული გადამისამართებები.</p>
+            <p className="feature-desc">არანაირი ამომხტარი რეკლამები, სპამი ან მავნე გადამისამართებები.</p>
           </div>
           <div className="feature-item">
             <Headphones className="feature-icon" size={24} />
@@ -332,38 +391,27 @@ export default function UDownload() {
           </div>
         </div>
 
-        {/* Conversion History */}
+        {/* Recent Downloads History */}
         {history.length > 0 && (
-          <div style={{ marginTop: '40px' }} className="animate-in">
-            <h4 style={{ fontSize: '14px', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '14px' }}>
-              ბოლოს გადმოწერილი სიმღერები
-            </h4>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              {history.map(item => (
-                <div 
-                  key={item.id}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    padding: '10px 16px',
-                    borderRadius: '12px',
-                    background: 'rgba(255, 255, 255, 0.03)',
-                    border: '1px solid rgba(255, 255, 255, 0.06)'
-                  }}
-                >
+          <div className="udownload-history">
+            <h3 className="history-title">ბოლოს გადმოწერილი სიმღერები</h3>
+            <div className="history-list">
+              {history.map((item) => (
+                <div key={item.id} className="history-item">
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0, flex: 1 }}>
                     <Music size={16} style={{ color: '#c084fc', flexShrink: 0 }} />
                     <span style={{ fontSize: '13.5px', color: '#e2e8f0', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                       {item.title}
                     </span>
                   </div>
-                  <a
-                    href={item.downloadUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    download
+                  <button
+                    type="button"
+                    onClick={() => triggerDirectDownload(item.downloadUrl, item.title, item.format || 'mp3')}
+                    disabled={downloadingFile}
                     style={{
+                      background: 'none',
+                      border: 'none',
+                      cursor: downloadingFile ? 'not-allowed' : 'pointer',
                       display: 'inline-flex',
                       alignItems: 'center',
                       gap: '4px',
@@ -372,12 +420,13 @@ export default function UDownload() {
                       fontWeight: 700,
                       textDecoration: 'none',
                       marginLeft: '12px',
-                      flexShrink: 0
+                      flexShrink: 0,
+                      opacity: downloadingFile ? 0.6 : 1
                     }}
                   >
                     <span>Download</span>
                     <ArrowRight size={13} />
-                  </a>
+                  </button>
                 </div>
               ))}
             </div>

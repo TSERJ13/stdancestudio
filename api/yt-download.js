@@ -1,5 +1,7 @@
 // Vercel Serverless Function: YouTube to MP3 Converter Proxy
 // Endpoint: https://stdance.ge/api/yt-download
+import { Readable } from 'stream';
+import { pipeline } from 'stream/promises';
 
 export default async function handler(req, res) {
   // CORS configuration
@@ -11,7 +13,31 @@ export default async function handler(req, res) {
     return res.status(200).end();
   }
 
-  const { url, id, format = 'mp3' } = req.query;
+  const { url, id, format = 'mp3', action, fileUrl, filename } = req.query;
+
+  // Stream proxy for clean direct file download without opening 3rd party tabs
+  if (action === 'file' && fileUrl) {
+    try {
+      const fileRes = await fetch(fileUrl, {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36'
+        }
+      });
+      if (!fileRes.ok) throw new Error(`CDN returned status ${fileRes.status}`);
+
+      const safeName = (filename || 'audio.mp3').replace(/[^\w\s.-]/gi, '_');
+      res.setHeader('Content-Type', fileRes.headers.get('content-type') || 'audio/mpeg');
+      res.setHeader('Content-Disposition', `attachment; filename="${safeName}"`);
+      const len = fileRes.headers.get('content-length');
+      if (len) res.setHeader('Content-Length', len);
+
+      const nodeStream = Readable.fromWeb(fileRes.body);
+      await pipeline(nodeStream, res);
+      return;
+    } catch (e) {
+      return res.status(500).json({ error: 'Direct download proxy failed', message: e.message });
+    }
+  }
 
   // 1. If progress ID provided, check conversion progress
   if (id) {
