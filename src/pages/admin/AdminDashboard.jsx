@@ -206,8 +206,10 @@ export default function AdminDashboard() {
             return cloudStudent
           });
 
-          // Add local-only students that haven't synced to cloud
+          // Add local-only students that haven't synced to cloud (excluding fake demo seed IDs)
+          const DEMO_IDS = new Set(['stu_001', 'stu_002', 'stu_003']);
           localStudents.forEach(ls => {
+            if (cloudStudents.length > 0 && DEMO_IDS.has(String(ls.id))) return;
             if (!mapped.find(ms => String(ms.id) === String(ls.id))) {
               mapped.push(ls);
             }
@@ -571,7 +573,24 @@ export default function AdminDashboard() {
           ) : (
             <>
               {tab===0 && <NewsTab news={news} onEdit={id => setEditingItem({ tab: 'news', id })} onDelete={handleDeleteNews} />}
-              {tab===1 && <StudentsTab students={students} onEdit={id => setEditingItem({ tab: 'student', id })} onDelete={id=>{deleteStudent(id);refresh()}} onSendSms={handleOpenSmsModal} />}
+              {tab===1 && (
+                <StudentsTab
+                  students={students}
+                  onEdit={id => setEditingItem({ tab: 'student', id })}
+                  onDelete={id => {
+                    showConfirm('დარწმუნებული ხართ, რომ გსურთ მოცეკვავის წაშლა?', async () => {
+                      deleteStudent(id);
+                      setStudents(prev => prev.filter(s => String(s.id) !== String(id)));
+                      try {
+                        const mod = await import('../../data/classcore');
+                        await mod.deleteStudentFromCloud(id);
+                      } catch (e) {}
+                      refresh();
+                    });
+                  }}
+                  onSendSms={handleOpenSmsModal}
+                />
+              )}
               {tab===2 && <TournamentsTab tournaments={tournaments} students={students} onEdit={id => setEditingItem({ tab: 'tournament', id })} onManageResults={id => setEditingItem({ tab: 'results', id })} onDelete={handleDeleteTournament} />}
               {tab===3 && (
                 <RegistrationsTab 

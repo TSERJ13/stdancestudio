@@ -6,13 +6,19 @@
 
 const CLASSCORE_API = 'https://classcore.ge/api/public/student-portal';
 const STUDIO_SLUG = 'stdancestudio';
-const CACHE_KEY = 'cc_portal_cache';
-const CACHE_TTL = 5 * 60 * 1000; // 5 minutes in-session
-const PERSIST_KEY = 'cc_portal_cache_persist'; // localStorage long-term fallback
+const STUDIO_ORG_ID = '04fcd615-255c-4f6d-9444-50308118db04';
+const CLASSCORE_SB_URL = 'https://pkmofhsbdwulczligyvl.supabase.co';
+const CLASSCORE_SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBrbW9maHNiZHd1bGN6bGlneXZsIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4OTQ1NDk1OSwiZXhwIjoyMTA1MDMwOTU5fQ.RfDveVBWqj-jb5hkNW5qa5AZOvcI7akWIA4svZ3vsfU';
+
+const CACHE_KEY = 'cc_portal_cache_v2';
+const CACHE_TTL = 2 * 60 * 1000; // 2 minutes in-session
+const PERSIST_KEY = 'cc_portal_cache_persist_v2'; // localStorage long-term fallback
 const FETCH_TIMEOUT_MS = 15000; // 15 second timeout
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || 'https://lzwdgedxceajhdtijnpv.supabase.co';
 const ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx6d2RnZWR4Y2VhamhkdGlqbnB2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkyMjY0MDEsImV4cCI6MjA5NDgwMjQwMX0.-uSzc5DC-xQJ66miZZDaPsGhsPBBDFjGS2VAwd7bTik';
+
+const QA_JUNK_IDS = new Set(['TT1114590', 'HH9995654', 'RB4147610', 'TX2882722', 'QS9039735']);
 
 /* ── Cache helpers ──────────────────────────────── */
 function getCached() {
@@ -45,14 +51,13 @@ function setCache(data) {
   try {
     const payload = JSON.stringify({ data, ts: Date.now() });
     sessionStorage.setItem(CACHE_KEY, payload);
-    // Also persist to localStorage as offline/slow-network fallback
     localStorage.setItem(PERSIST_KEY, JSON.stringify({ data, ts: Date.now() }));
   } catch { /* ignore quota errors */ }
 }
 
 export function clearCache() {
   sessionStorage.removeItem(CACHE_KEY);
-  // Keep localStorage persist — it's an offline fallback
+  localStorage.removeItem(PERSIST_KEY);
 }
 
 async function fetchWithTimeout(url, options = {}, ms = FETCH_TIMEOUT_MS) {
@@ -66,30 +71,50 @@ async function fetchWithTimeout(url, options = {}, ms = FETCH_TIMEOUT_MS) {
   }
 }
 
-/* ── Fetch all studio data from ClassCore & merge custom Supabase data ───────── */
+/* ── Fetch all studio data from ClassCore Supabase & merge custom studio settings ───────── */
 export async function fetchStudioData() {
   // 1. Check in-memory session cache (instant)
   const cached = getCached();
-  if (cached) return cached;
+  if (cached && Array.isArray(cached.students) && cached.students.length > 0) return cached;
 
   // 2. Check persistent localStorage cache
   const stale = getPersistCache();
 
   const doFetch = async () => {
-    // Fetch ClassCore data with timeout
-    const ccUrl = `${CLASSCORE_API}?slug=${STUDIO_SLUG}`;
-    const ccRes = await fetchWithTimeout(ccUrl);
+    const ccHeaders = {
+      'apikey': CLASSCORE_SB_KEY,
+      'Authorization': `Bearer ${CLASSCORE_SB_KEY}`
+    };
 
-    if (!ccRes.ok) throw new Error(`ClassCore API error: ${ccRes.status}`);
+    // Fetch students, subscriptions, attendance, groups directly from ClassCore Supabase in parallel
+    let rawStudents = [];
+    let rawSubscriptions = [];
+    let rawAttendance = [];
+    let rawGroups = [];
 
-    const ccData = await ccRes.json();
-    if (ccData.error) throw new Error(ccData.error);
+    try {
+      const [stRes, subRes, attRes, grpRes] = await Promise.all([
+        fetchWithTimeout(`${CLASSCORE_SB_URL}/rest/v1/students?org_id=eq.${STUDIO_ORG_ID}&select=*`, { headers: ccHeaders }),
+        fetchWithTimeout(`${CLASSCORE_SB_URL}/rest/v1/subscriptions?org_id=eq.${STUDIO_ORG_ID}&select=*`, { headers: ccHeaders }),
+        fetchWithTimeout(`${CLASSCORE_SB_URL}/rest/v1/attendance?org_id=eq.${STUDIO_ORG_ID}&select=*`, { headers: ccHeaders }),
+        fetchWithTimeout(`${CLASSCORE_SB_URL}/rest/v1/groups?org_id=eq.${STUDIO_ORG_ID}&select=*`, { headers: ccHeaders })
+      ]);
+
+      if (stRes.ok) rawStudents = await stRes.json();
+      if (subRes.ok) rawSubscriptions = await subRes.json();
+      if (attRes.ok) rawAttendance = await attRes.json();
+      if (grpRes.ok) rawGroups = await grpRes.json();
+    } catch (ccErr) {
+      console.warn('⚠️ ClassCore direct Supabase fetch warning:', ccErr);
+    }
 
     // Fetch Supabase studio settings with timeout
     let cloudTournaments = [];
     let cloudNews = [];
     let cloudTasks = [];
     let cloudNotes = [];
+    let customStudents = [];
+    let deletedStudentIds = [];
     let studentLangs = {};
     let studentEmails = {};
 
@@ -109,6 +134,8 @@ export async function fetchStudioData() {
           cloudNews = staffData.portal_news || [];
           cloudTasks = staffData.portal_tasks || [];
           cloudNotes = staffData.portal_notes || [];
+          customStudents = Array.isArray(staffData.portal_custom_students) ? staffData.portal_custom_students : [];
+          deletedStudentIds = Array.isArray(staffData.deleted_student_ids) ? staffData.deleted_student_ids : [];
           studentLangs = staffData.student_languages || {};
           studentEmails = staffData.student_emails || {};
         }
@@ -117,20 +144,81 @@ export async function fetchStudioData() {
       console.error('⚠️ Failed to load custom settings from Supabase:', err);
     }
 
-    const mergedStudents = (ccData.students || []).map(s => {
-      const cloudLang = studentLangs[s.id] || s.language || s.data?.language || 'ka';
-      const cloudEmail = studentEmails[s.id] || s.email || s.data?.email || '';
-      return {
-        ...s,
-        language: cloudLang,
-        email: cloudEmail,
-        data: { ...(s.data || {}), language: cloudLang, email: cloudEmail }
-      };
+    const deletedSet = new Set([...QA_JUNK_IDS, ...deletedStudentIds.map(String)]);
+    const customMap = new Map();
+    customStudents.forEach(cs => {
+      if (cs && cs.id && !deletedSet.has(String(cs.id))) {
+        customMap.set(String(cs.id), cs);
+      }
     });
 
+    const mergedStudents = (rawStudents || [])
+      .filter(s => s && s.id && !deletedSet.has(String(s.id)) && s.is_deleted !== true)
+      .map(s => {
+        const sid = String(s.id);
+        const override = customMap.get(sid);
+        if (override) customMap.delete(sid);
+
+        const cloudLang = override?.language || studentLangs[sid] || s.language || s.data?.preferred_language || s.data?.language || 'ka';
+        const cloudEmail = override?.email || studentEmails[sid] || s.email || s.data?.email || '';
+        const fullName = override?.name || s.full_name || `${s.first_name || s.data?.first_name || ''} ${s.last_name || s.data?.last_name || ''}`.trim() || 'Student';
+        const phone = override?.phone || s.phone || s.data?.phone || s.data?.parent_phone || '';
+        const danceClass = override?.classification || s.data?.dance_class || 'N კლასი';
+
+        return {
+          ...s,
+          id: sid,
+          full_name: fullName,
+          name: fullName,
+          phone,
+          language: cloudLang,
+          email: cloudEmail,
+          classification: danceClass,
+          data: {
+            ...(s.data || {}),
+            language: cloudLang,
+            email: cloudEmail,
+            dance_class: danceClass,
+            phone
+          }
+        };
+      });
+
+    // Append any custom-created students that weren't in ClassCore rawStudents
+    for (const [, cs] of customMap.entries()) {
+      const sid = String(cs.id);
+      const cloudLang = studentLangs[sid] || cs.language || 'ka';
+      const cloudEmail = studentEmails[sid] || cs.email || '';
+      mergedStudents.push({
+        id: sid,
+        full_name: cs.name || cs.full_name || 'Student',
+        name: cs.name || cs.full_name || 'Student',
+        phone: cs.phone || '',
+        email: cloudEmail,
+        language: cloudLang,
+        classification: cs.classification || 'N კლასი',
+        birthYear: cs.birthYear || 2012,
+        photo: cs.photo || '',
+        status: cs.active === false ? 'inactive' : 'active',
+        data: {
+          first_name: (cs.name || '').split(' ')[0] || '',
+          last_name: (cs.name || '').split(' ').slice(1).join(' ') || '',
+          phone: cs.phone || '',
+          email: cloudEmail,
+          language: cloudLang,
+          dance_class: cs.classification || 'N კლასი',
+          birth_date: cs.birthYear ? `${cs.birthYear}-01-01` : '2012-01-01',
+          photo_url: cs.photo || ''
+        }
+      });
+    }
+
     const mergedData = {
-      ...ccData,
+      studio: { name: 'ST Dance Studio', slug: STUDIO_SLUG },
       students: mergedStudents,
+      subscriptions: rawSubscriptions,
+      attendance: rawAttendance,
+      groups: rawGroups,
       tournaments: cloudTournaments,
       news: cloudNews,
       tasks: cloudTasks,
@@ -141,17 +229,14 @@ export async function fetchStudioData() {
     return mergedData;
   };
 
-  if (stale) {
-    // Return stale data instantly — refresh in background silently
+  if (stale && Array.isArray(stale.students) && stale.students.length > 0) {
     doFetch().catch(err => console.warn('Background refresh failed:', err));
     return stale;
   }
 
-  // No cache — must fetch (with timeout)
   try {
     return await doFetch();
   } catch (err) {
-    // Last resort: return any persisted data even if old
     const lastResort = getPersistCache();
     if (lastResort) {
       console.warn('⚠️ Network error, serving stale cache:', err.message);
@@ -1115,15 +1200,45 @@ export async function syncStudentToCloud(student) {
     const currentStaffData = settings.staff_data || {};
     const currentLangs = currentStaffData.student_languages || {};
     const currentEmails = currentStaffData.student_emails || {};
+    const customStudents = Array.isArray(currentStaffData.portal_custom_students)
+      ? [...currentStaffData.portal_custom_students]
+      : [];
+    const deletedIds = Array.isArray(currentStaffData.deleted_student_ids)
+      ? currentStaffData.deleted_student_ids.filter(id => String(id) !== String(student.id))
+      : [];
+
+    const normalizedStudent = {
+      id: String(student.id),
+      name: (student.name || student.full_name || '').trim(),
+      phone: (student.phone || '').trim(),
+      email: (student.email || '').trim(),
+      classification: student.classification || 'N კლასი',
+      birthYear: student.birthYear || 2012,
+      gender: student.gender || 'female',
+      language: student.language || 'ka',
+      photo: student.photo || '',
+      active: student.active !== false,
+      updatedAt: new Date().toISOString()
+    };
+
+    const existingIdx = customStudents.findIndex(cs => String(cs.id) === String(student.id));
+    if (existingIdx >= 0) {
+      customStudents[existingIdx] = { ...customStudents[existingIdx], ...normalizedStudent };
+    } else {
+      customStudents.push(normalizedStudent);
+    }
+
     const updatedStaffData = {
       ...currentStaffData,
+      portal_custom_students: customStudents,
+      deleted_student_ids: deletedIds,
       student_languages: {
         ...currentLangs,
-        [student.id]: student.language
+        [student.id]: normalizedStudent.language
       },
       student_emails: {
         ...currentEmails,
-        ...(student.email !== undefined ? { [student.id]: (student.email || '').trim() } : {})
+        ...(student.email !== undefined ? { [student.id]: normalizedStudent.email } : {})
       }
     };
     
@@ -1138,11 +1253,95 @@ export async function syncStudentToCloud(student) {
     });
     
     if (!patchRes.ok) throw new Error('Failed to update student settings on cloud');
-    console.log('✅ Student settings successfully synced to cloud!');
+
+    // Also upsert into ClassCore Supabase students table so both systems stay in sync
+    try {
+      const nameParts = normalizedStudent.name.split(/\s+/);
+      const firstName = nameParts[0] || normalizedStudent.name;
+      const lastName = nameParts.slice(1).join(' ') || '';
+      await fetch(`${CLASSCORE_SB_URL}/rest/v1/students`, {
+        method: 'POST',
+        headers: {
+          'apikey': CLASSCORE_SB_KEY,
+          'Authorization': `Bearer ${CLASSCORE_SB_KEY}`,
+          'Content-Type': 'application/json',
+          'Prefer': 'resolution=merge-duplicates'
+        },
+        body: JSON.stringify({
+          id: normalizedStudent.id,
+          org_id: STUDIO_ORG_ID,
+          first_name: firstName,
+          last_name: lastName,
+          full_name: normalizedStudent.name,
+          phone: normalizedStudent.phone,
+          status: normalizedStudent.active ? 'active' : 'inactive',
+          data: {
+            first_name: firstName,
+            last_name: lastName,
+            phone: normalizedStudent.phone,
+            email: normalizedStudent.email,
+            dance_class: normalizedStudent.classification,
+            preferred_language: normalizedStudent.language,
+            birth_date: `${normalizedStudent.birthYear}-01-01`,
+            photo_url: normalizedStudent.photo
+          }
+        })
+      });
+    } catch (ccSyncErr) {
+      console.warn('ClassCore student table upsert warning:', ccSyncErr);
+    }
+
     clearCache();
     return true;
   } catch (err) {
     console.error('❌ Cloud student settings sync error:', err);
+    return false;
+  }
+}
+
+export async function deleteStudentFromCloud(studentId) {
+  try {
+    const sid = String(studentId);
+    const settingsUrl = `${SUPABASE_URL}/rest/v1/studio_settings?studio_slug=eq.${STUDIO_SLUG}`;
+    const getRes = await fetch(settingsUrl, {
+      headers: {
+        'apikey': ANON_KEY,
+        'Authorization': `Bearer ${ANON_KEY}`
+      }
+    });
+    if (!getRes.ok) throw new Error('Failed to load studio settings');
+    const settingsList = await getRes.json();
+    if (!settingsList || settingsList.length === 0) return false;
+    const settings = settingsList[0];
+
+    const currentStaffData = settings.staff_data || {};
+    const customStudents = Array.isArray(currentStaffData.portal_custom_students)
+      ? currentStaffData.portal_custom_students.filter(cs => String(cs.id) !== sid)
+      : [];
+    const deletedIds = Array.isArray(currentStaffData.deleted_student_ids)
+      ? Array.from(new Set([...currentStaffData.deleted_student_ids.map(String), sid]))
+      : [sid];
+
+    const updatedStaffData = {
+      ...currentStaffData,
+      portal_custom_students: customStudents,
+      deleted_student_ids: deletedIds
+    };
+
+    await fetch(`${SUPABASE_URL}/rest/v1/studio_settings?studio_slug=eq.${STUDIO_SLUG}`, {
+      method: 'PATCH',
+      headers: {
+        'apikey': ANON_KEY,
+        'Authorization': `Bearer ${ANON_KEY}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ staff_data: updatedStaffData })
+    });
+
+    clearCache();
+    return true;
+  } catch (err) {
+    console.error('❌ Error deleting student from cloud:', err);
     return false;
   }
 }
