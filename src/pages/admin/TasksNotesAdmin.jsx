@@ -1309,6 +1309,23 @@ export default function TasksNotesAdmin({
                           <div style={{ display: 'flex', gap: '0.3rem', alignItems: 'center' }}>
                             <button
                               type="button"
+                              onClick={() => copyDirectLink(task.id, assignees.length === 1 ? assignees[0] : '')}
+                              style={{
+                                background: 'rgba(111,195,224,0.14)',
+                                border: '1px solid rgba(111,195,224,0.38)',
+                                color: '#6fc3e0',
+                                fontSize: '0.72rem',
+                                fontWeight: 700,
+                                padding: '4px 8px',
+                                borderRadius: '5px',
+                                cursor: 'pointer'
+                              }}
+                              title="პირდაპირი ლინკის კოპირება"
+                            >
+                              🔗 ლინკი
+                            </button>
+                            <button
+                              type="button"
                               onClick={() => setNotifyTaskModal(task)}
                               style={{
                                 background: 'rgba(212,166,74,0.16)',
