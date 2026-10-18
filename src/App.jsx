@@ -25,6 +25,7 @@ import AdminDashboard from './pages/admin/AdminDashboard'
 import PortalLogin from './pages/portal/PortalLogin'
 import StudentDashboard from './pages/portal/StudentDashboard'
 import PublicExamView from './pages/PublicExamView'
+import DancerTasksPage from './pages/DancerTasksPage'
 
 import Promo from './pages/Promo'
 import Game from './pages/Game'
@@ -79,7 +80,7 @@ const AppRoutes = () => (
 
 export default function App() {
   const { pathname } = useLocation()
-  const isStandalone = pathname.startsWith('/admin') || pathname.startsWith('/portal') || pathname.includes('/bio') || pathname.includes('/link') || pathname.includes('/game') || pathname.includes('/dancing-bricks') || pathname.startsWith('/exam')
+  const isStandalone = pathname.startsWith('/admin') || pathname.startsWith('/portal') || pathname.startsWith('/tasks') || pathname.includes('/bio') || pathname.includes('/link') || pathname.includes('/game') || pathname.includes('/dancing-bricks') || pathname.startsWith('/exam')
 
   return (
     <>
@@ -92,6 +93,7 @@ export default function App() {
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
             <Route path="/portal" element={<PortalLogin />} />
             <Route path="/portal/dashboard" element={<StudentDashboard />} />
+            <Route path="/tasks" element={<DancerTasksPage />} />
             <Route path="/bio" element={<Bio />} />
             <Route path="/link" element={<Bio />} />
             <Route path="/en/bio" element={<Bio />} />

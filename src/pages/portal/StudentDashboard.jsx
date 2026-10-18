@@ -5,9 +5,11 @@ import {
   getStudentSubscription, getStudentAttendance,
   getStudentGroups, getPortalSession,
   clearPortalSession, clearCache,
-  findAllStudentsByPhone, savePortalSession
+  findAllStudentsByPhone, savePortalSession,
+  fetchCloudTasksAndNotes
 } from '../../data/classcore'
-import { getTournaments } from '../../data/db'
+import { getTournaments, getTasks, getNotes, saveTasksList, saveNotesList } from '../../data/db'
+import DancerTasksBoard from '../../components/DancerTasksBoard'
 import './portal.css'
 
 const formatDate = (dateStr) => {
@@ -46,6 +48,9 @@ const SVG_ICONS = {
   ),
   trn: (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '0.5rem', verticalAlign: 'middle' }}><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
+  ),
+  tasks: (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '0.5rem', verticalAlign: 'middle' }}><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="m9 14 2 2 4-4"/></svg>
   )
 };
 
@@ -96,6 +101,7 @@ const TRANSLATIONS = {
     ticket_price: 'ბილეთის ფასი',
     tabs: {
       info: 'ჩემი ინფო',
+      tasks: 'თასქები & ნოუთები',
       sub: 'აბონემენტი',
       schedule: 'განრიგი',
       att: 'დასწრება',
@@ -149,6 +155,7 @@ const TRANSLATIONS = {
     ticket_price: 'Цена билета',
     tabs: {
       info: 'Моя инфо',
+      tasks: 'Задания и заметки',
       sub: 'Абонемент',
       schedule: 'Расписание',
       att: 'Посещаемость',
@@ -202,6 +209,7 @@ const TRANSLATIONS = {
     ticket_price: 'Ticket Price',
     tabs: {
       info: 'My Info',
+      tasks: 'Tasks & Notes',
       sub: 'Subscription',
       schedule: 'Schedule',
       att: 'Attendance',
@@ -220,6 +228,8 @@ export default function StudentDashboard() {
   const [att, setAtt] = useState([])
   const [groups, setGroups] = useState([])
   const [tournaments, setTournaments] = useState([])
+  const [tasks, setTasks] = useState([])
+  const [notes, setNotes] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [mobileOpen, setMobileOpen] = useState(false)
@@ -232,6 +242,8 @@ export default function StudentDashboard() {
     if (!studentId) { navigate('/portal'); return }
 
     setTournaments(getTournaments())
+    setTasks(getTasks())
+    setNotes(getNotes())
 
     fetchStudioData()
       .then(data => {
@@ -314,6 +326,28 @@ export default function StudentDashboard() {
             console.warn('Local storage quota exceeded for tournaments', e);
           }
         }
+
+        if (Array.isArray(data.tasks) && data.tasks.length > 0) {
+          saveTasksList(data.tasks)
+          setTasks(data.tasks)
+        }
+        if (Array.isArray(data.notes) && data.notes.length > 0) {
+          saveNotesList(data.notes)
+          setNotes(data.notes)
+        }
+
+        fetchCloudTasksAndNotes().then(fresh => {
+          if (fresh) {
+            if (Array.isArray(fresh.tasks) && fresh.tasks.length > 0) {
+              saveTasksList(fresh.tasks)
+              setTasks(fresh.tasks)
+            }
+            if (Array.isArray(fresh.notes) && fresh.notes.length > 0) {
+              saveNotesList(fresh.notes)
+              setNotes(fresh.notes)
+            }
+          }
+        }).catch(() => {})
         
         setLoading(false)
       })
@@ -486,8 +520,12 @@ export default function StudentDashboard() {
     return isPast && isAssigned && t.results?.[student.id]?.length > 0;
   })
 
+  const myAssignedTasks = tasks.filter(tsk => Array.isArray(tsk.assignedStudents) && tsk.assignedStudents.includes(student.id));
+  const myPendingTasksCount = myAssignedTasks.filter(tsk => (tsk.assigneeProgress?.[student.id]?.status || tsk.status || 'todo') !== 'done').length;
+
   const TABS_LIST = [
     { id: 'info',    icon: 'info', label: t('tabs').info },
+    { id: 'tasks',   icon: 'tasks', label: `${t('tabs').tasks}${myPendingTasksCount > 0 ? ` (${myPendingTasksCount})` : ''}` },
     { id: 'sub',     icon: 'sub', label: t('tabs').sub },
     { id: 'schedule',icon: 'schedule', label: t('tabs').schedule },
     { id: 'att',     icon: 'att', label: t('tabs').att },
@@ -810,7 +848,68 @@ export default function StudentDashboard() {
                 );
               })()}
 
+              {/* Active Tasks Banner */}
+              {myAssignedTasks.length > 0 && (
+                <div
+                  onClick={() => setTab('tasks')}
+                  style={{
+                    background: 'linear-gradient(135deg, rgba(80,200,120,0.12) 0%, rgba(212,166,74,0.06) 100%)',
+                    border: '1px solid rgba(212,166,74,0.35)',
+                    borderRadius: '12px',
+                    padding: '1.1rem 1.25rem',
+                    marginBottom: '1.25rem',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    flexWrap: 'wrap',
+                    gap: '1rem',
+                    cursor: 'pointer'
+                  }}
+                >
+                  <div>
+                    <div style={{ fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.1em', color: '#d4a64a', fontWeight: 700, marginBottom: '0.25rem' }}>
+                      📋 {t('tabs').tasks}
+                    </div>
+                    <div style={{ fontSize: '1rem', fontWeight: 700, color: '#fff' }}>
+                      {myPendingTasksCount > 0
+                        ? (lang === 'ru'
+                            ? `У вас ${myPendingTasksCount} активных заданий от тренера`
+                            : lang === 'en'
+                            ? `You have ${myPendingTasksCount} active tasks from your coach`
+                            : `მწვრთნელისგან გაქვთ ${myPendingTasksCount} შესასრულებელი დავალება`)
+                        : (lang === 'ru'
+                            ? 'Все задания выполнены! ✅'
+                            : lang === 'en'
+                            ? 'All tasks completed! ✅'
+                            : 'ყველა დავალება შესრულებულია! ✅')}
+                    </div>
+                  </div>
+                  <span style={{
+                    background: 'var(--color-gold, #d4a64a)',
+                    color: '#000',
+                    padding: '7px 14px',
+                    borderRadius: '20px',
+                    fontSize: '0.8rem',
+                    fontWeight: 700
+                  }}>
+                    {lang === 'ru' ? 'Открыть →' : lang === 'en' ? 'Open →' : 'გახსნა →'}
+                  </span>
+                </div>
+              )}
+
             </div>
+          )}
+
+          {tab === 'tasks' && (
+            <DancerTasksBoard
+              student={student}
+              studentName={name}
+              tasks={tasks}
+              setTasks={setTasks}
+              notes={notes}
+              setNotes={setNotes}
+              lang={lang}
+            />
           )}
 
           {tab === 'sub' && (

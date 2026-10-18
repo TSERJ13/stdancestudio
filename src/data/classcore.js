@@ -88,7 +88,10 @@ export async function fetchStudioData() {
     // Fetch Supabase studio settings with timeout
     let cloudTournaments = [];
     let cloudNews = [];
+    let cloudTasks = [];
+    let cloudNotes = [];
     let studentLangs = {};
+    let studentEmails = {};
 
     try {
       const settingsUrl = `${SUPABASE_URL}/rest/v1/studio_settings?studio_slug=eq.${STUDIO_SLUG}`;
@@ -104,7 +107,10 @@ export async function fetchStudioData() {
           const staffData = list[0].staff_data || {};
           cloudTournaments = staffData.portal_tournaments || [];
           cloudNews = staffData.portal_news || [];
+          cloudTasks = staffData.portal_tasks || [];
+          cloudNotes = staffData.portal_notes || [];
           studentLangs = staffData.student_languages || {};
+          studentEmails = staffData.student_emails || {};
         }
       }
     } catch (err) {
@@ -113,10 +119,12 @@ export async function fetchStudioData() {
 
     const mergedStudents = (ccData.students || []).map(s => {
       const cloudLang = studentLangs[s.id] || s.language || s.data?.language || 'ka';
+      const cloudEmail = studentEmails[s.id] || s.email || s.data?.email || '';
       return {
         ...s,
         language: cloudLang,
-        data: { ...(s.data || {}), language: cloudLang }
+        email: cloudEmail,
+        data: { ...(s.data || {}), language: cloudLang, email: cloudEmail }
       };
     });
 
@@ -124,7 +132,9 @@ export async function fetchStudioData() {
       ...ccData,
       students: mergedStudents,
       tournaments: cloudTournaments,
-      news: cloudNews
+      news: cloudNews,
+      tasks: cloudTasks,
+      notes: cloudNotes
     };
 
     setCache(mergedData);
@@ -1104,11 +1114,16 @@ export async function syncStudentToCloud(student) {
     
     const currentStaffData = settings.staff_data || {};
     const currentLangs = currentStaffData.student_languages || {};
+    const currentEmails = currentStaffData.student_emails || {};
     const updatedStaffData = {
       ...currentStaffData,
       student_languages: {
         ...currentLangs,
         [student.id]: student.language
+      },
+      student_emails: {
+        ...currentEmails,
+        ...(student.email !== undefined ? { [student.id]: (student.email || '').trim() } : {})
       }
     };
     
@@ -1122,12 +1137,12 @@ export async function syncStudentToCloud(student) {
       body: JSON.stringify({ staff_data: updatedStaffData })
     });
     
-    if (!patchRes.ok) throw new Error('Failed to update student language on cloud');
-    console.log('✅ Student language successfully synced to cloud!');
+    if (!patchRes.ok) throw new Error('Failed to update student settings on cloud');
+    console.log('✅ Student settings successfully synced to cloud!');
     clearCache();
     return true;
   } catch (err) {
-    console.error('❌ Cloud student language sync error:', err);
+    console.error('❌ Cloud student settings sync error:', err);
     return false;
   }
 }
@@ -1446,4 +1461,392 @@ export function sanitizeSeasonalProfile(prevProfile) {
 
   return prevProfile;
 }
+
+/* ── Tasks & Notes Cloud Sync (Trello-style Board for Dancers) ── */
+
+export async function fetchCloudTasksAndNotes() {
+  try {
+    const settingsUrl = `${SUPABASE_URL}/rest/v1/studio_settings?studio_slug=eq.${STUDIO_SLUG}`;
+    const getRes = await fetch(settingsUrl, {
+      headers: {
+        'apikey': ANON_KEY,
+        'Authorization': `Bearer ${ANON_KEY}`
+      }
+    });
+    if (!getRes.ok) throw new Error('Failed to load studio settings');
+    const list = await getRes.json();
+    if (!list || list.length === 0) return { tasks: [], notes: [], studentEmails: {} };
+    const staffData = list[0].staff_data || {};
+    return {
+      tasks: Array.isArray(staffData.portal_tasks) ? staffData.portal_tasks : [],
+      notes: Array.isArray(staffData.portal_notes) ? staffData.portal_notes : [],
+      studentEmails: staffData.student_emails || {}
+    };
+  } catch (err) {
+    console.warn('⚠️ Failed to fetch cloud tasks & notes:', err);
+    return null;
+  }
+}
+
+export async function syncTasksToCloud(tasks) {
+  try {
+    const settingsUrl = `${SUPABASE_URL}/rest/v1/studio_settings?studio_slug=eq.${STUDIO_SLUG}`;
+    const getRes = await fetch(settingsUrl, {
+      headers: {
+        'apikey': ANON_KEY,
+        'Authorization': `Bearer ${ANON_KEY}`
+      }
+    });
+    if (!getRes.ok) throw new Error('Failed to load studio settings from cloud');
+    const settingsList = await getRes.json();
+    if (!settingsList || settingsList.length === 0) throw new Error('Studio settings not found on cloud');
+    const settings = settingsList[0];
+
+    const currentStaffData = settings.staff_data || {};
+    const updatedStaffData = {
+      ...currentStaffData,
+      portal_tasks: Array.isArray(tasks) ? tasks : []
+    };
+
+    const patchRes = await fetch(`${SUPABASE_URL}/rest/v1/studio_settings?studio_slug=eq.${STUDIO_SLUG}`, {
+      method: 'PATCH',
+      headers: {
+        'apikey': ANON_KEY,
+        'Authorization': `Bearer ${ANON_KEY}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ staff_data: updatedStaffData })
+    });
+
+    if (!patchRes.ok) throw new Error('Failed to sync tasks to cloud');
+    clearCache();
+    return true;
+  } catch (err) {
+    console.error('❌ Cloud tasks sync error:', err);
+    return false;
+  }
+}
+
+export async function syncSingleTaskProgressToCloud({
+  taskId,
+  studentId,
+  studentName,
+  status,
+  checkedItems,
+  dancerNote,
+  commentText,
+  authorRole = 'dancer',
+  authorName
+}) {
+  try {
+    const settingsUrl = `${SUPABASE_URL}/rest/v1/studio_settings?studio_slug=eq.${STUDIO_SLUG}`;
+    const getRes = await fetch(settingsUrl, {
+      headers: {
+        'apikey': ANON_KEY,
+        'Authorization': `Bearer ${ANON_KEY}`
+      }
+    });
+    if (!getRes.ok) throw new Error('Failed to load studio settings from cloud');
+    const settingsList = await getRes.json();
+    if (!settingsList || settingsList.length === 0) throw new Error('Studio settings not found on cloud');
+    const settings = settingsList[0];
+
+    const currentStaffData = settings.staff_data || {};
+    let cloudTasks = Array.isArray(currentStaffData.portal_tasks) ? [...currentStaffData.portal_tasks] : [];
+    const idx = cloudTasks.findIndex(t => t.id === taskId);
+    if (idx < 0) return null;
+
+    const nowIso = new Date().toISOString();
+    const task = { ...cloudTasks[idx] };
+    const progressMap = { ...(task.assigneeProgress || {}) };
+
+    if (studentId) {
+      const prevProg = progressMap[studentId] || {
+        status: task.status || 'todo',
+        checkedItems: [],
+        dancerNote: '',
+        updatedAt: nowIso
+      };
+      progressMap[studentId] = {
+        ...prevProg,
+        ...(status !== undefined ? { status } : {}),
+        ...(checkedItems !== undefined ? { checkedItems } : {}),
+        ...(dancerNote !== undefined ? { dancerNote } : {}),
+        studentName: studentName || prevProg.studentName || '',
+        updatedAt: nowIso
+      };
+      task.assigneeProgress = progressMap;
+
+      // Recompute overall task column status based on assigned dancers
+      const assignees = Array.isArray(task.assignedStudents) && task.assignedStudents.length > 0
+        ? task.assignedStudents
+        : [studentId];
+
+      const statuses = assignees.map(sid => progressMap[sid]?.status || 'todo');
+      if (statuses.every(s => s === 'done')) {
+        task.status = 'done';
+      } else if (statuses.some(s => s === 'in_progress' || s === 'done')) {
+        task.status = 'in_progress';
+      } else {
+        task.status = 'todo';
+      }
+    } else if (status !== undefined) {
+      task.status = status;
+    }
+
+    if (commentText && commentText.trim()) {
+      const comments = Array.isArray(task.comments) ? [...task.comments] : [];
+      comments.push({
+        id: 'cmt_' + Math.random().toString(36).slice(2, 10),
+        authorName: authorName || studentName || 'მოცეკვავე',
+        authorRole,
+        studentId: studentId || null,
+        text: commentText.trim(),
+        createdAt: nowIso
+      });
+      task.comments = comments;
+    }
+
+    task.updatedAt = nowIso;
+    cloudTasks[idx] = task;
+
+    const updatedStaffData = {
+      ...currentStaffData,
+      portal_tasks: cloudTasks
+    };
+
+    const patchRes = await fetch(`${SUPABASE_URL}/rest/v1/studio_settings?studio_slug=eq.${STUDIO_SLUG}`, {
+      method: 'PATCH',
+      headers: {
+        'apikey': ANON_KEY,
+        'Authorization': `Bearer ${ANON_KEY}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ staff_data: updatedStaffData })
+    });
+
+    if (!patchRes.ok) throw new Error('Failed to patch task progress in cloud');
+    try {
+      localStorage.setItem('std_tasks', JSON.stringify(cloudTasks));
+    } catch (e) {}
+    clearCache();
+    return cloudTasks;
+  } catch (err) {
+    console.error('❌ Error syncing single task progress:', err);
+    return null;
+  }
+}
+
+export async function syncNotesToCloud(notes) {
+  try {
+    const settingsUrl = `${SUPABASE_URL}/rest/v1/studio_settings?studio_slug=eq.${STUDIO_SLUG}`;
+    const getRes = await fetch(settingsUrl, {
+      headers: {
+        'apikey': ANON_KEY,
+        'Authorization': `Bearer ${ANON_KEY}`
+      }
+    });
+    if (!getRes.ok) throw new Error('Failed to load studio settings from cloud');
+    const settingsList = await getRes.json();
+    if (!settingsList || settingsList.length === 0) throw new Error('Studio settings not found on cloud');
+    const settings = settingsList[0];
+
+    const currentStaffData = settings.staff_data || {};
+    const updatedStaffData = {
+      ...currentStaffData,
+      portal_notes: Array.isArray(notes) ? notes : []
+    };
+
+    const patchRes = await fetch(`${SUPABASE_URL}/rest/v1/studio_settings?studio_slug=eq.${STUDIO_SLUG}`, {
+      method: 'PATCH',
+      headers: {
+        'apikey': ANON_KEY,
+        'Authorization': `Bearer ${ANON_KEY}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ staff_data: updatedStaffData })
+    });
+
+    if (!patchRes.ok) throw new Error('Failed to sync notes to cloud');
+    clearCache();
+    return true;
+  } catch (err) {
+    console.error('❌ Cloud notes sync error:', err);
+    return false;
+  }
+}
+
+export async function saveSingleNoteToCloud(note) {
+  try {
+    const settingsUrl = `${SUPABASE_URL}/rest/v1/studio_settings?studio_slug=eq.${STUDIO_SLUG}`;
+    const getRes = await fetch(settingsUrl, {
+      headers: {
+        'apikey': ANON_KEY,
+        'Authorization': `Bearer ${ANON_KEY}`
+      }
+    });
+    if (!getRes.ok) throw new Error('Failed to load studio settings from cloud');
+    const settingsList = await getRes.json();
+    if (!settingsList || settingsList.length === 0) throw new Error('Studio settings not found on cloud');
+    const settings = settingsList[0];
+
+    const currentStaffData = settings.staff_data || {};
+    let cloudNotes = Array.isArray(currentStaffData.portal_notes) ? [...currentStaffData.portal_notes] : [];
+    const nowIso = new Date().toISOString();
+    const id = note.id || ('note_' + Math.random().toString(36).slice(2, 10));
+    const normalized = {
+      title: '',
+      content: '',
+      color: 'gold',
+      pinned: false,
+      assignedStudents: [],
+      authorName: 'სერგი წივწივაძე',
+      authorRole: 'admin',
+      createdAt: note.createdAt || nowIso,
+      ...note,
+      id,
+      updatedAt: nowIso
+    };
+
+    const idx = cloudNotes.findIndex(n => n.id === id);
+    if (idx >= 0) cloudNotes[idx] = normalized;
+    else cloudNotes.unshift(normalized);
+
+    const updatedStaffData = {
+      ...currentStaffData,
+      portal_notes: cloudNotes
+    };
+
+    const patchRes = await fetch(`${SUPABASE_URL}/rest/v1/studio_settings?studio_slug=eq.${STUDIO_SLUG}`, {
+      method: 'PATCH',
+      headers: {
+        'apikey': ANON_KEY,
+        'Authorization': `Bearer ${ANON_KEY}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ staff_data: updatedStaffData })
+    });
+
+    if (!patchRes.ok) throw new Error('Failed to save single note to cloud');
+    try {
+      localStorage.setItem('std_notes', JSON.stringify(cloudNotes));
+    } catch (e) {}
+    clearCache();
+    return cloudNotes;
+  } catch (err) {
+    console.error('❌ Error saving single note to cloud:', err);
+    return null;
+  }
+}
+
+export async function deleteSingleNoteFromCloud(noteId) {
+  try {
+    const settingsUrl = `${SUPABASE_URL}/rest/v1/studio_settings?studio_slug=eq.${STUDIO_SLUG}`;
+    const getRes = await fetch(settingsUrl, {
+      headers: {
+        'apikey': ANON_KEY,
+        'Authorization': `Bearer ${ANON_KEY}`
+      }
+    });
+    if (!getRes.ok) throw new Error('Failed to load studio settings from cloud');
+    const settingsList = await getRes.json();
+    if (!settingsList || settingsList.length === 0) throw new Error('Studio settings not found on cloud');
+    const settings = settingsList[0];
+
+    const currentStaffData = settings.staff_data || {};
+    let cloudNotes = Array.isArray(currentStaffData.portal_notes) ? [...currentStaffData.portal_notes] : [];
+    cloudNotes = cloudNotes.filter(n => n.id !== noteId);
+
+    const updatedStaffData = {
+      ...currentStaffData,
+      portal_notes: cloudNotes
+    };
+
+    const patchRes = await fetch(`${SUPABASE_URL}/rest/v1/studio_settings?studio_slug=eq.${STUDIO_SLUG}`, {
+      method: 'PATCH',
+      headers: {
+        'apikey': ANON_KEY,
+        'Authorization': `Bearer ${ANON_KEY}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ staff_data: updatedStaffData })
+    });
+
+    if (!patchRes.ok) throw new Error('Failed to delete note from cloud');
+    try {
+      localStorage.setItem('std_notes', JSON.stringify(cloudNotes));
+    } catch (e) {}
+    clearCache();
+    return cloudNotes;
+  } catch (err) {
+    console.error('❌ Error deleting note from cloud:', err);
+    return null;
+  }
+}
+
+export async function sendTaskEmailNotification({ toEmail, recipientName, task, directUrl, customMessage }) {
+  const cleanEmail = (toEmail || '').trim();
+  if (!cleanEmail) return { success: false, error: 'ელ-ფოსტა არ არის მითითებული' };
+
+  const checklistText = Array.isArray(task.checklist) && task.checklist.length > 0
+    ? task.checklist.map((item, i) => `${i + 1}. ☐ ${item.text}`).join('\n')
+    : '—';
+
+  const priorityLabels = {
+    low: 'დაბალი',
+    medium: 'საშუალო',
+    high: 'მაღალი',
+    urgent: '🔥 სასწრაფო'
+  };
+
+  const payload = {
+    name: 'ST Dance Studio — მწვრთნელის დავალება',
+    _subject: `📋 ახალი დავალება (ST Dance Studio): ${task.title}`,
+    _template: 'table',
+    "მოცეკვავე": recipientName || 'მოცეკვავე',
+    "დავალება": task.title,
+    "აღწერა / ინსტრუქცია": task.description || '—',
+    "ქვე-დავალებები (Checklist)": checklistText,
+    "პრიორიტეტი": priorityLabels[task.priority] || 'საშუალო',
+    "დედლაინი": task.dueDate || 'მითითებული არ არის',
+    ...(customMessage ? { "მწვრთნელის შეტყობინება": customMessage } : {}),
+    "პირდაპირი ბმული შესასრულებლად": directUrl || 'https://stdance.ge/portal'
+  };
+
+  try {
+    const res = await fetch(`https://formsubmit.co/ajax/${encodeURIComponent(cleanEmail)}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify(payload)
+    });
+
+    // Also send a backup log to studio email if recipient is different
+    if (cleanEmail.toLowerCase() !== 'stdancegroupdue@gmail.com') {
+      fetch('https://formsubmit.co/ajax/stdancegroupdue@gmail.com', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          ...payload,
+          _subject: `📤 გაგზავნილი თასქი (${recipientName} - ${cleanEmail}): ${task.title}`
+        })
+      }).catch(() => {});
+    }
+
+    const data = await res.json().catch(() => ({}));
+    return {
+      success: res.ok && (data.success === 'true' || data.success === true || !data.message?.toLowerCase?.()?.includes('error')),
+      data
+    };
+  } catch (err) {
+    console.error('❌ Error sending task email:', err);
+    return { success: false, error: err.message };
+  }
+}
+
 

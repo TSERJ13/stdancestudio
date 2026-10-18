@@ -8,7 +8,10 @@ import {
   getSubscription, saveSubscription,
   getAttendance,
   getTrainerRating, saveTrainerRating,
+  getTasks, saveTasksList,
+  getNotes, saveNotesList,
 } from '../../data/db'
+import TasksNotesAdmin from './TasksNotesAdmin'
 import './admin.css'
 
 const formatDate = (dateStr) => {
@@ -41,11 +44,14 @@ const SVG_ICONS = {
   ),
   analytics: (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '0.6rem' }}><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
+  ),
+  tasks: (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '0.6rem' }}><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="m9 14 2 2 4-4"/></svg>
   )
 };
 
-const TABS = ['სიახლეები','სტუდენტები','ტურნირები','რეგისტრაციები','ფორმები','გამოკითხვები','ანალიტიკა']
-const ICONS = ['news','students','tournaments','reg','forms','polls','analytics']
+const TABS = ['სიახლეები','სტუდენტები','ტურნირები','რეგისტრაციები','ფორმები','გამოკითხვები','ანალიტიკა','თასქები & ნოუთები']
+const ICONS = ['news','students','tournaments','reg','forms','polls','analytics','tasks']
 
 export default function AdminDashboard() {
   const navigate = useNavigate()
@@ -53,6 +59,8 @@ export default function AdminDashboard() {
   const [news, setNews] = useState([])
   const [students, setStudents] = useState([])
   const [tournaments, setTournaments] = useState([])
+  const [tasks, setTasks] = useState([])
+  const [notes, setNotes] = useState([])
   const [registrations, setRegistrations] = useState([])
   const [customForms, setCustomForms] = useState([])
   const [isSidebarOpen, setIsSidebarOpen] = useState(true)
@@ -159,6 +167,8 @@ export default function AdminDashboard() {
   const refresh = () => {
     setNews(getNews())
     setTournaments(getTournaments())
+    setTasks(getTasks())
+    setNotes(getNotes())
     
     import('../../data/classcore').then(mod => {
       mod.fetchStudioData()
@@ -172,6 +182,7 @@ export default function AdminDashboard() {
               id: s.id,
               name: s.full_name || `${fn} ${ln}`.trim() || 'Student',
               phone: s.phone || s.data?.phone || '',
+              email: s.email || s.data?.email || '',
               birthYear: s.data?.birth_date ? new Date(s.data.birth_date).getFullYear() : 2010,
               classification: s.data?.dance_class || 'N კლასი',
               photo: s.data?.photo_url || '',
@@ -184,6 +195,7 @@ export default function AdminDashboard() {
               return {
                 ...cloudStudent,
                 phone: localS.phone || cloudStudent.phone,
+                email: localS.email || cloudStudent.email || '',
                 birthYear: localS.birthYear || cloudStudent.birthYear,
                 classification: localS.classification || cloudStudent.classification,
                 photo: localS.photo || cloudStudent.photo,
@@ -264,11 +276,34 @@ export default function AdminDashboard() {
               setNews(localNews);
             }
           }
+
+          if (Array.isArray(data.tasks) && data.tasks.length > 0) {
+            saveTasksList(data.tasks);
+            setTasks(data.tasks);
+          }
+          if (Array.isArray(data.notes) && data.notes.length > 0) {
+            saveNotesList(data.notes);
+            setNotes(data.notes);
+          }
         })
         .catch(err => {
           console.error('Failed to load ClassCore students in admin:', err);
           setStudents(getStudents());
         });
+
+      // Also fetch fresh un-cached tasks & notes from Supabase
+      mod.fetchCloudTasksAndNotes().then(fresh => {
+        if (fresh) {
+          if (Array.isArray(fresh.tasks) && fresh.tasks.length > 0) {
+            saveTasksList(fresh.tasks);
+            setTasks(fresh.tasks);
+          }
+          if (Array.isArray(fresh.notes) && fresh.notes.length > 0) {
+            saveNotesList(fresh.notes);
+            setNotes(fresh.notes);
+          }
+        }
+      }).catch(() => {});
 
       setLoadingRegs(true);
       mod.fetchRegistrations()
@@ -631,6 +666,18 @@ export default function AdminDashboard() {
                 />
               )}
               {tab===6 && <AnalyticsTab showAlert={showAlert} />}
+              {tab===7 && (
+                <TasksNotesAdmin
+                  tasks={tasks}
+                  setTasks={setTasks}
+                  notes={notes}
+                  setNotes={setNotes}
+                  students={students}
+                  setStudents={setStudents}
+                  showAlert={showAlert}
+                  showConfirm={showConfirm}
+                />
+              )}
             </>
           )}
         </div>
@@ -953,7 +1000,7 @@ function StudentsTab({students,onEdit,onDelete,onSendSms}) {
           <table className="admin-table">
             <thead>
               <tr>
-                <th>სტუდენტი</th><th>ტელეფონი</th><th>კლასი</th><th>ამონ.</th><th>მზაობა</th><th>ენა</th><th></th>
+                <th>სტუდენტი</th><th>ტელეფონი / Email</th><th>კლასი</th><th>ამონ.</th><th>მზაობა</th><th>ენა</th><th></th>
               </tr>
             </thead>
             <tbody>
@@ -969,7 +1016,10 @@ function StudentsTab({students,onEdit,onDelete,onSendSms}) {
                         <div><div className="admin-student-name">{s.name}</div><div className="admin-student-phone">{s.birthYear}</div></div>
                       </div>
                     </td>
-                    <td style={{color:'#a8a39a',fontSize:'0.83rem'}}>{s.phone}</td>
+                    <td style={{color:'#a8a39a',fontSize:'0.83rem'}}>
+                      <div>{s.phone}</div>
+                      {s.email && <div style={{fontSize:'0.73rem',color:'#d4a64a'}}>{s.email}</div>}
+                    </td>
                     <td><span className="badge badge--gold">{s.classification}</span></td>
                     <td>
                       {sub ? <span style={{color:left<=2?'#ff7070':'#50c878',fontWeight:700,fontSize:'0.9rem'}}>{left}/{sub.total}</span> : <span style={{color:'#6b665e'}}>—</span>}
@@ -1003,7 +1053,7 @@ function StudentsTab({students,onEdit,onDelete,onSendSms}) {
 function StudentForm({item,onSave,onCancel}) {
   const isNew=!item?.id
   const [form,setForm]=useState({
-    id:item?.id||'',name:item?.name||'',phone:item?.phone||'',photo:item?.photo||'',
+    id:item?.id||'',name:item?.name||'',phone:item?.phone||'',email:item?.email||'',photo:item?.photo||'',
     birthYear:item?.birthYear||2010,gender:item?.gender||'female',
     classification:item?.classification||'N კლასი',
     language:item?.language||'ka',
@@ -1030,6 +1080,7 @@ function StudentForm({item,onSave,onCancel}) {
         <div className="admin-grid-2">
           <div className="admin-field"><label>სახელი და გვარი</label><input value={form.name} onChange={e=>set('name',e.target.value)} /></div>
           <div className="admin-field"><label>ტელეფონი (Login ID)</label><input value={form.phone} onChange={e=>set('phone',e.target.value)} placeholder="555123456" /></div>
+          <div className="admin-field"><label>ელ-ფოსტა (Email — თასქების გასაგზავნად)</label><input type="email" value={form.email} onChange={e=>set('email',e.target.value)} placeholder="dancer@gmail.com" /></div>
           <div className="admin-field"><label>დაბადების წელი</label><input type="number" value={form.birthYear} onChange={e=>set('birthYear',+e.target.value)} /></div>
           <div className="admin-field"><label>სქესი</label>
             <select value={form.gender} onChange={e=>set('gender',e.target.value)}>

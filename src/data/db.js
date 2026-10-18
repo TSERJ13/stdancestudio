@@ -13,6 +13,8 @@ const KEYS = {
   TRAINER_RATINGS: 'std_ratings',
   ADMIN_AUTH:  'std_admin_auth',
   PORTAL_SESSION: 'std_portal_session',
+  TASKS:       'std_tasks',
+  NOTES:       'std_notes',
 };
 
 export default KEYS;
@@ -250,3 +252,64 @@ export const saveTrainerRating = (studentId, rating) => {
   all[studentId] = { ...rating, updatedAt: new Date().toISOString().slice(0,10) };
   save(KEYS.TRAINER_RATINGS, all);
 };
+
+/* ── Tasks (Trello-style Board for Dancers) ──────── */
+export const getTasks      = () => (load(KEYS.TASKS) || []).sort((a, b) => (b.updatedAt || b.createdAt || '').localeCompare(a.updatedAt || a.createdAt || ''));
+export const getTask       = (id) => (load(KEYS.TASKS) || []).find(t => t.id === id) || null;
+export const saveTasksList = (list) => save(KEYS.TASKS, Array.isArray(list) ? list : []);
+export const saveTask      = (task) => {
+  const list = load(KEYS.TASKS) || [];
+  const nowIso = new Date().toISOString();
+  const id = task.id || ('tsk_' + uid());
+  const normalized = {
+    status: 'todo',
+    priority: 'medium',
+    category: 'general',
+    assignedStudents: [],
+    checklist: [],
+    assigneeProgress: {},
+    comments: [],
+    createdAt: task.createdAt || nowIso,
+    ...task,
+    id,
+    updatedAt: nowIso,
+  };
+  const idx = list.findIndex(x => x.id === id);
+  if (idx >= 0) list[idx] = normalized;
+  else list.unshift(normalized);
+  save(KEYS.TASKS, list);
+  return normalized;
+};
+export const deleteTask    = (id) => save(KEYS.TASKS, (load(KEYS.TASKS) || []).filter(t => t.id !== id));
+
+/* ── Notes (Shared & Personal Dancer Notes) ──────── */
+export const getNotes      = () => (load(KEYS.NOTES) || []).sort((a, b) => {
+  if (Boolean(b.pinned) !== Boolean(a.pinned)) return b.pinned ? 1 : -1;
+  return (b.updatedAt || b.createdAt || '').localeCompare(a.updatedAt || a.createdAt || '');
+});
+export const saveNotesList = (list) => save(KEYS.NOTES, Array.isArray(list) ? list : []);
+export const saveNote      = (note) => {
+  const list = load(KEYS.NOTES) || [];
+  const nowIso = new Date().toISOString();
+  const id = note.id || ('note_' + uid());
+  const normalized = {
+    title: '',
+    content: '',
+    color: 'gold',
+    pinned: false,
+    assignedStudents: [],
+    authorName: 'სერგი წივწივაძე',
+    authorRole: 'admin',
+    createdAt: note.createdAt || nowIso,
+    ...note,
+    id,
+    updatedAt: nowIso,
+  };
+  const idx = list.findIndex(x => x.id === id);
+  if (idx >= 0) list[idx] = normalized;
+  else list.unshift(normalized);
+  save(KEYS.NOTES, list);
+  return normalized;
+};
+export const deleteNote    = (id) => save(KEYS.NOTES, (load(KEYS.NOTES) || []).filter(n => n.id !== id));
+
