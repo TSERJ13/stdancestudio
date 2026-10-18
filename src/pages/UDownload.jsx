@@ -189,6 +189,13 @@ export default function UDownload() {
 
           const pollData = await pollRes.json();
 
+          if (pollData.error || pollData.failed) {
+            clearInterval(pollIntervalRef.current);
+            setLoading(false);
+            setError(pollData.error || 'ეს ვიდეო YouTube-ზე მიუწვდომელია, დაბლოკილია ან პირადია.');
+            return;
+          }
+
           if (pollData.progress && pollData.progress > 0) {
             const mappedProgress = Math.min(95, Math.floor(40 + (pollData.progress / 1000) * 55));
             setProgress(mappedProgress);

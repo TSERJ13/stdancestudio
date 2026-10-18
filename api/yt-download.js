@@ -55,6 +55,15 @@ export default async function handler(req, res) {
       }
 
       const data = await progRes.json();
+      // If the download_url is the fake ad redirect or unplayable video
+      if (data.download_url && (data.download_url.startsWith('http://p.savenow.to') || data.download_url.includes('ad/b.php') || data.download_url.includes('lto2.affadaffa.com'))) {
+        return res.status(200).json({ 
+          error: 'ეს ვიდეო YouTube-ზე მიუწვდომელია, დაბლოკილია ან საავტორო უფლებებით შეზღუდულია.',
+          success: 0,
+          progress: 1000,
+          failed: true
+        });
+      }
       return res.status(200).json(data);
     } catch (e) {
       return res.status(500).json({ error: 'Failed to check conversion progress', message: e.message });
