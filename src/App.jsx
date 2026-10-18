@@ -29,6 +29,7 @@ import DancerTasksPage from './pages/DancerTasksPage'
 
 import Promo from './pages/Promo'
 import Game from './pages/Game'
+import UDownload from './pages/UDownload'
 
 import { trackPageView } from './utils/analytics'
 
@@ -73,6 +74,7 @@ const AppRoutes = () => (
     <Route path="terms" element={<Terms />} />
     <Route path="bio" element={<Bio />} />
     <Route path="link" element={<Bio />} />
+    <Route path="udownload" element={<UDownload />} />
     <Route path="f/:slug" element={<CustomFormView />} />
     <Route path="*" element={<NotFound />} />
   </Routes>
@@ -80,7 +82,7 @@ const AppRoutes = () => (
 
 export default function App() {
   const { pathname } = useLocation()
-  const isStandalone = pathname.startsWith('/admin') || pathname.startsWith('/portal') || pathname.startsWith('/tasks') || pathname.includes('/bio') || pathname.includes('/link') || pathname.includes('/game') || pathname.includes('/dancing-bricks') || pathname.startsWith('/exam')
+  const isStandalone = pathname.startsWith('/admin') || pathname.startsWith('/portal') || pathname.startsWith('/tasks') || pathname.includes('/bio') || pathname.includes('/link') || pathname.includes('/game') || pathname.includes('/dancing-bricks') || pathname.startsWith('/exam') || pathname.startsWith('/udownload')
 
   return (
     <>
@@ -102,6 +104,7 @@ export default function App() {
             <Route path="/ru/link" element={<Bio />} />
             <Route path="/game" element={<Game />} />
             <Route path="/dancing-bricks" element={<Game />} />
+            <Route path="/udownload" element={<UDownload />} />
           </Routes>
         </ErrorBoundary>
       ) : (
