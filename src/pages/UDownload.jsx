@@ -191,7 +191,7 @@ export default function UDownload() {
         {/* Converter Card */}
         <div className="udownload-card">
           <div className="udownload-input-box">
-            <Youtube className="udownload-input-icon" size={22} />
+            <YoutubeIcon className="udownload-input-icon" size={22} />
             <input 
               type="text" 
               className="udownload-input"
