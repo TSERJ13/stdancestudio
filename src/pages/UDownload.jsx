@@ -22,7 +22,7 @@ const YoutubeIcon = ({ size = 22, className = '' }) => (
 );
 
 const FORMATS = [
-  { id: 'mp3', label: 'MP3 (Audio)' },
+  { id: 'mp3', label: 'MP3 (320 kbps)' },
   { id: 'm4a', label: 'M4A (AAC)' },
 ];
 
@@ -87,6 +87,11 @@ export default function UDownload() {
       if (!res.ok) throw new Error(`Direct fetch returned ${res.status}`);
 
       const blob = await res.blob();
+      // Ensure it is a valid audio file and not an HTML redirect (minimum 50KB)
+      if (blob.type.includes('text/html') || blob.size < 50000) {
+        throw new Error('Received invalid audio stream, trying fallback...');
+      }
+
       const blobUrl = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = blobUrl;

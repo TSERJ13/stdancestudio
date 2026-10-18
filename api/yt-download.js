@@ -1,4 +1,4 @@
-// Vercel Serverless Function: YouTube to MP3 Converter Proxy
+// Vercel Serverless Function: YouTube to MP3/M4A 320kbps Converter Proxy
 // Endpoint: https://stdance.ge/api/yt-download
 import { Readable } from 'stream';
 import { pipeline } from 'stream/promises';
@@ -42,12 +42,18 @@ export default async function handler(req, res) {
   // 1. If progress ID provided, check conversion progress
   if (id) {
     try {
-      const progRes = await fetch(`https://lto2.affadaffa.com/api/progress?id=${encodeURIComponent(id)}`, {
-        headers: {
-          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
-          'Referer': 'https://loader.to/'
-        }
-      });
+      let progRes;
+      try {
+        progRes = await fetch(`https://p.savenow.to/ajax/progress.php?id=${encodeURIComponent(id)}`, {
+          headers: {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+            'Referer': 'https://savenow.to/'
+          }
+        });
+      } catch {
+        progRes = await fetch(`https://lto2.affadaffa.com/api/progress?id=${encodeURIComponent(id)}`);
+      }
+
       const data = await progRes.json();
       return res.status(200).json(data);
     } catch (e) {
@@ -55,18 +61,28 @@ export default async function handler(req, res) {
     }
   }
 
-  // 2. Otherwise start conversion for the YouTube URL
+  // 2. Otherwise start conversion for the YouTube URL with 320kbps highest quality
   if (!url) {
     return res.status(400).json({ error: 'url parameter is required' });
   }
 
   try {
-    const startRes = await fetch(`https://loader.to/ajax/download.php?button=1&start=1&end=1&format=${encodeURIComponent(format)}&url=${encodeURIComponent(url)}`, {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
-        'Referer': 'https://loader.to/'
-      }
-    });
+    const targetFormat = format.toLowerCase() === 'm4a' ? 'm4a' : 'mp3';
+    // Explicitly pass audio_quality=320 and omit button=1 to ensure genuine 320kbps audio with NO ad-redirects
+    const startUrl = `https://p.savenow.to/ajax/download.php?format=${encodeURIComponent(targetFormat)}&audio_quality=320&url=${encodeURIComponent(url)}`;
+    
+    let startRes;
+    try {
+      startRes = await fetch(startUrl, {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+          'Referer': 'https://savenow.to/'
+        }
+      });
+    } catch {
+      // Fallback
+      startRes = await fetch(`https://loader.to/ajax/download.php?format=${encodeURIComponent(targetFormat)}&audio_quality=320&url=${encodeURIComponent(url)}`);
+    }
 
     const data = await startRes.json();
     return res.status(200).json(data);
