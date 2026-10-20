@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { User, ShieldCheck, CheckCircle2, IdCard, LogIn, KeyRound, Loader2, Sparkles, X, Trophy, Flame, PlayCircle, Crown, Users, Radio, RefreshCw, BarChart2, Plus, Minus, Edit2, Trash2, Search, Check, AlertCircle, Save } from 'lucide-react';
+import { User, ShieldCheck, CheckCircle2, IdCard, LogIn, KeyRound, Loader2, Sparkles, X, Trophy, Flame, PlayCircle, Crown, Users, Radio, RefreshCw, BarChart2, Plus, Minus, Edit2, Trash2, Search, Check, AlertCircle, Save, Send } from 'lucide-react';
 import { fetchStudioData, getStudentName, fetchCloudLeaderboard, submitFormAnswer, adminUpdatePlayerScore, updateWinnerPrizeDeliveryStatus, startNewSeasonInCloud, fetchCloudWinnersHistory } from '../../data/classcore';
+import { openTelegramAccount } from './Leaderboard';
 
 const STUDENT_ID_MAP = {
   '101': 'სერგო წივწივაძე (Head Coach)',
@@ -1145,8 +1146,37 @@ export default function LoginModal({ isOpen, onClose, currentUser, onLogin, lang
                               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0, flex: 1 }}>
                                 <span style={{ fontSize: '12px', fontWeight: '900', color: isFirstRank ? '#FFD700' : '#a1a1aa', width: '22px', flexShrink: 0 }}>#{idx + 1}</span>
                                 <div style={{ textAlign: 'left', minWidth: 0 }}>
-                                  <div style={{ fontSize: '13px', fontWeight: '800', color: 'white', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{pl.name}</div>
-                                  <span style={{ fontSize: '9.5px', color: '#a1a1aa' }}>ID: {pl.id}</span>
+                                  <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                                    <span style={{ fontSize: '13px', fontWeight: '800', color: 'white', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{pl.customName || pl.name}</span>
+                                    {(String(pl.id).startsWith('TG-') || pl.username) && (
+                                      <button
+                                        type="button"
+                                        onClick={() => openTelegramAccount(pl)}
+                                        style={{
+                                          background: 'rgba(56, 189, 248, 0.15)',
+                                          border: '1px solid rgba(56, 189, 248, 0.4)',
+                                          borderRadius: '5px',
+                                          color: '#38bdf8',
+                                          padding: '1px 5px',
+                                          fontSize: '9.5px',
+                                          fontWeight: '800',
+                                          display: 'inline-flex',
+                                          alignItems: 'center',
+                                          gap: '2px',
+                                          cursor: 'pointer'
+                                        }}
+                                        title="Telegram აქაუნთზე გადასვლა"
+                                      >
+                                        <Send size={10} /> TG
+                                      </button>
+                                    )}
+                                  </div>
+                                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px', flexWrap: 'wrap' }}>
+                                    <span style={{ fontSize: '9.5px', color: '#a1a1aa' }}>ID: {pl.id}</span>
+                                    {pl.aliasNote && (
+                                      <span style={{ fontSize: '9.5px', color: '#d4a64a', fontWeight: '800' }}>• {pl.aliasNote}</span>
+                                    )}
+                                  </div>
                                 </div>
                               </div>
                               

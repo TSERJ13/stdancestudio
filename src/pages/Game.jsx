@@ -526,6 +526,7 @@ export default function Game() {
         syncCloudScore({
           id: updated.studentId,
           name: updated.name,
+          username: updated.username || window.Telegram?.WebApp?.initDataUnsafe?.user?.username || '',
           photoUrl: updated.photoUrl || '',
           score: newTotal,
           games: newGames
@@ -574,6 +575,7 @@ export default function Game() {
       syncCloudScore({
         id: userId,
         name: cleanName,
+        username: prev.username || window.Telegram?.WebApp?.initDataUnsafe?.user?.username || '',
         photoUrl: prev.photoUrl || '',
         score: prev.monthlyTotalScore || prev.totalScore || prev.highScore || 0,
         games: prev.monthlyGames || prev.totalGames || 0

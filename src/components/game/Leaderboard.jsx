@@ -1,9 +1,106 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { createPortal } from 'react-dom';
-import { Trophy, Gift, Ticket, History, Copy, Check, Clock, Crown, Sparkles, Loader2 } from 'lucide-react';
+import {
+  Trophy, Gift, Ticket, History, Copy, Check, Clock, Crown, Sparkles, Loader2,
+  Send, ExternalLink, Phone, MessageCircle, X, Edit3, Save, GraduationCap, User
+} from 'lucide-react';
 import { useLanguage } from '../../context/LanguageContext';
 import SpinModal, { getCurrentDrawMonthKey, PRIZES } from './SpinModal';
-import { fetchCloudLeaderboard, syncCloudScore, fetchCloudWinnersHistory, updateWinnerPrizeDeliveryStatus, startNewSeasonInCloud } from '../../data/classcore';
+import {
+  fetchCloudLeaderboard, syncCloudScore, fetchCloudWinnersHistory,
+  updateWinnerPrizeDeliveryStatus, startNewSeasonInCloud,
+  fetchStudioData, getStudentName, getStudentSubscription, savePortalSession,
+  saveCloudPlayerAlias
+} from '../../data/classcore';
+
+export function openTelegramAccount(item) {
+  if (!item) return;
+  const rawId = String(item.id || '');
+  const tgId = rawId.startsWith('TG-') ? rawId.replace('TG-', '') : (rawId.startsWith('USER_') ? '' : rawId);
+  const username = item.username ? String(item.username).replace(/^@/, '') : '';
+
+  // 1. If username exists
+  if (username) {
+    const url = `https://t.me/${username}`;
+    if (window.Telegram?.WebApp?.openTelegramLink) {
+      window.Telegram.WebApp.openTelegramLink(url);
+    } else {
+      window.open(url, '_blank', 'noopener,noreferrer');
+    }
+    return;
+  }
+
+  // 2. If numeric Telegram ID
+  if (tgId && /^\d+$/.test(tgId)) {
+    const tgDeepLink = `tg://user?id=${tgId}`;
+    const tgWebLink = `https://t.me/openmessage?user_id=${tgId}`;
+
+    if (window.Telegram?.WebApp) {
+      try {
+        window.location.href = tgDeepLink;
+      } catch (e) {
+        if (window.Telegram?.WebApp?.openTelegramLink) {
+          window.Telegram.WebApp.openTelegramLink(tgWebLink);
+        }
+      }
+      return;
+    }
+
+    const now = Date.now();
+    try {
+      window.location.href = tgDeepLink;
+    } catch (e) {}
+    setTimeout(() => {
+      if (Date.now() - now < 2000) {
+        window.open(tgWebLink, '_blank', 'noopener,noreferrer');
+      }
+    }, 600);
+    return;
+  }
+
+  // 3. Fallback: if username in name
+  if (item.name && item.name.startsWith('@')) {
+    const cleanUser = item.name.replace('@', '');
+    const url = `https://t.me/${cleanUser}`;
+    if (window.Telegram?.WebApp?.openTelegramLink) {
+      window.Telegram.WebApp.openTelegramLink(url);
+    } else {
+      window.open(url, '_blank', 'noopener,noreferrer');
+    }
+  }
+}
+
+export function matchStudentForPlayer(player, studioStudents) {
+  if (!player || !Array.isArray(studioStudents) || studioStudents.length === 0) return null;
+  const rawId = String(player.id || '');
+  const pName = (player.name || '').toLowerCase().trim();
+
+  // 1. Explicit linked student ID
+  if (player.linkedStudentId) {
+    const found = studioStudents.find(s => s.id === player.linkedStudentId || s.code === player.linkedStudentId || `ST-${s.id}` === player.linkedStudentId);
+    if (found) return found;
+  }
+
+  // 2. Direct ID match
+  const idMatch = studioStudents.find(s => s.id === rawId || `ST-${s.id}` === rawId || s.code === rawId);
+  if (idMatch) return idMatch;
+
+  // 3. Match by name or parent name
+  if (!pName || pName === 'dancer') return null;
+
+  return studioStudents.find(s => {
+    const fn = (s.first_name || s.data?.first_name || '').toLowerCase().trim();
+    const ln = (s.last_name || s.data?.last_name || '').toLowerCase().trim();
+    const pn = (s.data?.parent_name || '').toLowerCase().trim();
+    const full = `${fn} ${ln}`.trim();
+    return (
+      (full && (pName === full || pName.includes(full) || full.includes(pName))) ||
+      (fn && fn.length > 3 && pName.includes(fn)) ||
+      (ln && ln.length > 3 && pName.includes(ln)) ||
+      (pn && pn.length > 3 && (pName.includes(pn) || pn.includes(pName)))
+    );
+  }) || null;
+}
 
 const TEST_LEADERBOARD = [];
 
@@ -53,7 +150,27 @@ const lbTranslations = {
     pts: 'ქულა',
     games: 'თამ.',
     prizeLbl: 'პრიზი: ',
-    prizeSpot: '👑 საპრიზო'
+    prizeSpot: '👑 საპრიზო',
+    openTelegramBtn: '✈️ Telegram ანგარიშზე გადასვლა',
+    openPortalBtn: '🎓 სტუდენტის პორტალზე გადასვლა',
+    playerProfileModalTitle: 'მოთამაშის პროფილი & ანგარიში',
+    accountTypeTg: 'Telegram მოთამაშე',
+    accountTypeStudent: 'ST Dance სტუდენტი',
+    studentCardTitle: 'ST Dance Studio-ს მოსწავლე',
+    parentLbl: 'მშობელი:',
+    phoneLbl: 'ტელეფონი:',
+    subLbl: 'აბონემენტი:',
+    lessonsLeft: 'გაკვეთილი დარჩენილი',
+    seasonRankLbl: 'ადგილი სეზონში',
+    seasonScoreLbl: 'სეზონის ქულა',
+    gamesLbl: 'თამაშები',
+    studioNoteLbl: 'იდენტიფიკაცია / შენიშვნა:',
+    studioNotePlaceholder: 'მაგ: მარიამის დედა...',
+    saveNoteBtn: 'შენახვა',
+    savedNoteSuccess: '✅ შენახულია!',
+    copiedIdToast: 'ID დაკოპირდა!',
+    callBtn: 'დარეკვა',
+    whatsAppBtn: 'WhatsApp'
   },
   en: {
     title: 'Leaderboard',
@@ -76,7 +193,27 @@ const lbTranslations = {
     pts: 'pts',
     games: 'g',
     prizeLbl: 'Prize: ',
-    prizeSpot: '👑 Prize'
+    prizeSpot: '👑 Prize',
+    openTelegramBtn: '✈️ Open Telegram Account',
+    openPortalBtn: '🎓 Open Student Portal',
+    playerProfileModalTitle: 'Player Profile & Account',
+    accountTypeTg: 'Telegram Player',
+    accountTypeStudent: 'ST Dance Student',
+    studentCardTitle: 'ST Dance Studio Student',
+    parentLbl: 'Parent:',
+    phoneLbl: 'Phone:',
+    subLbl: 'Subscription:',
+    lessonsLeft: 'lessons remaining',
+    seasonRankLbl: 'Rank in season',
+    seasonScoreLbl: 'Season Score',
+    gamesLbl: 'Games Played',
+    studioNoteLbl: 'Identification / Note:',
+    studioNotePlaceholder: 'e.g. Mariam’s mom...',
+    saveNoteBtn: 'Save',
+    savedNoteSuccess: '✅ Saved!',
+    copiedIdToast: 'ID copied!',
+    callBtn: 'Call',
+    whatsAppBtn: 'WhatsApp'
   },
   ru: {
     title: 'Лидерборд',
@@ -99,7 +236,27 @@ const lbTranslations = {
     pts: 'очк.',
     games: 'игр',
     prizeLbl: 'Приз: ',
-    prizeSpot: '👑 Призовой'
+    prizeSpot: '👑 Призовой',
+    openTelegramBtn: '✈️ Перейти в аккаунт Telegram',
+    openPortalBtn: '🎓 Перейти в портал ученика',
+    playerProfileModalTitle: 'Профиль и аккаунт игрока',
+    accountTypeTg: 'Игрок Telegram',
+    accountTypeStudent: 'Ученик ST Dance',
+    studentCardTitle: 'Ученик ST Dance Studio',
+    parentLbl: 'Родитель:',
+    phoneLbl: 'Телефон:',
+    subLbl: 'Абонемент:',
+    lessonsLeft: 'занятий осталось',
+    seasonRankLbl: 'место в сезоне',
+    seasonScoreLbl: 'Очки сезона',
+    gamesLbl: 'Сыграно игр',
+    studioNoteLbl: 'Идентификация / Заметка:',
+    studioNotePlaceholder: 'напр. мама Мариам...',
+    saveNoteBtn: 'Сохранить',
+    savedNoteSuccess: '✅ Сохранено!',
+    copiedIdToast: 'ID скопирован!',
+    callBtn: 'Позвонить',
+    whatsAppBtn: 'WhatsApp'
   }
 };
 
@@ -445,6 +602,80 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
     };
   }, []);
 
+  const [studioData, setStudioData] = useState(null);
+  const [selectedPlayer, setSelectedPlayer] = useState(null);
+  const [copiedId, setCopiedId] = useState(false);
+  const [aliasInput, setAliasInput] = useState('');
+  const [aliasStudentId, setAliasStudentId] = useState('');
+  const [isSavingAlias, setIsSavingAlias] = useState(false);
+  const [aliasSavedToast, setAliasSavedToast] = useState(false);
+
+  useEffect(() => {
+    fetchStudioData().then(d => {
+      if (d) setStudioData(d);
+    }).catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    if (selectedPlayer) {
+      setAliasInput(selectedPlayer.aliasNote || '');
+      setAliasStudentId(selectedPlayer.linkedStudentId || '');
+      setAliasSavedToast(false);
+      setCopiedId(false);
+    }
+  }, [selectedPlayer]);
+
+  const selectedPlayerStudent = useMemo(() => {
+    if (!selectedPlayer || !studioData?.students) return null;
+    return matchStudentForPlayer(selectedPlayer, studioData.students);
+  }, [selectedPlayer, studioData]);
+
+  const selectedPlayerSub = useMemo(() => {
+    if (!selectedPlayerStudent || !studioData?.subscriptions) return null;
+    try {
+      return getStudentSubscription(studioData.subscriptions, selectedPlayerStudent.id);
+    } catch (e) {
+      return null;
+    }
+  }, [selectedPlayerStudent, studioData]);
+
+  const handleSaveAlias = async () => {
+    if (!selectedPlayer?.id) return;
+    setIsSavingAlias(true);
+    try {
+      const success = await saveCloudPlayerAlias(selectedPlayer.id, {
+        note: aliasInput.trim(),
+        studentId: aliasStudentId || selectedPlayerStudent?.id || '',
+        customName: selectedPlayer.customName || ''
+      });
+      if (success) {
+        setAliasSavedToast(true);
+        setTimeout(() => setAliasSavedToast(false), 2500);
+
+        setCloudList(prev => prev.map(p => {
+          if (p.id === selectedPlayer.id) {
+            return {
+              ...p,
+              aliasNote: aliasInput.trim(),
+              linkedStudentId: aliasStudentId || selectedPlayerStudent?.id || ''
+            };
+          }
+          return p;
+        }));
+
+        setSelectedPlayer(prev => prev ? ({
+          ...prev,
+          aliasNote: aliasInput.trim(),
+          linkedStudentId: aliasStudentId || selectedPlayerStudent?.id || ''
+        }) : null);
+      }
+    } catch (err) {
+      console.error('Error saving alias:', err);
+    } finally {
+      setIsSavingAlias(false);
+    }
+  };
+
   const handleSaveName = () => {
     if (nameInput.trim()) {
       onUpdatePlayerName(nameInput.trim());
@@ -633,17 +864,25 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
           <div className="lb-list">
             {rankedList.map((item) => {
               const isWinner = item.rank === 1;
+              const isTg = String(item.id || '').startsWith('TG-') || item.username || String(item.name || '').startsWith('@');
+              const matchedStudent = matchStudentForPlayer(item, studioData?.students);
 
               return (
                 <div
                   key={item.id}
                   className={`lb-row ${item.name === playerName ? 'is-me' : ''}`}
-                  style={isWinner ? {
-                    background: 'rgba(212, 166, 74, 0.07)',
-                    border: '1px solid rgba(212, 166, 74, 0.35)',
-                    borderRadius: '14px',
-                    position: 'relative'
-                  } : {}}
+                  onClick={() => setSelectedPlayer(item)}
+                  style={{
+                    cursor: 'pointer',
+                    transition: 'all 0.15s ease',
+                    ...(isWinner ? {
+                      background: 'rgba(212, 166, 74, 0.07)',
+                      border: '1px solid rgba(212, 166, 74, 0.35)',
+                      borderRadius: '14px',
+                      position: 'relative'
+                    } : {})
+                  }}
+                  title="დააჭირეთ მოთამაშის პროფილის & აქაუნთის სანახავად"
                 >
                   <div className="lb-rank" style={{ color: isWinner ? '#d4a64a' : item.rank === 2 ? '#6fc3e0' : item.rank === 3 ? '#b87bde' : '#a1a1aa', fontWeight: isWinner ? '900' : '700' }}>
                     #{item.rank}
@@ -665,9 +904,39 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
                     <AvatarImage src={item.photoUrl} alt={item.name} fallbackChar={item.name ? item.name.charAt(0) : 'D'} />
                   </div>
 
-                  <div className="lb-user-info">
-                    <span className="lb-name" style={{ color: isWinner ? '#F0D9A8' : 'white', fontWeight: isWinner ? '900' : '700' }}>{item.name || 'Dancer'}</span>
-                    <span className="lb-badge">ID: {item.id}</span>
+                  <div className="lb-user-info" style={{ display: 'flex', flexDirection: 'column', gap: '3px', minWidth: 0, flex: 1 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', minWidth: 0 }}>
+                      <span className="lb-name" style={{ color: isWinner ? '#F0D9A8' : 'white', fontWeight: isWinner ? '900' : '700', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                        {item.customName || item.name || 'Dancer'}
+                      </span>
+                      {isTg && (
+                        <button
+                          type="button"
+                          className="lb-tg-btn"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            openTelegramAccount(item);
+                          }}
+                          title="Telegram პროფილი / ჩატი"
+                        >
+                          <Send size={10} /> TG
+                        </button>
+                      )}
+                    </div>
+
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
+                      <span className="lb-badge">ID: {item.id}</span>
+                      {item.aliasNote && (
+                        <span style={{ fontSize: '9.5px', color: '#d4a64a', fontWeight: '800', background: 'rgba(212,166,74,0.12)', border: '1px solid rgba(212,166,74,0.25)', padding: '1px 5px', borderRadius: '4px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '140px' }}>
+                          📝 {item.aliasNote}
+                        </span>
+                      )}
+                      {!item.aliasNote && matchedStudent && (
+                        <span style={{ fontSize: '9.5px', color: '#6fc3e0', fontWeight: '800', background: 'rgba(111,195,224,0.12)', border: '1px solid rgba(111,195,224,0.25)', padding: '1px 5px', borderRadius: '4px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '140px' }}>
+                          🎓 {getStudentName(matchedStudent)}
+                        </span>
+                      )}
+                    </div>
                   </div>
 
                   <div className="lb-score-col" style={{ zIndex: 1, display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '4px' }}>
@@ -1098,6 +1367,268 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
             >
               {lang === 'ka' ? 'შენახვა' : 'Save'}
             </button>
+          </div>
+        </div>,
+        document.body
+      )}
+
+      {/* Player Account & Profile Modal */}
+      {selectedPlayer && createPortal(
+        <div
+          className="modal-overlay"
+          style={{
+            zIndex: 99999,
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(5, 6, 10, 0.85)',
+            backdropFilter: 'blur(8px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '16px',
+            boxSizing: 'border-box'
+          }}
+          onClick={() => setSelectedPlayer(null)}
+        >
+          <div
+            className="modal-content glass animate-in"
+            style={{
+              maxWidth: '400px',
+              width: '100%',
+              padding: '24px 20px',
+              textAlign: 'left',
+              position: 'relative',
+              boxSizing: 'border-box',
+              background: '#0d1017',
+              border: '1.5px solid rgba(212, 166, 74, 0.4)',
+              borderRadius: '20px',
+              boxShadow: '0 12px 40px rgba(0, 0, 0, 0.85)',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '14px',
+              maxHeight: '90vh',
+              overflowY: 'auto'
+            }}
+            onClick={e => e.stopPropagation()}
+          >
+            {/* Close Button */}
+            <button
+              onClick={() => setSelectedPlayer(null)}
+              style={{
+                position: 'absolute',
+                top: '14px',
+                right: '14px',
+                background: 'rgba(255,255,255,0.08)',
+                border: 'none',
+                color: '#a1a1aa',
+                width: '30px',
+                height: '30px',
+                borderRadius: '50%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer'
+              }}
+            >
+              <X size={16} />
+            </button>
+
+            {/* Header: Avatar, Name, Rank, ID */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+              <div style={{ width: '54px', height: '54px', borderRadius: '50%', background: selectedPlayer.avatarBg || '#d4a64a', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, position: 'relative' }}>
+                {selectedPlayer.rank === 1 && (
+                  <Crown size={20} color="#FFD700" fill="#FFD700" style={{ position: 'absolute', top: '-13px', left: '-2px', transform: 'rotate(-15deg)' }} />
+                )}
+                <AvatarImage src={selectedPlayer.photoUrl} alt={selectedPlayer.name} fallbackChar={selectedPlayer.name ? selectedPlayer.name.charAt(0) : 'D'} />
+              </div>
+              <div style={{ minWidth: 0, flex: 1, paddingRight: '24px' }}>
+                <div style={{ fontSize: '17px', fontWeight: '900', color: '#F0D9A8', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  {selectedPlayer.customName || selectedPlayer.name}
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px', flexWrap: 'wrap' }}>
+                  <span style={{ fontSize: '11px', fontWeight: '900', color: selectedPlayer.rank === 1 ? '#FFD700' : '#4ADE80', background: 'rgba(255,255,255,0.06)', padding: '2px 8px', borderRadius: '6px' }}>
+                    #{selectedPlayer.rank} {t.seasonRankLbl}
+                  </span>
+                  <button
+                    onClick={() => {
+                      try { navigator.clipboard?.writeText(String(selectedPlayer.id)); } catch (e) {}
+                      setCopiedId(true);
+                      setTimeout(() => setCopiedId(false), 2000);
+                    }}
+                    style={{ background: 'transparent', border: 'none', color: '#a1a1aa', fontSize: '11px', display: 'flex', alignItems: 'center', gap: '3px', cursor: 'pointer', padding: 0 }}
+                    title="ID კოპირება"
+                  >
+                    ID: {selectedPlayer.id} {copiedId ? <Check size={11} color="#22c55e" /> : <Copy size={11} />}
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Telegram Account Link Action */}
+            {(String(selectedPlayer.id).startsWith('TG-') || selectedPlayer.username || String(selectedPlayer.name).startsWith('@')) && (
+              <div style={{ background: 'rgba(56, 189, 248, 0.08)', border: '1px solid rgba(56, 189, 248, 0.3)', borderRadius: '14px', padding: '14px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <span style={{ fontSize: '12px', fontWeight: '900', color: '#38bdf8', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <Send size={14} /> {t.accountTypeTg}
+                  </span>
+                  {selectedPlayer.username && (
+                    <span style={{ fontSize: '11px', color: '#a1a1aa', fontWeight: '700' }}>
+                      @{selectedPlayer.username.replace('@', '')}
+                    </span>
+                  )}
+                </div>
+                <button
+                  onClick={() => openTelegramAccount(selectedPlayer)}
+                  style={{
+                    background: 'linear-gradient(135deg, #0284c7 0%, #38bdf8 100%)',
+                    border: 'none',
+                    borderRadius: '10px',
+                    padding: '12px 16px',
+                    color: 'white',
+                    fontWeight: '900',
+                    fontSize: '13px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '8px',
+                    cursor: 'pointer',
+                    boxShadow: '0 4px 15px rgba(56, 189, 248, 0.35)'
+                  }}
+                >
+                  <Send size={15} /> {t.openTelegramBtn}
+                </button>
+              </div>
+            )}
+
+            {/* ClassCore Matched Student Card */}
+            {selectedPlayerStudent && (
+              <div style={{ background: 'rgba(212, 166, 74, 0.09)', border: '1px solid rgba(212, 166, 74, 0.35)', borderRadius: '14px', padding: '14px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                <div style={{ fontSize: '12px', fontWeight: '900', color: '#F0D9A8', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <GraduationCap size={15} color="#d4a64a" /> {t.studentCardTitle}
+                </div>
+                <div style={{ fontSize: '14px', fontWeight: '800', color: 'white' }}>
+                  {getStudentName(selectedPlayerStudent)}
+                </div>
+                {selectedPlayerStudent.data?.parent_name && (
+                  <div style={{ fontSize: '11.5px', color: '#d4d4d8' }}>
+                    <span style={{ color: '#a1a1aa' }}>{t.parentLbl}</span> {selectedPlayerStudent.data.parent_name}
+                  </div>
+                )}
+                {selectedPlayerStudent.phone && (
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
+                    <span style={{ fontSize: '12px', color: '#d4d4d8', fontWeight: '700' }}>
+                      📞 {selectedPlayerStudent.phone}
+                    </span>
+                    <div style={{ display: 'flex', gap: '6px' }}>
+                      <a
+                        href={`tel:${selectedPlayerStudent.phone}`}
+                        style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)', color: '#4ADE80', padding: '4px 8px', borderRadius: '6px', fontSize: '11px', fontWeight: '800', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '3px' }}
+                      >
+                        <Phone size={11} /> {t.callBtn}
+                      </a>
+                      <a
+                        href={`https://wa.me/${selectedPlayerStudent.phone.replace(/[^0-9]/g, '')}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        style={{ background: 'rgba(34,197,94,0.15)', border: '1px solid rgba(34,197,94,0.3)', color: '#4ADE80', padding: '4px 8px', borderRadius: '6px', fontSize: '11px', fontWeight: '800', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '3px' }}
+                      >
+                        <MessageCircle size={11} /> WhatsApp
+                      </a>
+                    </div>
+                  </div>
+                )}
+                {selectedPlayerSub && (
+                  <div style={{ fontSize: '11.5px', color: '#d4a64a', background: 'rgba(212,166,74,0.08)', padding: '6px 10px', borderRadius: '8px', fontWeight: '700' }}>
+                    🎫 {t.subLbl} {selectedPlayerSub.remaining}/{selectedPlayerSub.total} {t.lessonsLeft}
+                  </div>
+                )}
+                <button
+                  onClick={() => {
+                    savePortalSession(selectedPlayerStudent.id);
+                    window.open('/portal/dashboard', '_blank');
+                  }}
+                  style={{
+                    background: 'linear-gradient(135deg, #d4a64a 0%, #f59e0b 100%)',
+                    border: 'none',
+                    borderRadius: '10px',
+                    padding: '10px 14px',
+                    color: '#05060a',
+                    fontWeight: '900',
+                    fontSize: '12px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '6px',
+                    cursor: 'pointer',
+                    marginTop: '2px'
+                  }}
+                >
+                  <ExternalLink size={14} /> {t.openPortalBtn}
+                </button>
+              </div>
+            )}
+
+            {/* Game Stats Card */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+              <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '12px', padding: '10px 12px' }}>
+                <div style={{ fontSize: '10px', color: '#a1a1aa', fontWeight: '700' }}>{t.seasonScoreLbl}</div>
+                <div style={{ fontSize: '15px', fontWeight: '900', color: '#F0D9A8', marginTop: '2px' }}>
+                  {(selectedPlayer.score || 0).toLocaleString()} {t.pts}
+                </div>
+              </div>
+              <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '12px', padding: '10px 12px' }}>
+                <div style={{ fontSize: '10px', color: '#a1a1aa', fontWeight: '700' }}>{t.gamesLbl}</div>
+                <div style={{ fontSize: '15px', fontWeight: '900', color: '#4ADE80', marginTop: '2px' }}>
+                  {selectedPlayer.games || 0} {t.games}
+                </div>
+              </div>
+            </div>
+
+            {/* Studio Note / Recognition Field */}
+            <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '14px', padding: '12px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <label style={{ fontSize: '10.5px', fontWeight: '800', color: '#a1a1aa', textTransform: 'uppercase' }}>
+                {t.studioNoteLbl}
+              </label>
+              <div style={{ display: 'flex', gap: '6px' }}>
+                <input
+                  type="text"
+                  value={aliasInput}
+                  onChange={(e) => setAliasInput(e.target.value)}
+                  placeholder={t.studioNotePlaceholder}
+                  style={{
+                    flex: 1,
+                    background: 'rgba(0,0,0,0.4)',
+                    border: '1px solid rgba(255,255,255,0.15)',
+                    borderRadius: '8px',
+                    padding: '8px 10px',
+                    color: 'white',
+                    fontSize: '12px',
+                    outline: 'none'
+                  }}
+                />
+                <button
+                  onClick={handleSaveAlias}
+                  disabled={isSavingAlias}
+                  style={{
+                    background: '#22c55e',
+                    border: 'none',
+                    borderRadius: '8px',
+                    padding: '8px 14px',
+                    color: '#05060a',
+                    fontWeight: '900',
+                    fontSize: '11px',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '4px',
+                    whiteSpace: 'nowrap'
+                  }}
+                >
+                  {isSavingAlias ? <Loader2 size={13} className="animate-spin" /> : <Save size={13} />}
+                  {aliasSavedToast ? t.savedNoteSuccess : t.saveNoteBtn}
+                </button>
+              </div>
+            </div>
           </div>
         </div>,
         document.body

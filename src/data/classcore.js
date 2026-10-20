@@ -463,10 +463,65 @@ export async function fetchCloudLeaderboard() {
       }
     }
 
+    const aliases = staffData.player_aliases || {};
+    cloudList = cloudList.map(item => {
+      const alias = aliases[item.id];
+      if (alias) {
+        return {
+          ...item,
+          aliasNote: alias.note || '',
+          linkedStudentId: alias.studentId || '',
+          customName: alias.customName || ''
+        };
+      }
+      return item;
+    });
+
     return cloudList;
   } catch (err) {
     console.error('❌ Error fetching cloud leaderboard:', err);
     return [];
+  }
+}
+
+export async function saveCloudPlayerAlias(playerId, aliasData) {
+  try {
+    if (!playerId) return false;
+    const settingsUrl = `${SUPABASE_URL}/rest/v1/studio_settings?studio_slug=eq.${STUDIO_SLUG}`;
+    const getRes = await fetch(settingsUrl, {
+      headers: {
+        'apikey': ANON_KEY,
+        'Authorization': `Bearer ${ANON_KEY}`
+      }
+    });
+    if (!getRes.ok) return false;
+    const settingsList = await getRes.json();
+    if (!settingsList || settingsList.length === 0) return false;
+    const settings = settingsList[0];
+    const currentStaffData = settings.staff_data || {};
+    const aliases = currentStaffData.player_aliases || {};
+    aliases[playerId] = {
+      ...(aliases[playerId] || {}),
+      ...aliasData,
+      updatedAt: new Date().toISOString()
+    };
+    const updatedStaffData = {
+      ...currentStaffData,
+      player_aliases: aliases
+    };
+    const patchRes = await fetch(`${SUPABASE_URL}/rest/v1/studio_settings?studio_slug=eq.${STUDIO_SLUG}`, {
+      method: 'PATCH',
+      headers: {
+        'apikey': ANON_KEY,
+        'Authorization': `Bearer ${ANON_KEY}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ staff_data: updatedStaffData })
+    });
+    return patchRes.ok;
+  } catch (err) {
+    console.error('❌ Error saving player alias:', err);
+    return false;
   }
 }
 
@@ -512,6 +567,7 @@ export async function syncCloudScore(userEntry) {
         ...cloudList[existingIdx],
         id: userId,
         name: userEntry.name,
+        username: userEntry.username || cloudList[existingIdx].username || '',
         photoUrl: userEntry.photoUrl || cloudList[existingIdx].photoUrl || '',
         score: updatedScore,
         games: updatedGames,
@@ -525,6 +581,7 @@ export async function syncCloudScore(userEntry) {
       cloudList.push({
         id: userId,
         name: userEntry.name,
+        username: userEntry.username || '',
         photoUrl: userEntry.photoUrl || '',
         score: initScore,
         games: initGames,
