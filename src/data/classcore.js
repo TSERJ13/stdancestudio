@@ -925,6 +925,46 @@ export async function updateWinnerPrizeDeliveryStatus(monthKey, isDelivered) {
 }
 
 /**
+ * Save custom winner Telegram/contact username or link in cloud
+ */
+export async function saveWinnerContactLink(monthKey, linkOrUsername) {
+  try {
+    const settingsUrl = `${SUPABASE_URL}/rest/v1/studio_settings?studio_slug=eq.${STUDIO_SLUG}`;
+    const getRes = await fetch(settingsUrl, {
+      headers: { 'apikey': ANON_KEY, 'Authorization': `Bearer ${ANON_KEY}` }
+    });
+    if (!getRes.ok) return false;
+    const list = await getRes.json();
+    if (!list || list.length === 0) return false;
+    const settings = list[0];
+    const staffData = settings.staff_data || {};
+    const monthlyDraws = { ...(staffData.monthly_draws || {}) };
+    if (monthlyDraws[monthKey]) {
+      monthlyDraws[monthKey] = {
+        ...monthlyDraws[monthKey],
+        winnerUsername: linkOrUsername
+      };
+    }
+    const updatedStaffData = {
+      ...staffData,
+      monthly_draws: monthlyDraws
+    };
+    const patchRes = await fetch(`${SUPABASE_URL}/rest/v1/studio_settings?studio_slug=eq.${STUDIO_SLUG}`, {
+      method: 'PATCH',
+      headers: {
+        'apikey': ANON_KEY,
+        'Authorization': `Bearer ${ANON_KEY}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ staff_data: updatedStaffData })
+    });
+    return patchRes.ok;
+  } catch (e) {
+    return false;
+  }
+}
+
+/**
  * Admin: Start New Season in Supabase Cloud
  * - Resets all player scores to 0 in Supabase Cloud leaderboard
  * - Sets last_score_reset_ms to now

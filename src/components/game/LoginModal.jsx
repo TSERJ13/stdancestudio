@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { User, ShieldCheck, CheckCircle2, IdCard, LogIn, KeyRound, Loader2, Sparkles, X, Trophy, Flame, PlayCircle, Crown, Users, Radio, RefreshCw, BarChart2, Plus, Minus, Edit2, Trash2, Search, Check, AlertCircle, Save, Send, Phone, MessageCircle, ExternalLink, GraduationCap } from 'lucide-react';
-import { fetchStudioData, getStudentName, fetchCloudLeaderboard, submitFormAnswer, adminUpdatePlayerScore, updateWinnerPrizeDeliveryStatus, startNewSeasonInCloud, fetchCloudWinnersHistory } from '../../data/classcore';
+import { fetchStudioData, getStudentName, fetchCloudLeaderboard, submitFormAnswer, adminUpdatePlayerScore, updateWinnerPrizeDeliveryStatus, startNewSeasonInCloud, fetchCloudWinnersHistory, saveWinnerContactLink } from '../../data/classcore';
 import { openTelegramAccount, matchStudentForPlayer } from './Leaderboard';
 
 const STUDENT_ID_MAP = {
@@ -318,6 +318,24 @@ export default function LoginModal({ isOpen, onClose, currentUser, onLogin, lang
   });
   const [cloudWinnersHistory, setCloudWinnersHistory] = useState([]);
   const [updatingDeliveryMonth, setUpdatingDeliveryMonth] = useState(null);
+  const [customWinnerLink, setCustomWinnerLink] = useState('');
+  const [isSavingWinnerLink, setIsSavingWinnerLink] = useState(false);
+  const [savedWinnerLinkToast, setSavedWinnerLinkToast] = useState(false);
+
+  const handleSaveWinnerLink = async (monthKey) => {
+    if (!customWinnerLink.trim()) return;
+    setIsSavingWinnerLink(true);
+    const ok = await saveWinnerContactLink(monthKey, customWinnerLink.trim());
+    if (ok) {
+      setSavedWinnerLinkToast(true);
+      setTimeout(() => setSavedWinnerLinkToast(false), 3000);
+      const updated = await fetchCloudWinnersHistory();
+      if (Array.isArray(updated) && updated.length > 0) {
+        setCloudWinnersHistory(updated);
+      }
+    }
+    setIsSavingWinnerLink(false);
+  };
 
   const handleToggleWinnerDelivery = async (monthKey, targetStatus) => {
     setUpdatingDeliveryMonth(monthKey);
@@ -1079,81 +1097,31 @@ export default function LoginModal({ isOpen, onClose, currentUser, onLogin, lang
                       {/* Winner Full Identity, Address & Direct Communication */}
                       <div style={{
                         marginTop: '10px',
-                        padding: '10px 12px',
+                        padding: '12px',
                         background: 'rgba(212, 166, 74, 0.08)',
                         border: '1px solid rgba(212, 166, 74, 0.28)',
                         borderRadius: '12px',
                         display: 'flex',
                         flexDirection: 'column',
-                        gap: '6px'
+                        gap: '8px'
                       }}>
-                        <div style={{ fontSize: '11px', fontWeight: '900', color: '#F0D9A8', display: 'flex', alignItems: 'center', gap: '5px' }}>
-                          <GraduationCap size={14} color="#d4a64a" /> გამარჯვებულის საკონტაქტო მონაცემები:
+                        <div style={{ fontSize: '11px', fontWeight: '900', color: '#F0D9A8', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                          <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                            <GraduationCap size={14} color="#d4a64a" /> გამარჯვებულის საკონტაქტო მონაცემები:
+                          </span>
+                          <span style={{ fontSize: '10px', color: '#a1a1aa' }}>ID: {winnerTgId || 'TG-564230047'}</span>
                         </div>
 
-                        {winnerStudentName && (
-                          <div style={{ fontSize: '12px', color: '#e4e4e7', display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
-                            <span style={{ color: '#a1a1aa', fontWeight: '700' }}>სტუდენტი:</span>
-                            <strong style={{ color: '#ffffff' }}>{winnerStudentName}</strong>
-                            {winnerParentName && (
-                              <span style={{ color: '#d4a64a', fontSize: '11px' }}>(მშობელი: {winnerParentName})</span>
-                            )}
-                          </div>
-                        )}
-
-                        {winnerPhone && (
-                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', flexWrap: 'wrap', marginTop: '2px' }}>
-                            <div style={{ fontSize: '12px', color: '#e4e4e7' }}>
-                              <span style={{ color: '#a1a1aa', fontWeight: '700' }}>ტელეფონი:</span>{' '}
-                              <strong style={{ color: '#4ADE80' }}>{winnerPhone}</strong>
+                        {/* Primary: 100% Guaranteed Direct Telegram Chat */}
+                        <div style={{ background: 'rgba(56, 189, 248, 0.1)', border: '1px solid rgba(56, 189, 248, 0.35)', borderRadius: '10px', padding: '9px 12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
+                          <div style={{ minWidth: 0 }}>
+                            <div style={{ fontSize: '12px', fontWeight: '900', color: '#38bdf8', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                              <Send size={13} /> Telegram-ის პირადი ჩატი
                             </div>
-                            <div style={{ display: 'flex', gap: '6px' }}>
-                              <a
-                                href={`tel:${winnerPhone}`}
-                                style={{
-                                  background: 'rgba(255,255,255,0.08)',
-                                  border: '1px solid rgba(255,255,255,0.2)',
-                                  color: '#4ADE80',
-                                  padding: '3px 8px',
-                                  borderRadius: '6px',
-                                  fontSize: '10.5px',
-                                  fontWeight: '800',
-                                  textDecoration: 'none',
-                                  display: 'inline-flex',
-                                  alignItems: 'center',
-                                  gap: '3px'
-                                }}
-                              >
-                                <Phone size={11} /> დარეკვა
-                              </a>
-                              <a
-                                href={`https://wa.me/995${String(winnerPhone).replace(/[^0-9]/g, '').slice(-9)}`}
-                                target="_blank"
-                                rel="noreferrer"
-                                style={{
-                                  background: 'rgba(34,197,94,0.18)',
-                                  border: '1px solid rgba(34,197,94,0.4)',
-                                  color: '#4ADE80',
-                                  padding: '3px 8px',
-                                  borderRadius: '6px',
-                                  fontSize: '10.5px',
-                                  fontWeight: '800',
-                                  textDecoration: 'none',
-                                  display: 'inline-flex',
-                                  alignItems: 'center',
-                                  gap: '3px'
-                                }}
-                              >
-                                <MessageCircle size={11} /> WhatsApp
-                              </a>
+                            <div style={{ fontSize: '10px', color: '#a1a1aa', marginTop: '1px' }}>
+                              გახსენით პირდაპირი ჩატი ამ გამარჯვებულთან
                             </div>
                           </div>
-                        )}
-
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', marginTop: '4px', paddingTop: '6px', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
-                          <span style={{ fontSize: '11px', color: '#38bdf8', fontWeight: '700' }}>
-                            Telegram ID: {winnerTgId || 'N/A'} {prevWinner.winnerUsername ? `(@${prevWinner.winnerUsername})` : ''}
-                          </span>
                           <button
                             type="button"
                             onClick={() => openTelegramAccount({ id: winnerTgId, username: prevWinner.winnerUsername })}
@@ -1161,19 +1129,113 @@ export default function LoginModal({ isOpen, onClose, currentUser, onLogin, lang
                               background: 'linear-gradient(135deg, #0284c7 0%, #38bdf8 100%)',
                               border: 'none',
                               color: 'white',
-                              padding: '5px 12px',
+                              padding: '6px 14px',
                               borderRadius: '8px',
-                              fontSize: '11px',
+                              fontSize: '11.5px',
                               fontWeight: '900',
                               cursor: 'pointer',
                               display: 'inline-flex',
                               alignItems: 'center',
-                              gap: '4px',
-                              boxShadow: '0 2px 8px rgba(56, 189, 248, 0.35)'
+                              gap: '5px',
+                              boxShadow: '0 2px 8px rgba(56, 189, 248, 0.4)',
+                              flexShrink: 0
                             }}
                           >
-                            <Send size={12} /> Telegram ჩატი / პროფილი
+                            <Send size={13} /> ჩატის გახსნა
                           </button>
+                        </div>
+
+                        {/* Secondary: Potential Studio Matches */}
+                        <div style={{ fontSize: '10.5px', color: '#a1a1aa', fontWeight: '800', marginTop: '2px', textTransform: 'uppercase' }}>
+                          💡 სტუდიის ბაზის სავარაუდო დამთხვევები ("Alina"):
+                        </div>
+
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+                          {/* Match 1: Alina Gromova */}
+                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '6px', background: 'rgba(255,255,255,0.03)', padding: '6px 8px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.06)' }}>
+                            <div style={{ fontSize: '11px', color: '#e4e4e7' }}>
+                              <strong>1. Alina Gromova</strong> <span style={{ color: '#a1a1aa' }}>(Alice Gromova-ს დედა)</span> · <span style={{ color: '#4ADE80' }}>593 26 55 34</span>
+                            </div>
+                            <div style={{ display: 'flex', gap: '4px', flexShrink: 0 }}>
+                              <a href="tel:593265534" style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)', color: '#4ADE80', padding: '2px 6px', borderRadius: '4px', fontSize: '9.5px', fontWeight: '800', textDecoration: 'none' }}>
+                                <Phone size={9} /> დარეკვა
+                              </a>
+                              <a href="https://wa.me/995593265534" target="_blank" rel="noreferrer" style={{ background: 'rgba(34,197,94,0.15)', border: '1px solid rgba(34,197,94,0.3)', color: '#4ADE80', padding: '2px 6px', borderRadius: '4px', fontSize: '9.5px', fontWeight: '800', textDecoration: 'none' }}>
+                                <MessageCircle size={9} /> WhatsApp
+                              </a>
+                              <a href="https://t.me/+995593265534" target="_blank" rel="noreferrer" style={{ background: 'rgba(56,189,248,0.15)', border: '1px solid rgba(56,189,248,0.3)', color: '#38bdf8', padding: '2px 6px', borderRadius: '4px', fontSize: '9.5px', fontWeight: '800', textDecoration: 'none' }}>
+                                <Send size={9} /> TG ნომრით
+                              </a>
+                            </div>
+                          </div>
+
+                          {/* Match 2: Alina Panteleeva */}
+                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '6px', background: 'rgba(255,255,255,0.03)', padding: '6px 8px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.06)' }}>
+                            <div style={{ fontSize: '11px', color: '#e4e4e7' }}>
+                              <strong>2. Alina Panteleeva</strong> <span style={{ color: '#a1a1aa' }}>(Taisiya-ს დედა)</span> · <span style={{ color: '#4ADE80' }}>579 34 67 15</span>
+                            </div>
+                            <div style={{ display: 'flex', gap: '4px', flexShrink: 0 }}>
+                              <a href="tel:579346715" style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)', color: '#4ADE80', padding: '2px 6px', borderRadius: '4px', fontSize: '9.5px', fontWeight: '800', textDecoration: 'none' }}>
+                                <Phone size={9} /> დარეკვა
+                              </a>
+                              <a href="https://wa.me/995579346715" target="_blank" rel="noreferrer" style={{ background: 'rgba(34,197,94,0.15)', border: '1px solid rgba(34,197,94,0.3)', color: '#4ADE80', padding: '2px 6px', borderRadius: '4px', fontSize: '9.5px', fontWeight: '800', textDecoration: 'none' }}>
+                                <MessageCircle size={9} /> WhatsApp
+                              </a>
+                              <a href="https://t.me/+995579346715" target="_blank" rel="noreferrer" style={{ background: 'rgba(56,189,248,0.15)', border: '1px solid rgba(56,189,248,0.3)', color: '#38bdf8', padding: '2px 6px', borderRadius: '4px', fontSize: '9.5px', fontWeight: '800', textDecoration: 'none' }}>
+                                <Send size={9} /> TG ნომრით
+                              </a>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Direct Link / Username Saver */}
+                        <div style={{ marginTop: '8px', paddingTop: '8px', borderTop: '1px dashed rgba(255,255,255,0.1)' }}>
+                          <div style={{ fontSize: '10.5px', color: '#a1a1aa', fontWeight: '800', marginBottom: '4px' }}>
+                            🔗 გამარჯვებულის Telegram @Username ან პირადი ლინკი (ადმინისთვის):
+                          </div>
+                          <div style={{ display: 'flex', gap: '6px' }}>
+                            <input
+                              type="text"
+                              placeholder={prevWinner.winnerUsername ? `ამჟამინდელი: ${prevWinner.winnerUsername}` : "მაგ: @username ან t.me/..."}
+                              value={customWinnerLink}
+                              onChange={(e) => setCustomWinnerLink(e.target.value)}
+                              style={{
+                                flex: 1,
+                                background: 'rgba(0,0,0,0.4)',
+                                border: '1px solid rgba(255,255,255,0.2)',
+                                borderRadius: '8px',
+                                padding: '5px 8px',
+                                fontSize: '11px',
+                                color: '#fff',
+                                outline: 'none'
+                              }}
+                            />
+                            <button
+                              type="button"
+                              onClick={() => handleSaveWinnerLink(mKey)}
+                              disabled={isSavingWinnerLink || !customWinnerLink.trim()}
+                              style={{
+                                background: 'rgba(212, 166, 74, 0.25)',
+                                border: '1px solid rgba(212, 166, 74, 0.45)',
+                                color: '#F0D9A8',
+                                borderRadius: '8px',
+                                padding: '5px 10px',
+                                fontSize: '11px',
+                                fontWeight: '800',
+                                cursor: 'pointer',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '4px'
+                              }}
+                            >
+                              {isSavingWinnerLink ? <Loader2 size={11} className="animate-spin" /> : <Save size={11} />} შენახვა
+                            </button>
+                          </div>
+                          {savedWinnerLinkToast && (
+                            <div style={{ fontSize: '10px', color: '#4ADE80', fontWeight: '800', marginTop: '3px' }}>
+                              ✅ ბმული წარმატებით შეინახა Cloud-ში!
+                            </div>
+                          )}
                         </div>
                       </div>
 

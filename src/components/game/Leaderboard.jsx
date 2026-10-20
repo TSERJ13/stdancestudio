@@ -871,10 +871,11 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
                 <div
                   key={item.id}
                   className={`lb-row ${item.name === playerName ? 'is-me' : ''}`}
-                  onClick={() => setSelectedPlayer(item)}
+                  onClick={() => {
+                    const isAdmin = localStorage.getItem('dancing_bricks_is_admin') === 'true' || userId === '99999' || userId === 'TG-stdancestudio';
+                    if (isAdmin) setSelectedPlayer(item);
+                  }}
                   style={{
-                    cursor: 'pointer',
-                    transition: 'all 0.15s ease',
                     ...(isWinner ? {
                       background: 'rgba(212, 166, 74, 0.07)',
                       border: '1px solid rgba(212, 166, 74, 0.35)',
@@ -882,7 +883,6 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
                       position: 'relative'
                     } : {})
                   }}
-                  title="დააჭირეთ მოთამაშის პროფილის & აქაუნთის სანახავად"
                 >
                   <div className="lb-rank" style={{ color: isWinner ? '#d4a64a' : item.rank === 2 ? '#6fc3e0' : item.rank === 3 ? '#b87bde' : '#a1a1aa', fontWeight: isWinner ? '900' : '700' }}>
                     #{item.rank}
@@ -909,19 +909,6 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
                       <span className="lb-name" style={{ color: isWinner ? '#F0D9A8' : 'white', fontWeight: isWinner ? '900' : '700', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                         {item.customName || item.name || 'Dancer'}
                       </span>
-                      {isTg && (
-                        <button
-                          type="button"
-                          className="lb-tg-btn"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            openTelegramAccount(item);
-                          }}
-                          title="Telegram პროფილი / ჩატი"
-                        >
-                          <Send size={10} /> TG
-                        </button>
-                      )}
                     </div>
 
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
@@ -929,11 +916,6 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
                       {item.aliasNote && (
                         <span style={{ fontSize: '9.5px', color: '#d4a64a', fontWeight: '800', background: 'rgba(212,166,74,0.12)', border: '1px solid rgba(212,166,74,0.25)', padding: '1px 5px', borderRadius: '4px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '140px' }}>
                           📝 {item.aliasNote}
-                        </span>
-                      )}
-                      {!item.aliasNote && matchedStudent && (
-                        <span style={{ fontSize: '9.5px', color: '#6fc3e0', fontWeight: '800', background: 'rgba(111,195,224,0.12)', border: '1px solid rgba(111,195,224,0.25)', padding: '1px 5px', borderRadius: '4px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '140px' }}>
-                          🎓 {getStudentName(matchedStudent)}
                         </span>
                       )}
                     </div>
