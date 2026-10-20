@@ -1025,12 +1025,8 @@ export default function LoginModal({ isOpen, onClose, currentUser, onLogin, lang
                   const isDelivered = Boolean(prevWinner.delivered);
                   const isUpdating = updatingDeliveryMonth === mKey;
 
-                  // Resolve contact & student info for the winner
-                  const winnerMatchedStudent = matchStudentForPlayer({ id: prevWinner.winnerId, name: prevWinner.winner }, classcoreStudents);
-                  const winnerPhone = prevWinner.phone || winnerMatchedStudent?.phone || (prevWinner.winner === 'Alina' ? '593265534' : null);
-                  const winnerStudentName = prevWinner.studentName || (winnerMatchedStudent ? getStudentName(winnerMatchedStudent) : (prevWinner.winner === 'Alina' ? 'Alice Gromova' : null));
-                  const winnerParentName = prevWinner.parentName || winnerMatchedStudent?.data?.parent_name || (prevWinner.winner === 'Alina' ? 'Alina Gromova' : null);
-                  const winnerTgId = prevWinner.winnerId || (prevWinner.winner === 'Alina' ? 'TG-564230047' : null);
+                  // Resolve winner ID
+                  const winnerTgId = prevWinner.winnerId || null;
 
                   return (
                     <div style={{
@@ -1107,7 +1103,7 @@ export default function LoginModal({ isOpen, onClose, currentUser, onLogin, lang
                       }}>
                         <div style={{ fontSize: '11px', fontWeight: '900', color: '#F0D9A8', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                           <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-                            <GraduationCap size={14} color="#d4a64a" /> გამარჯვებულის საკონტაქტო მონაცემები:
+                            <Send size={14} color="#38bdf8" /> გამარჯვებულის Telegram კონტაქტი:
                           </span>
                           <span style={{ fontSize: '10px', color: '#a1a1aa' }}>ID: {winnerTgId || 'TG-564230047'}</span>
                         </div>
@@ -1119,12 +1115,15 @@ export default function LoginModal({ isOpen, onClose, currentUser, onLogin, lang
                               <Send size={13} /> Telegram-ის პირადი ჩატი
                             </div>
                             <div style={{ fontSize: '10px', color: '#a1a1aa', marginTop: '1px' }}>
-                              გახსენით პირდაპირი ჩატი ამ გამარჯვებულთან
+                              {prevWinner.winnerUsername ? `ბმული: ${prevWinner.winnerUsername}` : 'გახსენით პირდაპირი ჩატი ამ გამარჯვებულთან'}
                             </div>
                           </div>
                           <button
                             type="button"
-                            onClick={() => openTelegramAccount({ id: winnerTgId, username: prevWinner.winnerUsername })}
+                            onClick={() => {
+                              const targetUser = customWinnerLink.trim() || prevWinner.winnerUsername;
+                              openTelegramAccount({ id: winnerTgId, username: targetUser });
+                            }}
                             style={{
                               background: 'linear-gradient(135deg, #0284c7 0%, #38bdf8 100%)',
                               border: 'none',
@@ -1145,48 +1144,6 @@ export default function LoginModal({ isOpen, onClose, currentUser, onLogin, lang
                           </button>
                         </div>
 
-                        {/* Secondary: Potential Studio Matches */}
-                        <div style={{ fontSize: '10.5px', color: '#a1a1aa', fontWeight: '800', marginTop: '2px', textTransform: 'uppercase' }}>
-                          💡 სტუდიის ბაზის სავარაუდო დამთხვევები ("Alina"):
-                        </div>
-
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
-                          {/* Match 1: Alina Gromova */}
-                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '6px', background: 'rgba(255,255,255,0.03)', padding: '6px 8px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.06)' }}>
-                            <div style={{ fontSize: '11px', color: '#e4e4e7' }}>
-                              <strong>1. Alina Gromova</strong> <span style={{ color: '#a1a1aa' }}>(Alice Gromova-ს დედა)</span> · <span style={{ color: '#4ADE80' }}>593 26 55 34</span>
-                            </div>
-                            <div style={{ display: 'flex', gap: '4px', flexShrink: 0 }}>
-                              <a href="tel:593265534" style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)', color: '#4ADE80', padding: '2px 6px', borderRadius: '4px', fontSize: '9.5px', fontWeight: '800', textDecoration: 'none' }}>
-                                <Phone size={9} /> დარეკვა
-                              </a>
-                              <a href="https://wa.me/995593265534" target="_blank" rel="noreferrer" style={{ background: 'rgba(34,197,94,0.15)', border: '1px solid rgba(34,197,94,0.3)', color: '#4ADE80', padding: '2px 6px', borderRadius: '4px', fontSize: '9.5px', fontWeight: '800', textDecoration: 'none' }}>
-                                <MessageCircle size={9} /> WhatsApp
-                              </a>
-                              <a href="https://t.me/+995593265534" target="_blank" rel="noreferrer" style={{ background: 'rgba(56,189,248,0.15)', border: '1px solid rgba(56,189,248,0.3)', color: '#38bdf8', padding: '2px 6px', borderRadius: '4px', fontSize: '9.5px', fontWeight: '800', textDecoration: 'none' }}>
-                                <Send size={9} /> TG ნომრით
-                              </a>
-                            </div>
-                          </div>
-
-                          {/* Match 2: Alina Panteleeva */}
-                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '6px', background: 'rgba(255,255,255,0.03)', padding: '6px 8px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.06)' }}>
-                            <div style={{ fontSize: '11px', color: '#e4e4e7' }}>
-                              <strong>2. Alina Panteleeva</strong> <span style={{ color: '#a1a1aa' }}>(Taisiya-ს დედა)</span> · <span style={{ color: '#4ADE80' }}>579 34 67 15</span>
-                            </div>
-                            <div style={{ display: 'flex', gap: '4px', flexShrink: 0 }}>
-                              <a href="tel:579346715" style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)', color: '#4ADE80', padding: '2px 6px', borderRadius: '4px', fontSize: '9.5px', fontWeight: '800', textDecoration: 'none' }}>
-                                <Phone size={9} /> დარეკვა
-                              </a>
-                              <a href="https://wa.me/995579346715" target="_blank" rel="noreferrer" style={{ background: 'rgba(34,197,94,0.15)', border: '1px solid rgba(34,197,94,0.3)', color: '#4ADE80', padding: '2px 6px', borderRadius: '4px', fontSize: '9.5px', fontWeight: '800', textDecoration: 'none' }}>
-                                <MessageCircle size={9} /> WhatsApp
-                              </a>
-                              <a href="https://t.me/+995579346715" target="_blank" rel="noreferrer" style={{ background: 'rgba(56,189,248,0.15)', border: '1px solid rgba(56,189,248,0.3)', color: '#38bdf8', padding: '2px 6px', borderRadius: '4px', fontSize: '9.5px', fontWeight: '800', textDecoration: 'none' }}>
-                                <Send size={9} /> TG ნომრით
-                              </a>
-                            </div>
-                          </div>
-                        </div>
 
                         {/* Direct Link / Username Saver */}
                         <div style={{ marginTop: '8px', paddingTop: '8px', borderTop: '1px dashed rgba(255,255,255,0.1)' }}>
