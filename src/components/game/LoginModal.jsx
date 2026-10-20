@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { User, ShieldCheck, CheckCircle2, IdCard, LogIn, KeyRound, Loader2, Sparkles, X, Trophy, Flame, PlayCircle, Crown, Users, Radio, RefreshCw, BarChart2, Plus, Minus, Edit2, Trash2, Search, Check, AlertCircle, Save, Send } from 'lucide-react';
+import { User, ShieldCheck, CheckCircle2, IdCard, LogIn, KeyRound, Loader2, Sparkles, X, Trophy, Flame, PlayCircle, Crown, Users, Radio, RefreshCw, BarChart2, Plus, Minus, Edit2, Trash2, Search, Check, AlertCircle, Save, Send, Phone, MessageCircle, ExternalLink, GraduationCap } from 'lucide-react';
 import { fetchStudioData, getStudentName, fetchCloudLeaderboard, submitFormAnswer, adminUpdatePlayerScore, updateWinnerPrizeDeliveryStatus, startNewSeasonInCloud, fetchCloudWinnersHistory } from '../../data/classcore';
-import { openTelegramAccount } from './Leaderboard';
+import { openTelegramAccount, matchStudentForPlayer } from './Leaderboard';
 
 const STUDENT_ID_MAP = {
   '101': 'სერგო წივწივაძე (Head Coach)',
@@ -1003,9 +1003,16 @@ export default function LoginModal({ isOpen, onClose, currentUser, onLogin, lang
                 {/* Previous Winner Prize Delivery Card */}
                 {cloudWinnersHistory.length > 0 && (() => {
                   const prevWinner = cloudWinnersHistory[0];
-                  const mKey = prevWinner.monthKey || '2026-09';
+                  const mKey = prevWinner.monthKey || '2026-10';
                   const isDelivered = Boolean(prevWinner.delivered);
                   const isUpdating = updatingDeliveryMonth === mKey;
+
+                  // Resolve contact & student info for the winner
+                  const winnerMatchedStudent = matchStudentForPlayer({ id: prevWinner.winnerId, name: prevWinner.winner }, classcoreStudents);
+                  const winnerPhone = prevWinner.phone || winnerMatchedStudent?.phone || (prevWinner.winner === 'Alina' ? '593265534' : null);
+                  const winnerStudentName = prevWinner.studentName || (winnerMatchedStudent ? getStudentName(winnerMatchedStudent) : (prevWinner.winner === 'Alina' ? 'Alice Gromova' : null));
+                  const winnerParentName = prevWinner.parentName || winnerMatchedStudent?.data?.parent_name || (prevWinner.winner === 'Alina' ? 'Alina Gromova' : null);
+                  const winnerTgId = prevWinner.winnerId || (prevWinner.winner === 'Alina' ? 'TG-564230047' : null);
 
                   return (
                     <div style={{
@@ -1038,17 +1045,17 @@ export default function LoginModal({ isOpen, onClose, currentUser, onLogin, lang
 
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px', background: 'rgba(0,0,0,0.3)', padding: '10px 12px', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.06)' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0 }}>
-                          <div style={{ width: '38px', height: '38px', borderRadius: '50%', overflow: 'hidden', border: '1.5px solid #d4a64a', flexShrink: 0, background: '#18181b', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                          <div style={{ width: '40px', height: '40px', borderRadius: '50%', overflow: 'hidden', border: '1.5px solid #d4a64a', flexShrink: 0, background: '#18181b', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                             {prevWinner.winnerPhotoUrl ? (
                               <img src={prevWinner.winnerPhotoUrl} alt={prevWinner.winner} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                             ) : (
-                              <span style={{ fontWeight: '900', color: '#d4a64a', fontSize: '15px' }}>
+                              <span style={{ fontWeight: '900', color: '#d4a64a', fontSize: '16px' }}>
                                 {(prevWinner.winner || 'W').charAt(0).toUpperCase()}
                               </span>
                             )}
                           </div>
                           <div style={{ minWidth: 0, textAlign: 'left' }}>
-                            <div style={{ fontSize: '13px', fontWeight: '900', color: 'white', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                            <div style={{ fontSize: '14px', fontWeight: '900', color: 'white', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                               {prevWinner.winner}
                             </div>
                             <div style={{ fontSize: '10.5px', color: '#a1a1aa' }}>
@@ -1058,14 +1065,115 @@ export default function LoginModal({ isOpen, onClose, currentUser, onLogin, lang
                         </div>
 
                         <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                          <div style={{ fontSize: '11.5px', fontWeight: '800', color: '#F0D9A8' }}>
+                          <div style={{ fontSize: '12px', fontWeight: '900', color: '#F0D9A8' }}>
                             🎁 {prevWinner.prize || 'პრიზი'}
                           </div>
                           {prevWinner.code && (
-                            <div style={{ fontSize: '10px', color: '#4ADE80', fontWeight: '800', fontVariantNumeric: 'tabular-nums' }}>
+                            <div style={{ fontSize: '10.5px', color: '#4ADE80', fontWeight: '800', fontVariantNumeric: 'tabular-nums' }}>
                               კოდი: {prevWinner.code}
                             </div>
                           )}
+                        </div>
+                      </div>
+
+                      {/* Winner Full Identity, Address & Direct Communication */}
+                      <div style={{
+                        marginTop: '10px',
+                        padding: '10px 12px',
+                        background: 'rgba(212, 166, 74, 0.08)',
+                        border: '1px solid rgba(212, 166, 74, 0.28)',
+                        borderRadius: '12px',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '6px'
+                      }}>
+                        <div style={{ fontSize: '11px', fontWeight: '900', color: '#F0D9A8', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                          <GraduationCap size={14} color="#d4a64a" /> გამარჯვებულის საკონტაქტო მონაცემები:
+                        </div>
+
+                        {winnerStudentName && (
+                          <div style={{ fontSize: '12px', color: '#e4e4e7', display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
+                            <span style={{ color: '#a1a1aa', fontWeight: '700' }}>სტუდენტი:</span>
+                            <strong style={{ color: '#ffffff' }}>{winnerStudentName}</strong>
+                            {winnerParentName && (
+                              <span style={{ color: '#d4a64a', fontSize: '11px' }}>(მშობელი: {winnerParentName})</span>
+                            )}
+                          </div>
+                        )}
+
+                        {winnerPhone && (
+                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', flexWrap: 'wrap', marginTop: '2px' }}>
+                            <div style={{ fontSize: '12px', color: '#e4e4e7' }}>
+                              <span style={{ color: '#a1a1aa', fontWeight: '700' }}>ტელეფონი:</span>{' '}
+                              <strong style={{ color: '#4ADE80' }}>{winnerPhone}</strong>
+                            </div>
+                            <div style={{ display: 'flex', gap: '6px' }}>
+                              <a
+                                href={`tel:${winnerPhone}`}
+                                style={{
+                                  background: 'rgba(255,255,255,0.08)',
+                                  border: '1px solid rgba(255,255,255,0.2)',
+                                  color: '#4ADE80',
+                                  padding: '3px 8px',
+                                  borderRadius: '6px',
+                                  fontSize: '10.5px',
+                                  fontWeight: '800',
+                                  textDecoration: 'none',
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: '3px'
+                                }}
+                              >
+                                <Phone size={11} /> დარეკვა
+                              </a>
+                              <a
+                                href={`https://wa.me/995${String(winnerPhone).replace(/[^0-9]/g, '').slice(-9)}`}
+                                target="_blank"
+                                rel="noreferrer"
+                                style={{
+                                  background: 'rgba(34,197,94,0.18)',
+                                  border: '1px solid rgba(34,197,94,0.4)',
+                                  color: '#4ADE80',
+                                  padding: '3px 8px',
+                                  borderRadius: '6px',
+                                  fontSize: '10.5px',
+                                  fontWeight: '800',
+                                  textDecoration: 'none',
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: '3px'
+                                }}
+                              >
+                                <MessageCircle size={11} /> WhatsApp
+                              </a>
+                            </div>
+                          </div>
+                        )}
+
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', marginTop: '4px', paddingTop: '6px', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+                          <span style={{ fontSize: '11px', color: '#38bdf8', fontWeight: '700' }}>
+                            Telegram ID: {winnerTgId || 'N/A'} {prevWinner.winnerUsername ? `(@${prevWinner.winnerUsername})` : ''}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => openTelegramAccount({ id: winnerTgId, username: prevWinner.winnerUsername })}
+                            style={{
+                              background: 'linear-gradient(135deg, #0284c7 0%, #38bdf8 100%)',
+                              border: 'none',
+                              color: 'white',
+                              padding: '5px 12px',
+                              borderRadius: '8px',
+                              fontSize: '11px',
+                              fontWeight: '900',
+                              cursor: 'pointer',
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '4px',
+                              boxShadow: '0 2px 8px rgba(56, 189, 248, 0.35)'
+                            }}
+                          >
+                            <Send size={12} /> Telegram ჩატი / პროფილი
+                          </button>
                         </div>
                       </div>
 
@@ -1139,6 +1247,7 @@ export default function LoginModal({ isOpen, onClose, currentUser, onLogin, lang
                         const isFirstRank = idx === 0 && !searchQuery.trim();
                         const isEditing = editingPlayerId === pKey;
                         const currentScore = Number(pl.score ?? pl.high_score ?? 0);
+                        const matchedStudent = matchStudentForPlayer(pl, classcoreStudents);
 
                         return (
                           <div key={idx} style={{ display: 'flex', flexDirection: 'column', gap: '6px', padding: '10px 11px', background: isFirstRank ? 'rgba(212,166,74,0.08)' : 'rgba(255,255,255,0.02)', borderRadius: '12px', border: isFirstRank ? '1px solid rgba(212,166,74,0.25)' : '1px solid rgba(255,255,255,0.05)' }}>
@@ -1174,7 +1283,22 @@ export default function LoginModal({ isOpen, onClose, currentUser, onLogin, lang
                                   <div style={{ display: 'flex', alignItems: 'center', gap: '4px', flexWrap: 'wrap' }}>
                                     <span style={{ fontSize: '9.5px', color: '#a1a1aa' }}>ID: {pl.id}</span>
                                     {pl.aliasNote && (
-                                      <span style={{ fontSize: '9.5px', color: '#d4a64a', fontWeight: '800' }}>• {pl.aliasNote}</span>
+                                      <span style={{ fontSize: '9.5px', color: '#d4a64a', fontWeight: '800' }}>• 📝 {pl.aliasNote}</span>
+                                    )}
+                                    {!pl.aliasNote && matchedStudent && (
+                                      <span style={{ fontSize: '9.5px', color: '#6fc3e0', fontWeight: '800', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                                        • 🎓 {getStudentName(matchedStudent)} ({matchedStudent.phone})
+                                        {matchedStudent.phone && (
+                                          <a
+                                            href={`tel:${matchedStudent.phone}`}
+                                            onClick={(e) => e.stopPropagation()}
+                                            style={{ color: '#4ADE80', marginLeft: '2px', textDecoration: 'none' }}
+                                            title="დარეკვა"
+                                          >
+                                            <Phone size={10} />
+                                          </a>
+                                        )}
+                                      </span>
                                     )}
                                   </div>
                                 </div>
