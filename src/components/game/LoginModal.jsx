@@ -1266,7 +1266,6 @@ export default function LoginModal({ isOpen, onClose, currentUser, onLogin, lang
                         const isFirstRank = idx === 0 && !searchQuery.trim();
                         const isEditing = editingPlayerId === pKey;
                         const currentScore = Number(pl.score ?? pl.high_score ?? 0);
-                        const matchedStudent = matchStudentForPlayer(pl, classcoreStudents);
 
                         return (
                           <div key={idx} style={{ display: 'flex', flexDirection: 'column', gap: '6px', padding: '10px 11px', background: isFirstRank ? 'rgba(212,166,74,0.08)' : 'rgba(255,255,255,0.02)', borderRadius: '12px', border: isFirstRank ? '1px solid rgba(212,166,74,0.25)' : '1px solid rgba(255,255,255,0.05)' }}>
@@ -1303,21 +1302,6 @@ export default function LoginModal({ isOpen, onClose, currentUser, onLogin, lang
                                     <span style={{ fontSize: '9.5px', color: '#a1a1aa' }}>ID: {pl.id}</span>
                                     {pl.aliasNote && (
                                       <span style={{ fontSize: '9.5px', color: '#d4a64a', fontWeight: '800' }}>• 📝 {pl.aliasNote}</span>
-                                    )}
-                                    {!pl.aliasNote && matchedStudent && (
-                                      <span style={{ fontSize: '9.5px', color: '#6fc3e0', fontWeight: '800', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                                        • 🎓 {getStudentName(matchedStudent)} ({matchedStudent.phone})
-                                        {matchedStudent.phone && (
-                                          <a
-                                            href={`tel:${matchedStudent.phone}`}
-                                            onClick={(e) => e.stopPropagation()}
-                                            style={{ color: '#4ADE80', marginLeft: '2px', textDecoration: 'none' }}
-                                            title="დარეკვა"
-                                          >
-                                            <Phone size={10} />
-                                          </a>
-                                        )}
-                                      </span>
                                     )}
                                   </div>
                                 </div>

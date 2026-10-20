@@ -602,79 +602,7 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
     };
   }, []);
 
-  const [studioData, setStudioData] = useState(null);
-  const [selectedPlayer, setSelectedPlayer] = useState(null);
-  const [copiedId, setCopiedId] = useState(false);
-  const [aliasInput, setAliasInput] = useState('');
-  const [aliasStudentId, setAliasStudentId] = useState('');
-  const [isSavingAlias, setIsSavingAlias] = useState(false);
-  const [aliasSavedToast, setAliasSavedToast] = useState(false);
 
-  useEffect(() => {
-    fetchStudioData().then(d => {
-      if (d) setStudioData(d);
-    }).catch(() => {});
-  }, []);
-
-  useEffect(() => {
-    if (selectedPlayer) {
-      setAliasInput(selectedPlayer.aliasNote || '');
-      setAliasStudentId(selectedPlayer.linkedStudentId || '');
-      setAliasSavedToast(false);
-      setCopiedId(false);
-    }
-  }, [selectedPlayer]);
-
-  const selectedPlayerStudent = useMemo(() => {
-    if (!selectedPlayer || !studioData?.students) return null;
-    return matchStudentForPlayer(selectedPlayer, studioData.students);
-  }, [selectedPlayer, studioData]);
-
-  const selectedPlayerSub = useMemo(() => {
-    if (!selectedPlayerStudent || !studioData?.subscriptions) return null;
-    try {
-      return getStudentSubscription(studioData.subscriptions, selectedPlayerStudent.id);
-    } catch (e) {
-      return null;
-    }
-  }, [selectedPlayerStudent, studioData]);
-
-  const handleSaveAlias = async () => {
-    if (!selectedPlayer?.id) return;
-    setIsSavingAlias(true);
-    try {
-      const success = await saveCloudPlayerAlias(selectedPlayer.id, {
-        note: aliasInput.trim(),
-        studentId: aliasStudentId || selectedPlayerStudent?.id || '',
-        customName: selectedPlayer.customName || ''
-      });
-      if (success) {
-        setAliasSavedToast(true);
-        setTimeout(() => setAliasSavedToast(false), 2500);
-
-        setCloudList(prev => prev.map(p => {
-          if (p.id === selectedPlayer.id) {
-            return {
-              ...p,
-              aliasNote: aliasInput.trim(),
-              linkedStudentId: aliasStudentId || selectedPlayerStudent?.id || ''
-            };
-          }
-          return p;
-        }));
-
-        setSelectedPlayer(prev => prev ? ({
-          ...prev,
-          aliasNote: aliasInput.trim(),
-          linkedStudentId: aliasStudentId || selectedPlayerStudent?.id || ''
-        }) : null);
-      }
-    } catch (err) {
-      console.error('Error saving alias:', err);
-    } finally {
-      setIsSavingAlias(false);
-    }
-  };
 
   const handleSaveName = () => {
     if (nameInput.trim()) {
@@ -864,17 +792,11 @@ export default function Leaderboard({ currentTotalScore, totalGames, playerName,
           <div className="lb-list">
             {rankedList.map((item) => {
               const isWinner = item.rank === 1;
-              const isTg = String(item.id || '').startsWith('TG-') || item.username || String(item.name || '').startsWith('@');
-              const matchedStudent = matchStudentForPlayer(item, studioData?.students);
 
               return (
                 <div
                   key={item.id}
                   className={`lb-row ${item.name === playerName ? 'is-me' : ''}`}
-                  onClick={() => {
-                    const isAdmin = localStorage.getItem('dancing_bricks_is_admin') === 'true' || userId === '99999' || userId === 'TG-stdancestudio';
-                    if (isAdmin) setSelectedPlayer(item);
-                  }}
                   style={{
                     ...(isWinner ? {
                       background: 'rgba(212, 166, 74, 0.07)',
